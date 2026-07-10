@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Riding School - HorseSquare Pakistan</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #F8FAFC;
+      color: #1E293B;
+      line-height: 1.6;
+      animation: fadeInBody 0.8s ease-out;
+    }
+
+    header {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: white;
+      padding: 25px 20px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #D4AF37, #C9A227, #D4AF37);
+    }
+
+    header h1 {
+      font-size: 2.2rem;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #FFFFFF 0%, #D4AF37 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p { color: #94A3B8; font-size: 1.05rem; font-weight: 300; }
+
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: #CBD5E1;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 13px;
+      position: relative;
+      padding: 8px 0;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    nav a::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 0%; height: 2px;
+      background: linear-gradient(90deg, #D4AF37, #C9A227);
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+
+    nav a:hover { color: #D4AF37; }
+    nav a:hover::after { width: 100%; }
+
+    .container {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 40px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 10px 30px rgba(0,0,0,0.08);
+      border: 1px solid #E2E8F0;
+      animation: fadeUp 0.8s ease-out;
+    }
+
+    h2 {
+      color: #0F172A;
+      text-align: center;
+      margin-bottom: 10px;
+      font-size: 1.8rem;
+      position: relative;
+      padding-bottom: 15px;
+    }
+
+    h2::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 60px;
+      height: 3px;
+      background: linear-gradient(90deg, #D4AF37, #C9A227);
+      border-radius: 2px;
+    }
+
+    .intro {
+      text-align: center;
+      font-size: 16px;
+      color: #64748B;
+      margin-bottom: 40px;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    .programs {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 25px;
+      margin-bottom: 50px;
+    }
+
+    .program {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 30px;
+      border: 1px solid #E2E8F0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .program::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #D4AF37, #C9A227);
+      transform: scaleX(0);
+      transition: transform 0.4s ease;
+    }
+
+    .program:hover {
+      transform: translateY(-6px);
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+      border-color: #D4AF37;
+    }
+
+    .program:hover::before {
+      transform: scaleX(1);
+    }
+
+    .program h3 {
+      color: #0F172A;
+      margin-top: 0;
+      margin-bottom: 15px;
+      font-size: 1.3rem;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .program h3::before {
+      content: '◆';
+      color: #D4AF37;
+      font-size: 0.8rem;
+    }
+
+    .program p {
+      color: #64748B;
+      margin-bottom: 15px;
+      line-height: 1.7;
+    }
+
+    .fee {
+      display: inline-block;
+      background: linear-gradient(135deg, #F1F5F9 0%, #E2E8F0 100%);
+      color: #0F172A;
+      padding: 10px 20px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      border: 1px solid #E2E8F0;
+    }
+
+    .schedule {
+      margin-top: 50px;
+    }
+
+    .schedule h2 { margin-bottom: 25px; }
+
+    table {
+      width: 100%;
+      border-collapse: separate;
+      border-spacing: 0;
+      margin-top: 15px;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    table th {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: #D4AF37;
+      padding: 16px;
+      text-align: center;
+      font-weight: 600;
+      text-transform: uppercase;
+      font-size: 13px;
+      letter-spacing: 0.5px;
+    }
+
+    table td {
+      padding: 16px;
+      text-align: center;
+      border-bottom: 1px solid #E2E8F0;
+      background: #FFFFFF;
+      color: #1E293B;
+      font-weight: 500;
+    }
+
+    table tr:last-child td {
+      border-bottom: none;
+    }
+
+    table tr:nth-child(even) td {
+      background: #F8FAFC;
+    }
+
+    .contact-box {
+      margin-top: 50px;
+      text-align: center;
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      padding: 50px 30px;
+      border-radius: 16px;
+      color: white;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .contact-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #D4AF37, #C9A227, #D4AF37);
+    }
+
+    .contact-box h2 {
+      color: white;
+      margin-bottom: 15px;
+    }
+
+    .contact-box h2::after {
+      background: #D4AF37;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .contact-box p {
+      color: #94A3B8;
+      margin-bottom: 25px;
+      font-size: 16px;
+    }
+
+    .contact-box a {
+      display: inline-block;
+      margin: 8px;
+      padding: 14px 28px;
+      background: linear-gradient(135deg, #D4AF37 0%, #C9A227 100%);
+      color: #0F172A;
+      text-decoration: none;
+      border-radius: 10px;
+      font-weight: 700;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 15px rgba(212, 175, 55, 0.3);
+    }
+
+    .contact-box a:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 25px rgba(212, 175, 55, 0.4);
+      background: linear-gradient(135deg, #C9A227 0%, #B8941F 100%);
+    }
+
+    footer {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: #94A3B8;
+      text-align: center;
+      padding: 30px 20px;
+      margin-top: 60px;
+      border-top: 3px solid #D4AF37;
+    }
+
+    @keyframes fadeInBody { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes fadeUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+    @media (max-width: 768px) {
+      .programs { grid-template-columns: 1fr; }
+      nav { gap: 15px; }
+      .card { padding: 25px; }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>HorseSquare Riding School</h1>
+    <p>Professional Equestrian Training</p>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="riding-school.html">Riding School</a>
+      <a href="contact.html">Contact Us</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2>Our Riding Programs</h2>
+      <p class="intro">
+        Master the art of horsemanship with our world-class trainers. 
+        From first-time riders to competitive athletes, we build confidence, skill, and partnership.
+      </p>
+
+      <div class="programs">
+        <div class="program">
+          <h3>Beginner Riding</h3>
+          <p>Perfect foundation for kids and adults new to horses. Learn mounting, basic controls, walking, and trotting in a safe, supportive environment.</p>
+          <span class="fee">₨ 18,000 / month •    8 sessions</span>
+        </div>
+
+        <div class="program">
+          <h3>Intermediate Training</h3>
+          <p>Advance your skills with cantering, jumping fundamentals, and refined balance techniques. Build confidence for trail riding and light competition.</p>
+          <span class="fee">₨ 25,000 / month •    10 sessions</span>
+        </div>
+
+        <div class="program">
+          <h3>Advanced & Competition</h3>
+          <p>Professional coaching for dressage, show jumping, and endurance events. Personalized training plans for serious competitors.</p>
+          <span class="fee">₨ 40,000 / month •    2-3 Events</span>
+        </div>
+      </div>
+
+      <div class="schedule">
+        <h2>Training Schedule</h2>
+        <table>
+          <tr>
+            <th>Day</th>
+            <th>Morning Session</th>
+            <th>Evening Session</th>
+          </tr>
+          <tr>
+            <td>Monday – Friday</td>
+            <td>7:00 AM – 10:00 AM</td>
+            <td>4:00 PM – 7:00 PM</td>
+          </tr>
+          <tr>
+            <td>Saturday</td>
+            <td>8:00 AM – 11:00 AM</td>
+            <td>5:00 PM – 7:00 PM</td>
+          </tr>
+          <tr>
+            <td>Sunday</td>
+            <td colspan="2" style="color: #DC2626; font-weight: 700;">Closed</td>
+          </tr>
+        </table>
+      </div>
+
+      <div class="contact-box">
+        <h2>Begin Your Journey</h2>
+        <p>Contact us to schedule your first lesson or book a stable tour.</p>
+        <a href="tel:+923001234567">📞 Call Now</a>
+        <a href="https://wa.me/923001234567">💬 WhatsApp</a>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 HorseSquare Pakistan. All rights reserved.</p>
+  </footer>
+</body>
+</html>

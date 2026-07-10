@@ -1,0 +1,415 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Horse Auction - HorseSquare Pakistan</title>
+
+<style>
+
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+}
+
+body{
+  font-family:'Segoe UI',sans-serif;
+  background:#F8FAFC;
+  color:#1E293B;
+}
+
+/* HEADER */
+
+header{
+  background:linear-gradient(135deg,#0F172A,#1E293B);
+  padding:25px;
+  text-align:center;
+  color:white;
+  border-bottom:3px solid #D4AF37;
+}
+
+header h1{
+  font-size:2.2rem;
+  color:#D4AF37;
+}
+
+nav{
+  margin-top:15px;
+}
+
+nav a{
+  color:#CBD5E1;
+  text-decoration:none;
+  margin:0 15px;
+  transition:0.3s;
+}
+
+nav a:hover{
+  color:#D4AF37;
+}
+
+/* CONTAINER */
+
+.container{
+  max-width:1200px;
+  margin:40px auto;
+  padding:20px;
+}
+
+/* AUCTION CARD */
+
+.auction-card{
+  background:white;
+  border-radius:18px;
+  overflow:hidden;
+  display:flex;
+  gap:25px;
+  padding:25px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  border:1px solid #E2E8F0;
+  transition:0.4s;
+}
+
+.auction-card:hover{
+  transform:translateY(-5px);
+}
+
+.auction-card img{
+  width:350px;
+  height:260px;
+  object-fit:cover;
+  border-radius:12px;
+}
+
+.auction-details{
+  flex:1;
+}
+
+.auction-details h2{
+  color:#0F172A;
+  margin-bottom:15px;
+  font-size:2rem;
+}
+
+.auction-details p{
+  margin:10px 0;
+  color:#64748B;
+  font-size:15px;
+}
+
+/* LIVE STATUS */
+
+.status{
+  display:inline-block;
+  padding:8px 16px;
+  border-radius:30px;
+  font-weight:bold;
+  margin-top:10px;
+}
+
+.active{
+  background:#DCFCE7;
+  color:#166534;
+}
+
+.ended{
+  background:#FEE2E2;
+  color:#991B1B;
+}
+
+/* TIMER */
+
+.timer{
+  margin-top:20px;
+  font-size:1.4rem;
+  font-weight:bold;
+  color:#D4AF37;
+}
+
+/* BID SECTION */
+
+.bid-section{
+  margin-top:25px;
+}
+
+.current-bid{
+  font-size:2rem;
+  color:#059669;
+  font-weight:bold;
+  margin-bottom:15px;
+}
+
+input{
+  width:100%;
+  padding:14px;
+  border:1.5px solid #CBD5E1;
+  border-radius:10px;
+  margin-bottom:15px;
+  font-size:15px;
+}
+
+input:focus{
+  outline:none;
+  border-color:#D4AF37;
+}
+
+button{
+  background:linear-gradient(135deg,#0F172A,#1E293B);
+  color:white;
+  border:none;
+  padding:14px 24px;
+  border-radius:10px;
+  cursor:pointer;
+  font-weight:700;
+  transition:0.3s;
+}
+
+button:hover{
+  background:linear-gradient(135deg,#1E293B,#334155);
+}
+
+/* BID HISTORY */
+
+.bid-history{
+  margin-top:25px;
+}
+
+.bid-history h3{
+  margin-bottom:15px;
+  color:#0F172A;
+}
+
+.bid{
+  background:#F8FAFC;
+  padding:12px;
+  border-radius:10px;
+  margin-bottom:10px;
+  border:1px solid #E2E8F0;
+}
+
+/* FOOTER */
+
+footer{
+  background:#0F172A;
+  color:#94A3B8;
+  text-align:center;
+  padding:25px;
+  margin-top:60px;
+}
+
+@media(max-width:900px){
+
+  .auction-card{
+    flex-direction:column;
+  }
+
+  .auction-card img{
+    width:100%;
+    height:250px;
+  }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<header>
+
+<h1>HorseSquare Pakistan</h1>
+
+<p>Live Horse Auction System</p>
+
+<nav>
+<a href="index.html">Home</a>
+<a href="auction.html">Live Auctions</a>
+<a href="sell.html">Sell Horse</a>
+<a href="contact.html">Contact</a>
+</nav>
+
+</header>
+
+<div class="container" id="auctionContainer">
+
+<p style="text-align:center;color:#64748B;padding:40px;">Loading live auction...</p>
+
+</div>
+
+<footer>
+
+<p>
+© 2026 HorseSquare Pakistan | Live Auction System
+</p>
+
+</footer>
+
+<script>
+
+const API_BASE = "http://localhost:5000/api"; // change this if your backend runs elsewhere
+
+let currentAuctionId = null;
+let countdownInterval = null;
+
+function escapeHtml(str){
+  if(str === undefined || str === null) return "";
+  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function renderAuctionCard(auction, secondsRemaining){
+  const container = document.getElementById("auctionContainer");
+
+  const imgSrc = auction.image
+    ? (auction.image.startsWith("/uploads") ? API_BASE.replace("/api","") + auction.image : auction.image)
+    : "https://images.unsplash.com/photo-1517849845537-4d257902454a?w=900";
+
+  const statusClass = auction.status === "live" ? "active" : "ended";
+  const statusText = auction.status === "live" ? "LIVE AUCTION" : "SOLD";
+
+  const bidsHtml = (auction.bids || []).map(function(b){
+    return `<div class="bid">${escapeHtml(b.bidderName)} placed ₨ ${Number(b.amount).toLocaleString()}</div>`;
+  }).join("") || '<div class="bid">No bids placed yet. Be the first!</div>';
+
+  container.innerHTML = `
+    <div class="auction-card">
+
+      <img src="${imgSrc}" alt="Horse">
+
+      <div class="auction-details">
+
+        <h2>${escapeHtml(auction.horseName)}</h2>
+        <p><strong>Breed:</strong> ${escapeHtml(auction.breed)}</p>
+        <p><strong>Location:</strong> ${escapeHtml(auction.location)}</p>
+        <p><strong>Seller:</strong> ${escapeHtml(auction.sellerName)}</p>
+        <p><strong>Auction Ends:</strong> ${new Date(auction.endTime).toLocaleString()}</p>
+
+        <div id="status" class="status ${statusClass}">${statusText}</div>
+
+        <div class="timer" id="timer">--:--:--</div>
+
+        <div class="bid-section">
+          <div class="current-bid">Current Bid: ₨ <span id="highestBid">${Number(auction.currentBid).toLocaleString()}</span></div>
+          <input type="text" id="bidderName" placeholder="Enter Your Name">
+          <input type="number" id="bidAmount" placeholder="Enter Your Bid">
+          <button id="placeBidBtn">Place Bid</button>
+          <div id="bidErrorMsg" style="color:#DC2626;font-size:13px;margin-top:-8px;margin-bottom:10px;"></div>
+        </div>
+
+        <div class="bid-history">
+          <h3>Live Bid History</h3>
+          <div id="bidsContainer">${bidsHtml}</div>
+        </div>
+
+      </div>
+    </div>`;
+
+  document.getElementById("placeBidBtn").addEventListener("click", placeBid);
+
+  startCountdown(secondsRemaining, auction.status);
+}
+
+function startCountdown(secondsRemaining, status){
+  if(countdownInterval) clearInterval(countdownInterval);
+
+  let totalSeconds = secondsRemaining;
+  const timer = document.getElementById("timer");
+
+  if(status !== "live" || totalSeconds <= 0){
+    timer.innerHTML = "AUCTION ENDED";
+    return;
+  }
+
+  function tick(){
+    if(totalSeconds <= 0){
+      clearInterval(countdownInterval);
+      timer.innerHTML = "AUCTION ENDED";
+      document.getElementById("status").className = "status ended";
+      document.getElementById("status").innerHTML = "SOLD";
+      return;
+    }
+
+    totalSeconds--;
+
+    const hours = Math.floor(totalSeconds / 3600);
+    const minutes = Math.floor((totalSeconds % 3600) / 60);
+    const seconds = totalSeconds % 60;
+
+    timer.innerHTML =
+      String(hours).padStart(2,'0') + ":" +
+      String(minutes).padStart(2,'0') + ":" +
+      String(seconds).padStart(2,'0');
+  }
+
+  tick();
+  countdownInterval = setInterval(tick, 1000);
+}
+
+async function placeBid(){
+  const bidder = document.getElementById("bidderName").value.trim();
+  const amount = document.getElementById("bidAmount").value;
+  const errorMsg = document.getElementById("bidErrorMsg");
+  errorMsg.textContent = "";
+
+  if(!bidder || !amount){
+    errorMsg.textContent = "Please enter name and bid.";
+    return;
+  }
+
+  try {
+    const res = await fetch(`${API_BASE}/auctions/${currentAuctionId}/bid`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ bidderName: bidder, amount: Number(amount) }),
+    });
+
+    const data = await res.json();
+
+    if(!data.success){
+      errorMsg.textContent = data.message || "Could not place bid.";
+      return;
+    }
+
+    // re-render with the updated auction (new current bid + bid history)
+    const secondsLeft = Math.max(0, Math.floor((new Date(data.data.endTime) - new Date()) / 1000));
+    renderAuctionCard(data.data, secondsLeft);
+
+  } catch(err){
+    errorMsg.textContent = "Could not reach the server. Make sure the backend is running.";
+  }
+}
+
+async function loadLiveAuction(){
+  try {
+    const res = await fetch(`${API_BASE}/auctions?status=live`);
+    const data = await res.json();
+
+    if(!data.success || data.data.length === 0){
+      document.getElementById("auctionContainer").innerHTML =
+        '<p style="text-align:center;color:#64748B;padding:40px;">No live auctions right now. Check back soon!</p>';
+      return;
+    }
+
+    // show the most recently created live auction
+    const auction = data.data[0];
+    currentAuctionId = auction._id;
+
+    const detailRes = await fetch(`${API_BASE}/auctions/${auction._id}`);
+    const detailData = await detailRes.json();
+
+    if(detailData.success){
+      renderAuctionCard(detailData.data, detailData.secondsRemaining);
+    }
+  } catch(err){
+    document.getElementById("auctionContainer").innerHTML =
+      '<p style="text-align:center;color:#DC2626;padding:40px;">Could not reach the server. Make sure the backend is running.</p>';
+  }
+}
+
+loadLiveAuction();
+
+</script>
+
+</body>
+</html>

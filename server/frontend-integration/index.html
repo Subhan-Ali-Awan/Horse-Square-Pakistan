@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HorseSquare Pakistan - Premium Horse Marketplace</title>
+  <style>
+    /* ========== PREMIUM COLOR SCHEME ==========
+       Primary:    #0F172A (Deep Navy) - Trust, professionalism
+       Secondary:  #1E293B (Slate Dark) - Depth, elegance
+       Accent:     #D4AF37 (Antique Gold) - Luxury, premium feel
+       Accent 2:   #C9A227 (Rich Gold) - Hover states
+       Background: #F8FAFC (Cool White) - Clean, modern
+       Surface:    #FFFFFF (Pure White) - Cards, containers
+       Text:       #1E293B (Dark Slate) - Primary text
+       Text Muted: #64748B (Slate Gray) - Secondary text
+       Border:     #E2E8F0 (Light Gray) - Subtle dividers
+       Success:    #059669 (Emerald) - Positive actions
+       Danger:     #DC2626 (Crimson) - Alerts/warnings
+    ========================================== */
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background-color: #F8FAFC;
+      color: #147941;
+      line-height: 1.6;
+      animation: fadeInBody 0.8s ease-out;
+    }
+
+    /* ---------- Typography ---------- */
+    h1, h2, h3 {
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
+
+    /* ---------- Header ---------- */
+    header {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: white;
+      padding: 25px 20px;
+      text-align: center;
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.3);
+      position: relative;
+      overflow: hidden;
+    }
+
+    header::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, #D4AF37, #C9A227, #D4AF37);
+    }
+
+    header h1 {
+      font-size: 2.5rem;
+      margin-bottom: 8px;
+      background: linear-gradient(135deg, #FFFFFF 0%, #D4AF37 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    header p {
+      color: #94A3B8;
+      font-size: 1.1rem;
+      font-weight: 300;
+    }
+
+    /* ---------- Navigation ---------- */
+    nav {
+      display: flex;
+      justify-content: center;
+      gap: 30px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+
+    nav a {
+      color: #CBD5E1;
+      text-decoration: none;
+      font-weight: 500;
+      font-size: 15px;
+      position: relative;
+      padding: 8px 0;
+      transition: all 0.3s ease;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-size: 13px;
+    }
+
+    nav a::after {
+      content: "";
+      position: absolute;
+      width: 0%;
+      height: 2px;
+      bottom: 0;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(90deg, #D4AF37, #C9A227);
+      transition: width 0.3s ease;
+      border-radius: 2px;
+    }
+
+    nav a:hover {
+      color: #D4AF37;
+    }
+
+    nav a:hover::after {
+      width: 100%;
+    }
+
+    /* ---------- Container ---------- */
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      padding: 0 20px;
+    }
+
+    .card {
+      background: #FFFFFF;
+      border-radius: 16px;
+      padding: 30px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05), 0 10px 30px rgba(0, 0, 0, 0.08);
+      border: 1px solid #E2E8F0;
+      animation: fadeUp 0.8s ease-out;
+    }
+
+    /* ---------- Section Headers ---------- */
+    .section-title {
+      font-size: 1.8rem;
+      color: #0F172A;
+      margin-bottom: 25px;
+      padding-bottom: 15px;
+      border-bottom: 2px solid #E2E8F0;
+      position: relative;
+    }
+
+    .section-title::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0;
+      width: 60px;
+      height: 2px;
+      background: linear-gradient(90deg, #D4AF37, #C9A227);
+    }
+
+    /* ---------- Filters ---------- */
+    .filters {
+      display: flex;
+      gap: 15px;
+      margin-bottom: 30px;
+      flex-wrap: wrap;
+      padding: 25px;
+      background: #FFFFFF;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+      border: 1px solid #E2E8F0;
+    }
+
+    .filters select, .filters input {
+      padding: 12px 16px;
+      border: 1.5px solid #E2E8F0;
+      border-radius: 8px;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      background: #F8FAFC;
+      color: #1E293B;
+      min-width: 180px;
+    }
+
+    .filters input:focus, .filters select:focus {
+      outline: none;
+      border-color: #D4AF37;
+      box-shadow: 0 0 0 3px rgba(212, 175, 55, 0.15);
+      background: #FFFFFF;
+    }
+
+    .filters input::placeholder {
+      color: #94A3B8;
+    }
+
+    .filters button {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: white;
+      border: none;
+      padding: 12px 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-weight: 600;
+      font-size: 14px;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.25);
+    }
+
+    .filters button:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(15, 23, 42, 0.35);
+      background: linear-gradient(135deg, #1E293B 0%, #334155 100%);
+    }
+
+    /* ---------- Listings ---------- */
+    .listing {
+      display: flex;
+      margin-bottom: 25px;
+      padding: 25px;
+      border-radius: 16px;
+      background: #FFFFFF;
+      border: 1px solid #E2E8F0;
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+      animation: fadeInListing 0.6s ease-out;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .listing::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 4px;
+      background: linear-gradient(180deg, #D4AF37, #C9A227);
+      opacity: 0;
+      transition: opacity 0.3s ease;
+    }
+
+    .listing:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(15, 23, 42, 0.12);
+      border-color: #D4AF37;
+    }
+
+    .listing:hover::before {
+      opacity: 1;
+    }
+
+    .listing img {
+      width: 180px;
+      height: 180px;
+      object-fit: cover;
+      margin-right: 25px;
+      border-radius: 12px;
+      transition: transform 0.5s ease;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .listing:hover img {
+      transform: scale(1.05);
+    }
+
+    .details {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .details h3 {
+      margin: 0 0 12px 0;
+      color: #0F172A;
+      font-size: 1.5rem;
+      transition: color 0.3s ease;
+    }
+
+    .listing:hover .details h3 {
+      color: #D4AF37;
+    }
+
+    .details p {
+      margin: 6px 0;
+      color: #64748B;
+      font-size: 15px;
+    }
+
+    .details p strong {
+      color: #1E293B;
+      font-weight: 600;
+    }
+
+    .price-tag {
+      display: inline-block;
+      background: linear-gradient(135deg, #D4AF37 0%, #C9A227 100%);
+      color: #0F172A;
+      padding: 6px 16px;
+      border-radius: 20px;
+      font-weight: 700;
+      font-size: 1.1rem;
+      margin-top: 8px;
+      box-shadow: 0 2px 8px rgba(212, 175, 55, 0.3);
+    }
+
+    .contact {
+      margin-top: 18px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .contact a {
+      background: #F1F5F9;
+      color: #0F172A;
+      padding: 10px 20px;
+      text-decoration: none;
+      border-radius: 8px;
+      transition: all 0.3s ease;
+      font-weight: 500;
+      font-size: 14px;
+      border: 1px solid #E2E8F0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .contact a:hover {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: #D4AF37;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(15, 23, 42, 0.2);
+      border-color: transparent;
+    }
+
+    /* ---------- Footer ---------- */
+    footer {
+      background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%);
+      color: #94A3B8;
+      text-align: center;
+      padding: 30px 20px;
+      margin-top: 60px;
+      border-top: 3px solid #D4AF37;
+    }
+
+    footer p {
+      margin: 0;
+      font-size: 14px;
+    }
+
+    footer a {
+      color: #D4AF37;
+      text-decoration: none;
+    }
+
+    /* ---------- Media Queries ---------- */
+    @media (max-width: 768px) {
+      header h1 { font-size: 1.8rem; }
+      .listing { flex-direction: column; }
+      .listing img { width: 100%; height: 250px; margin-right: 0; margin-bottom: 20px; }
+      nav { gap: 15px; }
+      .filters { flex-direction: column; }
+      .filters select, .filters input { width: 100%; }
+    }
+
+    /* ---------- Keyframes ---------- */
+    @keyframes fadeInBody {
+      from { opacity: 0; }
+      to { opacity: 1; }
+    }
+
+    @keyframes fadeUp {
+      from { transform: translateY(30px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    @keyframes fadeInListing {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>HorseSquare Pakistan</h1>
+    <p>Premium Horse Marketplace</p>
+    <nav>
+      <a href="index.html">Home</a>
+      <a href="index.html">Buy a Horse</a>
+      <a href="sell.html">Sell a Horse</a>
+	  <a href="auction.html">Live Auction</a>
+	  <a href="breeding-system.html">Horse Breeding</a>
+      <a href="riding-school.html">Riding School</a>
+      <a href="ai-vet-doctor.html">AI Vet Doctor</a>
+      <a href="contact.html">Contact Us</a>
+    </nav>
+  </header>
+
+  <div class="container">
+    <div class="card">
+      <h2 class="section-title">Find Your Horse</h2>
+      <div class="filters">
+       <button onclick="startLocationTracking()" style="
+  padding:12px 16px;
+  border:none;
+  border-radius:8px;
+  background:linear-gradient(135deg,#D4AF37,#C9A227);
+  color:#0F172A;
+  font-weight:700;
+  cursor:pointer;
+  min-width:180px;
+">
+📍 Use My Current Location
+</button>
+
+<div id="liveLocationText" style="
+  margin-top:10px;
+  font-size:13px;
+  color:#64748B;
+"></div>
+        <select id="breedFilter">
+          <option value="">Select Breed</option>
+          <option>Arabian</option>
+          <option>Spanish</option>
+          <option>Desi</option>
+          <option>Thoroughbred</option>
+        </select>
+        <input type="number" id="minPriceFilter" placeholder="Min Price (PKR)">
+        <input type="number" id="maxPriceFilter" placeholder="Max Price (PKR)">
+        <button id="searchBtn">Search Horses</button>
+      </div>
+
+      <!-- Horse Listings (loaded dynamically from the backend) -->
+      <div id="listingsContainer">
+        <p style="text-align:center;color:#64748B;padding:30px;">Loading horses...</p>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    <p>&copy; 2026 HorseSquare Pakistan. All rights reserved. | <a href="mailto:info@horsesquare.pk">info@horsesquare.pk</a></p>
+  </footer>
+<script>
+
+const API_BASE = "http://localhost:5000/api"; // change this if your backend runs elsewhere
+
+function escapeHtml(str){
+  if(str === undefined || str === null) return "";
+  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+function renderListings(horses){
+  const container = document.getElementById("listingsContainer");
+
+  if(!horses || horses.length === 0){
+    container.innerHTML = '<p style="text-align:center;color:#64748B;padding:30px;">No horses found matching your search.</p>';
+    return;
+  }
+
+  container.innerHTML = horses.map(function(h){
+    const img = (h.images && h.images.length > 0) ? h.images[0] : "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?w=400&h=400&fit=crop";
+    const imgSrc = img.startsWith("/uploads") ? API_BASE.replace("/api","") + img : img;
+    const phoneDigits = (h.phone || "").replace(/[^0-9+]/g,"");
+    return `
+      <div class="listing">
+        <img src="${imgSrc}" alt="${escapeHtml(h.breed)} Horse">
+        <div class="details">
+          <h3>${escapeHtml(h.name)}</h3>
+          <p><strong>Breed:</strong> ${escapeHtml(h.breed)}</p>
+          <p><strong>Location:</strong> ${escapeHtml(h.location)}</p>
+          <p><strong>Seller:</strong> ${escapeHtml(h.sellerName)}</p>
+          <span class="price-tag">₨ ${Number(h.price).toLocaleString()}</span>
+          <div class="contact">
+            <a href="tel:${phoneDigits}">📞 Call Now</a>
+            <a href="https://wa.me/${phoneDigits.replace('+','')}">💬 WhatsApp</a>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+async function loadHorses(){
+  const breed = document.getElementById("breedFilter").value;
+  const minPrice = document.getElementById("minPriceFilter").value;
+  const maxPrice = document.getElementById("maxPriceFilter").value;
+
+  const params = new URLSearchParams();
+  if(breed) params.append("breed", breed);
+  if(minPrice) params.append("minPrice", minPrice);
+  if(maxPrice) params.append("maxPrice", maxPrice);
+
+  const container = document.getElementById("listingsContainer");
+  container.innerHTML = '<p style="text-align:center;color:#64748B;padding:30px;">Loading horses...</p>';
+
+  try {
+    const res = await fetch(`${API_BASE}/horses?${params.toString()}`);
+    const data = await res.json();
+
+    if(!data.success){
+      container.innerHTML = '<p style="text-align:center;color:#DC2626;padding:30px;">Could not load listings.</p>';
+      return;
+    }
+
+    renderListings(data.data);
+  } catch(err){
+    container.innerHTML = '<p style="text-align:center;color:#DC2626;padding:30px;">Could not reach the server. Make sure the backend is running.</p>';
+  }
+}
+
+document.getElementById("searchBtn").addEventListener("click", function(e){
+  e.preventDefault();
+  loadHorses();
+});
+
+// initial load on page open (shows all approved listings)
+loadHorses();
+
+  let locationWatch;
+
+  function startLocationTracking() {
+    const output = document.getElementById("liveLocationText");
+
+    if (!navigator.geolocation) {
+      output.innerHTML = "❌ Geolocation not supported";
+      return;
+    }
+
+    output.innerHTML = "📡 Detecting your live location...";
+
+    locationWatch = navigator.geolocation.watchPosition(
+      function(position) {
+        const lat = position.coords.latitude;
+        const lon = position.coords.longitude;
+        const acc = position.coords.accuracy;
+
+        output.innerHTML =
+          "📍 Live Location Active<br>" +
+          "Lat: " + lat +
+          "<br>Lon: " + lon +
+          "<br>Accuracy: " + acc + "m<br>" +
+          "<a target='_blank' style='color:#D4AF37;font-weight:700' href='https://www.google.com/maps?q=" +
+          lat + "," + lon + "'>Open in Maps</a>";
+
+        // Save this location ping to the backend (fire-and-forget, doesn't block the UI)
+        fetch(`${API_BASE}/location`, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ latitude: lat, longitude: lon, accuracy: acc }),
+        }).catch(function(){ /* silently ignore - location display still works without this */ });
+      },
+      {
+        enableHighAccuracy: true,
+        maximumAge: 0,
+        timeout: 10000
+      }
+    );
+  }
+</script>
+</body>
+</html>

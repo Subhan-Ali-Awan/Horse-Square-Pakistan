@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Login - Horse-Square Pakistan</title>
+
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
+
+body{
+    font-family:'Segoe UI',sans-serif;
+    background:linear-gradient(135deg,#0F172A,#1E293B);
+    min-height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    padding:20px;
+}
+
+/* LOGIN CARD */
+
+.login-card{
+    width:100%;
+    max-width:450px;
+    background:#FFFFFF;
+    border-radius:18px;
+    overflow:hidden;
+    box-shadow:0 20px 40px rgba(0,0,0,0.25);
+    border:1px solid #E2E8F0;
+    animation:fadeUp 0.8s ease;
+}
+
+/* GOLD TOP BORDER */
+
+.login-card::before{
+    content:'';
+    display:block;
+    height:5px;
+    background:linear-gradient(90deg,#D4AF37,#C9A227,#D4AF37);
+}
+
+/* HEADER */
+
+.login-header{
+    background:linear-gradient(135deg,#0F172A,#1E293B);
+    padding:20px 25px;
+    text-align:center;
+}
+
+.login-header h1{
+    color:#FFFFFF;
+    font-size:1rem;
+    margin-bottom:8px;
+}
+
+.login-header span{
+    color:#D4AF37;
+}
+
+.login-header p{
+    color:#CBD5E1;
+    font-size:14px;
+}
+
+/* FORM AREA */
+
+.login-body{
+    padding:35px;
+}
+
+.form-group{
+    margin-bottom:20px;
+}
+
+.form-group label{
+    display:block;
+    margin-bottom:8px;
+    font-weight:600;
+    color:#1E293B;
+}
+
+.form-group input{
+    width:100%;
+    padding:14px;
+    border:1.5px solid #CBD5E1;
+    border-radius:10px;
+    background:#F8FAFC;
+    font-size:15px;
+    transition:0.3s;
+}
+
+.form-group input:focus{
+    outline:none;
+    border-color:#D4AF37;
+    box-shadow:0 0 0 4px rgba(212,175,55,0.15);
+    background:white;
+}
+
+/* OPTIONS */
+
+.options{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+    font-size:14px;
+}
+
+.options a{
+    text-decoration:none;
+    color:#D4AF37;
+    font-weight:600;
+}
+
+.options a:hover{
+    text-decoration:underline;
+}
+
+/* BUTTON */
+
+.login-btn{
+    width:100%;
+    padding:15px;
+    border:none;
+    border-radius:10px;
+    background:linear-gradient(135deg,#0F172A,#1E293B);
+    color:white;
+    font-size:16px;
+    font-weight:700;
+    cursor:pointer;
+    transition:0.3s;
+    box-shadow:0 4px 15px rgba(15,23,42,0.3);
+}
+
+.login-btn:hover{
+    transform:translateY(-2px);
+    background:linear-gradient(135deg,#1E293B,#334155);
+}
+
+/* DIVIDER */
+
+.divider{
+    text-align:center;
+    margin:25px 0;
+    color:#94A3B8;
+    position:relative;
+}
+
+.divider::before{
+    content:'';
+    position:absolute;
+    top:50%;
+    left:0;
+    width:40%;
+    height:1px;
+    background:#CBD5E1;
+}
+
+.divider::after{
+    content:'';
+    position:absolute;
+    top:50%;
+    right:0;
+    width:40%;
+    height:1px;
+    background:#CBD5E1;
+}
+
+/* SOCIAL BUTTONS */
+
+.social-buttons{
+    display:flex;
+    gap:10px;
+}
+
+.social-buttons button{
+    flex:1;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #CBD5E1;
+    background:white;
+    cursor:pointer;
+    font-weight:600;
+    transition:0.3s;
+}
+
+.social-buttons button:hover{
+    border-color:#D4AF37;
+    color:#D4AF37;
+}
+
+/* REGISTER */
+
+.register{
+    text-align:center;
+    margin-top:25px;
+    color:#64748B;
+}
+
+.register a{
+    text-decoration:none;
+    color:#D4AF37;
+    font-weight:700;
+}
+
+.register a:hover{
+    text-decoration:underline;
+}
+
+/* ANIMATION */
+
+@keyframes fadeUp{
+    from{
+        opacity:0;
+        transform:translateY(30px);
+    }
+    to{
+        opacity:1;
+        transform:translateY(0);
+    }
+}
+
+/* MOBILE */
+
+@media(max-width:500px){
+
+    .login-body{
+        padding:25px;
+    }
+
+    .options{
+        flex-direction:column;
+        gap:10px;
+        align-items:flex-start;
+    }
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="login-card">
+
+<div class="login-header">
+    <h1>Horse<span>-Square</span> Pakistan</h1>
+    <p>Premium Horse Marketplace</p>
+</div>
+
+<div class="login-body">
+
+<div id="loginMessage" style="display:none;padding:12px 15px;border-radius:8px;margin-bottom:18px;font-size:14px;"></div>
+
+<form id="loginForm">
+
+<div class="form-group">
+<label>Email Address</label>
+<input type="email" id="email" placeholder="Enter your email" required>
+</div>
+
+<div class="form-group">
+<label>Password</label>
+<input type="password" id="password" placeholder="Enter your password" required>
+</div>
+
+<div class="options">
+<label>
+<input type="checkbox" id="rememberMe">
+ Remember Me
+</label>
+
+<a href="forgot-password.html">Forgot Password?</a>
+</div>
+
+<button type="submit" class="login-btn" id="loginBtn">
+Login Account
+</button>
+
+</form>
+
+<div class="divider">
+OR
+</div>
+
+<div class="social-buttons">
+<button>Google</button>
+<button>Facebook</button>
+</div>
+
+<div class="register">
+Don't have an account?
+<a href="register.html">Create Account</a>
+</div>
+
+</div>
+
+</div><script>
+
+const API_BASE = "http://localhost:5000/api"; // change this if your backend runs elsewhere
+
+const loginForm = document.getElementById("loginForm");
+const loginMessage = document.getElementById("loginMessage");
+const loginBtn = document.getElementById("loginBtn");
+
+function showMessage(text, type) {
+    loginMessage.style.display = "block";
+    loginMessage.textContent = text;
+    if (type === "error") {
+        loginMessage.style.background = "#FEE2E2";
+        loginMessage.style.color = "#991B1B";
+    } else {
+        loginMessage.style.background = "#DCFCE7";
+        loginMessage.style.color = "#166534";
+    }
+}
+
+loginForm.addEventListener("submit", async function (e) {
+    e.preventDefault();
+
+    const email = document.getElementById("email").value.trim();
+    const password = document.getElementById("password").value;
+
+    loginBtn.disabled = true;
+    loginBtn.textContent = "Logging in...";
+
+    try {
+        const res = await fetch(`${API_BASE}/auth/login`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ email, password }),
+        });
+
+        const data = await res.json();
+
+        if (!data.success) {
+            showMessage(data.message || "Login failed. Please check your credentials.", "error");
+            loginBtn.disabled = false;
+            loginBtn.textContent = "Login Account";
+            return;
+        }
+
+        // Save the token. If "Remember Me" is checked, persist in localStorage (survives browser restart);
+        // otherwise sessionStorage (cleared when the tab/browser closes).
+        const rememberMe = document.getElementById("rememberMe").checked;
+        const storage = rememberMe ? localStorage : sessionStorage;
+        storage.setItem("hs_token", data.token);
+        storage.setItem("hs_user", JSON.stringify(data.user));
+
+        showMessage("Login successful! Redirecting...", "success");
+
+        setTimeout(() => {
+            window.location.href = "index.html"; // redirect to your marketplace home page
+        }, 800);
+    } catch (err) {
+        showMessage("Could not reach the server. Make sure the backend is running.", "error");
+        loginBtn.disabled = false;
+        loginBtn.textContent = "Login Account";
+    }
+});
+
+</script>
+</body>
+</html>
