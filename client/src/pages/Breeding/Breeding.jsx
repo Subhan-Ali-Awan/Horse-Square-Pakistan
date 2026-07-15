@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Award, Dna, Send, CheckCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 
@@ -8,8 +8,10 @@ export const Breeding = () => {
   const [ownerPhone, setOwnerPhone] = useState(user ? user.phone || '' : '');
   const [mareDetails, setMareDetails] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [breedingHorses, setBreedingHorses] = useState([]);
+  const [loading, setLoading] = useState(true);
 
-  const breedingHorses = [
+  const sampleBreedingHorses = [
     {
       id: 'b1',
       name: 'Al-Burraq (Champion Stallion)',
@@ -30,13 +32,68 @@ export const Breeding = () => {
     }
   ];
 
-  const handleRequest = (e) => {
+  const fetchBreedingHorses = async () => {
+    setLoading(true);
+    try {
+      const res = await fetch('/api/breeding/horses');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.data && data.data.length > 0) {
+          const formatted = data.data.map(h => ({
+            ...h,
+            id: h._id,
+            studFee: Number(h.breedingFee),
+            imageUrl: h.image || 'https://images.pexels.com/photos/29632852/pexels-photo-29632852.jpeg',
+            achievements: h.tag || 'Available for Stud service'
+          }));
+          setBreedingHorses(formatted);
+        } else {
+          setBreedingHorses(sampleBreedingHorses);
+        }
+      } else {
+        setBreedingHorses(sampleBreedingHorses);
+      }
+    } catch (err) {
+      console.error("Failed to fetch breeding horses, using fallback:", err);
+      setBreedingHorses(sampleBreedingHorses);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchBreedingHorses();
+  }, []);
+
+  const handleRequest = async (e) => {
     e.preventDefault();
-    setSubmitted(true);
-    setTimeout(() => {
-      setSubmitted(false);
-      setSelectedHorse(null);
-    }, 3000);
+    try {
+      const res = await fetch('/api/breeding/requests', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          requesterName: user ? user.name : 'Guest User',
+          phone: ownerPhone,
+          ownHorseName: 'Mare',
+          preferredBreed: selectedHorse.breed,
+          details: mareDetails,
+          breedingHorseId: selectedHorse.id
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setSubmitted(true);
+        setTimeout(() => {
+          setSubmitted(false);
+          setSelectedHorse(null);
+          setMareDetails('');
+        }, 3000);
+      } else {
+        alert(data.message || 'Failed to submit breeding request.');
+      }
+    } catch (err) {
+      alert('Network error. Failed to communicate with the breeding server.');
+    }
   };
 
   return (

@@ -41,7 +41,17 @@ export const SellHorse = () => {
 
     try {
       const data = new FormData();
-      Object.keys(formData).forEach((key) => data.append(key, formData[key]));
+      data.append('name', formData.name);
+      data.append('breed', formData.breed);
+      data.append('price', formData.price);
+      data.append('location', formData.location);
+      data.append('description', formData.description);
+      data.append('age', formData.age);
+      data.append('color', formData.color);
+      data.append('height', formData.height);
+      data.append('phone', formData.sellerPhone);
+      data.append('sellerName', user ? user.name : 'Guest Seller');
+      
       if (imageFile) {
         data.append('images', imageFile);
       }

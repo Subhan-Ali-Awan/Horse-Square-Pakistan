@@ -33,6 +33,11 @@ const SYMPTOM_ADVICE = {
       "Trypanosomiasis (Surra) is a serious parasitic disease common in Pakistan. Symptoms include intermittent fever, sweating, weakness, and leg swelling. Seek immediate veterinary diagnostics and treatment (e.g. Quinapyramine).",
     severity: "warning",
   },
+  colic: {
+    result:
+      "Potential Colic (Gastrointestinal distress). Immediately restrict all feed and grain. Walk the horse gently to prevent violent rolling, which can twist the intestines. Call a vet urgently.",
+    severity: "warning",
+  },
 };
 
 // ===================================================
@@ -40,23 +45,35 @@ const SYMPTOM_ADVICE = {
 // ===================================================
 exports.checkHealth = async (req, res, next) => {
   try {
-    const { horseName, symptom, details } = req.body;
+    const horseName = req.body.horseName || "My Horse";
+    const rawSymptom = (req.body.symptom || req.body.symptoms || "").toLowerCase();
 
-    if (!horseName || !symptom) {
-      return res.status(400).json({ success: false, message: "Please provide horse name and select a symptom." });
+    if (!rawSymptom) {
+      return res.status(400).json({ success: false, message: "Please select or describe a symptom." });
     }
 
-    const advice = SYMPTOM_ADVICE[symptom];
-    if (!advice) {
-      return res.status(400).json({ success: false, message: "Please select a valid symptom for analysis." });
+    let matchedKey = "injury";
+    if (rawSymptom.includes("sweat") && rawSymptom.includes("fever")) {
+      matchedKey = "surra";
+    } else if (rawSymptom.includes("sweat")) {
+      matchedKey = "heavy sweating";
+    } else if (rawSymptom.includes("cough")) {
+      matchedKey = "cough";
+    } else if (rawSymptom.includes("fever")) {
+      matchedKey = "fever";
+    } else if (rawSymptom.includes("swell") || rawSymptom.includes("foot")) {
+      matchedKey = "foot swelling";
+    } else if (rawSymptom.includes("feed") || rawSymptom.includes("refus") || rawSymptom.includes("paw") || rawSymptom.includes("roll")) {
+      matchedKey = "colic";
     }
 
+    const advice = SYMPTOM_ADVICE[matchedKey];
     const images = req.files ? req.files.map((file) => `/uploads/${file.filename}`) : [];
 
     const inquiry = await VetInquiry.create({
       horseName,
-      symptom,
-      details,
+      symptom: matchedKey,
+      details: req.body.details || rawSymptom,
       images,
       aiResult: advice.result,
       severity: advice.severity,
@@ -65,6 +82,25 @@ exports.checkHealth = async (req, res, next) => {
 
     res.status(201).json({
       success: true,
+      assessment: {
+        possibleCondition: matchedKey === "surra" 
+          ? "Trypanosomiasis (Surra) - Parasitic Fever" 
+          : matchedKey === "colic" 
+            ? "Potential Colic (Gastrointestinal Distress)" 
+            : matchedKey === "foot swelling"
+              ? "Laminitis (Founder) or Sole Bruise"
+              : matchedKey === "cough"
+                ? "Equine Respiratory Infection (Strangles/Influenza)"
+                : "Equine Injury or Wound",
+        urgency: advice.severity === "danger" || advice.severity === "warning" 
+          ? "HIGH - Veterinary Attention Recommended" 
+          : "Moderate - Monitor closely",
+        recommendedActions: [
+          advice.result,
+          "Ensure clean, fresh water is available at all times.",
+          "Check vital signs: normal horse pulse is 28-44 bpm, respiration 8-16 breaths/min."
+        ]
+      },
       data: {
         result: advice.result,
         severity: advice.severity,

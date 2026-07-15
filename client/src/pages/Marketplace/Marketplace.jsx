@@ -281,9 +281,30 @@ export const Marketplace = () => {
 
   const fetchHorses = async () => {
     setLoading(true);
-    // Directly use front-end sample listings for visual pagination testing as requested
-    setHorses(sampleHorses);
-    setLoading(false);
+    try {
+      const res = await fetch('/api/horses?limit=1000');
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.data && data.data.length > 0) {
+          const formatted = data.data.map(h => ({
+            ...h,
+            price: Number(h.price),
+            age: Number(h.age || 4),
+            imageUrl: h.images && h.images.length > 0 ? h.images[0] : 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600'
+          }));
+          setHorses(formatted);
+        } else {
+          setHorses(sampleHorses);
+        }
+      } else {
+        setHorses(sampleHorses);
+      }
+    } catch (err) {
+      console.error("Failed to fetch horses, falling back to mock listings:", err);
+      setHorses(sampleHorses);
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => {

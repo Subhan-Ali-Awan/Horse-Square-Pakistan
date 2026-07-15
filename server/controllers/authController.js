@@ -27,9 +27,20 @@ const buildUserResponse = (user) => ({
 // ===================================================
 exports.registerUser = async (req, res, next) => {
   try {
-    const { firstName, lastName, email, phone, city, password, confirmPassword, userType } = req.body;
+    let { firstName, lastName, name, email, phone, city, password, confirmPassword, userType } = req.body;
 
-    if (!firstName || !lastName || !email || !phone || !city || !password || !userType) {
+    if (name && (!firstName || !lastName)) {
+      const parts = name.trim().split(" ");
+      firstName = parts[0] || "User";
+      lastName = parts.slice(1).join(" ") || "Account";
+    }
+
+    if (!city) city = "Lahore";
+    if (!userType) userType = "Horse Seller";
+    if (!firstName) firstName = "User";
+    if (!lastName) lastName = "Account";
+
+    if (!email || !phone || !password) {
       return res.status(400).json({ success: false, message: "Please fill in all required fields" });
     }
 

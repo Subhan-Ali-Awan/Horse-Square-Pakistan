@@ -89,8 +89,7 @@ export const Auction = () => {
         alert(data.message || 'Error placing bid');
       }
     } catch (err) {
-      alert('Simulated bid recorded! (Backend connection pending)');
-      setAuctions(auctions.map(a => a._id === auctionId ? { ...a, currentBid: amount } : a));
+      alert('Network error. Failed to communicate with the auction server.');
     }
   };
 
