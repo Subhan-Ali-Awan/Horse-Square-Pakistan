@@ -20,20 +20,13 @@ export const VetDoctor = () => {
   const [symptomFile, setSymptomFile] = useState(null);
   const [loading, setLoading] = useState(false);
   const [assessment, setAssessment] = useState(null);
-  const [activeDiseaseIndex, setActiveDiseaseIndex] = useState(null);
 
   const quickSymptoms = [
-    { label: 'Pawing Ground', category: 'Digestive' },
-    { label: 'Rolling Constantly', category: 'Digestive' },
-    { label: 'Refusing Feed', category: 'Digestive' },
-    { label: 'Lethargic / Dull', category: 'General' },
-    { label: 'High Fever', category: 'General' },
     { label: 'Heavy Sweating', category: 'General' },
-    { label: 'Limping / Lame', category: 'Physical' },
-    { label: 'Hot Hooves', category: 'Physical' },
-    { label: 'Rapid Breathing', category: 'Respiratory' },
-    { label: 'Nasal Discharge', category: 'Respiratory' },
-    { label: 'Coughing', category: 'Respiratory' }
+    { label: 'Coughing', category: 'Respiratory' },
+    { label: 'High Fever', category: 'General' },
+    { label: 'Refusing Feed', category: 'Digestive' },
+    { label: 'Foot Swelling', category: 'Physical' }
   ];
 
   const vitalSigns = [
@@ -57,44 +50,66 @@ export const VetDoctor = () => {
       metric: 'breaths per minute', 
       icon: <Wind className="w-5 h-5 text-cyan-500" />,
       desc: 'Watch flank movements. Elevated rate suggests heat stress or respiratory illness.' 
-    },
-    { 
-      label: 'Capillary Refill', 
-      range: 'Under 2 seconds', 
-      metric: 'gum color recovery', 
-      icon: <Activity className="w-5 h-5 text-emerald-500" />,
-      desc: 'Press gums above front teeth. White to pink recovery time checks hydration.' 
-    }
-  ];
-
-  const commonDiseases = [
-    {
-      name: 'Equine Colic (Digestive Pain)',
-      urgency: 'Critical Emergency',
-      urgencyColor: 'bg-red-500/10 text-red-400 border-red-500/20',
-      symptoms: 'Pawing ground, rolling, looking at flank, kicking at belly, sweating, elevated heart rate.',
-      firstAid: 'Remove all food. Walk the horse gently to stimulate gut movement. Do NOT give medicine without consulting a vet.'
-    },
-    {
-      name: 'Laminitis (Founder)',
-      urgency: 'High Urgency',
-      urgencyColor: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
-      symptoms: 'Shifting weight, leaning back on heels, hot hoof wall, strong digital pulse.',
-      firstAid: 'Stand the horse in cold water or ice slurry. Restrict movement and do not feed sweet grains. Keep on soft bedding.'
-    },
-    {
-      name: 'Strangles (Respiratory Infection)',
-      urgency: 'Moderate (Highly Contagious)',
-      urgencyColor: 'bg-yellow-500/10 text-yellow-400 border-yellow-500/20',
-      symptoms: 'Thick yellow nasal discharge, swollen lymph nodes under jaw, high fever, difficulty swallowing.',
-      firstAid: 'Isolate the horse immediately. Disinfect all feed buckets and gear. Apply warm compresses to abscesses to encourage drainage.'
     }
   ];
 
   const localVets = [
-    { name: 'UVAS Animal Hospital (Lahore)', phone: '+92 (42) 99211374', location: 'Outfall Road, Near District Courts, Lahore' },
-    { name: 'Richmond Equine Clinic (Karachi)', phone: '+92 (300) 1234567', location: 'Clifton / Malir Cantt Area, Karachi' },
-    { name: 'RVFC Veterinary Center (Rawalpindi)', phone: '+92 (51) 5561234', location: 'Westridge, Rawalpindi Cantonment' }
+    { 
+      name: 'UVAS Equine Clinic & Surgery Center', 
+      doctor: 'Dr. Aneela Zameer Durrani (Equine Specialist)',
+      city: 'Lahore',
+      phone: '+924299211374', 
+      location: 'Outfall Road, Near District Courts, Lahore' 
+    },
+    { 
+      name: 'Lahore Race Club Equine Hospital', 
+      doctor: 'Dr. Muhammad Asim (Racehorse Practitioner)',
+      city: 'Lahore',
+      phone: '+923008456789', 
+      location: 'Kot Lakhpat, Lahore' 
+    },
+    { 
+      name: 'Richmond Equine Clinic & Surgery', 
+      doctor: 'Dr. Farhan Ali (Equine Surgeon)',
+      city: 'Karachi',
+      phone: '+923001234567', 
+      location: 'Malir Cantt, Karachi' 
+    },
+    { 
+      name: 'Karachi Race Club Veterinary Hospital', 
+      doctor: 'Dr. Syed Muhammad Naeem (Orthopedics)',
+      city: 'Karachi',
+      phone: '+923332345678', 
+      location: 'Dehih, Karachi' 
+    },
+    { 
+      name: 'RVFC Army Equine Hospital', 
+      doctor: 'Col. Dr. Tariq Mahmood (Internal Medicine)',
+      city: 'Rawalpindi',
+      phone: '+92515561234', 
+      location: 'Westridge, Rawalpindi Cantonment' 
+    },
+    { 
+      name: 'NARC Equine & Livestock Hospital', 
+      doctor: 'Dr. Khalid Naeem (Large Animal Medicine)',
+      city: 'Islamabad',
+      phone: '+92519255012', 
+      location: 'Park Road, Islamabad' 
+    },
+    { 
+      name: 'UAF Veterinary Teaching Hospital', 
+      doctor: 'Dr. Muhammad Tariq (Equine Medicine)',
+      city: 'Faisalabad',
+      phone: '+92419200161', 
+      location: 'Jail Road, Faisalabad' 
+    },
+    { 
+      name: 'Army Stud Farm Veterinary Center (Mona Depot)', 
+      doctor: 'Maj. Dr. Shaukat Ali (Breeding & Care)',
+      city: 'Sargodha',
+      phone: '+92483211234', 
+      location: 'Mona Depot, Sargodha' 
+    }
   ];
 
   const handleTagClick = (tagLabel) => {
@@ -152,7 +167,16 @@ export const VetDoctor = () => {
       'Check vital signs: normal horse pulse is 28-44 bpm, respiration 8-16 breaths/min.'
     ];
 
-    if (lower.includes('paw') || lower.includes('roll') || lower.includes('flank') || lower.includes('belly')) {
+    if (lower.includes('sweat') && lower.includes('fever')) {
+      possibleCondition = 'Trypanosomiasis (Surra) - Parasitic Fever';
+      urgency = 'HIGH - Veterinary Treatment Required';
+      recommendedActions = [
+        'Isolate the infected horse from biting flies (vector control).',
+        'Record temperature regularly. Surra causes intermittent spikes.',
+        'Consult a veterinarian immediately for antiprotozoal drug treatment (e.g. Quinapyramine).',
+        'Provide supportive care, fluids, and anti-inflammatory therapy to manage weakness.'
+      ];
+    } else if (lower.includes('paw') || lower.includes('roll') || lower.includes('flank') || lower.includes('belly') || lower.includes('feed') || lower.includes('refus')) {
       possibleCondition = 'Potential Colic (Gastrointestinal Distress)';
       urgency = 'HIGH - Veterinary Attention Recommended';
       recommendedActions = [
@@ -161,7 +185,7 @@ export const VetDoctor = () => {
         'Keep a close record of heart rate and respiration rate.',
         'Call an emergency veterinarian immediately if the horse is sweating heavily or thrashing.'
       ];
-    } else if (lower.includes('limp') || lower.includes('lame') || lower.includes('hoof') || lower.includes('hooves')) {
+    } else if (lower.includes('limp') || lower.includes('lame') || lower.includes('hoof') || lower.includes('hooves') || lower.includes('swell') || lower.includes('swelling')) {
       possibleCondition = 'Laminitis (Founder) or Sole Bruise';
       urgency = 'HIGH - Limit movement immediately';
       recommendedActions = [
@@ -170,8 +194,8 @@ export const VetDoctor = () => {
         'Avoid feeding any grains, concentrates, or fresh pasture grass.',
         'Schedule an emergency visit with your vet and farrier.'
       ];
-    } else if (lower.includes('discharge') || lower.includes('cough') || lower.includes('fever') || lower.includes('throat')) {
-      possibleCondition = 'Equine Respiratory Infection (e.g., Strangles or Influenza)';
+    } else if (lower.includes('discharge') || lower.includes('cough') || lower.includes('fever') || lower.includes('throat') || lower.includes('sweat')) {
+      possibleCondition = 'Equine Respiratory Infection (e.g., Strangles or Influenza) or Heat Stress';
       urgency = 'MODERATE - Isolate the horse';
       recommendedActions = [
         'Quarantine the horse in a well-ventilated stable to prevent spreading infection to other animals.',
@@ -182,10 +206,6 @@ export const VetDoctor = () => {
     }
 
     setAssessment({ possibleCondition, urgency, recommendedActions });
-  };
-
-  const toggleDisease = (index) => {
-    setActiveDiseaseIndex((prev) => (prev === index ? null : index));
   };
 
   return (
@@ -381,71 +401,40 @@ export const VetDoctor = () => {
             </div>
           </div>
 
-          {/* Accordion - Common Diseases */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
-            <h2 className="text-lg font-bold text-[#0F172A] mb-1 flex items-center gap-2">
-              <AlertTriangle className="w-5 h-5 text-[#D4AF37]" /> Equine Emergency Guide
-            </h2>
-            <p className="text-xs text-slate-500 mb-4 font-light">
-              Click on a condition to view standard indicators and immediate first-aid protocols.
-            </p>
-
-            <div className="space-y-3">
-              {commonDiseases.map((disease, idx) => (
-                <div key={idx} className="border border-slate-200 rounded-xl overflow-hidden">
-                  <button
-                    onClick={() => toggleDisease(idx)}
-                    className="w-full px-4 py-3 bg-slate-50 hover:bg-slate-100 flex items-center justify-between text-left transition cursor-pointer"
-                  >
-                    <span className="text-xs sm:text-sm font-bold text-[#0F172A]">{disease.name}</span>
-                    {activeDiseaseIndex === idx ? <ChevronUp className="w-4 h-4 text-[#D4AF37]" /> : <ChevronDown className="w-4 h-4 text-[#D4AF37]" />}
-                  </button>
-                  {activeDiseaseIndex === idx && (
-                    <div className="p-4 bg-white border-t border-slate-100 space-y-3 text-xs leading-relaxed">
-                      <div className="flex gap-2">
-                        <span className={`px-2 py-0.5 rounded text-[10px] font-bold border ${disease.urgencyColor}`}>
-                          {disease.urgency}
-                        </span>
-                      </div>
-                      <div>
-                        <span className="font-bold text-slate-800">Symptoms:</span>
-                        <p className="text-slate-600 font-light mt-0.5">{disease.symptoms}</p>
-                      </div>
-                      <div>
-                        <span className="font-bold text-slate-800">Emergency Actions:</span>
-                        <p className="text-slate-600 font-light mt-0.5">{disease.firstAid}</p>
-                      </div>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-          </div>
-
           {/* Emergency Regional Vets */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
             <h2 className="text-lg font-bold text-[#0F172A] mb-1 flex items-center gap-2">
               <Phone className="w-5 h-5 text-[#D4AF37]" /> Emergency Vet Contacts
             </h2>
             <p className="text-xs text-slate-500 mb-4 font-light">
-              Contact verified animal hospitals and clinical centers in Pakistan.
+              Contact verified equine veterinarians and specialized animal hospitals in Pakistan.
             </p>
 
             <div className="space-y-4">
               {localVets.map((vet, idx) => (
-                <div key={idx} className="p-3 bg-slate-50 rounded-xl border border-slate-100 flex flex-col justify-between hover:shadow transition">
-                  <div>
-                    <h4 className="text-xs sm:text-sm font-bold text-[#0F172A]">{vet.name}</h4>
-                    <p className="text-[10px] text-slate-400 font-light mt-0.5 leading-normal">{vet.location}</p>
+                <div key={idx} className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex flex-col justify-between hover:shadow transition hover:border-amber-200">
+                  <div className="space-y-2">
+                    <div className="flex justify-between items-start gap-2">
+                      <h4 className="text-xs sm:text-sm font-bold text-[#0F172A]">{vet.name}</h4>
+                      <span className="bg-amber-100 text-amber-900 border border-amber-300 font-black text-[9px] px-2.5 py-0.5 rounded-full uppercase">
+                        {vet.city}
+                      </span>
+                    </div>
+                    {vet.doctor && (
+                      <p className="text-[11px] text-slate-600 font-semibold bg-white px-2 py-1 rounded border border-slate-100 inline-block">
+                        👨‍⚕️ {vet.doctor}
+                      </p>
+                    )}
+                    <p className="text-[10px] text-slate-400 font-light leading-normal">{vet.location}</p>
                   </div>
-                  <div className="mt-3 pt-2.5 border-t border-slate-200/50 flex items-center justify-between">
+                  <div className="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between">
                     <a
                       href={`tel:${vet.phone}`}
                       className="inline-flex items-center gap-1.5 text-xs font-bold text-[#D4AF37] hover:text-[#0F172A] transition"
                     >
-                      <Phone className="w-3.5 h-3.5" /> Call Clinic
+                      <Phone className="w-3.5 h-3.5" /> Call Hospital
                     </a>
-                    <span className="text-[10px] text-slate-500 font-semibold">{vet.phone}</span>
+                    <span className="text-[10px] text-slate-500 font-bold">{vet.phone}</span>
                   </div>
                 </div>
               ))}

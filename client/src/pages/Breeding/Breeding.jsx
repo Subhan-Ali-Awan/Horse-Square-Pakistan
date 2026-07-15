@@ -17,7 +17,7 @@ export const Breeding = () => {
       studFee: 150000,
       location: 'Lahore Stud Farm',
       achievements: 'Multiple National Show Champion 2024',
-      imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=600'
+      imageUrl: 'https://images.pexels.com/photos/29632852/pexels-photo-29632852.jpeg'
     },
     {
       id: 'b2',

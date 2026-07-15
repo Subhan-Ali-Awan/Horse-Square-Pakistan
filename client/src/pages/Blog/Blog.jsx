@@ -13,24 +13,10 @@ const articles = [
     image: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&q=80&w=800",
     content: [
       "The Nukra horse is not just a breed; it is a living symbol of cultural pride, heritage, and luxury in Pakistan, particularly across the fertile plains of Punjab. Characterized by its signature pure white coat, white mane, pink skin, and often light-colored eyes, a true Nukra is a sight of breathtaking beauty. In local horse culture, the pink-spotted skin is beautifully referred to as 'phulkari' (floral embroidery).",
-      "Genetically, the Nukra's stunning white coat is the result of specific double-sabino genes. While breeders across Pakistan treat them as a distinct class, experts note that they share conformational lineages with other regional breeds like the Sindhi, Chamba, and Marwari horses. They are highly agile, spirited, and possess a regal stance.",
+      "Genetically, the Nukra's stunning white coat is the result of specific double-sabino genes. While breeders across Pakistan treat them as a distinct class, experts note that they share conformational lineages with other regional breeds like the Sindhi and Chamba horses. They are highly agile, spirited, and possess a regal stance.",
       "In traditional celebrations, Nukra horses play an irreplaceable role. They are trained for traditional dancing (tent-pegging shows, cultural fairs) where they move gracefully to the beat of Punjabi 'dhol' drums. Owning a Nukra stallion is considered a status symbol of nobility and hospitality, and they are regularly featured in high-profile weddings and national festivals like the Lahore Horse and Cattle Show."
     ]
-  },
-  {
-    id: 2,
-    title: "The Legendary Marwari Breed: Warrior of the Desert",
-    category: "Breeds",
-    author: "Dr. Aisha Khan",
-    date: "June 18, 2026",
-    readTime: "6 min read",
-    summary: "Explore the history of the brave Marwari breed, famous for their unique inward-curving ears and extreme loyalty.",
-    image: "https://images.unsplash.com/photo-1598974357801-cbca10065a71?auto=format&fit=crop&q=80&w=800",
-    content: [
-      "The Marwari is an ancient and elite horse breed originating from the arid Marwar region of Rajasthan. In historic subcontinent battles, these horses served as the valiant mounts of the Rathore rulers, celebrated for their bravery, unmatched stamina, and intelligence. They possess a unique anatomical trait: inward-curving ears that point toward each other and can touch at the tips, rotating a full 180 degrees.",
-      "Bred to survive in severe desert climates, Marwaris are exceptionally hardy. Their hooves are naturally strong, and they require less water and feed compared to European thoroughbreds. Historically, a Marwari was legendary for its loyalty—it is said that a wounded Marwari horse would never abandon its rider, instead carrying them to safety before collapsing.",
-      "Today, the Marwari is highly sought after across South Asia for dressage, endurance riding, and show exhibitions. Because of their spirited temperament and high carriage, they command a premium in the market. Breeding programs in Punjab and Sindh are actively working to preserve the pure bloodline, creating a bridge of equestrian history that lives on today."
-    ]
+
   },
   {
     id: 3,

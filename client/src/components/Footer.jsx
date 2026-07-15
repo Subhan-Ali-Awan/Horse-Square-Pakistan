@@ -10,7 +10,7 @@ export const Footer = () => {
         {/* Left: Brand & Copyright */}
         <div className="flex items-center gap-2.5">
           <span className="font-black tracking-tight text-white text-sm sm:text-base">
-            Horse-Square <span className="text-[#D4AF37]">PK</span>
+            Horse-Square <span className="text-[#D4AF37]">Pakistan</span>
           </span>
           <span className="text-slate-700">|</span>
           <span className="text-xs text-slate-500">

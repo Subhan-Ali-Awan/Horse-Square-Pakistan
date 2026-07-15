@@ -23,6 +23,16 @@ const SYMPTOM_ADVICE = {
       "Possible respiratory infection or allergic reaction. Ensure clean, dust-free stable environment. Isolate from other horses and consult your veterinarian for proper diagnosis.",
     severity: "warning",
   },
+  "heavy sweating": {
+    result:
+      "Possible Trypanosomiasis (Surra) or acute heat stress. Isolate the horse from biting flies (vector control), provide cool water/shade, and seek immediate veterinary assistance for antiprotozoal treatment.",
+    severity: "warning",
+  },
+  surra: {
+    result:
+      "Trypanosomiasis (Surra) is a serious parasitic disease common in Pakistan. Symptoms include intermittent fever, sweating, weakness, and leg swelling. Seek immediate veterinary diagnostics and treatment (e.g. Quinapyramine).",
+    severity: "warning",
+  },
 };
 
 // ===================================================

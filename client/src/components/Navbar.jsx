@@ -80,7 +80,7 @@ export const Navbar = () => {
           {/* Logo / Brand */}
           <Link to="/" className="flex items-center gap-3 group">
             <span className="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-white via-amber-100 to-[#D4AF37] bg-clip-text text-transparent group-hover:opacity-90 transition">
-              Horse-Square <span className="text-[#D4AF37]">PK</span>
+              Horse-Square <span className="text-[#D4AF37]">Pakistan</span>
             </span>
           </Link>
 

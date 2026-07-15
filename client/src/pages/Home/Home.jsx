@@ -68,25 +68,37 @@ export const Home = () => {
       name: "Thoroughbred",
       origin: "British / European",
       description: "Renowned for their incredible speed, athletic posture, and premium racing pedigree. Highly sought after for professional turf racing.",
-      imageUrl: "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600"
+      imageUrl: "https://images.unsplash.com/photo-1605258277235-8f645a7ec8c9?auto=format&fit=crop&q=80&w=600"
     },
     {
       name: "Arabian",
       origin: "Middle East",
       description: "Famed for their elegance, high-set tail, and exceptional endurance. Prized across Pakistan for beauty contests and stamina riding.",
-      imageUrl: "https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=600"
-    },
-    {
-      name: "Marwari",
-      origin: "Rajasthan (Subcontinent)",
-      description: "Recognized by their distinctive inward-curving ears and extreme loyalty. Known for their high spirit and usage in cultural festivals.",
-      imageUrl: "https://images.unsplash.com/photo-1598974357801-cbca10065a71?auto=format&fit=crop&q=80&w=600"
+      imageUrl: "https://images.pexels.com/photos/3165565/pexels-photo-3165565.jpeg?auto=compress&cs=tinysrgb&w=600"
     },
     {
       name: "Desi / Local (Nukra)",
       origin: "Pakistan / Punjab",
       description: "Highly robust, white coat (Nukra), and resilient. Widely celebrated for traditional Nezabazi (Tent pegging) and local equestrian shows.",
-      imageUrl: "https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&q=80&w=600"
+      imageUrl: "https://images.unsplash.com/photo-1599819811279-d5ad9cccf838?auto=format&fit=crop&q=80&w=600"
+    },
+    {
+      name: "Sindhi",
+      origin: "Sindh, Pakistan",
+      description: "Prized for its elegant high head carriage, ambling gait, and immense heat tolerance. An integral part of Sindhi cultural festivals.",
+      imageUrl: "https://images.unsplash.com/photo-1598974357801-cbca10065a71?auto=format&fit=crop&q=80&w=600"
+    },
+    {
+      name: "Balochi",
+      origin: "Balochistan, Pakistan",
+      description: "A powerful, mountain-hardy horse with robust hooves. Widely celebrated for Nezabazi (tent pegging) and endurance across rocky regions.",
+      imageUrl: "https://images.unsplash.com/photo-1598974357832-6a68b030fb3f?auto=format&fit=crop&q=80&w=600"
+    },
+    {
+      name: "Friesian",
+      origin: "Netherlands (Exotic)",
+      description: "Highly majestic black horses with thick manes, feathered legs, and high-stepping gaits. Increasingly popular for luxury weddings.",
+      imageUrl: "https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&q=80&w=600"
     }
   ];
 
@@ -120,7 +132,7 @@ export const Home = () => {
       title: "National Breeding Pageant & Show",
       location: "Faisalabad Equestrian Club",
       date: "Nov 22, 2026",
-      description: "An elite beauty show presenting purebred Nukra, Arabian, and Marwari breeds, judging confirmation, posture, and elegance.",
+      description: "An elite beauty show presenting purebred Nukra and Arabian breeds, judging confirmation, posture, and elegance.",
       icon: <Sparkles className="w-5 h-5 text-[#D4AF37]" />
     },
     {

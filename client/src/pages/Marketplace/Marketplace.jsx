@@ -23,7 +23,8 @@ export const Marketplace = () => {
   const [horses, setHorses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [breedFilter, setBreedFilter] = useState('');
-  const [maxPriceFilter, setMaxPriceFilter] = useState('');
+  const [minPriceFilter, setMinPriceFilter] = useState(0);
+  const [maxPriceFilter, setMaxPriceFilter] = useState(5000000);
   const [locationFilter, setLocationFilter] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('newest');
@@ -34,7 +35,7 @@ export const Marketplace = () => {
   // Reset page when filters/sorting change
   useEffect(() => {
     setCurrentPage(1);
-  }, [breedFilter, maxPriceFilter, locationFilter, searchTerm, sortBy]);
+  }, [breedFilter, minPriceFilter, maxPriceFilter, locationFilter, searchTerm, sortBy]);
 
 
 
@@ -62,7 +63,7 @@ export const Marketplace = () => {
       breed: 'Thoroughbred',
       age: 4,
       color: 'Dark Bay',
-      height: '16.2 hh',
+      height: '66 inches',
       location: 'Lahore',
       price: 2500000,
       description: 'Champion bloodline, excellent temperament, fully vaccinated. Top speed record holder at Lahore Turf Club.',
@@ -75,7 +76,7 @@ export const Marketplace = () => {
       temperament: '8/10',
       healthStatus: 'Fully Vaccinated',
       training: 'Professional Race Trained',
-      imageUrl: 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600',
+      imageUrl: 'https://images.unsplash.com/photo-1593113630400-ea4288922497?auto=format&fit=crop&q=80&w=600',
       spotlight: true
     },
     {
@@ -84,7 +85,7 @@ export const Marketplace = () => {
       breed: 'Arabian',
       age: 3,
       color: 'Grey / White',
-      height: '15.1 hh',
+      height: '61 inches',
       location: 'Islamabad',
       price: 1800000,
       description: 'Purebred Arabian mare with high stamina and elegant posture. Ideal for show rings and breeding.',
@@ -106,7 +107,7 @@ export const Marketplace = () => {
       breed: 'Local / Desi',
       age: 4,
       color: 'Pure White (Pink Skin)',
-      height: '16.3 hh',
+      height: '67 inches',
       location: 'Sargodha',
       price: 3500000,
       description: 'Elite Nukra bloodline with clear pink skin (phulkari). Active dancer and Nezabazi (tent-pegging) champion.',
@@ -128,7 +129,7 @@ export const Marketplace = () => {
       breed: 'Local / Desi',
       age: 6,
       color: 'Bay Brown',
-      height: '16.1 hh',
+      height: '65 inches',
       location: 'Multan',
       price: 1200000,
       description: 'Strong bones, highly resilient local stock. Highly trained for Nezabazi tournaments with swift acceleration.',
@@ -150,7 +151,7 @@ export const Marketplace = () => {
       breed: 'Local / Desi',
       age: 5,
       color: 'Dun (Golden Brown)',
-      height: '15.3 hh',
+      height: '63 inches',
       location: 'Faisalabad',
       price: 1500000,
       description: 'Exceptional tent pegging speed, very robust hooves. Winner of local village sports cups.',
@@ -172,7 +173,7 @@ export const Marketplace = () => {
       breed: 'Thoroughbred',
       age: 5,
       color: 'Jet Black',
-      height: '16.4 hh',
+      height: '68 inches',
       location: 'Lahore',
       price: 2800000,
       description: 'Imported bloodline lineage. Perfect confirmation for competitive jumping and turf racing.',
@@ -194,7 +195,7 @@ export const Marketplace = () => {
       breed: 'Arabian',
       age: 4,
       color: 'Chestnut',
-      height: '15.0 hh',
+      height: '60 inches',
       location: 'Multan',
       price: 2100000,
       description: 'Extremely elegant purebred Arabian mare. Exceptional stamina, trained for endurance racing.',
@@ -216,7 +217,7 @@ export const Marketplace = () => {
       breed: 'Local / Desi',
       age: 4,
       color: 'Pure Nukra White',
-      height: '16.2 hh',
+      height: '66 inches',
       location: 'Sargodha',
       price: 3400000,
       description: 'Elite Nukra lineage. High-stepping gait, trained for local tent pegging (Nezabazi) and dance tournaments.',
@@ -238,7 +239,7 @@ export const Marketplace = () => {
       breed: 'Arabian',
       age: 5,
       color: 'Chestnut Red',
-      height: '15.2 hh',
+      height: '62 inches',
       location: 'Karachi',
       price: 2900000,
       description: 'Purebred Arabian stallion with deep chestnut coat and white blaze. Exceptional pedigree and show records.',
@@ -260,7 +261,7 @@ export const Marketplace = () => {
       breed: 'Thoroughbred',
       age: 5,
       color: 'Dark Chestnut',
-      height: '16.1 hh',
+      height: '65 inches',
       location: 'Peshawar',
       price: 2700000,
       description: 'High endurance and swift speed record. Perfectly suited for showjumping or eventing.',
@@ -273,7 +274,7 @@ export const Marketplace = () => {
       temperament: '8/10',
       healthStatus: 'Fully Vaccinated',
       training: 'Show Jumping Trained',
-      imageUrl: 'https://images.unsplash.com/photo-1593113630400-ea4288922497?auto=format&fit=crop&q=80&w=600',
+      imageUrl: 'https://images.pexels.com/photos/1996333/pexels-photo-1996333.jpeg?auto=compress&cs=tinysrgb&w=600',
       spotlight: true
     }
   ];
@@ -324,8 +325,11 @@ export const Marketplace = () => {
     if (breedFilter) {
       list = list.filter(h => h.breed.toLowerCase() === breedFilter.toLowerCase());
     }
-    if (maxPriceFilter) {
-      list = list.filter(h => Number(h.price) <= Number(maxPriceFilter));
+    if (minPriceFilter > 0) {
+      list = list.filter(h => Number(h.price) >= minPriceFilter);
+    }
+    if (maxPriceFilter < 5000000) {
+      list = list.filter(h => Number(h.price) <= maxPriceFilter);
     }
     if (locationFilter) {
       list = list.filter(h => h.location.toLowerCase().includes(locationFilter.toLowerCase()));
@@ -371,7 +375,7 @@ export const Marketplace = () => {
             <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Premium Horse Trading
           </span>
           <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
-            HorseSquare Marketplace PK
+            HorseSquare Marketplace Pakistan
           </h1>
           <p className="text-slate-300 text-sm max-w-2xl font-light">
             Browse verified listings, review complete pedigree bloodlines, connect with breeders, and coordinate shipping across Pakistan.
@@ -513,15 +517,48 @@ export const Marketplace = () => {
                 </select>
               </div>
 
-              <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase">Max Price (PKR)</label>
-                <input
-                  type="number"
-                  placeholder="e.g. 3000000"
-                  value={maxPriceFilter}
-                  onChange={(e) => setMaxPriceFilter(e.target.value)}
-                  className="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:outline-none focus:border-[#D4AF37]"
-                />
+              <div className="space-y-3 p-3 bg-slate-100/50 rounded-xl border border-slate-100">
+                <div className="flex justify-between items-center">
+                  <label className="text-xs font-bold text-slate-700 uppercase">Price Range (PKR)</label>
+                </div>
+                
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center text-[10px] text-slate-500">
+                    <span>Min Price:</span>
+                    <span className="font-bold text-slate-700">Rs. {Number(minPriceFilter).toLocaleString('en-PK')}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="5000000"
+                    step="100000"
+                    value={minPriceFilter}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      if (val <= maxPriceFilter) setMinPriceFilter(val);
+                    }}
+                    className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
+                  />
+                </div>
+
+                <div className="space-y-1">
+                  <div className="flex justify-between items-center text-[10px] text-slate-500">
+                    <span>Max Price:</span>
+                    <span className="font-bold text-slate-700">Rs. {Number(maxPriceFilter).toLocaleString('en-PK')}</span>
+                  </div>
+                  <input
+                    type="range"
+                    min="0"
+                    max="5000000"
+                    step="100000"
+                    value={maxPriceFilter}
+                    onChange={(e) => {
+                      const val = Number(e.target.value);
+                      if (val >= minPriceFilter) setMaxPriceFilter(val);
+                    }}
+                    className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
+                  />
+                </div>
               </div>
 
               <div className="space-y-1">
@@ -553,12 +590,13 @@ export const Marketplace = () => {
                 Apply Filters
               </button>
 
-              {(breedFilter || maxPriceFilter || locationFilter || searchTerm) && (
+              {(breedFilter || minPriceFilter > 0 || maxPriceFilter < 5000000 || locationFilter || searchTerm) && (
                 <button
                   type="button"
                   onClick={() => {
                     setBreedFilter('');
-                    setMaxPriceFilter('');
+                    setMinPriceFilter(0);
+                    setMaxPriceFilter(5000000);
                     setLocationFilter('');
                     setSearchTerm('');
                   }}
@@ -748,7 +786,7 @@ export const Marketplace = () => {
                       <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 my-3 text-[11px] sm:text-xs text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
                         <p><strong className="text-slate-800">Breed:</strong> {horse.breed}</p>
                         <p><strong className="text-slate-800">Age:</strong> {horse.age} yrs</p>
-                        <p><strong className="text-slate-800">Height:</strong> {horse.height}</p>
+                        <p><strong className="text-slate-800">Height in inches:</strong> {horse.height}</p>
                         <p><strong className="text-slate-800">Color:</strong> {horse.color}</p>
                       </div>
 
@@ -855,7 +893,7 @@ export const Marketplace = () => {
                   <p className="font-bold text-slate-800">{selectedHorse.age} years</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">Height</span>
+                  <span className="text-[10px] text-slate-400 uppercase font-bold">Height in inches</span>
                   <p className="font-bold text-slate-800">{selectedHorse.height}</p>
                 </div>
                 <div>

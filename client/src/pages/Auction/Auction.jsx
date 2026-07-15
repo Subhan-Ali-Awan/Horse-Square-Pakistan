@@ -16,7 +16,7 @@ export const Auction = () => {
       startingBid: 2000000,
       endTime: new Date(Date.now() + 86400000 * 2).toISOString(),
       status: 'live',
-      imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=600',
+      imageUrl: 'https://images.unsplash.com/photo-1621993202323-f438eec934ff?auto=format&fit=crop&q=80&w=600',
       bids: [
         { bidderName: 'Malik Usman', amount: 3500000, time: '10 mins ago' },
         { bidderName: 'Chaudhry Bilal', amount: 3200000, time: '1 hour ago' }
@@ -29,7 +29,7 @@ export const Auction = () => {
       startingBid: 2500000,
       endTime: new Date(Date.now() + 86400000 * 4).toISOString(),
       status: 'live',
-      imageUrl: 'https://images.unsplash.com/photo-1598974357801-cbca10065a71?auto=format&fit=crop&q=80&w=600',
+      imageUrl: 'https://images.unsplash.com/photo-1593034510222-0a1fb8c9cd02?auto=format&fit=crop&q=80&w=600',
       bids: [
         { bidderName: 'Rana Hammad', amount: 4200000, time: '25 mins ago' }
       ]

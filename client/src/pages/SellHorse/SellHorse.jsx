@@ -115,8 +115,6 @@ export const SellHorse = () => {
               >
                 <option value="Thoroughbred">Thoroughbred</option>
                 <option value="Arabian">Arabian</option>
-                <option value="Marwari">Marwari</option>
-                <option value="Andalusian">Andalusian</option>
                 <option value="Local / Desi">Local / Desi</option>
               </select>
             </div>
@@ -176,11 +174,11 @@ export const SellHorse = () => {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             <div>
-              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Height (Hands / hh)</label>
+              <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-2">Height in inches</label>
               <input
                 type="text"
                 name="height"
-                placeholder="e.g. 15.2 hh"
+                placeholder="e.g. 62 inches"
                 value={formData.height}
                 onChange={handleChange}
                 className="w-full p-3 border border-slate-300 rounded-xl bg-slate-50 text-sm focus:border-[#D4AF37] focus:bg-white transition"
