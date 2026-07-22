@@ -16,10 +16,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev")); // logs every request to the console - helpful while developing/demoing
 
 // Serve uploaded images statically, e.g. http://localhost:5000/uploads/abc.jpg
+app.use("/uploads", express.static("C:/Users/Acer/.gemini/antigravity-ide/brain/a0eb1cf8-0b87-4cc6-a5a3-d942d01e9d56"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
-
-// Serve the simple admin dashboard frontend (plain HTML/JS) at /admin
-app.use("/admin", express.static(path.join(__dirname, "public", "admin")));
 
 // ---------- Routes ----------
 app.use("/api/auth", require("./routes/authRoutes"));
@@ -49,8 +47,18 @@ const PORT = process.env.PORT || 5000;
 connectDB().then(async () => {
   await seedAdmin(); // creates the default admin account on first run
 
-  app.listen(PORT, () => {
-    console.log(`🚀 Server running on http://localhost:${PORT}`);
-    console.log(`🛠️  Admin dashboard at http://localhost:${PORT}/admin`);
+  const server = app.listen(PORT, () => {
+    console.log(`🚀 HorseSquare Backend API running on http://localhost:${PORT}/api`);
+  });
+
+  server.on("error", (err) => {
+    if (err.code === "EADDRINUSE") {
+      console.error(`\n❌ Port ${PORT} is already in use!`);
+      console.error(`   Run this to fix it:  taskkill /IM node.exe /F`);
+      console.error(`   Then retry:          npm run dev\n`);
+      process.exit(1);
+    } else {
+      throw err;
+    }
   });
 });

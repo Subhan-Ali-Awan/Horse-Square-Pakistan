@@ -3,6 +3,7 @@ const Horse = require("../models/Horse");
 const Auction = require("../models/Auction");
 const { BreedingRequest } = require("../models/Breeding");
 const VetInquiry = require("../models/VetInquiry");
+const { ContactMessage } = require("../models/Misc");
 
 // ===================================================
 // GET /api/admin/stats -> dashboard overview cards
@@ -18,6 +19,8 @@ exports.getDashboardStats = async (req, res, next) => {
       endedAuctions,
       pendingBreedingRequests,
       totalVetInquiries,
+      totalContactMessages,
+      newContactMessages,
     ] = await Promise.all([
       User.countDocuments({ role: "user" }),
       Horse.countDocuments(),
@@ -27,6 +30,8 @@ exports.getDashboardStats = async (req, res, next) => {
       Auction.countDocuments({ status: "ended" }),
       BreedingRequest.countDocuments({ status: "pending" }),
       VetInquiry.countDocuments(),
+      ContactMessage.countDocuments(),
+      ContactMessage.countDocuments({ status: "new" }),
     ]);
 
     res.status(200).json({
@@ -40,6 +45,8 @@ exports.getDashboardStats = async (req, res, next) => {
         endedAuctions,
         pendingBreedingRequests,
         totalVetInquiries,
+        totalContactMessages,
+        newContactMessages,
       },
     });
   } catch (error) {

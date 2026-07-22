@@ -223,3 +223,64 @@ exports.getMe = async (req, res, next) => {
     next(error);
   }
 };
+
+// ===================================================
+// PUT /api/auth/profile  (protected) - update profile info
+// ===================================================
+exports.updateProfile = async (req, res, next) => {
+  try {
+    const { firstName, lastName, phone, city, userType } = req.body;
+    const user = await require("../models/User").findById(req.user._id);
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    if (firstName) user.firstName = firstName.trim();
+    if (lastName) user.lastName = lastName.trim();
+    if (phone) user.phone = phone.trim();
+    if (city) user.city = city.trim();
+    if (userType) user.userType = userType;
+
+    await user.save();
+
+    res.status(200).json({
+      success: true,
+      message: "Profile updated successfully",
+      user: buildUserResponse(user),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ===================================================
+// PUT /api/auth/change-password  (protected) - change password
+// ===================================================
+exports.changePassword = async (req, res, next) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ success: false, message: "Please provide current and new password" });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ success: false, message: "New password must be at least 6 characters" });
+    }
+
+    const user = await require("../models/User").findById(req.user._id).select("+password");
+
+    if (!user || !(await user.matchPassword(currentPassword))) {
+      return res.status(401).json({ success: false, message: "Current password is incorrect" });
+    }
+
+    user.password = newPassword; // hashed automatically by pre-save hook
+    await user.save();
+
+    res.status(200).json({ success: true, message: "Password changed successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+

@@ -6,7 +6,7 @@ const breedingHorseSchema = new mongoose.Schema(
     name: { type: String, required: true },
     breed: {
       type: String,
-      enum: ["Arabian", "Spanish", "Desi", "Thoroughbred"],
+      enum: ["Arabian", "Spanish", "Local / Desi", "Thoroughbred"],
       required: true,
     },
     age: { type: Number, required: true },
@@ -32,7 +32,7 @@ const breedingRequestSchema = new mongoose.Schema(
     ownHorseName: { type: String, required: true },
     preferredBreed: {
       type: String,
-      enum: ["Arabian", "Thoroughbred", "Spanish", "Desi"],
+      enum: ["Arabian", "Thoroughbred", "Spanish", "Local / Desi"],
       required: true,
     },
     details: { type: String },

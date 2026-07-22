@@ -18,6 +18,7 @@ import {
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
+import { Modal } from '../../components/Modal';
 
 export const Marketplace = () => {
   const [horses, setHorses] = useState([]);
@@ -542,7 +543,7 @@ export const Marketplace = () => {
                 <div className="flex justify-between items-center">
                   <label className="text-xs font-bold text-slate-700 uppercase">Price Range (PKR)</label>
                 </div>
-                
+
                 <div className="space-y-1">
                   <div className="flex justify-between items-center text-[10px] text-slate-500">
                     <span>Min Price:</span>
@@ -844,8 +845,8 @@ export const Marketplace = () => {
                   key={pageNum}
                   onClick={() => setCurrentPage(pageNum)}
                   className={`w-9 h-9 rounded-xl text-xs font-bold transition cursor-pointer ${activePage === pageNum
-                      ? 'bg-[#0F172A] text-[#D4AF37] border border-amber-500/30 shadow'
-                      : 'bg-white border text-slate-700 hover:border-[#D4AF37]'
+                    ? 'bg-[#0F172A] text-[#D4AF37] border border-amber-500/30 shadow'
+                    : 'bg-white border text-slate-700 hover:border-[#D4AF37]'
                     }`}
                 >
                   {pageNum}
@@ -864,19 +865,15 @@ export const Marketplace = () => {
 
         </div>
 
-      </div>      {/* Details modal overlay */}
-      {selectedHorse && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 backdrop-blur-md p-4">
-          <div className="bg-white rounded-3xl overflow-hidden max-w-2xl w-full max-h-[85vh] flex flex-col border border-slate-200 shadow-2xl relative animate-fade-up">
+      </div>
 
-            {/* Close Button */}
-            <button
-              onClick={() => setSelectedHorse(null)}
-              className="absolute top-4 right-4 z-20 bg-black/60 hover:bg-black/80 text-white p-2 rounded-full transition cursor-pointer"
-            >
-              <X className="w-5 h-5" />
-            </button>
-
+      <Modal
+        isOpen={Boolean(selectedHorse)}
+        onClose={() => setSelectedHorse(null)}
+        maxWidth="max-w-2xl"
+      >
+        {selectedHorse && (
+          <div className="-m-6 flex flex-col max-h-[85vh]">
             {/* Modal Image Header */}
             <div className="relative h-52 sm:h-56 bg-slate-900 shrink-0">
               <img
@@ -971,7 +968,7 @@ export const Marketplace = () => {
                     </li>
                     <li className="flex justify-between">
                       <span className="text-slate-400">Lineage History:</span>
-                      <span className="font-bold text-slate-700 text-emerald-600">Purebred</span>
+                      <span className="font-bold text-emerald-600">Purebred</span>
                     </li>
                   </ul>
                 </div>
@@ -1009,8 +1006,8 @@ export const Marketplace = () => {
             </div>
 
           </div>
-        </div>
-      )}
+        )}
+      </Modal>
 
     </div>
   );

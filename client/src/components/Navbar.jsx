@@ -13,7 +13,8 @@ import {
   Dna,
   Stethoscope,
   GraduationCap,
-  ShoppingBag
+  ShoppingBag,
+  LayoutDashboard
 } from 'lucide-react';
 
 export const Navbar = () => {
@@ -24,6 +25,7 @@ export const Navbar = () => {
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
   const [isMarketplaceOpen, setIsMarketplaceOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
 
   const isActive = (path) => location.pathname === path;
 
@@ -214,26 +216,70 @@ export const Navbar = () => {
           {/* Desktop Authentication / User info */}
           <div className="hidden md:flex items-center gap-4">
             {user ? (
-              <div className="flex items-center gap-4">
-                <span className="text-xs text-amber-300 font-semibold bg-amber-500/10 px-3 py-1.5 rounded-lg border border-amber-500/20 flex items-center gap-1.5">
-                  <User className="w-3.5 h-3.5 text-[#D4AF37]" /> {user.name}
-                </span>
-                {user.role === 'admin' && (
-                  <a
-                    href="http://localhost:5000/admin"
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-xs bg-amber-500/20 text-[#D4AF37] border border-amber-500/30 px-3 py-1.5 rounded-lg hover:bg-amber-500/30 transition flex items-center gap-1.5 font-bold"
-                  >
-                    <Shield className="w-3.5 h-3.5" /> Admin Panel
-                  </a>
-                )}
+              <div
+                className="relative"
+                onMouseEnter={() => setIsProfileOpen(true)}
+                onMouseLeave={() => setIsProfileOpen(false)}
+              >
+                {/* Profile Avatar Button Trigger */}
                 <button
-                  onClick={handleLogout}
-                  className="text-xs bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 px-3 py-1.5 rounded-lg transition flex items-center gap-1.5 font-bold cursor-pointer"
+                  onClick={() => setIsProfileOpen(!isProfileOpen)}
+                  className="flex items-center gap-2.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-[#D4AF37]/60 px-3 py-1.5 rounded-full transition-all duration-200 cursor-pointer shadow-sm group"
                 >
-                  <LogOut className="w-3.5 h-3.5" /> Logout
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F59E0B] text-slate-950 font-black text-xs flex items-center justify-center shadow-inner ring-2 ring-amber-500/20 group-hover:scale-105 transition duration-200">
+                    {user.firstName ? user.firstName[0].toUpperCase() : user.name ? user.name[0].toUpperCase() : 'U'}
+                  </div>
+                  <span className="text-xs font-extrabold text-slate-200 group-hover:text-amber-300 transition max-w-[110px] truncate">
+                    {user.firstName || user.name}
+                  </span>
+                  <ChevronDown className={`w-3.5 h-3.5 text-slate-400 group-hover:text-amber-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} />
                 </button>
+
+                {/* Profile Dropdown Menu */}
+                <div
+                  className={`absolute right-0 mt-2 w-64 bg-[#0F172A] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden transition-all duration-200 origin-top-right z-50 ${
+                    isProfileOpen
+                      ? 'opacity-100 scale-100 translate-y-0 visible'
+                      : 'opacity-0 scale-95 -translate-y-2 invisible'
+                  }`}
+                >
+                  {/* User Profile Summary Header */}
+                  <div className="p-4 bg-gradient-to-r from-slate-900 to-[#1E293B] border-b border-slate-800 flex items-center gap-3">
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F59E0B] text-slate-950 font-black text-sm flex items-center justify-center shrink-0 shadow">
+                      {user.firstName ? user.firstName[0].toUpperCase() : user.name ? user.name[0].toUpperCase() : 'U'}
+                    </div>
+                    <div className="overflow-hidden">
+                      <h4 className="text-xs font-black text-white truncate">
+                        {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.name}
+                      </h4>
+                      <p className="text-[10px] text-slate-400 truncate">{user.email}</p>
+                      <span className="inline-block mt-1 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider rounded bg-amber-500/10 text-amber-300 border border-amber-500/20">
+                        {user.role === 'admin' ? '🛡️ Super Admin' : '👤 Member'}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Dropdown Navigation Links */}
+                  <div className="p-2 space-y-1">
+                    <Link
+                      to="/dashboard"
+                      onClick={() => setIsProfileOpen(false)}
+                      className="flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-bold text-slate-200 hover:bg-slate-800 hover:text-white transition"
+                    >
+                      <LayoutDashboard className="w-4 h-4 text-[#D4AF37]" /> My Dashboard
+                    </Link>
+                  </div>
+
+                  {/* Logout Action */}
+                  <div className="p-2 border-t border-slate-800 bg-slate-900/50">
+                    <button
+                      onClick={handleLogout}
+                      className="flex items-center gap-3 w-full px-3 py-2.5 rounded-xl text-xs font-bold text-rose-400 hover:bg-rose-500/10 transition cursor-pointer"
+                    >
+                      <LogOut className="w-4 h-4 text-rose-400" /> Logout
+                    </button>
+                  </div>
+                </div>
               </div>
             ) : (
               <div className="flex items-center gap-3">
@@ -357,23 +403,28 @@ export const Navbar = () => {
           <div className="pt-4 border-t border-slate-800">
             {user ? (
               <div className="space-y-3 px-3">
-                <div className="text-slate-400 text-sm font-medium">
-                  Signed in as: <span className="text-amber-300 font-bold">{user.name}</span>
+                <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-900 border border-slate-800">
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F59E0B] text-slate-950 font-black text-sm flex items-center justify-center shrink-0 shadow">
+                    {user.firstName ? user.firstName[0].toUpperCase() : user.name ? user.name[0].toUpperCase() : 'U'}
+                  </div>
+                  <div className="overflow-hidden">
+                    <div className="text-xs font-bold text-white truncate">
+                      {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.name}
+                    </div>
+                    <div className="text-[10px] text-slate-400 truncate">{user.email}</div>
+                  </div>
                 </div>
-                {user.role === 'admin' && (
-                  <a
-                    href="http://localhost:5000/admin"
-                    target="_blank"
-                    rel="noreferrer"
-                    onClick={() => setIsMobileMenuOpen(false)}
-                    className="flex items-center justify-center gap-2 w-full bg-amber-500/20 text-[#D4AF37] border border-amber-500/30 py-2.5 rounded-lg hover:bg-amber-500/30 transition text-sm font-bold"
-                  >
-                    <Shield className="w-4 h-4" /> Admin Panel
-                  </a>
-                )}
+
+                <Link
+                  to="/dashboard"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="flex items-center justify-center gap-2 w-full bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 py-2.5 rounded-xl hover:bg-[#D4AF37]/20 transition text-xs font-bold"
+                >
+                  <LayoutDashboard className="w-4 h-4" /> My Dashboard
+                </Link>
                 <button
                   onClick={handleLogout}
-                  className="flex items-center justify-center gap-2 w-full bg-red-500/10 hover:bg-red-500/20 text-red-400 border border-red-500/20 py-2.5 rounded-lg transition text-sm font-bold cursor-pointer"
+                  className="flex items-center justify-center gap-2 w-full bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 border border-rose-500/20 py-2.5 rounded-xl transition text-xs font-bold cursor-pointer"
                 >
                   <LogOut className="w-4 h-4" /> Logout
                 </button>

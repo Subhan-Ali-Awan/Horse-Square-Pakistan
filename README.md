@@ -25,9 +25,23 @@ HorseSquare Pakistan is a premium, state-of-the-art MERN stack web application t
 
 ## 🚀 How to Run Locally
 
-Follow these steps to run the client and server on your local machine:
+You can run both the frontend and backend using either the automatic launcher or manual commands.
 
-### 1. Run the Backend Server
+### Method 1: Automatic One-Click Launcher (Recommended for Windows)
+If you are on Windows, simply double-click the `run.bat` file in the root folder of your project, or run it from your terminal:
+```bash
+.\run.bat
+```
+This script will automatically open two new Command Prompt windows:
+1. One running the backend server on `http://localhost:5000`
+2. One running the frontend client on `http://localhost:5173`
+
+---
+
+### Method 2: Manual Setup
+
+#### 1. Run the Backend Server
+Open a terminal in the project root and run:
 ```bash
 cd server
 npm install
@@ -35,7 +49,8 @@ node server.js
 ```
 *   **Server runs at**: `http://localhost:5000`
 
-### 2. Run the Frontend Client
+#### 2. Run the Frontend Client
+Open a second terminal in the project root and run:
 ```bash
 cd client
 npm install
@@ -43,7 +58,29 @@ npm run dev
 ```
 *   **Website runs at**: `http://localhost:5173`
 
-*(Note: On Windows PowerShell, if script execution is blocked, use `npm.cmd` instead of `npm`, e.g., `npm.cmd install` and `npm.cmd run dev`)*.
+---
+
+### ⚠️ Windows PowerShell Troubleshooting (Script Execution Blocked)
+If you receive an error saying *"running scripts is disabled on this system"* (e.g., when running `npm`), you can resolve it in one of two ways:
+
+1. **Use `.cmd` commands instead:**
+   Use `npm.cmd` instead of `npm` for all commands:
+   ```powershell
+   # In server folder:
+   npm.cmd install
+   
+   # In client folder:
+   npm.cmd install
+   npm.cmd run dev
+   ```
+
+2. **Temporarily bypass execution policy:**
+   Run the following command in your PowerShell window to allow script execution for the current session:
+   ```powershell
+   Set-ExecutionPolicy -ExecutionPolicy Bypass -Scope Process
+   ```
+   After running this, normal `npm install` and `npm run dev` commands will work.
+
 
 ---
 

@@ -6,7 +6,7 @@ const horseSchema = new mongoose.Schema(
     breed: {
       type: String,
       required: true,
-      enum: ["Arabian", "Spanish", "Desi", "Thoroughbred"],
+      enum: ["Arabian", "Spanish", "Local / Desi", "Thoroughbred"],
     },
     price: { type: Number, required: true, min: 0 },
     location: { type: String, required: true, trim: true },
@@ -20,6 +20,13 @@ const horseSchema = new mongoose.Schema(
     phone: { type: String, required: true },
     description: { type: String, required: true },
 
+    age: { type: Number, default: 4 },
+    color: { type: String, default: "Unknown" },
+    height: { type: String, default: "62 inches" },
+    spotlight: { type: Boolean, default: false },
+    sire: { type: String, default: "Unknown" },
+    dam: { type: String, default: "Unknown" },
+
     images: [{ type: String }], // file paths e.g. /uploads/xyz.jpg
 
     // Link back to the registered user who posted it (optional - guests can also post in this FYP)
@@ -32,6 +39,9 @@ const horseSchema = new mongoose.Schema(
     },
 
     views: { type: Number, default: 0 },
+    autoApproved: { type: Boolean, default: false },
+    rejectionReason: { type: String, default: "" },
+    policyFailures: [{ type: String }],
   },
   { timestamps: true }
 );

@@ -4,6 +4,21 @@ const Auction = require("../models/Auction");
 async function autoCloseIfExpired(auction) {
   if (auction.status === "live" && auction.endTime <= new Date()) {
     auction.status = "ended";
+
+    // Transfer ownership to the winning bidder
+    if (auction.bids && auction.bids.length > 0) {
+      const sortedBids = [...auction.bids].sort((a, b) => b.amount - a.amount);
+      const winningBid = sortedBids[0];
+      if (winningBid && winningBid.bidder) {
+        const Horse = require("../models/Horse");
+        const horse = await Horse.findOne({ name: auction.horseName });
+        if (horse) {
+          horse.postedBy = winningBid.bidder;
+          await horse.save();
+        }
+      }
+    }
+
     await auction.save();
   }
   return auction;
@@ -19,12 +34,16 @@ exports.getAuctions = async (req, res, next) => {
 
     const auctions = await Auction.find(filter).sort({ createdAt: -1 });
 
-    // close out any that expired since last check
+    const formattedAuctions = [];
     for (const auction of auctions) {
-      await autoCloseIfExpired(auction);
+      const closedAuction = await autoCloseIfExpired(auction);
+      const auctionObj = closedAuction.toObject();
+      // sort bids highest first
+      auctionObj.bids.sort((a, b) => b.amount - a.amount);
+      formattedAuctions.push(auctionObj);
     }
 
-    res.status(200).json({ success: true, count: auctions.length, data: auctions });
+    res.status(200).json({ success: true, count: formattedAuctions.length, data: formattedAuctions });
   } catch (error) {
     next(error);
   }
@@ -42,8 +61,8 @@ exports.getAuctionById = async (req, res, next) => {
 
     auction = await autoCloseIfExpired(auction);
 
-    // sort bids newest-first for "Live Bid History" display, matching frontend prepend() behaviour
-    const sortedBids = [...auction.bids].sort((a, b) => b.createdAt - a.createdAt);
+    // sort bids highest-first so that the highest bid is on top
+    const sortedBids = [...auction.bids].sort((a, b) => b.amount - a.amount);
 
     res.status(200).json({
       success: true,
@@ -69,7 +88,12 @@ exports.createAuction = async (req, res, next) => {
     const hours = Number(durationHours) || 24; // matches frontend default 24-hour timer
     const endTime = new Date(Date.now() + hours * 60 * 60 * 1000);
 
-    const image = req.file ? `/uploads/${req.file.filename}` : undefined;
+    let image;
+    if (req.file) {
+      image = `/uploads/${req.file.filename}`;
+    } else if (req.files && req.files.length > 0) {
+      image = `/uploads/${req.files[0].filename}`;
+    }
 
     const auction = await Auction.create({
       horseName,
@@ -96,7 +120,10 @@ exports.createAuction = async (req, res, next) => {
 // ===================================================
 exports.placeBid = async (req, res, next) => {
   try {
-    const { bidderName, amount } = req.body;
+    const { amount } = req.body;
+    
+    // Resolve bidderName from logged-in user since route is protected
+    const bidderName = req.user ? `${req.user.firstName} ${req.user.lastName}`.trim() : req.body.bidderName || "Anonymous";
 
     let auction = await Auction.findById(req.params.id);
     if (!auction) {
@@ -109,8 +136,8 @@ exports.placeBid = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Auction already ended." });
     }
 
-    if (!bidderName || !amount) {
-      return res.status(400).json({ success: false, message: "Please enter name and bid amount." });
+    if (!amount) {
+      return res.status(400).json({ success: false, message: "Please enter bid amount." });
     }
 
     const bidAmount = Number(amount);
@@ -129,10 +156,14 @@ exports.placeBid = async (req, res, next) => {
 
     await auction.save();
 
+    // Sort bids descending by amount so highest is on top
+    const updatedAuction = auction.toObject();
+    updatedAuction.bids.sort((a, b) => b.amount - a.amount);
+
     res.status(200).json({
       success: true,
       message: "Bid placed successfully!",
-      data: auction,
+      data: updatedAuction,
     });
   } catch (error) {
     next(error);
@@ -150,6 +181,21 @@ exports.closeAuction = async (req, res, next) => {
     }
 
     auction.status = "ended";
+
+    // Transfer ownership to the winning bidder
+    if (auction.bids && auction.bids.length > 0) {
+      const sortedBids = [...auction.bids].sort((a, b) => b.amount - a.amount);
+      const winningBid = sortedBids[0];
+      if (winningBid && winningBid.bidder) {
+        const Horse = require("../models/Horse");
+        const horse = await Horse.findOne({ name: auction.horseName });
+        if (horse) {
+          horse.postedBy = winningBid.bidder;
+          await horse.save();
+        }
+      }
+    }
+
     await auction.save();
 
     res.status(200).json({ success: true, message: "Auction closed", data: auction });
@@ -173,3 +219,30 @@ exports.deleteAuction = async (req, res, next) => {
     next(error);
   }
 };
+
+// ===================================================
+// GET /api/auctions/my-bids  (protected) -> auctions this user has bid on
+// ===================================================
+exports.getMyBids = async (req, res, next) => {
+  try {
+    const auctions = await Auction.find({ "bids.bidder": req.user._id }).sort({ updatedAt: -1 });
+
+    // Auto-close expired ones and attach the user's highest bid for display
+    const result = [];
+    for (const auction of auctions) {
+      await autoCloseIfExpired(auction);
+      const myBids = auction.bids.filter(
+        (b) => b.bidder && b.bidder.toString() === req.user._id.toString()
+      );
+      const myHighestBid = myBids.length
+        ? Math.max(...myBids.map((b) => b.amount))
+        : 0;
+      result.push({ ...auction.toObject(), myHighestBid });
+    }
+
+    res.status(200).json({ success: true, count: result.length, data: result });
+  } catch (error) {
+    next(error);
+  }
+};
+

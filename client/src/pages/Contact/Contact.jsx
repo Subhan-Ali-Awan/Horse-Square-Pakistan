@@ -1,10 +1,29 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Mail, Phone, MapPin, Send, CheckCircle } from 'lucide-react';
+import { useAuth } from '../../context/AuthContext';
 
 export const Contact = () => {
-  const [formData, setFormData] = useState({ name: '', email: '', subject: '', message: '' });
+  const { user } = useAuth();
+  const [formData, setFormData] = useState({
+    name: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || '' : '',
+    email: user ? user.email || '' : '',
+    phone: user ? user.phone || '' : '',
+    subject: '',
+    message: ''
+  });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setFormData(prev => ({
+        ...prev,
+        name: `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || '',
+        email: user.email || prev.email,
+        phone: user.phone || prev.phone
+      }));
+    }
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -13,7 +32,10 @@ export const Contact = () => {
       const res = await fetch('/api/contact', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData)
+        body: JSON.stringify({
+          ...formData,
+          userId: user ? user._id : undefined
+        })
       });
       setSubmitted(true);
     } catch (err) {
@@ -72,7 +94,7 @@ export const Contact = () => {
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-4">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 mb-1">Your Name</label>
                   <input
@@ -90,6 +112,16 @@ export const Contact = () => {
                     required
                     value={formData.email}
                     onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                    className="w-full p-3 border rounded-xl text-sm bg-slate-50 focus:outline-none focus:border-[#D4AF37]"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 mb-1">Your Phone Number</label>
+                  <input
+                    type="tel"
+                    required
+                    value={formData.phone}
+                    onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                     className="w-full p-3 border rounded-xl text-sm bg-slate-50 focus:outline-none focus:border-[#D4AF37]"
                   />
                 </div>

@@ -6,6 +6,7 @@ const {
   createHorse,
   updateHorse,
   deleteHorse,
+  getMyHorses,
 } = require("../controllers/horseController");
 const upload = require("../middleware/upload");
 
@@ -14,6 +15,7 @@ const upload = require("../middleware/upload");
 const { protect } = require("../middleware/auth");
 
 router.get("/", getHorses); // Home page listings + "Search Horses" filters
+router.get("/my", protect, getMyHorses); // User dashboard: my listings (must be before /:id)
 router.get("/:id", getHorseById);
 router.post("/", upload.array("images", 5), createHorse); // Sell a Horse "Submit Listing" button
 router.put("/:id", protect, upload.array("images", 5), updateHorse);
