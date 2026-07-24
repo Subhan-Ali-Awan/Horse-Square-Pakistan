@@ -40,6 +40,8 @@ const breedingRequestSchema = new mongoose.Schema(
     // which breeding horse (from the cards) this request targets, if any
     breedingHorse: { type: mongoose.Schema.Types.ObjectId, ref: "BreedingHorse" },
 
+    submittedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+
     status: {
       type: String,
       enum: ["pending", "contacted", "closed"],

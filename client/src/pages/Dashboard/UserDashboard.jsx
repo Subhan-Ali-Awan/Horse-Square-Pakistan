@@ -24,7 +24,18 @@ import {
   MessageSquare,
   Trash2,
   Send,
-  Plus
+  Plus,
+  Dna,
+  Compass,
+  Award,
+  ShieldCheck,
+  Sparkles,
+  Stethoscope,
+  ArrowRight,
+  BookOpen,
+  Target,
+  CheckCircle2,
+  Phone
 } from 'lucide-react';
 import { Modal } from '../../components/Modal';
 import { QueryChatModal } from '../../components/QueryChatModal';
@@ -47,11 +58,70 @@ export const UserDashboard = () => {
   const [editPhone, setEditPhone] = useState('');
   const [editMessage, setEditMessage] = useState('');
   const [queryMsg, setQueryMsg] = useState('');
+  const [listingMsg, setListingMsg] = useState('');
 
   // Profile form state
   const [profile, setProfile] = useState({ firstName: '', lastName: '', phone: '', city: '', userType: '' });
   const [profileMsg, setProfileMsg] = useState({ type: '', text: '' });
   const [savingProfile, setSavingProfile] = useState(false);
+
+  // Breeding system state
+  const [breedingHorses, setBreedingHorses] = useState([]);
+  const [myBreedingRequests, setMyBreedingRequests] = useState([]);
+  const [breedingSubTab, setBreedingSubTab] = useState('services'); // 'services' | 'requests'
+  const [selectedBreedingHorse, setSelectedBreedingHorse] = useState(null);
+  const [showGeneralBreedingModal, setShowGeneralBreedingModal] = useState(false);
+  const [breedingPhone, setBreedingPhone] = useState(user ? user.phone || '' : '');
+  const [breedingMareDetails, setBreedingMareDetails] = useState('');
+  const [breedingPreferredBreed, setBreedingPreferredBreed] = useState('Arabian');
+  const [breedingSubmitSuccess, setBreedingSubmitSuccess] = useState('');
+
+  const sampleBreedingHorses = [
+    {
+      id: 'b1',
+      name: 'Sufi (Nukra Champion Stallion)',
+      breed: 'Local / Desi',
+      breedingFee: 250000,
+      location: 'Sargodha Stud Farm',
+      tag: 'Pure White (Pink Skin) • Active Nezabazi & Dancing Champion',
+      sire: 'Shah-Jahan',
+      dam: 'White Beauty',
+      image: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&q=80&w=600'
+    },
+    {
+      id: 'b2',
+      name: 'Al-Burraq (Arabian Champion)',
+      breed: 'Arabian',
+      breedingFee: 180000,
+      location: 'Lahore Stud Farm',
+      tag: 'Multiple National Show Champion 2024 • Pure Bloodline',
+      sire: 'Al-Murtajiz',
+      dam: 'Desert Rose',
+      image: 'https://images.pexels.com/photos/29632852/pexels-photo-29632852.jpeg'
+    },
+    {
+      id: 'b3',
+      name: 'Bucephalus (Thoroughbred Stallion)',
+      breed: 'Thoroughbred',
+      breedingFee: 220000,
+      location: 'Rawalpindi Turf Club',
+      tag: 'Derby Winner & Speed Record Holder at Lahore Turf Club',
+      sire: 'Storm Cat II',
+      dam: 'Lady Pearl',
+      image: 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600'
+    },
+    {
+      id: 'b4',
+      name: 'Rustam (Desi Stud Stallion)',
+      breed: 'Local / Desi',
+      breedingFee: 160000,
+      location: 'Multan Stud Farms',
+      tag: 'High Resilient Bloodline • Tent Pegging Specialist',
+      sire: 'Ghulam Muhammad',
+      dam: 'Bella',
+      image: 'https://images.unsplash.com/photo-1551887196-72e32fad773a?auto=format&fit=crop&q=80&w=600'
+    }
+  ];
 
   // Password form state
   const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '', confirmNewPassword: '' });
@@ -95,6 +165,8 @@ export const UserDashboard = () => {
         if (horsesData && horsesData.success) setMyHorses(horsesData.data);
         if (bidsData && bidsData.success) setMyBids(bidsData.data);
         if (queriesData && queriesData.success) setMyQueries(queriesData.data);
+
+        fetchBreedingData();
       } catch {
         setError('Could not connect to server.');
       } finally {
@@ -104,6 +176,63 @@ export const UserDashboard = () => {
 
     loadData();
   }, [activeTab, user, token]);
+
+  const fetchBreedingData = async () => {
+    try {
+      const horsesRes = await fetch('/api/breeding/horses');
+      if (horsesRes.ok) {
+        const data = await horsesRes.json();
+        if (data.success && data.data && data.data.length > 0) {
+          setBreedingHorses(data.data);
+        } else {
+          setBreedingHorses(sampleBreedingHorses);
+        }
+      } else {
+        setBreedingHorses(sampleBreedingHorses);
+      }
+
+      const reqRes = await fetchWithAuth('/breeding/my-requests');
+      if (reqRes && reqRes.success && reqRes.data) {
+        setMyBreedingRequests(reqRes.data);
+      }
+    } catch {
+      setBreedingHorses(sampleBreedingHorses);
+    }
+  };
+
+  const handleCreateBreedingRequest = async (e) => {
+    e.preventDefault();
+    try {
+      const res = await fetch('/api/breeding/requests', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`
+        },
+        body: JSON.stringify({
+          requesterName: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name : 'Guest User',
+          phone: breedingPhone || user?.phone || '',
+          ownHorseName: 'Mare',
+          preferredBreed: selectedBreedingHorse ? selectedBreedingHorse.breed : breedingPreferredBreed,
+          details: breedingMareDetails,
+          breedingHorseId: selectedBreedingHorse ? (selectedBreedingHorse._id || (selectedBreedingHorse.id && selectedBreedingHorse.id.length === 24 ? selectedBreedingHorse.id : undefined)) : undefined
+        })
+      });
+      const data = await res.json();
+      if (data.success) {
+        setBreedingSubmitSuccess('🎉 Breeding request submitted successfully!');
+        setSelectedBreedingHorse(null);
+        setShowGeneralBreedingModal(false);
+        setBreedingMareDetails('');
+        fetchBreedingData();
+        setTimeout(() => setBreedingSubmitSuccess(''), 4000);
+      } else {
+        alert(data.message || 'Failed to submit breeding request.');
+      }
+    } catch {
+      alert('Network error. Failed to send breeding request.');
+    }
+  };
 
   const fetchWithAuth = async (path, options = {}) => {
     const res = await fetch(`/api${path}`, {
@@ -131,6 +260,24 @@ export const UserDashboard = () => {
       else setError(data?.message || 'Failed to load listings.');
     } catch { setError('Could not connect to server.'); }
     finally { setLoading(false); }
+  };
+
+  const handleToggleSoldStatus = async (id, newStatus) => {
+    try {
+      const data = await fetchWithAuth(`/horses/${id}/status`, {
+        method: 'PUT',
+        body: JSON.stringify({ status: newStatus }),
+      });
+      if (data && data.success) {
+        setListingMsg(data.message || `Listing marked as ${newStatus}`);
+        setTimeout(() => setListingMsg(''), 3500);
+        fetchMyHorses();
+      } else {
+        alert(data?.message || 'Failed to update listing status.');
+      }
+    } catch {
+      alert('Could not connect to server.');
+    }
   };
 
   const fetchMyBids = async () => {
@@ -260,6 +407,8 @@ export const UserDashboard = () => {
     { id: 'overview',  label: 'Overview',        icon: <LayoutDashboard className="w-4 h-4" /> },
     { id: 'listings',  label: 'My Listings',     icon: <ShoppingBag className="w-4 h-4" /> },
     { id: 'auctions',  label: 'My Auctions',     icon: <Gavel className="w-4 h-4" /> },
+    { id: 'breeding',  label: 'Breeding System', icon: <Dna className="w-4 h-4" /> },
+    { id: 'riding',    label: 'Riding School',   icon: <Compass className="w-4 h-4" /> },
     { id: 'contact',   label: 'Contact Queries', icon: <MessageSquare className="w-4 h-4" /> },
     { id: 'profile',   label: 'My Profile',      icon: <User className="w-4 h-4" /> },
   ];
@@ -303,27 +452,29 @@ export const UserDashboard = () => {
 
         {/* Nav */}
         <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-          <Link
-            to="/"
-            className="flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all duration-300 text-slate-400 hover:bg-slate-800/40 hover:text-slate-100 border border-slate-800 bg-[#0B0F19]/40 mb-4"
-          >
-            <Globe className="w-4 h-4 text-[#D4AF37]" />
-            <span>Go to Website</span>
-          </Link>
-
           {navItems.map((item) => (
-            <button
-              key={item.id}
-              onClick={() => setActiveTab(item.id)}
-              className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all duration-300 border-l-[3px] ${
-                activeTab === item.id
-                  ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-[#D4AF37]'
-                  : 'text-slate-400 border-transparent hover:bg-slate-800/40 hover:text-slate-100'
-              }`}
-            >
-              {item.icon}
-              <span>{item.label}</span>
-            </button>
+            <React.Fragment key={item.id}>
+              {item.id === 'auctions' && (
+                <Link
+                  to="/sell"
+                  className="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all duration-300 border-l-[3px] border-transparent text-slate-400 hover:bg-slate-800/40 hover:text-slate-100"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Sell a Horse</span>
+                </Link>
+              )}
+              <button
+                onClick={() => setActiveTab(item.id)}
+                className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all duration-300 border-l-[3px] cursor-pointer ${
+                  activeTab === item.id
+                    ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-[#D4AF37]'
+                    : 'text-slate-400 border-transparent hover:bg-slate-800/40 hover:text-slate-100'
+                }`}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </button>
+            </React.Fragment>
           ))}
         </nav>
 
@@ -363,10 +514,11 @@ export const UserDashboard = () => {
               </span>
             )}
             <Link
-              to="/sell"
-              className="text-xs font-bold px-4 py-2 bg-gradient-to-r from-[#0F172A] to-[#1E293B] hover:from-[#1E293B] hover:to-[#334155] text-[#D4AF37] rounded-xl transition duration-300 border border-[#D4AF37]/20 shadow-sm"
+              to="/"
+              className="text-xs font-bold px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition duration-300 border border-slate-200 flex items-center gap-2"
             >
-              + Sell a Horse
+              <Globe className="w-3.5 h-3.5 text-[#C9A227]" />
+              <span>Go to Website</span>
             </Link>
           </div>
         </header>
@@ -512,7 +664,13 @@ export const UserDashboard = () => {
 
           {/* ── MY LISTINGS TAB ─────────────────────────────────────────── */}
           {activeTab === 'listings' && (
-            <div className="animate-fade-in">
+            <div className="animate-fade-in space-y-4">
+              {listingMsg && (
+                <div className="bg-emerald-50 text-emerald-900 p-4 rounded-2xl border border-emerald-200 flex items-center gap-3 font-bold text-xs shadow-sm">
+                  <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+                  <span>{listingMsg}</span>
+                </div>
+              )}
               <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
                 {loading ? (
                   <div className="py-20 text-center text-slate-400 text-xs font-semibold flex items-center justify-center gap-3">
@@ -536,7 +694,7 @@ export const UserDashboard = () => {
                     <table className="w-full text-left text-xs border-collapse">
                       <thead>
                         <tr className="border-b border-slate-200 bg-slate-50/75">
-                          {['Horse', 'Breed', 'Price', 'Location', 'Status', 'Date Listed'].map(h => (
+                          {['Horse', 'Breed', 'Price', 'Location', 'Status', 'Date Listed', 'Actions'].map(h => (
                             <th key={h} className="px-6 py-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">{h}</th>
                           ))}
                         </tr>
@@ -560,6 +718,26 @@ export const UserDashboard = () => {
                             <td className="px-6 py-4"><span className={getStatusBadge(h.status)}>{h.status}</span></td>
                             <td className="px-6 py-4 text-slate-500 font-medium">
                               {new Date(h.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                            </td>
+                            <td className="px-6 py-4">
+                              {h.status === 'approved' && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleSoldStatus(h._id, 'sold')}
+                                  className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-[10px] transition cursor-pointer"
+                                >
+                                  Mark Sold
+                                </button>
+                              )}
+                              {h.status === 'sold' && (
+                                <button
+                                  type="button"
+                                  onClick={() => handleToggleSoldStatus(h._id, 'approved')}
+                                  className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-bold rounded-lg text-[10px] transition cursor-pointer"
+                                >
+                                  Mark Unsold
+                                </button>
+                              )}
                             </td>
                           </tr>
                         ))}
@@ -628,6 +806,317 @@ export const UserDashboard = () => {
                   </div>
                 )}
               </div>
+            </div>
+          )}
+
+          {/* ── BREEDING SYSTEM TAB ────────────────────────────────────────── */}
+          {activeTab === 'breeding' && (
+            <div className="animate-fade-in space-y-6">
+
+              {breedingSubmitSuccess && (
+                <div className="bg-emerald-50 text-emerald-900 p-4 rounded-2xl border border-emerald-200 flex items-center gap-3 font-bold text-xs shadow-sm">
+                  <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
+                  <span>{breedingSubmitSuccess}</span>
+                </div>
+              )}
+
+              {/* 2 MAIN CARDS: BREEDING SERVICES & BREEDING REQUESTS */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+                <div
+                  onClick={() => setBreedingSubTab('services')}
+                  className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer flex items-center justify-between shadow-sm ${
+                    breedingSubTab === 'services'
+                      ? 'bg-gradient-to-r from-[#0F172A] to-[#1E293B] text-white border-[#D4AF37]/50 ring-2 ring-[#D4AF37]/30 shadow-lg'
+                      : 'bg-white text-slate-800 border-slate-200 hover:border-amber-400 hover:shadow-md'
+                  }`}
+                >
+                  <div className="space-y-1">
+                    <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
+                      breedingSubTab === 'services' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-amber-50 text-amber-800 border-amber-200'
+                    }`}>
+                      Verified Stallion Studs
+                    </span>
+                    <h3 className="text-xl font-black">Breeding Services</h3>
+                    <p className={`text-xs font-light ${breedingSubTab === 'services' ? 'text-slate-300' : 'text-slate-500'}`}>
+                      Browse champion stallions & book genetic breeding stud services
+                    </p>
+                  </div>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black shrink-0 ${
+                    breedingSubTab === 'services' ? 'bg-[#D4AF37] text-slate-950' : 'bg-amber-50 text-[#C9A227] border border-amber-200'
+                  }`}>
+                    <Dna className="w-6 h-6" />
+                  </div>
+                </div>
+
+                <div
+                  onClick={() => setBreedingSubTab('requests')}
+                  className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer flex items-center justify-between shadow-sm ${
+                    breedingSubTab === 'requests'
+                      ? 'bg-gradient-to-r from-[#0F172A] to-[#1E293B] text-white border-[#D4AF37]/50 ring-2 ring-[#D4AF37]/30 shadow-lg'
+                      : 'bg-white text-slate-800 border-slate-200 hover:border-amber-400 hover:shadow-md'
+                  }`}
+                >
+                  <div className="space-y-1">
+                    <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
+                      breedingSubTab === 'requests' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                    }`}>
+                      My Applications ({myBreedingRequests.length})
+                    </span>
+                    <h3 className="text-xl font-black">Breeding Requests</h3>
+                    <p className={`text-xs font-light ${breedingSubTab === 'requests' ? 'text-slate-300' : 'text-slate-500'}`}>
+                      View status updates & details for your submitted breeding applications
+                    </p>
+                  </div>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black shrink-0 ${
+                    breedingSubTab === 'requests' ? 'bg-[#D4AF37] text-slate-950' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                  }`}>
+                    <MessageSquare className="w-6 h-6" />
+                  </div>
+                </div>
+              </div>
+
+              {/* SUB-VIEW 1: BREEDING SERVICES */}
+              {breedingSubTab === 'services' && (
+                <div className="space-y-6">
+                  <div className="flex justify-between items-center bg-white p-5 rounded-2xl border border-slate-200 shadow-sm">
+                    <div>
+                      <h4 className="font-extrabold text-sm text-slate-900 flex items-center gap-2">
+                        <Sparkles className="w-4 h-4 text-amber-500" /> Available Stud Stallions Directory
+                      </h4>
+                      <p className="text-xs text-slate-500 mt-0.5">Select a stallion to submit your mare breeding request</p>
+                    </div>
+                    <button
+                      onClick={() => { setSelectedBreedingHorse(null); setShowGeneralBreedingModal(true); }}
+                      className="px-4 py-2 bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-bold rounded-xl transition shadow flex items-center gap-1.5 cursor-pointer"
+                    >
+                      <Plus className="w-3.5 h-3.5 text-amber-400" /> Custom Breeding Request
+                    </button>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-2 gap-6">
+                    {breedingHorses.map((horse) => (
+                      <div key={horse._id || horse.id} className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition duration-300">
+                        <div>
+                          <div className="relative h-48 overflow-hidden bg-slate-900">
+                            <img
+                              src={horse.image || horse.imageUrl || 'https://images.pexels.com/photos/29632852/pexels-photo-29632852.jpeg'}
+                              alt={horse.name}
+                              className="w-full h-full object-cover"
+                            />
+                            <span className="absolute top-3 left-3 bg-[#0F172A]/90 text-[#D4AF37] border border-amber-500/30 text-[10px] font-black tracking-widest uppercase px-3 py-1 rounded-full backdrop-blur-md shadow">
+                              {horse.breed}
+                            </span>
+                          </div>
+
+                          <div className="p-5 space-y-3">
+                            <div>
+                              <h5 className="text-base font-black text-slate-900 leading-snug">{horse.name}</h5>
+                              <p className="text-xs text-slate-500 mt-1 flex items-center gap-1">
+                                <Award className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" /> {horse.tag || horse.achievements || 'Champion Stud'}
+                              </p>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-2 text-[11px] p-2.5 bg-slate-50 rounded-2xl border border-slate-100">
+                              <div>
+                                <span className="text-[9px] text-slate-400 font-bold uppercase block">Sire</span>
+                                <span className="font-extrabold text-slate-800 truncate block">{horse.sire || 'Verified Sire'}</span>
+                              </div>
+                              <div>
+                                <span className="text-[9px] text-slate-400 font-bold uppercase block">Dam</span>
+                                <span className="font-extrabold text-slate-800 truncate block">{horse.dam || 'Verified Dam'}</span>
+                              </div>
+                            </div>
+
+                            <div className="bg-amber-50/70 p-3 rounded-2xl border border-amber-200/80 flex justify-between items-center text-xs">
+                              <span className="text-amber-900 font-bold">Stud Booking Fee:</span>
+                              <span className="font-black text-slate-900 text-sm">Rs. {(Number(horse.breedingFee || horse.studFee || 0)).toLocaleString('en-PK')}</span>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="p-5 pt-0">
+                          <button
+                            onClick={() => { setSelectedBreedingHorse(horse); setShowGeneralBreedingModal(false); }}
+                            className="w-full py-3 bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-2xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer"
+                          >
+                            <Send className="w-3.5 h-3.5 text-amber-400" /> Book Breeding Request
+                          </button>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* SUB-VIEW 2: BREEDING REQUESTS */}
+              {breedingSubTab === 'requests' && (
+                <div className="space-y-6">
+                  <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
+                    <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+                      <div>
+                        <h4 className="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+                          <MessageSquare className="w-4 h-4 text-[#D4AF37]" /> My Submitted Breeding Requests
+                        </h4>
+                        <p className="text-slate-500 text-xs mt-0.5">Track approvals, stud contact status, and details of your breeding applications</p>
+                      </div>
+                      <button
+                        onClick={() => { setSelectedBreedingHorse(null); setShowGeneralBreedingModal(true); }}
+                        className="px-4 py-2 bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-bold rounded-xl transition shadow flex items-center gap-1.5 cursor-pointer"
+                      >
+                        <Plus className="w-3.5 h-3.5 text-amber-400" /> New Request
+                      </button>
+                    </div>
+
+                    {myBreedingRequests.length === 0 ? (
+                      <div className="py-20 text-center space-y-3">
+                        <Dna className="w-10 h-10 text-slate-300 mx-auto" />
+                        <p className="text-slate-500 font-bold text-sm">No breeding requests submitted yet</p>
+                        <p className="text-slate-400 text-xs">Browse our Breeding Services tab to apply for stallion stud service.</p>
+                        <button
+                          onClick={() => setBreedingSubTab('services')}
+                          className="inline-block px-5 py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#C9A227] text-slate-950 text-xs font-black rounded-xl shadow cursor-pointer"
+                        >
+                          Browse Breeding Services
+                        </button>
+                      </div>
+                    ) : (
+                      <div className="divide-y divide-slate-100">
+                        {myBreedingRequests.map((req) => (
+                          <div key={req._id} className="p-6 hover:bg-amber-50/30 transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+                            <div className="space-y-1.5 max-w-xl">
+                              <div className="flex items-center gap-2.5">
+                                <span className="font-extrabold text-sm text-slate-900">
+                                  {req.breedingHorse?.name ? `Target Stud: ${req.breedingHorse.name}` : `Preferred Breed: ${req.preferredBreed}`}
+                                </span>
+                                <span className={getStatusBadge(req.status)}>{req.status}</span>
+                              </div>
+                              <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                                <strong>Mare Details:</strong> {req.details || req.ownHorseName || 'Not specified'}
+                              </p>
+                              <div className="flex items-center gap-3 text-[10px] text-slate-400 font-medium">
+                                <span>📅 {new Date(req.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                                <span>•</span>
+                                <span>📞 Contact Phone: {req.phone}</span>
+                              </div>
+                            </div>
+
+                            <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-right shrink-0">
+                              <span className="text-[9px] text-slate-400 font-bold uppercase block">Status Info</span>
+                              <span className="text-xs font-extrabold text-slate-800">
+                                {req.status === 'pending' ? '⏳ Under Breeder Review' : req.status === 'contacted' ? '📞 Breeder Contacted' : '✅ Request Closed'}
+                              </span>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+            </div>
+          )}
+
+          {/* ── RIDING SCHOOL TAB ─────────────────────────────────────────── */}
+          {activeTab === 'riding' && (
+            <div className="animate-fade-in space-y-8">
+              
+              {/* Banner Header */}
+              <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-7 text-white shadow-lg border border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
+                <div className="space-y-2">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-bold uppercase tracking-wider">
+                    <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Equestrian Training Network
+                  </span>
+                  <h3 className="text-2xl font-black tracking-tight flex items-center gap-2.5">
+                    <Compass className="w-7 h-7 text-[#D4AF37]" /> Riding School & Equestrian Academies
+                  </h3>
+                  <p className="text-slate-300 text-xs font-light max-w-xl">
+                    Connect with certified equestrian instructors, enroll in structured coaching programs, and train at elite arenas across Pakistan.
+                  </p>
+                </div>
+                <Link
+                  to="/riding-school"
+                  className="px-5 py-3 bg-gradient-to-r from-[#D4AF37] to-[#C9A227] hover:from-[#C9A227] text-slate-950 font-black rounded-2xl text-xs transition shadow flex items-center gap-2 shrink-0"
+                >
+                  <span>Explore Full Directory</span>
+                  <ArrowRight className="w-4 h-4" />
+                </Link>
+              </div>
+
+              {/* Riding Training Packages Grid */}
+              <div>
+                <h4 className="font-extrabold text-slate-800 text-sm uppercase tracking-wider mb-4 flex items-center gap-2">
+                  <Award className="w-4 h-4 text-[#D4AF37]" /> Featured Training Programs
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {[
+                    {
+                      title: 'Beginner Riding Foundation',
+                      fee: 'Rs. 35,000 / month',
+                      duration: '12 Sessions (3x per week)',
+                      desc: 'Master mounting posture, rein control, trot rhythm, saddle balance, and essential horse safety fundamentals.',
+                      level: 'Beginner'
+                    },
+                    {
+                      title: 'Intermediate Canter & Jumping',
+                      fee: 'Rs. 45,000 / month',
+                      duration: '12 Sessions (3x per week)',
+                      desc: 'Master smooth canter transitions, obstacle clearance, trail navigation, and arena control under certified coaches.',
+                      level: 'Intermediate'
+                    },
+                    {
+                      title: 'Master Polo & Endurance Riding',
+                      fee: 'Rs. 65,000 / month',
+                      duration: '16 Intensive Sessions',
+                      desc: 'Specialized polo mallet maneuvers, high-speed gallop balance, and endurance trail conditioning for competitive events.',
+                      level: 'Advanced'
+                    }
+                  ].map((course, idx) => (
+                    <div key={idx} className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+                      <div className="space-y-3">
+                        <div className="flex justify-between items-center">
+                          <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full bg-amber-50 text-amber-800 border border-amber-200">
+                            {course.level}
+                          </span>
+                          <span className="text-xs font-black text-[#C9A227]">{course.fee}</span>
+                        </div>
+                        <h5 className="font-black text-slate-900 text-base">{course.title}</h5>
+                        <p className="text-xs text-slate-500 leading-relaxed">{course.desc}</p>
+                      </div>
+                      <div className="pt-4 border-t mt-4 flex items-center justify-between">
+                        <span className="text-[10px] text-slate-400 font-bold">{course.duration}</span>
+                        <Link
+                          to="/riding-school"
+                          className="px-3 py-1.5 bg-slate-900 text-white rounded-xl text-[10px] font-bold hover:bg-slate-800 transition"
+                        >
+                          Enroll Now
+                        </Link>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Partner Riding Academies */}
+              <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm space-y-4">
+                <h4 className="font-extrabold text-slate-800 text-sm uppercase tracking-wider flex items-center gap-2">
+                  <ShieldCheck className="w-4 h-4 text-emerald-600" /> Verified Partner Riding Clubs in Pakistan
+                </h4>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
+                  {[
+                    { name: 'Islamabad Riding Club', loc: 'Chak Shahzad, Islamabad', phone: '+92 300 5001234' },
+                    { name: 'Lahore Polo & Riding Club', loc: 'Cantonment, Lahore', phone: '+92 321 4005678' },
+                    { name: 'Multan Equestrian Academy', loc: 'BOSAN Road, Multan', phone: '+92 301 7009876' }
+                  ].map((club, idx) => (
+                    <div key={idx} className="p-4 rounded-2xl bg-slate-50 border border-slate-100 space-y-1">
+                      <h6 className="font-black text-slate-900 text-xs">{club.name}</h6>
+                      <p className="text-[11px] text-slate-500 font-medium">{club.loc}</p>
+                      <p className="text-[10px] text-amber-700 font-bold">{club.phone}</p>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
             </div>
           )}
 
@@ -977,6 +1466,73 @@ export const UserDashboard = () => {
           setMyQueries(myQueries.map(q => q._id === updatedQuery._id ? updatedQuery : q));
         }}
       />
+      {/* Modal for Booking Breeding Request */}
+      <Modal
+        isOpen={Boolean(selectedBreedingHorse || showGeneralBreedingModal)}
+        onClose={() => { setSelectedBreedingHorse(null); setShowGeneralBreedingModal(false); }}
+        title={selectedBreedingHorse ? `Breeding Request for ${selectedBreedingHorse.name}` : 'Submit Horse Breeding Request'}
+        maxWidth="max-w-lg"
+      >
+        <form onSubmit={handleCreateBreedingRequest} className="space-y-4">
+          <p className="text-xs text-slate-500">Provide details about your mare to submit a stud service request.</p>
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Your Contact Phone Number</label>
+            <input
+              type="text"
+              required
+              value={breedingPhone}
+              onChange={(e) => setBreedingPhone(e.target.value)}
+              placeholder="03xx-xxxxxxx"
+              className="w-full p-3 border border-slate-300 rounded-xl text-sm"
+            />
+          </div>
+
+          {!selectedBreedingHorse && (
+            <div>
+              <label className="block text-xs font-bold text-slate-700 mb-1">Preferred Breed Match</label>
+              <select
+                value={breedingPreferredBreed}
+                onChange={(e) => setBreedingPreferredBreed(e.target.value)}
+                className="w-full p-3 border border-slate-300 rounded-xl text-sm"
+              >
+                <option value="Arabian">Arabian</option>
+                <option value="Thoroughbred">Thoroughbred</option>
+                <option value="Spanish">Spanish</option>
+                <option value="Local / Desi">Local / Desi</option>
+              </select>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-xs font-bold text-slate-700 mb-1">Your Mare Details (Breed, Age, Pedigree)</label>
+            <textarea
+              rows="3"
+              required
+              value={breedingMareDetails}
+              onChange={(e) => setBreedingMareDetails(e.target.value)}
+              placeholder="Enter mare age, color, vaccinations, sire/dam lineage..."
+              className="w-full p-3 border border-slate-300 rounded-xl text-sm"
+            ></textarea>
+          </div>
+
+          <div className="flex gap-3 pt-2">
+            <button
+              type="button"
+              onClick={() => { setSelectedBreedingHorse(null); setShowGeneralBreedingModal(false); }}
+              className="flex-1 py-3 bg-slate-100 text-slate-700 font-bold rounded-xl text-xs cursor-pointer"
+            >
+              Cancel
+            </button>
+            <button
+              type="submit"
+              className="flex-1 py-3 bg-[#0F172A] text-white font-bold rounded-xl text-xs shadow cursor-pointer flex items-center justify-center gap-2"
+            >
+              <Send className="w-3.5 h-3.5 text-amber-400" /> Submit Breeding Request
+            </button>
+          </div>
+        </form>
+      </Modal>
     </div>
   );
 };

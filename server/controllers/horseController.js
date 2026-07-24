@@ -263,3 +263,42 @@ exports.getMyHorses = async (req, res, next) => {
   }
 };
 
+// ===================================================
+// PUT /api/horses/:id/status (protected) -> owner updates status (sold / approved)
+// ===================================================
+exports.updateMyHorseStatus = async (req, res, next) => {
+  try {
+    const { status } = req.body;
+    if (!["sold", "approved"].includes(status)) {
+      return res.status(400).json({ success: false, message: "Status must be 'sold' or 'approved'" });
+    }
+
+    const horse = await Horse.findById(req.params.id);
+    if (!horse) {
+      return res.status(404).json({ success: false, message: "Horse listing not found" });
+    }
+
+    const isOwner = horse.postedBy && req.user && horse.postedBy.toString() === req.user._id.toString();
+    const isAdmin = req.user && req.user.role === "admin";
+
+    if (!isOwner && !isAdmin) {
+      return res.status(403).json({ success: false, message: "Not authorized to update this listing" });
+    }
+
+    if (horse.status !== "approved" && horse.status !== "sold") {
+      return res.status(400).json({ success: false, message: `Cannot change status of a ${horse.status} listing` });
+    }
+
+    horse.status = status;
+    await horse.save();
+
+    res.status(200).json({
+      success: true,
+      message: status === "sold" ? "Listing marked as SOLD" : "Listing marked as UNSOLD (Available)",
+      data: horse,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+

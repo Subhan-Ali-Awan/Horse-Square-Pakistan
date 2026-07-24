@@ -6,6 +6,7 @@ const {
   updateBreedingHorse,
   deleteBreedingHorse,
   createBreedingRequest,
+  getMyBreedingRequests,
   getBreedingRequests,
   updateBreedingRequestStatus,
 } = require("../controllers/breedingController");
@@ -17,6 +18,9 @@ router.get("/horses", getBreedingHorses);
 router.post("/horses", protect, adminOnly, upload.single("image"), createBreedingHorse);
 router.put("/horses/:id", protect, adminOnly, updateBreedingHorse);
 router.delete("/horses/:id", protect, adminOnly, deleteBreedingHorse);
+
+// User - view my submitted breeding requests
+router.get("/my-requests", protect, getMyBreedingRequests);
 
 // Public - "Submit Breeding Request" button (#apply form)
 router.post("/requests", createBreedingRequest);

@@ -153,3 +153,14 @@ exports.markHorseSold = async (req, res, next) => {
     next(error);
   }
 };
+
+// PUT /api/admin/horses/:id/mark-unsold
+exports.markHorseUnsold = async (req, res, next) => {
+  try {
+    const horse = await Horse.findByIdAndUpdate(req.params.id, { status: "approved" }, { new: true });
+    if (!horse) return res.status(404).json({ success: false, message: "Listing not found" });
+    res.status(200).json({ success: true, message: "Marked as unsold (available)", data: horse });
+  } catch (error) {
+    next(error);
+  }
+};

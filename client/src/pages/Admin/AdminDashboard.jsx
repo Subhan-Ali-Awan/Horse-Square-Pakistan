@@ -195,6 +195,14 @@ export const AdminDashboard = () => {
     }
   };
 
+  const handleMarkUnsold = async (id) => {
+    const res = await fetchWithAuth(`/admin/horses/${id}/mark-unsold`, { method: 'PUT' });
+    if (res.success) {
+      showToast(`Listing marked as UNSOLD (Available).`);
+      loadTabData();
+    }
+  };
+
   const handleCloseAuction = async (id) => {
     const res = await fetchWithAuth(`/admin/auctions/${id}/close`, { method: 'PUT' });
     if (res.success) {
@@ -331,14 +339,6 @@ export const AdminDashboard = () => {
 
         {/* Nav Items */}
         <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
-          <Link
-            to="/"
-            className="flex items-center gap-3.5 px-4.5 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all duration-300 text-slate-400 hover:bg-slate-800/40 hover:text-slate-100 border border-slate-800 bg-[#0B0F19]/40 mb-3"
-          >
-            <Globe className="w-4 h-4 text-[#D4AF37]" />
-            <span>Go to Website</span>
-          </Link>
-
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -419,13 +419,13 @@ export const AdminDashboard = () => {
                 {error}
               </span>
             )}
-            <button 
-              onClick={loadTabData} 
-              className="text-xs font-bold px-3.5 py-1.5 bg-white hover:bg-slate-50 text-slate-650 rounded-xl transition duration-300 border border-slate-200 shadow-sm flex items-center gap-2 cursor-pointer"
+            <Link
+              to="/"
+              className="text-xs font-bold px-4 py-2 bg-gradient-to-r from-[#0F172A] to-[#1E293B] hover:from-[#1E293B] hover:to-[#334155] text-[#D4AF37] rounded-xl transition duration-300 border border-[#D4AF37]/20 shadow-sm flex items-center gap-2"
             >
-              <RefreshCw className={`w-3.5 h-3.5 text-[#C9A227] ${loading ? 'animate-spin' : ''}`} />
-              <span>Refresh</span>
-            </button>
+              <Globe className="w-3.5 h-3.5 text-[#D4AF37]" />
+              <span>Go to Website</span>
+            </Link>
           </div>
         </header>
 
@@ -867,6 +867,14 @@ export const AdminDashboard = () => {
                               className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-[10px] transition cursor-pointer"
                             >
                               Mark Sold
+                            </button>
+                          )}
+                          {h.status === 'sold' && (
+                            <button
+                              onClick={() => handleMarkUnsold(h._id)}
+                              className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-bold rounded-lg text-[10px] transition cursor-pointer"
+                            >
+                              Mark Unsold
                             </button>
                           )}
                         </td>

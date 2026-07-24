@@ -128,7 +128,7 @@ export const Breeding = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-up space-y-8">
-      
+
       {/* Top Banner Header */}
       <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl border border-slate-800 relative overflow-hidden gold-gradient-bar">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
@@ -177,7 +177,7 @@ export const Breeding = () => {
             <h3 className="font-extrabold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2 pb-2 border-b">
               <Award className="w-4.5 h-4.5 text-[#D4AF37]" /> Breeding Season Insights
             </h3>
-            
+
             <div className="space-y-2.5 text-xs">
               <div className="flex justify-between items-center p-2.5 rounded-2xl bg-slate-50 border border-slate-100">
                 <span className="font-semibold text-slate-600">Active Stud Bookings</span>

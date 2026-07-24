@@ -9,6 +9,7 @@ const {
   approveHorse,
   rejectHorse,
   markHorseSold,
+  markHorseUnsold,
 } = require("../controllers/adminController");
 const { getAuctions, closeAuction, deleteAuction } = require("../controllers/auctionController");
 const { getBreedingRequests, updateBreedingRequestStatus } = require("../controllers/breedingController");
@@ -30,6 +31,7 @@ router.get("/horses", getAllHorsesAdmin);
 router.put("/horses/:id/approve", approveHorse);
 router.put("/horses/:id/reject", rejectHorse);
 router.put("/horses/:id/mark-sold", markHorseSold);
+router.put("/horses/:id/mark-unsold", markHorseUnsold);
 
 // Auctions
 router.get("/auctions", getAuctions);

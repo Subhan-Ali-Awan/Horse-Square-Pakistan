@@ -86,13 +86,17 @@ exports.createBreedingRequest = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Please fill in all required fields" });
     }
 
+    const rawHorseId = breedingHorseId || req.body.breedingHorse;
+    const validBreedingHorse = rawHorseId && mongoose.isValidObjectId(rawHorseId) ? rawHorseId : undefined;
+
     const request = await BreedingRequest.create({
       requesterName,
       phone,
       ownHorseName,
       preferredBreed,
       details,
-      breedingHorse: breedingHorseId || undefined,
+      breedingHorse: validBreedingHorse,
+      submittedBy: req.user ? req.user._id : undefined,
     });
 
     res.status(201).json({
@@ -100,6 +104,24 @@ exports.createBreedingRequest = async (req, res, next) => {
       message: "Your breeding request has been submitted successfully!",
       data: request,
     });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ===================================================
+// GET /api/breeding/my-requests (protected) -> user dashboard view
+// ===================================================
+exports.getMyBreedingRequests = async (req, res, next) => {
+  try {
+    const query = req.user
+      ? { $or: [{ submittedBy: req.user._id }, { phone: req.user.phone }] }
+      : {};
+    const requests = await BreedingRequest.find(query)
+      .populate("breedingHorse", "name breed image breedingFee")
+      .sort({ createdAt: -1 });
+
+    res.status(200).json({ success: true, count: requests.length, data: requests });
   } catch (error) {
     next(error);
   }
