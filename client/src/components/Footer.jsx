@@ -30,12 +30,12 @@ export const Footer = () => {
             {/* Column 1: Brand & Tagline (4 Cols) */}
             <div className="lg:col-span-4 space-y-4">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-2xl bg-gradient-to-tr from-[#D4AF37] to-[#F59E0B] flex items-center justify-center shadow-lg text-slate-950 font-black">
-                  <Sparkles className="w-5 h-5" />
+                <div className="w-10 h-10 rounded-full overflow-hidden border border-[#D4AF37]/60 p-0.5 bg-[#020B21] shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center shrink-0">
+                  <img src="/login and registeration .png" alt="HorseSquare Logo" className="w-full h-full object-cover rounded-full" />
                 </div>
                 <div>
                   <h3 className="font-black text-lg text-white tracking-tight leading-none">
-                    HorseSquare <span className="text-[#D4AF37]">Pakistan</span>
+                    Horse-Square-Pakistan
                   </h3>
                   <span className="text-[9px] font-extrabold text-[#D4AF37] tracking-[0.2em] uppercase block mt-1">
                     EQUESTRIAN PLATFORM

@@ -36,7 +36,6 @@ export const Login = () => {
         } else {
           navigate('/');
         }
-
       } else {
         setError(data.message || 'Login failed. Please check your credentials.');
       }
@@ -54,25 +53,23 @@ export const Login = () => {
 
         {/* Left Side: Premium Brand Visuals (Desktop only) */}
         <div className="hidden md:flex md:col-span-5 bg-gradient-to-br from-[#020B21] via-[#030F2D] to-[#010512] p-10 flex-col justify-between relative overflow-hidden text-white border-r border-[#D4AF37]/20 h-full">
-          {/* Animated Glow Elements */}
-          <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl animate-pulse"></div>
-          <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-amber-500/5 rounded-full blur-3xl animate-pulse" style={{ animationDelay: '2s' }}></div>
+          {/* Ambient Glow Elements */}
+          <div className="absolute top-[-10%] left-[-10%] w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl"></div>
+          <div className="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-amber-500/5 rounded-full blur-3xl"></div>
 
           {/* Top: Logo & Brand Header */}
-          <div className="relative z-10 flex items-center gap-3 animate-fade-in">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#020B21]/80 to-[#1E293B]/80 flex items-center justify-center shadow-lg border border-[#D4AF37]/30">
-              <svg className="w-6 h-6" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M55 130C62 133 72 131 82 125C92 118 97 106 97 92C97 85 91 80 87 71C84 62 86 52 86 52C86 52 92 56 95 62C98 67 101 72 106 78C110 83 118 88 128 90C138 92 146 90 152 86C145 92 135 96 126 98C117 100 109 105 104 113C99 121 95 132 93 145C91 138 88 132 82 127C76 122 66 122 55 130Z" fill="#D4AF37" />
-              </svg>
+          <div className="relative z-10 flex items-center gap-3">
+            <div className="w-11 h-11 rounded-full overflow-hidden border border-[#D4AF37]/60 p-0.5 bg-[#020B21] shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center shrink-0">
+              <img src="/login and registeration .png" alt="HorseSquare Logo" className="w-full h-full object-cover rounded-full" />
             </div>
             <div>
               <span className="text-[10px] font-bold tracking-[0.25em] text-[#D4AF37] uppercase block leading-none mb-0.5">Platform</span>
-              <span className="font-extrabold text-sm tracking-tight text-white leading-none">HorseSquare</span>
+              <span className="font-extrabold text-sm tracking-tight text-white leading-none">Horse-Square-Pakistan</span>
             </div>
           </div>
 
           {/* Center: Heading & Majestic Horse Image Card */}
-          <div className="relative z-10 my-auto py-6 animate-fade-in" style={{ animationDelay: '0.15s' }}>
+          <div className="relative z-10 my-auto py-6">
             <h2 className="text-sm font-bold tracking-[0.15em] text-[#D4AF37] uppercase mb-1.5">
               Welcome back
             </h2>
@@ -80,59 +77,45 @@ export const Login = () => {
               Pakistan's Premier <span className="text-[#D4AF37] block mt-0.5">Equine Portal</span>
             </h1>
 
-
-            {/* Majestic Framed Horse Photo Card */}
-            <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#D4AF37]/20 shadow-2xl relative group bg-[#020B21]">
-              <img
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                src="/login and registeration .png"
-                alt="Majestic Stallion"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#020B21]/60 via-transparent to-transparent"></div>
-              <div className="absolute bottom-4.5 left-4.5 text-[10px] font-bold text-white tracking-wide uppercase flex items-center gap-2 bg-[#020B21]/70 backdrop-blur-md py-2 px-3.5 rounded-full border border-[#D4AF37]/20 shadow-lg">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#D4AF37] animate-pulse"></span>
-                <span>Verified breeds & active auctions</span>
+            {/* Majestic Clean Golden Stallion Emblem */}
+            <div className="relative flex flex-col items-center justify-center py-2 my-2">
+              <div className="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center group">
+                <img
+                  className="w-full h-full object-contain filter drop-shadow-[0_10px_25px_rgba(212,175,55,0.35)] transition-transform duration-700 group-hover:scale-105"
+                  src="/login and registeration .png"
+                  alt="Majestic Stallion"
+                />
               </div>
             </div>
           </div>
 
-          {/* Bottom: Premium Footer Checklist */}
-
+          {/* Bottom Footer Note */}
+          <div className="relative z-10 pt-4 border-t border-white/10 text-xs text-slate-400">
+            © 2026 HorseSquare Pakistan. All rights reserved.
+          </div>
         </div>
 
-        {/* Right Side: Login Form */}
-        <div className="col-span-1 md:col-span-7 flex flex-col p-6 sm:p-8 lg:p-10 bg-slate-50/50 backdrop-blur-sm relative h-full overflow-x-hidden overflow-y-auto md:overflow-y-hidden">
-          {/* Subtle gold accent background glow */}
-          <div className="absolute top-1/4 right-0 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
+        {/* Right Side: Clean Login Form */}
+        <div className="col-span-1 md:col-span-7 flex flex-col p-6 sm:p-8 lg:p-10 bg-slate-50/60 relative h-full overflow-x-hidden overflow-y-auto justify-center items-center">
 
-          {/* Elegant Stallion Watermark in Background */}
-          <div className="absolute bottom-[-5%] right-[-5%] w-80 h-80 pointer-events-none select-none">
-            <svg className="w-full h-full opacity-[0.035] text-[#D4AF37] fill-current transform rotate-12" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-              <path d="M55 130C62 133 72 131 82 125C92 118 97 106 97 92C97 85 91 80 87 71C84 62 86 52 86 52C86 52 92 56 95 62C98 67 101 72 106 78C110 83 118 88 128 90C138 92 146 90 152 86C145 92 135 96 126 98C117 100 109 105 104 113C99 121 95 132 93 145C91 138 88 132 82 127C76 122 66 122 55 130Z" />
-            </svg>
-          </div>
-
-          <div className="w-full max-w-md mx-auto my-auto py-2">
-            {/* Elegant Horse Badge Emblem at Top */}
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0F172A] to-[#1E293B] flex items-center justify-center mb-6 shadow-lg border border-[#D4AF37]/35 mx-auto md:mx-0 group-hover:scale-105 transition-transform duration-300">
-              <svg className="w-8 h-8 drop-shadow-[0_2px_4px_rgba(212,175,55,0.3)]" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M55 130C62 133 72 131 82 125C92 118 97 106 97 92C97 85 91 80 87 71C84 62 86 52 86 52C86 52 92 56 95 62C98 67 101 72 106 78C110 83 118 88 128 90C138 92 146 90 152 86C145 92 135 96 126 98C117 100 109 105 104 113C99 121 95 132 93 145C91 138 88 132 82 127C76 122 66 122 55 130Z" fill="#D4AF37" />
-                <path d="M78 55C76 50 78 45 80 40C82 35 85 32 85 32C85 32 83 38 82 43C81 48 80 52 78 55Z" fill="#D4AF37" opacity="0.8" />
-              </svg>
+          <div className="w-full max-w-md mx-auto my-auto py-2 relative z-10">
+            {/* Emblem Badge */}
+            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#D4AF37]/60 p-0.5 bg-[#020B21] shadow-[0_0_20px_rgba(212,175,55,0.35)] flex items-center justify-center mb-6 mx-auto md:mx-0 shrink-0">
+              <img src="/login and registeration .png" alt="HorseSquare Logo" className="w-full h-full object-cover rounded-full" />
             </div>
 
-            {/* Logo header (only visible on mobile) */}
+            {/* Mobile Header */}
             <div className="md:hidden text-center mb-6">
               <h1 className="text-4xl font-extrabold text-slate-900 tracking-tight">
-                HorseSquare <span className="text-[#D4AF37]">Pakistan</span>
+                Horse-Square-Pakistan
               </h1>
               <p className="text-slate-500 text-sm mt-3.5">Login to manage your account and marketplace listings</p>
             </div>
 
-            {/* Desktop header */}
+            {/* Desktop Header */}
             <div className="hidden md:block mb-6">
-              <h2 className="text-3xl font-extrabold text-slate-800 tracking-tight">Welcome Back</h2>
-              <p className="text-slate-500 text-sm mt-2">Please enter your credentials to access your account.</p>
+              <h2 className="text-3xl font-extrabold text-slate-900 tracking-tight">Welcome Back</h2>
+              <p className="text-slate-600 text-sm mt-2">Please enter your credentials to access your account.</p>
             </div>
 
             {registeredMessage && (
@@ -143,7 +126,7 @@ export const Login = () => {
             )}
 
             {error && (
-              <div className="bg-red-50/80 backdrop-blur-sm text-red-700 p-4.5 rounded-2xl text-xs mb-6 border border-red-200/50 flex items-start gap-3.5 shadow-sm animate-shake">
+              <div className="bg-red-50 text-red-700 p-4.5 rounded-2xl text-xs mb-6 border border-red-200 flex items-start gap-3.5 shadow-sm">
                 <AlertCircle className="w-5 h-5 shrink-0 text-red-500 mt-0.5" />
                 <div className="space-y-0.5">
                   <span className="font-semibold block">Authentication Error</span>
@@ -156,7 +139,7 @@ export const Login = () => {
 
               {/* Email field */}
               <div className="space-y-2">
-                <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+                <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
                   Email Address
                 </label>
                 <div className="relative group focus-within:text-[#D4AF37]">
@@ -167,7 +150,7 @@ export const Login = () => {
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     autoComplete="off"
-                    className="w-full pl-11 pr-4 py-3.5 border border-slate-200 rounded-2xl bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm focus:shadow-md transition-all duration-300"
+                    className="w-full pl-11 pr-4 py-3.5 border border-slate-300 rounded-2xl bg-white text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all duration-300"
                   />
                   <Mail className="w-5 h-5 text-slate-400 group-focus-within:text-[#D4AF37] absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors duration-300 pointer-events-none" />
                 </div>
@@ -176,7 +159,7 @@ export const Login = () => {
               {/* Password field */}
               <div className="space-y-2">
                 <div className="flex justify-between items-center">
-                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-600">
+                  <label className="block text-xs font-bold uppercase tracking-wider text-slate-700">
                     Password
                   </label>
                 </div>
@@ -188,7 +171,7 @@ export const Login = () => {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     autoComplete="new-password"
-                    className="w-full pl-11 pr-11 py-3.5 border border-slate-200 rounded-2xl bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm focus:shadow-md transition-all duration-300"
+                    className="w-full pl-11 pr-11 py-3.5 border border-slate-300 rounded-2xl bg-white text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all duration-300"
                   />
                   <Lock className="w-5 h-5 text-slate-400 group-focus-within:text-[#D4AF37] absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors duration-300 pointer-events-none" />
 
@@ -210,7 +193,7 @@ export const Login = () => {
 
               {/* Remember & Forgot options */}
               <div className="flex justify-between items-center text-xs pt-1">
-                <label className="flex items-center text-slate-600 gap-2.5 cursor-pointer select-none">
+                <label className="flex items-center text-slate-700 font-medium gap-2.5 cursor-pointer select-none">
                   <input
                     type="checkbox"
                     className="rounded border-slate-300 text-[#D4AF37] focus:ring-amber-500/30 w-4 h-4 accent-[#D4AF37] cursor-pointer"
@@ -246,7 +229,7 @@ export const Login = () => {
             </form>
 
             {/* Bottom link */}
-            <div className="mt-6 pt-6 border-t border-slate-200/60 text-center text-xs text-slate-500">
+            <div className="mt-6 pt-6 border-t border-slate-200/60 text-center text-xs text-slate-600">
               Don't have an account yet?{' '}
               <Link to="/register" className="text-[#D4AF37] font-bold hover:text-[#B8942A] transition-colors hover:underline">
                 Create Account

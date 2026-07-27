@@ -13,13 +13,13 @@ async function seedAdmin() {
     let admin = await User.findOne({ email: adminEmail });
     if (!admin) {
       admin = await User.create({
-        firstName: "Super",
-        lastName: "Admin",
+        firstName: "Admin",
+        lastName: "",
         email: adminEmail,
         phone: "+923000000000",
         city: "Lahore",
         password: adminPassword,
-        userType: "Horse Seller", // arbitrary, not used for admins
+        userType: "User", // arbitrary, not used for admins
         role: "admin",
       });
 
@@ -27,6 +27,10 @@ async function seedAdmin() {
       console.log(`   Email: ${adminEmail}`);
       console.log(`   Password: ${adminPassword}`);
       console.log("   ⚠️  Change this password after first login in a real deployment.");
+    } else if (admin.firstName === "Super" || (admin.firstName + " " + admin.lastName).trim() === "Super Admin") {
+      admin.firstName = "Admin";
+      admin.lastName = "";
+      await admin.save();
     }
 
     // Seed default horses and auctions for the live marketplace/auction demo

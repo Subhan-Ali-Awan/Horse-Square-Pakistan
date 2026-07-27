@@ -74,6 +74,25 @@ export const Navbar = () => {
     navigate('/login');
   };
 
+  const getDisplayFirstName = () => {
+    if (!user) return '';
+    const first = user.firstName || user.name || '';
+    if (first.toLowerCase() === 'super' || first.toLowerCase() === 'super admin') return 'Admin';
+    return first;
+  };
+
+  const getDisplayFullName = () => {
+    if (!user) return '';
+    const full = user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : (user.name || '');
+    if (full.toLowerCase() === 'super admin' || full.toLowerCase() === 'super' || full.toLowerCase() === 'super admin admin') return 'Admin';
+    return full;
+  };
+
+  const getAvatarInitial = () => {
+    const first = getDisplayFirstName();
+    return first ? first[0].toUpperCase() : 'A';
+  };
+
   return (
     <header className="sticky top-0 z-50 bg-[#0B0F19]/95 backdrop-blur-md border-b border-slate-800/80 text-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -81,8 +100,11 @@ export const Navbar = () => {
 
           {/* Logo / Brand */}
           <Link to="/" className="flex items-center gap-3 group">
+            <div className="w-10 h-10 rounded-full overflow-hidden border border-[#D4AF37]/60 p-0.5 bg-[#020B21] shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+              <img src="/login and registeration .png" alt="HorseSquare Logo" className="w-full h-full object-cover rounded-full" />
+            </div>
             <span className="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-white via-amber-100 to-[#D4AF37] bg-clip-text text-transparent group-hover:opacity-90 transition">
-              Horse-Square <span className="text-[#D4AF37]">Pakistan</span>
+              Horse-Square-Pakistan
             </span>
           </Link>
 
@@ -227,10 +249,10 @@ export const Navbar = () => {
                   className="flex items-center gap-2.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-[#D4AF37]/60 px-3 py-1.5 rounded-full transition-all duration-200 cursor-pointer shadow-sm group"
                 >
                   <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F59E0B] text-slate-950 font-black text-xs flex items-center justify-center shadow-inner ring-2 ring-amber-500/20 group-hover:scale-105 transition duration-200">
-                    {user.firstName ? user.firstName[0].toUpperCase() : user.name ? user.name[0].toUpperCase() : 'U'}
+                    {getAvatarInitial()}
                   </div>
                   <span className="text-xs font-extrabold text-slate-200 group-hover:text-amber-300 transition max-w-[110px] truncate">
-                    {user.firstName || user.name}
+                    {getDisplayFirstName()}
                   </span>
                   <ChevronDown className={`w-3.5 h-3.5 text-slate-400 group-hover:text-amber-400 transition-transform duration-200 ${isProfileOpen ? 'rotate-180' : ''}`} />
                 </button>
@@ -246,15 +268,15 @@ export const Navbar = () => {
                   {/* User Profile Summary Header */}
                   <div className="p-4 bg-gradient-to-r from-slate-900 to-[#1E293B] border-b border-slate-800 flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F59E0B] text-slate-950 font-black text-sm flex items-center justify-center shrink-0 shadow">
-                      {user.firstName ? user.firstName[0].toUpperCase() : user.name ? user.name[0].toUpperCase() : 'U'}
+                      {getAvatarInitial()}
                     </div>
                     <div className="overflow-hidden">
                       <h4 className="text-xs font-black text-white truncate">
-                        {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.name}
+                        {getDisplayFullName()}
                       </h4>
                       <p className="text-[10px] text-slate-400 truncate">{user.email}</p>
                       <span className="inline-block mt-1 px-2 py-0.5 text-[9px] font-extrabold uppercase tracking-wider rounded bg-amber-500/10 text-amber-300 border border-amber-500/20">
-                        {user.role === 'admin' ? '🛡️ Super Admin' : '👤 Member'}
+                        {user.role === 'admin' ? '🛡️ Admin' : '👤 Member'}
                       </span>
                     </div>
                   </div>
@@ -405,11 +427,11 @@ export const Navbar = () => {
               <div className="space-y-3 px-3">
                 <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-900 border border-slate-800">
                   <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F59E0B] text-slate-950 font-black text-sm flex items-center justify-center shrink-0 shadow">
-                    {user.firstName ? user.firstName[0].toUpperCase() : user.name ? user.name[0].toUpperCase() : 'U'}
+                    {getAvatarInitial()}
                   </div>
                   <div className="overflow-hidden">
                     <div className="text-xs font-bold text-white truncate">
-                      {user.firstName ? `${user.firstName} ${user.lastName || ''}`.trim() : user.name}
+                      {getDisplayFullName()}
                     </div>
                     <div className="text-[10px] text-slate-400 truncate">{user.email}</div>
                   </div>

@@ -87,7 +87,7 @@ export const QueryChatModal = ({ isOpen, onClose, query, currentUser, onQueryUpd
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="" maxWidth="max-w-2xl">
       <div className="space-y-4">
-        
+
         {/* Chat Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 border-b border-slate-200 pb-4">
           <div>
@@ -117,7 +117,7 @@ export const QueryChatModal = ({ isOpen, onClose, query, currentUser, onQueryUpd
 
         {/* Scrollable Conversation Thread */}
         <div className="max-h-[380px] overflow-y-auto space-y-4 pr-2 p-1 bg-slate-50/50 rounded-2xl border border-slate-100">
-          
+
           {/* Initial Message from User */}
           <div className={`flex flex-col ${isAdmin ? 'items-start' : 'items-end'} space-y-1`}>
             <div className="flex items-center gap-2 text-[11px] font-bold text-slate-500 px-1">
@@ -128,11 +128,10 @@ export const QueryChatModal = ({ isOpen, onClose, query, currentUser, onQueryUpd
                 {new Date(query.createdAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
               </span>
             </div>
-            <div className={`p-4 rounded-2xl shadow-sm text-xs leading-relaxed max-w-[85%] ${
-              !isAdmin 
-                ? 'bg-amber-100 text-slate-900 border border-amber-300 rounded-tr-none font-medium' 
-                : 'bg-white text-slate-800 border border-slate-200 rounded-tl-none font-normal'
-            }`}>
+            <div className={`p-4 rounded-2xl shadow-sm text-xs leading-relaxed max-w-[85%] ${!isAdmin
+              ? 'bg-amber-100 text-slate-900 border border-amber-300 rounded-tr-none font-medium'
+              : 'bg-white text-slate-800 border border-slate-200 rounded-tl-none font-normal'
+              }`}>
               {query.message}
             </div>
           </div>
@@ -170,11 +169,10 @@ export const QueryChatModal = ({ isOpen, onClose, query, currentUser, onQueryUpd
                 </div>
 
                 <div
-                  className={`p-4 rounded-2xl shadow-sm text-xs leading-relaxed max-w-[85%] ${
-                    isFromAdmin
-                      ? 'bg-[#0F172A] text-white border border-slate-800 ' + (isMe ? 'rounded-tr-none' : 'rounded-tl-none')
-                      : 'bg-amber-100 text-slate-900 border border-amber-300 ' + (isMe ? 'rounded-tr-none font-medium' : 'rounded-tl-none')
-                  }`}
+                  className={`p-4 rounded-2xl shadow-sm text-xs leading-relaxed max-w-[85%] ${isFromAdmin
+                    ? 'bg-[#0F172A] text-white border border-slate-800 ' + (isMe ? 'rounded-tr-none' : 'rounded-tl-none')
+                    : 'bg-amber-100 text-slate-900 border border-amber-300 ' + (isMe ? 'rounded-tr-none font-medium' : 'rounded-tl-none')
+                    }`}
                 >
                   {reply.message}
                 </div>

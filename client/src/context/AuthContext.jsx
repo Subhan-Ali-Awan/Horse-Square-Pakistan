@@ -7,6 +7,19 @@ export const AuthProvider = ({ children }) => {
   const [token, setToken] = useState(localStorage.getItem('token') || '');
   const [initializing, setInitializing] = useState(true); // true until auth is restored
 
+  const sanitizeUser = (u) => {
+    if (!u) return u;
+    if (u.firstName === 'Super' || u.name === 'Super Admin' || u.name === 'Super' || (u.firstName + ' ' + (u.lastName || '')).trim() === 'Super Admin') {
+      return {
+        ...u,
+        firstName: 'Admin',
+        lastName: u.lastName === 'Admin' ? '' : (u.lastName || ''),
+        name: 'Admin'
+      };
+    }
+    return u;
+  };
+
   useEffect(() => {
     const storedToken = localStorage.getItem('token');
     const storedUser = localStorage.getItem('user');
@@ -14,7 +27,12 @@ export const AuthProvider = ({ children }) => {
     if (storedToken && storedUser) {
       try {
         setToken(storedToken);
-        setUser(JSON.parse(storedUser));
+        const parsed = JSON.parse(storedUser);
+        const cleaned = sanitizeUser(parsed);
+        setUser(cleaned);
+        if (JSON.stringify(cleaned) !== storedUser) {
+          localStorage.setItem('user', JSON.stringify(cleaned));
+        }
       } catch (e) {
         console.error('Error parsing user', e);
         localStorage.removeItem('token');
@@ -26,10 +44,11 @@ export const AuthProvider = ({ children }) => {
   }, []); // runs once on mount
 
   const login = (newToken, userData) => {
+    const cleaned = sanitizeUser(userData);
     localStorage.setItem('token', newToken);
-    localStorage.setItem('user', JSON.stringify(userData));
+    localStorage.setItem('user', JSON.stringify(cleaned));
     setToken(newToken);
-    setUser(userData);
+    setUser(cleaned);
   };
 
   const logout = () => {

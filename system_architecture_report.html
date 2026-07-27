@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>HorseSquare Pakistan - System Architecture & Engineering Manual</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&family=Fira+Code:wght@400;600&display=swap');
+  
+  :root {
+    --primary: #0f172a;
+    --accent: #2563eb;
+    --accent-light: #38bdf8;
+    --gold: #d97706;
+    --bg-card: #1e293b;
+    --text-main: #f8fafc;
+    --text-muted: #94a3b8;
+    --border: #334155;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #090d16;
+    color: var(--text-main);
+    line-height: 1.6;
+    padding: 0;
+  }
+
+  .page {
+    width: 210mm;
+    min-height: 297mm;
+    padding: 20mm;
+    margin: 10px auto;
+    background: #0f172a;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    page-break-after: always;
+    position: relative;
+  }
+
+  @media print {
+    body { background: none; }
+    .page {
+      margin: 0;
+      border: none;
+      box-shadow: none;
+      width: 100%;
+      height: 100%;
+      page-break-after: always;
+    }
+    .no-print { display: none; }
+  }
+
+  .cover-page {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 100%);
+  }
+
+  .badge {
+    background: rgba(37, 99, 235, 0.2);
+    color: var(--accent-light);
+    border: 1px solid var(--accent);
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: 600;
+    margin-bottom: 24px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+
+  h1 { font-size: 32px; font-weight: 800; color: #ffffff; margin-bottom: 12px; }
+  h2 { font-size: 22px; font-weight: 700; color: var(--accent-light); margin-top: 20px; margin-bottom: 12px; border-bottom: 2px solid var(--border); padding-bottom: 6px; }
+  h3 { font-size: 16px; font-weight: 600; color: #fbbf24; margin-top: 14px; margin-bottom: 8px; }
+
+  p { font-size: 14px; color: var(--text-muted); margin-bottom: 12px; }
+
+  .arch-image {
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--accent);
+    box-shadow: 0 8px 24px rgba(37, 99, 235, 0.3);
+    margin: 16px 0;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 16px 0;
+    font-size: 13px;
+  }
+  th { background: #1e293b; color: var(--accent-light); text-align: left; padding: 10px; border: 1px solid var(--border); }
+  td { padding: 10px; border: 1px solid var(--border); color: var(--text-main); }
+  tr:nth-child(even) { background: rgba(255,255,255,0.02); }
+
+  code {
+    font-family: 'Fira Code', monospace;
+    background: #1e293b;
+    color: #38bdf8;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+
+  pre {
+    background: #020617;
+    border: 1px solid var(--border);
+    padding: 14px;
+    border-radius: 8px;
+    font-family: 'Fira Code', monospace;
+    font-size: 12px;
+    color: #e2e8f0;
+    overflow-x: auto;
+    margin: 12px 0;
+  }
+
+  .footer-note {
+    position: absolute;
+    bottom: 15mm;
+    left: 20mm;
+    right: 20mm;
+    display: flex;
+    justify-content: space-between;
+    font-size: 11px;
+    color: var(--text-muted);
+    border-top: 1px solid var(--border);
+    padding-top: 8px;
+  }
+
+  .print-btn {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background: var(--accent);
+    color: #fff;
+    border: none;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 700;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(37,99,235,0.4);
+    z-index: 1000;
+  }
+  .print-btn:hover { background: #1d4ed8; }
+</style>
+</head>
+<body>
+
+<button class="print-btn no-print" onclick="window.print()">🖨️ Save as PDF / Print</button>
+
+<!-- COVER PAGE -->
+<div class="page cover-page">
+  <div class="badge">Chapter-Wise Systems Engineering Manual v2.0</div>
+  <h1 style="font-size: 38px;">🐎 HorseSquare Pakistan</h1>
+  <p style="font-size: 16px; color: #94a3b8; max-width: 580px; margin-top: 10px;">
+    End-to-End System Architecture, Front-End (14 Pages) & Back-End Request Flows, Database ERD, and Real-Time AI Vet Doctor Multimodal Blueprint.
+  </p>
+
+  <div style="margin-top: 30px; padding: 20px; background: rgba(30, 41, 59, 0.8); border-radius: 12px; border: 1px solid var(--border); text-align: left; width: 100%; max-width: 520px;">
+    <p style="margin: 4px 0; color: #fff;"><strong>Implementation Audit:</strong> 80% Completed State</p>
+    <p style="margin: 4px 0; color: #fff;"><strong>Front-End:</strong> React 18, Vite, React Router v6, AuthContext</p>
+    <p style="margin: 4px 0; color: #fff;"><strong>Back-End:</strong> Node.js, Express REST API, Multer Storage</p>
+    <p style="margin: 4px 0; color: #fff;"><strong>Database:</strong> MongoDB + Mongoose ODM (ERD Included)</p>
+    <p style="margin: 4px 0; color: #fff;"><strong>Date:</strong> July 2026</p>
+  </div>
+
+  <div class="footer-note">
+    <span>HorseSquare Pakistan Technical Documentation</span>
+    <span>Page 1 of 10</span>
+  </div>
+</div>
+
+<!-- CHAPTER 1: Overview & Stack -->
+<div class="page">
+  <h2>Chapter 1: Project Architecture & Tech Stack Breakdown</h2>
+  <p>HorseSquare Pakistan is built as a decoupled Single Page Application (SPA) communicating with a Node.js/Express REST API service and MongoDB document store.</p>
+
+  <img src="C:/Users/Acer/.gemini/antigravity-ide/brain/e30d0654-a243-478f-8428-89d86e1e48b2/system_architecture_diagram_1785179513437.png" class="arch-image" alt="System Architecture Diagram">
+
+  <h3>Tech Stack Breakdown</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Layer</th>
+        <th>Technologies Used</th>
+        <th>Purpose & Responsibilities</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Front-End</strong></td>
+        <td>React 18, Vite, React Router v6, Lucide Icons, HSL Token CSS</td>
+        <td>Component-based dynamic UI rendering, SPA client-side routing, theme styling, and state management.</td>
+      </tr>
+      <tr>
+        <td><strong>State & Auth</strong></td>
+        <td>AuthContext, LocalStorage API, JWT Bearer Token</td>
+        <td>Centralized global authentication persistence, route protection, and request authorization headers.</td>
+      </tr>
+      <tr>
+        <td><strong>Back-End</strong></td>
+        <td>Node.js, Express.js, CORS, Morgan, Multer, Dotenv</td>
+        <td>RESTful API routing, image file upload management, request logging, and middleware processing.</td>
+      </tr>
+      <tr>
+        <td><strong>Database</strong></td>
+        <td>MongoDB Community / Atlas, Mongoose ODM</td>
+        <td>Document database storing User, Horse, Auction, Breeding, and Vet inquiry records with text & compound indexes.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <div class="footer-note">
+    <span>HorseSquare Pakistan Technical Documentation</span>
+    <span>Page 2 of 10</span>
+  </div>
+</div>
+
+<!-- CHAPTER 2: Front-End Architecture & Page-by-Page Flow -->
+<div class="page">
+  <h2>Chapter 2: Front-End Architecture & Page-by-Page Flow (14 Pages)</h2>
+  <p>The client application contains 14 distinct page views organized under React Router DOM v6:</p>
+
+  <pre>
+Client Directory Structure:
+client/src/
+ ├── components/ (Navbar.jsx, Footer.jsx, Modal.jsx, QueryChatModal.jsx)
+ ├── context/    (AuthContext.jsx - Global Token & User State)
+ └── pages/      (Home, Marketplace, Auction, Breeding, VetDoctor, SellHorse, 
+                  Admin, Dashboard, Login, Register, ForgotPassword, RidingSchool, Contact, Blog)
+  </pre>
+
+  <h3>Detailed Flow for All 14 Pages:</h3>
+  <ol>
+    <li><code>Home.jsx</code>: Hero section, featured breed spotlight, quick navigation. Fetches spotlight horses via <code>GET /api/horses?spotlight=true</code>.</li>
+    <li><code>Marketplace.jsx</code>: Multi-criteria filter engine (Breed, City, Price slider). Sends dynamic queries to <code>GET /api/horses</code> and renders interactive horse cards with seller contact modals.</li>
+    <li><code>Auction.jsx</code>: Displays active live auctions, highest bid, and countdown timer. Accepts user bids via <code>POST /api/auctions/:id/bid</code> after verifying <code>amount > currentBid</code>.</li>
+    <li><code>Breeding.jsx</code>: Champion stallion showcase. Submits stud booking requests via <code>POST /api/breeding/request</code>.</li>
+    <li><code>VetDoctor.jsx</code>: Equine symptom checker (fever, injury, foot swelling, cough) and city-wise doctor directory. Submits to <code>POST /api/vet/check</code>.</li>
+    <li><code>SellHorse.jsx</code>: Seller submission form. Packages horse details and photo files into <code>FormData</code> for submission to <code>POST /api/horses</code> (handled by Multer).</li>
+    <li><code>AdminDashboard.jsx</code>: Listing moderation queue (Approve/Reject) and user governance (Active/Block toggle). Protected by <code>adminMiddleware.js</code>.</li>
+    <li><code>UserDashboard.jsx</code>: Displays seller's posted listings with approval status badges (Pending, Approved, Rejected, Sold).</li>
+    <li><code>Login.jsx</code> & <code>Register.jsx</code>: User authentication. Login saves JWT token to <code>localStorage</code> via <code>AuthContext.jsx</code>.</li>
+    <li><code>ForgotPassword.jsx</code>, <code>RidingSchool.jsx</code>, <code>Contact.jsx</code>, <code>Blog.jsx</code>: Supporting views for password resets, academy inquiries, contact messages, and equine health blogs.</li>
+  </ol>
+
+  <div class="footer-note">
+    <span>HorseSquare Pakistan Technical Documentation</span>
+    <span>Page 3 of 10</span>
+  </div>
+</div>
+
+<!-- CHAPTER 3: Request Pipeline - Front-End to Back-End API Flow -->
+<div class="page">
+  <h2>Chapter 3: Request Pipeline — Front-End to Back-End API Flow</h2>
+  <p>Below is the complete step-by-step lifecycle of an API request moving from the React UI to the MongoDB database and back:</p>
+
+  <pre>
+API Execution Pipeline Trace:
+1. [React UI] User submits form (e.g. SellHorse.jsx)
+2. [Fetch API] Constructs HTTP request with Authorization: Bearer &lt;token&gt; header
+3. [Network] Transmits request to Express server (http://localhost:5000/api/horses)
+4. [Express Core] Passes through cors(), express.json(), and morgan() loggers
+5. [authMiddleware.js] Extracts JWT token and validates with jwt.verify()
+6. [Multer Engine] Intercepts multipart/form-data and writes images to /uploads
+7. [Controller] Executes business logic & constructs Mongoose document
+8. [MongoDB] Mongoose saves document into horses collection
+9. [Express Response] Returns HTTP 201 Created JSON { success: true, horse }
+10. [React Component] State updates, triggering Virtual DOM diffing & screen navigation
+  </pre>
+
+  <h3>Authentication Headers & Authorization</h3>
+  <p>All protected backend endpoints check the HTTP Authorization header format: <code>Authorization: Bearer &lt;JWT_TOKEN&gt;</code>. If missing or invalid, <code>authMiddleware.js</code> rejects the request with HTTP 401 Unauthorized.</p>
+
+  <div class="footer-note">
+    <span>HorseSquare Pakistan Technical Documentation</span>
+    <span>Page 4 of 10</span>
+  </div>
+</div>
+
+<!-- CHAPTER 4: Back-End Architecture -->
+<div class="page">
+  <h2>Chapter 4: Back-End Architecture & Express Router Flow</h2>
+  <p>The backend follows a modular Controller-Route-Service pattern for scalable REST API management.</p>
+
+  <table>
+    <thead>
+      <tr>
+        <th>Route File</th>
+        <th>Base Endpoint</th>
+        <th>Associated Controllers & Functions</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td><code>authRoutes.js</code></td><td><code>/api/auth</code></td><td><code>register()</code>, <code>login()</code>, <code>forgotPassword()</code></td></tr>
+      <tr><td><code>horseRoutes.js</code></td><td><code>/api/horses</code></td><td><code>getHorses()</code>, <code>createHorse()</code>, <code>getMyListings()</code></td></tr>
+      <tr><td><code>auctionRoutes.js</code></td><td><code>/api/auctions</code></td><td><code>getAuctions()</code>, <code>placeBid()</code>, <code>createAuction()</code></td></tr>
+      <tr><td><code>breedingRoutes.js</code></td><td><code>/api/breeding</code></td><td><code>getBreedingHorses()</code>, <code>submitRequest()</code></td></tr>
+      <tr><td><code>vetRoutes.js</code></td><td><code>/api/vet</code></td><td><code>checkSymptoms()</code>, <code>getInquiries()</code></td></tr>
+      <tr><td><code>adminRoutes.js</code></td><td><code>/api/admin</code></td><td><code>getPending()</code>, <code>approveListing()</code>, <code>toggleUserStatus()</code></td></tr>
+    </tbody>
+  </table>
+
+  <h3>Error Handling & DB Resilience</h3>
+  <p>All async controllers are wrapped in error handlers. If the primary MongoDB server is unavailable, <code>config/db.js</code> launches an in-memory Mongo server automatically to prevent developer workflow interruption.</p>
+
+  <div class="footer-note">
+    <span>HorseSquare Pakistan Technical Documentation</span>
+    <span>Page 5 of 10</span>
+  </div>
+</div>
+
+<!-- CHAPTER 5: Database Architecture & ERD Diagram -->
+<div class="page">
+  <h2>Chapter 5: Database Architecture & Entity-Relationship Diagram (ERD)</h2>
+  <p>The MongoDB database utilizes 6 primary collections linked via Mongoose ObjectId references:</p>
+
+  <pre>
+Collection Relationships & Foreign Keys:
+- User (_id) <------- (postedBy) Horse
+- User (_id) <------- (createdBy) Auction
+- User (_id) <------- (bidder) Auction.bids[]
+- User (_id) <------- (submittedBy) BreedingRequest
+- BreedingHorse (_id) <--- (breedingHorse) BreedingRequest
+- User (_id) <------- (submittedBy) VetInquiry
+  </pre>
+
+  <h3>Database Indexing Strategy</h3>
+  <ul>
+    <li><strong style="color:#fff;">Full-Text Search Index:</strong> <code>horseSchema.index({ name: "text", description: "text" })</code> for keyword searches.</li>
+    <li><strong style="color:#fff;">Compound Filter Index:</strong> <code>horseSchema.index({ breed: 1, price: 1, location: 1 })</code> for ultra-fast Marketplace queries.</li>
+  </ul>
+
+  <div class="footer-note">
+    <span>HorseSquare Pakistan Technical Documentation</span>
+    <span>Page 6 of 10</span>
+  </div>
+</div>
+
+<!-- CHAPTER 6: AI Vet Doctor & Real-Time Enhancements -->
+<div class="page">
+  <h2>Chapter 6: AI Vet Doctor & Real-Time Enhancements Architecture</h2>
+  
+  <h3>1. Current Engine vs. Real-Time Multimodal Architecture</h3>
+  <table>
+    <thead>
+      <tr>
+        <th>Feature</th>
+        <th>Current System (80%)</th>
+        <th>Upgraded System Architecture (100%)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>Intelligence Core</strong></td>
+        <td>Static rule lookup (fever/cough strings).</td>
+        <td><strong>Google Gemini 1.5 Pro Multimodal API</strong>.</td>
+      </tr>
+      <tr>
+        <td><strong>Response Engine</strong></td>
+        <td>Static JSON delay return.</td>
+        <td><strong>Real-Time Token Streaming (Server-Sent Events / SSE)</strong>.</td>
+      </tr>
+      <tr>
+        <td><strong>Vision AI</strong></td>
+        <td>None (Text only).</td>
+        <td><strong>Multimodal Photo Scanner</strong> detecting skin lesions & hoof laminitis.</td>
+      </tr>
+      <tr>
+        <td><strong>Medical Base</strong></td>
+        <td>Hardcoded text snippets.</td>
+        <td><strong>RAG (Vector DB)</strong> loaded with Pakistani Equine Medical Manuals.</td>
+      </tr>
+    </tbody>
+  </table>
+
+  <h3>2. Real-Time Token Streaming Flow</h3>
+  <pre>
+[User Uploads Symptom + Photo] 
+        |
+        v
+[Express API Gateway] ---> [Pinecone Vector DB (RAG Context)]
+        |
+        v
+[Google Gemini 1.5 Pro API (Streaming Mode)]
+        |
+        v (Server-Sent Events / SSE Stream)
+[React VetDoctor.jsx UI] (Live Typing Effect Response)
+  </pre>
+
+  <div class="footer-note">
+    <span>HorseSquare Pakistan Technical Documentation</span>
+    <span>Page 7 of 10</span>
+  </div>
+</div>
+
+<!-- CHAPTER 7: Real-Time Live Auctions (Socket.io) -->
+<div class="page">
+  <h2>Chapter 7: Real-Time Live Auctions (Socket.io) Architecture</h2>
+  <p>To eliminate manual page refreshing during live equine bidding, Socket.io integration connects buyers directly to a WebSocket server cluster.</p>
+
+  <pre>
+WebSocket Real-Time Bidding Sequence:
+1. Buyer A places bid -> Socket.emit('bid:place', { auctionId: 101, amount: 550000 })
+2. Socket Server validates bid & updates MongoDB Auction document
+3. Socket Server broadcasts event -> Socket.broadcast.emit('auction:updated', payload)
+4. All connected buyers (Buyer B, C, D) receive event instantly
+5. React UI updates bidding panel & countdown timer in real-time without page reload!
+  </pre>
+
+  <div class="footer-note">
+    <span>HorseSquare Pakistan Technical Documentation</span>
+    <span>Page 8 of 10</span>
+  </div>
+</div>
+
+<!-- CHAPTER 8: Security & Production Deployment -->
+<div class="page">
+  <h2>Chapter 8: Security, Performance & Production Deployment Topology</h2>
+
+  <pre>
+Production Cloud Infrastructure Topology:
++---------------------------------------------------------------------------------+
+|  [ Vercel CDN ] -----------> React 18 SPA (Vite Production Distribution)       |
+|                                     |                                           |
+|                                HTTPS API Calls                                  |
+|                                     v                                           |
+|  [ Render / AWS EC2 ] ------> Node.js + Express REST API Gateway                |
+|                                     |                                           |
+|                              Mongoose ODM                                       |
+|                                     v                                           |
+|  [ MongoDB Atlas ] ---------> Replica Set Database Cluster                      |
+|                                                                                 |
+|  [ AWS S3 / Cloudinary ] ---> Media Cloud Storage (Horse Photos)                |
++---------------------------------------------------------------------------------+
+  </pre>
+
+  <h3>Security Hardening Checklist</h3>
+  <ul>
+    <li><strong>Rate Limiting:</strong> Use <code>express-rate-limit</code> to protect auth routes from brute-force attacks.</li>
+    <li><strong>Password Security:</strong> Enforce <code>bcryptjs</code> with 10 salt rounds.</li>
+    <li><strong>CORS Hardening:</strong> Restrict API calls exclusively to trusted domain origins in production.</li>
+  </ul>
+
+  <div style="margin-top: 30px; text-align: center; padding: 20px; border: 1px dashed var(--accent); border-radius: 8px;">
+    <p style="color: var(--accent-light); font-weight: 700; font-size: 16px;">HorseSquare Pakistan — Completed Chapter-Wise Engineering Documentation</p>
+    <p style="font-size: 12px; color: var(--text-muted);">Generated for FYP Final Defense & Architecture Review</p>
+  </div>
+
+  <div class="footer-note">
+    <span>HorseSquare Pakistan Technical Documentation</span>
+    <span>Page 10 of 10</span>
+  </div>
+</div>
+
+</body>
+</html>

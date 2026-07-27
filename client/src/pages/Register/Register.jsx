@@ -37,9 +37,14 @@ export const Register = () => {
 
       const data = await res.json();
       if (data.success) {
-        navigate('/login', {
-          state: { registeredMessage: '🎉 Account created successfully! Please log in to access your dashboard.' }
-        });
+        if (data.token && data.user) {
+          login(data.token, data.user);
+          navigate('/');
+        } else {
+          navigate('/login', {
+            state: { registeredMessage: '🎉 Account created successfully! Please log in to access your dashboard.' }
+          });
+        }
       } else {
         setError(data.message || 'Registration failed.');
       }
@@ -63,14 +68,12 @@ export const Register = () => {
 
           {/* Top: Logo & Brand Header */}
           <div className="relative z-10 flex items-center gap-3 animate-fade-in">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-[#020B21]/80 to-[#1E293B]/80 flex items-center justify-center shadow-lg border border-[#D4AF37]/30">
-              <svg className="w-6 h-6" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M55 130C62 133 72 131 82 125C92 118 97 106 97 92C97 85 91 80 87 71C84 62 86 52 86 52C86 52 92 56 95 62C98 67 101 72 106 78C110 83 118 88 128 90C138 92 146 90 152 86C145 92 135 96 126 98C117 100 109 105 104 113C99 121 95 132 93 145C91 138 88 132 82 127C76 122 66 122 55 130Z" fill="#D4AF37" />
-              </svg>
+            <div className="w-11 h-11 rounded-full overflow-hidden border-2 border-[#D4AF37]/60 p-0.5 bg-[#020B21] shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center shrink-0">
+              <img src="/login and registeration .png" alt="HorseSquare Logo" className="w-full h-full object-cover rounded-full" />
             </div>
             <div>
               <span className="text-[10px] font-bold tracking-[0.25em] text-[#D4AF37] uppercase block leading-none mb-0.5">Platform</span>
-              <span className="font-extrabold text-sm tracking-tight text-white leading-none">HorseSquare</span>
+              <span className="font-extrabold text-sm tracking-tight text-white leading-none">Horse-Square-Pakistan</span>
             </div>
           </div>
 
@@ -83,24 +86,22 @@ export const Register = () => {
               Pakistan's Premier <span className="text-[#D4AF37] block mt-0.5">Equine Portal</span>
             </h1>
 
-
-            {/* Majestic Framed Horse Photo Card */}
-            <div className="w-full aspect-[4/3] rounded-2xl overflow-hidden border border-[#D4AF37]/20 shadow-2xl relative group bg-[#020B21]">
-              <img
-                className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
-                src="/login and registeration .png"
-                alt="Majestic Stallion"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#020B21]/60 via-transparent to-transparent"></div>
-              <div className="absolute bottom-4.5 left-4.5 text-[10px] font-bold text-white tracking-wide uppercase flex items-center gap-2 bg-[#020B21]/70 backdrop-blur-md py-2 px-3.5 rounded-full border border-[#D4AF37]/20 shadow-lg">
-                <span className="w-2.5 h-2.5 rounded-full bg-[#D4AF37] animate-pulse"></span>
-                <span>Verified breeds & active auctions</span>
+            {/* Majestic Clean Golden Stallion Emblem */}
+            <div className="relative flex flex-col items-center justify-center py-2 my-2">
+              <div className="relative w-64 h-64 sm:w-72 sm:h-72 flex items-center justify-center group">
+                <img
+                  className="w-full h-full object-contain filter drop-shadow-[0_10px_25px_rgba(212,175,55,0.35)] transition-transform duration-700 group-hover:scale-105"
+                  src="/login and registeration .png"
+                  alt="Majestic Stallion"
+                />
               </div>
             </div>
           </div>
 
-          {/* Bottom: Premium Footer Checklist */}
-
+          {/* Bottom Footer Note */}
+          <div className="relative z-10 pt-4 border-t border-white/10 text-xs text-slate-400">
+            © 2026 HorseSquare Pakistan. All rights reserved.
+          </div>
         </div>
 
         {/* Right Side: Register Form */}
@@ -108,20 +109,10 @@ export const Register = () => {
           {/* Subtle gold accent background glow */}
           <div className="absolute top-1/4 right-0 w-80 h-80 bg-amber-500/5 rounded-full blur-3xl pointer-events-none"></div>
 
-          {/* Elegant Stallion Watermark in Background */}
-          <div className="absolute bottom-[-5%] right-[-5%] w-80 h-80 pointer-events-none select-none">
-            <svg className="w-full h-full opacity-[0.035] text-[#D4AF37] fill-current transform rotate-12" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
-              <path d="M55 130C62 133 72 131 82 125C92 118 97 106 97 92C97 85 91 80 87 71C84 62 86 52 86 52C86 52 92 56 95 62C98 67 101 72 106 78C110 83 118 88 128 90C138 92 146 90 152 86C145 92 135 96 126 98C117 100 109 105 104 113C99 121 95 132 93 145C91 138 88 132 82 127C76 122 66 122 55 130Z" />
-            </svg>
-          </div>
-
           <div className="w-full max-w-md mx-auto my-auto py-2">
             {/* Elegant Horse Badge Emblem at Top */}
-            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#0F172A] to-[#1E293B] flex items-center justify-center mb-6 shadow-lg border border-[#D4AF37]/35 mx-auto md:mx-0 group-hover:scale-105 transition-transform duration-300">
-              <svg className="w-8 h-8 drop-shadow-[0_2px_4px_rgba(212,175,55,0.3)]" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M55 130C62 133 72 131 82 125C92 118 97 106 97 92C97 85 91 80 87 71C84 62 86 52 86 52C86 52 92 56 95 62C98 67 101 72 106 78C110 83 118 88 128 90C138 92 146 90 152 86C145 92 135 96 126 98C117 100 109 105 104 113C99 121 95 132 93 145C91 138 88 132 82 127C76 122 66 122 55 130Z" fill="#D4AF37" />
-                <path d="M78 55C76 50 78 45 80 40C82 35 85 32 85 32C85 32 83 38 82 43C81 48 80 52 78 55Z" fill="#D4AF37" opacity="0.8" />
-              </svg>
+            <div className="w-14 h-14 rounded-full overflow-hidden border-2 border-[#D4AF37]/60 p-0.5 bg-[#020B21] shadow-[0_0_20px_rgba(212,175,55,0.35)] flex items-center justify-center mb-6 mx-auto md:mx-0 shrink-0">
+              <img src="/login and registeration .png" alt="HorseSquare Logo" className="w-full h-full object-cover rounded-full" />
             </div>
 
             {/* Logo header (only visible on mobile) */}

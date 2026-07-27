@@ -322,23 +322,21 @@ export const AdminDashboard = () => {
     <div className="h-screen w-screen flex bg-[#F8FAFC] overflow-hidden text-slate-800 font-sans">
       
       {/* Sidebar Navigation */}
-      <aside className="w-64 bg-gradient-to-b from-[#0B0F19] to-[#1E293B] flex flex-col border-r border-[#D4AF37]/10 shrink-0 shadow-xl z-20">
+      <aside className="w-64 liquid-glass-sidebar flex flex-col shrink-0 shadow-2xl z-20">
         
         {/* Brand Header */}
-        <div className="p-6 border-b border-slate-800 flex items-center gap-3">
-          <div className="w-10 h-10 rounded-2xl bg-[#0B0F19] flex items-center justify-center border border-[#D4AF37]/30 shadow-md">
-            <svg className="w-5 h-5" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M55 130C62 133 72 131 82 125C92 118 97 106 97 92C97 85 91 80 87 71C84 62 86 52 86 52C86 52 92 56 95 62C98 67 101 72 106 78C110 83 118 88 128 90C138 92 146 90 152 86C145 92 135 96 126 98C117 100 109 105 104 113C99 121 95 132 93 145C91 138 88 132 82 127C76 122 66 122 55 130Z" fill="#D4AF37" />
-            </svg>
+        <div className="p-6 border-b border-white/10 flex items-center gap-3 relative z-10">
+          <div className="w-10 h-10 rounded-full overflow-hidden border border-[#D4AF37]/60 p-0.5 bg-[#020B21] shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center shrink-0">
+            <img src="/login and registeration .png" alt="HorseSquare Logo" className="w-full h-full object-cover rounded-full" />
           </div>
           <div>
-            <h2 className="font-black text-sm tracking-tight text-white leading-none">HorseSquare</h2>
-            <span className="text-[9px] font-bold text-[#D4AF37] tracking-[0.2em] uppercase block mt-1">Admin Panel</span>
+            <h2 className="font-black text-sm tracking-tight text-white leading-none">Horse-Square-Pakistan</h2>
+            <span className="text-[9px] font-extrabold text-[#D4AF37] tracking-[0.2em] uppercase block mt-1">Admin Panel</span>
           </div>
         </div>
 
         {/* Nav Items */}
-        <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-3.5 py-6 space-y-2 overflow-y-auto relative z-10">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -348,10 +346,10 @@ export const AdminDashboard = () => {
                   setActiveTab(item.id);
                   setSearchQuery('');
                 }}
-                className={`w-full flex items-center justify-between px-4.5 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all duration-300 border-l-[3px] cursor-pointer ${
+                className={`w-full flex items-center justify-between px-4.5 py-3 rounded-2xl text-xs font-bold tracking-wide transition-all duration-300 cursor-pointer ${
                   isActive
-                    ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-[#D4AF37]'
-                    : 'text-slate-400 border-transparent hover:bg-slate-800/40 hover:text-slate-100'
+                    ? 'liquid-glass-nav-active font-black'
+                    : 'liquid-glass-nav-inactive'
                 }`}
               >
                 <div className="flex items-center gap-3.5">
@@ -369,19 +367,21 @@ export const AdminDashboard = () => {
         </nav>
 
         {/* Sidebar Footer / User Profile */}
-        <div className="p-4 border-t border-slate-800 bg-[#0B0F19]/40 flex items-center justify-between gap-2.5">
+        <div className="p-4.5 liquid-glass-sidebar-footer flex items-center justify-between gap-2.5 relative z-10">
           <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="w-8 h-8 rounded-full bg-slate-800 flex items-center justify-center shrink-0 border border-slate-700 text-xs font-extrabold uppercase text-[#D4AF37]">
-              {user.firstName ? user.firstName[0] : 'A'}
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 flex items-center justify-center shrink-0 border border-[#D4AF37]/40 text-xs font-extrabold uppercase text-[#D4AF37] shadow">
+              A
             </div>
             <div className="overflow-hidden">
-              <span className="text-xs font-bold text-slate-200 block truncate">{user.firstName} {user.lastName}</span>
-              <span className="text-[10px] text-slate-500 block truncate">{user.email}</span>
+              <span className="text-xs font-bold text-slate-200 block truncate">
+                {user?.firstName && user.firstName !== 'Super' ? `${user.firstName} ${user.lastName || ''}`.trim() : 'Admin'}
+              </span>
+              <span className="text-[10px] text-amber-200/80 font-bold block truncate">{user?.email || 'admin@horsesquare.pk'}</span>
             </div>
           </div>
           <button 
             onClick={handleLogout} 
-            className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-xl transition duration-300 shrink-0 cursor-pointer"
+            className="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/15 rounded-xl transition duration-300 shrink-0 cursor-pointer"
             title="Logout"
           >
             <LogOut className="w-4 h-4" />
@@ -390,10 +390,13 @@ export const AdminDashboard = () => {
       </aside>
 
       {/* Main Panel Content Area */}
-      <main className="flex-1 flex flex-col bg-[#F8FAFC] overflow-hidden relative">
-        
+      <main className="flex-1 flex flex-col bg-gradient-to-br from-slate-100 via-slate-50 to-amber-50/20 overflow-hidden relative">
+        {/* Ambient Glowing Background Liquid Blobs */}
+        <div className="absolute top-12 left-1/4 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
+        <div className="absolute bottom-12 right-12 w-[30rem] h-[30rem] bg-indigo-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDelay: '2s' }} />
+
         {/* Content Topbar */}
-        <header className="h-16 border-b border-slate-200 flex items-center justify-between px-8 bg-white shrink-0 shadow-sm z-10">
+        <header className="h-16 border-b border-slate-200/80 flex items-center justify-between px-8 bg-white/70 backdrop-blur-md shrink-0 shadow-sm z-10">
           <h1 className="text-lg font-black tracking-tight text-slate-800 capitalize flex items-center gap-2.5">
             {activeTab === 'overview' && <LayoutDashboard className="w-5 h-5 text-[#C9A227]" />}
             {activeTab === 'users' && <Users className="w-5 h-5 text-[#C9A227]" />}
@@ -408,20 +411,20 @@ export const AdminDashboard = () => {
           {/* Quick Header Buttons */}
           <div className="flex items-center gap-4">
             {toastMsg && (
-              <span className="text-xs text-emerald-800 font-bold bg-emerald-50 px-3 py-1.5 rounded-full border border-emerald-200 flex items-center gap-1.5 animate-fade-in shadow-sm">
+              <span className="text-xs text-emerald-800 font-bold bg-emerald-50/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-emerald-200 flex items-center gap-1.5 animate-fade-in shadow-sm">
                 <CheckCircle className="w-3.5 h-3.5 text-emerald-600" />
                 {toastMsg}
               </span>
             )}
             {error && (
-              <span className="text-xs text-rose-600 font-medium flex items-center gap-1.5 bg-rose-50 px-3 py-1.5 rounded-full border border-rose-200/50">
+              <span className="text-xs text-rose-600 font-medium flex items-center gap-1.5 bg-rose-50/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-rose-200/50">
                 <AlertCircle className="w-3.5 h-3.5" />
                 {error}
               </span>
             )}
             <Link
               to="/"
-              className="text-xs font-bold px-4 py-2 bg-gradient-to-r from-[#0F172A] to-[#1E293B] hover:from-[#1E293B] hover:to-[#334155] text-[#D4AF37] rounded-xl transition duration-300 border border-[#D4AF37]/20 shadow-sm flex items-center gap-2"
+              className="text-xs font-bold px-4 py-2 liquid-glass-action text-[#C9A227] rounded-xl transition duration-300 border border-[#D4AF37]/30 shadow-sm flex items-center gap-2"
             >
               <Globe className="w-3.5 h-3.5 text-[#D4AF37]" />
               <span>Go to Website</span>
@@ -430,93 +433,93 @@ export const AdminDashboard = () => {
         </header>
 
         {/* Content Pane */}
-        <div className="flex-grow p-8 overflow-y-auto space-y-8">
+        <div className="flex-grow p-8 overflow-y-auto space-y-8 z-10">
 
           {/* OVERVIEW PANEL WITH 5 DEDICATED DOMAIN WIDGETS */}
           {activeTab === 'overview' && (
             <div className="space-y-8 animate-fade-in">
 
-              {/* Top Banner Header */}
-              <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-6 text-white shadow-lg flex flex-col md:flex-row justify-between items-start md:items-center gap-6 border border-slate-800">
-                <div className="space-y-1">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-bold uppercase tracking-wider">
+              {/* Top Banner Header - Dark Liquid Glass */}
+              <div className="liquid-glass-dark rounded-3xl p-7 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden liquid-glass-sheen">
+                <div className="space-y-1 relative z-10">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full text-xs font-black uppercase tracking-wider backdrop-blur-md">
                     <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Executive Overview
                   </span>
-                  <h2 className="text-xl sm:text-2xl font-black tracking-tight">
-                    Welcome back, {user.firstName || 'Admin'}!
+                  <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white mt-1">
+                    Welcome back, {user?.firstName && user.firstName !== 'Super' ? user.firstName : 'Admin'}!
                   </h2>
-                  <p className="text-slate-300 text-xs font-light">
+                  <p className="text-slate-300 text-xs font-medium">
                     Direct controls and live domain metrics for Users, Horse Listings, Auctions, Breeding, and AI Vet services.
                   </p>
                 </div>
               </div>
 
-              {/* 5 DEDICATED DOMAIN WIDGETS GRID */}
+              {/* 5 DEDICATED DOMAIN WIDGETS GRID WITH LIQUID GLASS CARDS */}
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
 
                 {/* WIDGET 1: USERS DIRECTORY */}
-                <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition space-y-5 flex flex-col justify-between">
+                <div className="liquid-glass-card rounded-3xl p-6 shadow-lg hover:shadow-xl transition space-y-5 flex flex-col justify-between liquid-glass-sheen">
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                    <div className="flex justify-between items-center pb-3 border-b border-slate-200/60">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+                        <div className="w-11 h-11 rounded-2xl bg-blue-500/15 text-blue-600 border border-blue-400/30 flex items-center justify-center shrink-0 shadow-sm">
                           <Users className="w-5 h-5" />
                         </div>
                         <div>
                           <h3 className="font-extrabold text-slate-900 text-sm">Users Directory</h3>
-                          <span className="text-[10px] text-slate-400 font-medium">Platform Accounts</span>
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Platform Accounts</span>
                         </div>
                       </div>
-                      <span className="text-2xl font-black text-slate-900">{usersList.length}</span>
+                      <span className="text-3xl font-black text-slate-900">{usersList.length}</span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 pt-1">
-                      <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase">Super Admins</span>
-                        <h4 className="text-lg font-black text-amber-600 mt-0.5">{adminUsersCount}</h4>
+                      <div className="p-3.5 bg-white/60 rounded-2xl border border-white/80 shadow-sm">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Admins</span>
+                        <h4 className="text-xl font-black text-amber-600 mt-0.5">{adminUsersCount}</h4>
                       </div>
-                      <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100">
-                        <span className="text-[10px] font-bold text-slate-500 uppercase">Members</span>
-                        <h4 className="text-lg font-black text-slate-800 mt-0.5">{usersList.length - adminUsersCount}</h4>
+                      <div className="p-3.5 bg-white/60 rounded-2xl border border-white/80 shadow-sm">
+                        <span className="text-[10px] font-black text-slate-500 uppercase tracking-wider">Members</span>
+                        <h4 className="text-xl font-black text-slate-800 mt-0.5">{usersList.length - adminUsersCount}</h4>
                       </div>
                     </div>
                   </div>
 
                   <button
                     onClick={() => setActiveTab('users')}
-                    className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-xs border border-slate-200 transition flex items-center justify-center gap-2 cursor-pointer mt-2"
+                    className="w-full py-3 liquid-glass-action text-slate-800 font-extrabold rounded-2xl text-xs border border-slate-300/80 transition flex items-center justify-center gap-2 cursor-pointer mt-2"
                   >
                     <span>Manage All Users</span> <ArrowRight className="w-3.5 h-3.5 text-[#C9A227]" />
                   </button>
                 </div>
 
                 {/* WIDGET 2: HORSE LISTINGS & MODERATION */}
-                <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition space-y-5 flex flex-col justify-between">
+                <div className="liquid-glass-card rounded-3xl p-6 shadow-lg hover:shadow-xl transition space-y-5 flex flex-col justify-between liquid-glass-sheen">
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                    <div className="flex justify-between items-center pb-3 border-b border-slate-200/60">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-[#D4AF37]/10 text-[#C9A227] border border-[#D4AF37]/20 flex items-center justify-center shrink-0">
+                        <div className="w-11 h-11 rounded-2xl bg-[#D4AF37]/15 text-[#C9A227] border border-[#D4AF37]/30 flex items-center justify-center shrink-0 shadow-sm">
                           <ShoppingBag className="w-5 h-5" />
                         </div>
                         <div>
                           <h3 className="font-extrabold text-slate-900 text-sm">Horse Listings</h3>
-                          <span className="text-[10px] text-slate-400 font-medium">Marketplace Ads</span>
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Marketplace Ads</span>
                         </div>
                       </div>
-                      <span className="text-2xl font-black text-slate-900">{horsesList.length}</span>
+                      <span className="text-3xl font-black text-slate-900">{horsesList.length}</span>
                     </div>
 
                     <div className="grid grid-cols-3 gap-2 pt-1 text-center">
-                      <div className="p-2.5 bg-emerald-50 rounded-2xl border border-emerald-100">
-                        <span className="text-[9px] font-extrabold text-emerald-700 uppercase">Approved</span>
+                      <div className="p-3 bg-emerald-500/10 rounded-2xl border border-emerald-400/20 shadow-sm">
+                        <span className="text-[9px] font-black text-emerald-700 uppercase tracking-wide">Approved</span>
                         <h4 className="text-base font-black text-emerald-800 mt-0.5">{approvedHorses.length}</h4>
                       </div>
-                      <div className="p-2.5 bg-amber-50 rounded-2xl border border-amber-200">
-                        <span className="text-[9px] font-extrabold text-amber-700 uppercase">Pending</span>
+                      <div className="p-3 bg-amber-500/15 rounded-2xl border border-amber-400/30 shadow-sm">
+                        <span className="text-[9px] font-black text-amber-700 uppercase tracking-wide">Pending</span>
                         <h4 className="text-base font-black text-amber-800 mt-0.5">{pendingHorses.length}</h4>
                       </div>
-                      <div className="p-2.5 bg-blue-50 rounded-2xl border border-blue-100">
-                        <span className="text-[9px] font-extrabold text-blue-700 uppercase">Sold</span>
+                      <div className="p-3 bg-blue-500/10 rounded-2xl border border-blue-400/20 shadow-sm">
+                        <span className="text-[9px] font-black text-blue-700 uppercase tracking-wide">Sold</span>
                         <h4 className="text-base font-black text-blue-800 mt-0.5">{horsesList.filter(h => h.status === 'sold').length}</h4>
                       </div>
                     </div>
@@ -524,39 +527,39 @@ export const AdminDashboard = () => {
 
                   <button
                     onClick={() => setActiveTab('horses')}
-                    className="w-full py-2.5 bg-amber-500 hover:bg-amber-600 text-slate-950 font-black rounded-xl text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-sm mt-2"
+                    className="w-full py-3 bg-gradient-to-r from-amber-500 to-amber-600 hover:from-amber-600 hover:to-amber-700 text-slate-950 font-black rounded-2xl text-xs transition flex items-center justify-center gap-2 cursor-pointer shadow-md mt-2"
                   >
                     <span>Moderate Listings ({pendingHorses.length})</span> <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
 
                 {/* WIDGET 3: LIVE AUCTIONS */}
-                <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition space-y-5 flex flex-col justify-between">
+                <div className="liquid-glass-card rounded-3xl p-6 shadow-lg hover:shadow-xl transition space-y-5 flex flex-col justify-between liquid-glass-sheen">
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                    <div className="flex justify-between items-center pb-3 border-b border-slate-200/60">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-amber-50 text-amber-600 border border-amber-100 flex items-center justify-center shrink-0">
+                        <div className="w-11 h-11 rounded-2xl bg-amber-500/15 text-amber-600 border border-amber-400/30 flex items-center justify-center shrink-0 shadow-sm">
                           <Gavel className="w-5 h-5 animate-bounce" style={{ animationDuration: '3s' }} />
                         </div>
                         <div>
                           <h3 className="font-extrabold text-slate-900 text-sm">Live Auctions</h3>
-                          <span className="text-[10px] text-slate-400 font-medium">Bidding Events</span>
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Bidding Events</span>
                         </div>
                       </div>
-                      <span className="text-2xl font-black text-[#C9A227]">{liveAuctions.length}</span>
+                      <span className="text-3xl font-black text-[#C9A227]">{liveAuctions.length}</span>
                     </div>
 
                     {liveAuctions.length > 0 ? (
-                      <div className="p-3 bg-amber-50/60 rounded-2xl border border-amber-200/70 space-y-1">
-                        <span className="text-[10px] font-bold text-amber-700 uppercase block">Active Leading Auction</span>
+                      <div className="p-3.5 bg-amber-500/10 rounded-2xl border border-amber-400/30 space-y-1 shadow-sm">
+                        <span className="text-[10px] font-black text-amber-700 uppercase tracking-wider block">Active Leading Auction</span>
                         <h4 className="text-xs font-black text-slate-900 truncate">{liveAuctions[0].horseName}</h4>
-                        <div className="flex justify-between text-[11px] font-bold text-amber-700 pt-1">
+                        <div className="flex justify-between text-[11px] font-bold text-amber-800 pt-1">
                           <span>Highest Bid:</span>
                           <span>Rs. {Number(liveAuctions[0].currentBid || liveAuctions[0].startingBid).toLocaleString('en-PK')}</span>
                         </div>
                       </div>
                     ) : (
-                      <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 text-center text-xs text-slate-500">
+                      <div className="p-3.5 bg-white/60 rounded-2xl border border-white/80 text-center text-xs text-slate-500 font-semibold shadow-sm">
                         No active live auctions right now.
                       </div>
                     )}
@@ -564,72 +567,72 @@ export const AdminDashboard = () => {
 
                   <button
                     onClick={() => setActiveTab('auctions')}
-                    className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-xs border border-slate-200 transition flex items-center justify-center gap-2 cursor-pointer mt-2"
+                    className="w-full py-3 liquid-glass-action text-slate-800 font-extrabold rounded-2xl text-xs border border-slate-300/80 transition flex items-center justify-center gap-2 cursor-pointer mt-2"
                   >
                     <span>View All Auctions</span> <ArrowRight className="w-3.5 h-3.5 text-[#C9A227]" />
                   </button>
                 </div>
 
                 {/* WIDGET 4: BREEDING STUD REQUESTS */}
-                <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition space-y-5 flex flex-col justify-between">
+                <div className="liquid-glass-card rounded-3xl p-6 shadow-lg hover:shadow-xl transition space-y-5 flex flex-col justify-between liquid-glass-sheen">
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                    <div className="flex justify-between items-center pb-3 border-b border-slate-200/60">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-purple-50 text-purple-600 border border-purple-100 flex items-center justify-center shrink-0">
+                        <div className="w-11 h-11 rounded-2xl bg-purple-500/15 text-purple-600 border border-purple-400/30 flex items-center justify-center shrink-0 shadow-sm">
                           <Dna className="w-5 h-5" />
                         </div>
                         <div>
                           <h3 className="font-extrabold text-slate-900 text-sm">Breeding Requests</h3>
-                          <span className="text-[10px] text-slate-400 font-medium">Stud Services</span>
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Stud Services</span>
                         </div>
                       </div>
-                      <span className="text-2xl font-black text-slate-900">{breedingList.length}</span>
+                      <span className="text-3xl font-black text-slate-900">{breedingList.length}</span>
                     </div>
 
                     <div className="grid grid-cols-2 gap-3 pt-1">
-                      <div className="p-3 bg-purple-50/50 rounded-2xl border border-purple-100">
-                        <span className="text-[10px] font-bold text-purple-700 uppercase">Pending Review</span>
-                        <h4 className="text-lg font-black text-purple-800 mt-0.5">{pendingBreeding.length}</h4>
+                      <div className="p-3.5 bg-purple-500/10 rounded-2xl border border-purple-400/20 shadow-sm">
+                        <span className="text-[10px] font-black text-purple-700 uppercase tracking-wider">Pending Review</span>
+                        <h4 className="text-xl font-black text-purple-800 mt-0.5">{pendingBreeding.length}</h4>
                       </div>
-                      <div className="p-3 bg-emerald-50/50 rounded-2xl border border-emerald-100">
-                        <span className="text-[10px] font-bold text-emerald-700 uppercase">Approved Matches</span>
-                        <h4 className="text-lg font-black text-emerald-800 mt-0.5">{breedingList.filter(b => b.status === 'approved').length}</h4>
+                      <div className="p-3.5 bg-emerald-500/10 rounded-2xl border border-emerald-400/20 shadow-sm">
+                        <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider">Approved Matches</span>
+                        <h4 className="text-xl font-black text-emerald-800 mt-0.5">{breedingList.filter(b => b.status === 'approved').length}</h4>
                       </div>
                     </div>
                   </div>
 
                   <button
                     onClick={() => setActiveTab('breeding')}
-                    className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-xs border border-slate-200 transition flex items-center justify-center gap-2 cursor-pointer mt-2"
+                    className="w-full py-3 liquid-glass-action text-slate-800 font-extrabold rounded-2xl text-xs border border-slate-300/80 transition flex items-center justify-center gap-2 cursor-pointer mt-2"
                   >
                     <span>Manage Breeding</span> <ArrowRight className="w-3.5 h-3.5 text-[#C9A227]" />
                   </button>
                 </div>
 
                 {/* WIDGET 5: AI VET DOCTOR INQUIRIES */}
-                <div className="bg-white rounded-3xl border border-slate-200 p-6 shadow-sm hover:shadow-md transition space-y-5 flex flex-col justify-between">
+                <div className="liquid-glass-card rounded-3xl p-6 shadow-lg hover:shadow-xl transition space-y-5 flex flex-col justify-between liquid-glass-sheen">
                   <div className="space-y-4">
-                    <div className="flex justify-between items-center pb-3 border-b border-slate-100">
+                    <div className="flex justify-between items-center pb-3 border-b border-slate-200/60">
                       <div className="flex items-center gap-3">
-                        <div className="w-10 h-10 rounded-2xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+                        <div className="w-11 h-11 rounded-2xl bg-emerald-500/15 text-emerald-600 border border-emerald-400/30 flex items-center justify-center shrink-0 shadow-sm">
                           <Stethoscope className="w-5 h-5" />
                         </div>
                         <div>
                           <h3 className="font-extrabold text-slate-900 text-sm">AI Vet Doctor</h3>
-                          <span className="text-[10px] text-slate-400 font-medium">Health Diagnoses</span>
+                          <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider">Health Diagnoses</span>
                         </div>
                       </div>
-                      <span className="text-2xl font-black text-emerald-600">{vetList.length}</span>
+                      <span className="text-3xl font-black text-emerald-600">{vetList.length}</span>
                     </div>
 
                     {vetList.length > 0 ? (
-                      <div className="p-3 bg-emerald-50/50 rounded-2xl border border-emerald-100 space-y-1">
-                        <span className="text-[10px] font-bold text-emerald-700 uppercase block">Latest Medical Inquire</span>
+                      <div className="p-3.5 bg-emerald-500/10 rounded-2xl border border-emerald-400/20 space-y-1 shadow-sm">
+                        <span className="text-[10px] font-black text-emerald-700 uppercase tracking-wider block">Latest Medical Inquiry</span>
                         <p className="text-xs font-bold text-slate-800 truncate">{vetList[0].symptoms}</p>
-                        <span className="text-[10px] text-slate-500 block truncate">Diagnosis: {vetList[0].diagnosis}</span>
+                        <span className="text-[10px] text-slate-500 font-semibold block truncate">Diagnosis: {vetList[0].diagnosis}</span>
                       </div>
                     ) : (
-                      <div className="p-3 bg-slate-50 rounded-2xl border border-slate-100 text-center text-xs text-slate-500">
+                      <div className="p-3.5 bg-white/60 rounded-2xl border border-white/80 text-center text-xs text-slate-500 font-semibold shadow-sm">
                         No AI Vet diagnoses logged yet.
                       </div>
                     )}
@@ -637,7 +640,7 @@ export const AdminDashboard = () => {
 
                   <button
                     onClick={() => setActiveTab('vet')}
-                    className="w-full py-2.5 bg-slate-50 hover:bg-slate-100 text-slate-700 font-bold rounded-xl text-xs border border-slate-200 transition flex items-center justify-center gap-2 cursor-pointer mt-2"
+                    className="w-full py-3 liquid-glass-action text-slate-800 font-extrabold rounded-2xl text-xs border border-slate-300/80 transition flex items-center justify-center gap-2 cursor-pointer mt-2"
                   >
                     <span>View AI Vet Logs</span> <ArrowRight className="w-3.5 h-3.5 text-[#C9A227]" />
                   </button>

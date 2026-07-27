@@ -144,7 +144,7 @@ export const UserDashboard = () => {
         lastName: user.lastName || '',
         phone: user.phone || '',
         city: user.city || '',
-        userType: user.userType || '',
+        userType: (user.userType === 'Horse Seller' ? 'User' : user.userType) || '',
       });
     }
   }, [user]);
@@ -435,40 +435,38 @@ export const UserDashboard = () => {
     <div className="h-screen w-screen flex bg-[#F8FAFC] overflow-hidden text-slate-800 font-sans">
 
       {/* ── Sidebar ─────────────────────────────────────────────────────── */}
-      <aside className="w-64 bg-gradient-to-b from-[#0B0F19] to-[#1E293B] flex flex-col border-r border-[#D4AF37]/10 shrink-0">
+      <aside className="w-64 liquid-glass-sidebar flex flex-col shrink-0 z-20 shadow-2xl">
 
         {/* Brand */}
-        <div className="p-6 border-b border-white/5 flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#0B0F19] flex items-center justify-center border border-[#D4AF37]/30 shadow-md shrink-0">
-            <svg className="w-5 h-5" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M55 130C62 133 72 131 82 125C92 118 97 106 97 92C97 85 91 80 87 71C84 62 86 52 86 52C86 52 92 56 95 62C98 67 101 72 106 78C110 83 118 88 128 90C138 92 146 90 152 86C145 92 135 96 126 98C117 100 109 105 104 113C99 121 95 132 93 145C91 138 88 132 82 127C76 122 66 122 55 130Z" fill="#D4AF37" />
-            </svg>
+        <div className="p-6 border-b border-white/10 flex items-center gap-3 relative z-10">
+          <div className="w-10 h-10 rounded-full overflow-hidden border border-[#D4AF37]/60 p-0.5 bg-[#020B21] shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center shrink-0">
+            <img src="/login and registeration .png" alt="HorseSquare Logo" className="w-full h-full object-cover rounded-full" />
           </div>
           <div>
-            <h2 className="font-black text-sm tracking-tight text-white leading-none">HorseSquare</h2>
-            <span className="text-[9px] font-bold text-[#D4AF37] tracking-[0.2em] uppercase block mt-1">My Dashboard</span>
+            <h2 className="font-black text-sm tracking-tight text-white leading-none">Horse-Square-Pakistan</h2>
+            <span className="text-[9px] font-extrabold text-[#D4AF37] tracking-[0.2em] uppercase block mt-1">My Dashboard</span>
           </div>
         </div>
 
         {/* Nav */}
-        <nav className="flex-1 px-3 py-6 space-y-1 overflow-y-auto">
+        <nav className="flex-1 px-3.5 py-6 space-y-2 overflow-y-auto relative z-10">
           {navItems.map((item) => (
             <React.Fragment key={item.id}>
               {item.id === 'auctions' && (
                 <Link
                   to="/sell"
-                  className="w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all duration-300 border-l-[3px] border-transparent text-slate-400 hover:bg-slate-800/40 hover:text-slate-100"
+                  className="w-full flex items-center gap-3.5 px-4.5 py-3 rounded-2xl text-xs font-bold tracking-wide transition-all duration-300 liquid-glass-nav-inactive cursor-pointer"
                 >
-                  <Plus className="w-4 h-4" />
+                  <Plus className="w-4 h-4 text-[#D4AF37]" />
                   <span>Sell a Horse</span>
                 </Link>
               )}
               <button
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3.5 px-4 py-3 rounded-xl text-xs font-semibold tracking-wide transition-all duration-300 border-l-[3px] cursor-pointer ${
+                className={`w-full flex items-center gap-3.5 px-4.5 py-3 rounded-2xl text-xs font-bold tracking-wide transition-all duration-300 cursor-pointer ${
                   activeTab === item.id
-                    ? 'bg-[#D4AF37]/10 text-[#D4AF37] border-[#D4AF37]'
-                    : 'text-slate-400 border-transparent hover:bg-slate-800/40 hover:text-slate-100'
+                    ? 'liquid-glass-nav-active font-black'
+                    : 'liquid-glass-nav-inactive'
                 }`}
               >
                 {item.icon}
@@ -479,27 +477,30 @@ export const UserDashboard = () => {
         </nav>
 
         {/* User footer */}
-        <div className="p-4 border-t border-white/5 bg-[#0B0F19]/40 flex items-center justify-between gap-2.5">
+        <div className="p-4.5 liquid-glass-sidebar-footer flex items-center justify-between gap-2.5 relative z-10">
           <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[#D4AF37]/20 to-[#D4AF37]/10 flex items-center justify-center shrink-0 border border-[#D4AF37]/30 text-xs font-extrabold uppercase text-[#D4AF37]">
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 flex items-center justify-center shrink-0 border border-[#D4AF37]/40 text-xs font-extrabold uppercase text-[#D4AF37] shadow">
               {user.firstName?.[0]}{user.lastName?.[0]}
             </div>
             <div className="overflow-hidden">
               <span className="text-xs font-bold text-slate-200 block truncate">{user.firstName} {user.lastName}</span>
-              <span className="text-[10px] text-slate-500 block truncate">{user.userType}</span>
+              <span className="text-[10px] text-amber-200/80 font-bold block truncate">{user.userType === 'Horse Seller' ? 'User' : user.userType}</span>
             </div>
           </div>
-          <button onClick={handleLogout} className="p-2 text-rose-500 hover:bg-rose-500/10 rounded-xl transition duration-300 shrink-0" title="Logout">
+          <button onClick={handleLogout} className="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/15 rounded-xl transition duration-300 shrink-0" title="Logout">
             <LogOut className="w-4 h-4" />
           </button>
         </div>
       </aside>
 
       {/* ── Main Content ─────────────────────────────────────────────────── */}
-      <main className="flex-1 flex flex-col bg-[#F8FAFC] overflow-hidden">
+      <main className="flex-1 flex flex-col bg-gradient-to-br from-slate-100 via-slate-50 to-amber-50/20 overflow-hidden relative">
+        {/* Ambient Glowing Background Liquid Blobs */}
+        <div className="absolute top-12 left-1/4 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
+        <div className="absolute bottom-12 right-12 w-[30rem] h-[30rem] bg-sky-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDelay: '2s' }} />
 
         {/* Topbar */}
-        <header className="h-16 border-b border-slate-200 flex items-center justify-between px-8 bg-white shrink-0 shadow-sm">
+        <header className="h-16 border-b border-slate-200/80 flex items-center justify-between px-8 bg-white/70 backdrop-blur-md shrink-0 shadow-sm z-10">
           <h1 className="text-lg font-black tracking-tight text-slate-800 flex items-center gap-2.5">
             {navItems.find(i => i.id === activeTab)?.icon && (
               <span className="text-[#C9A227]">{navItems.find(i => i.id === activeTab)?.icon}</span>
@@ -508,14 +509,14 @@ export const UserDashboard = () => {
           </h1>
           <div className="flex items-center gap-3">
             {error && (
-              <span className="text-xs text-rose-600 font-medium flex items-center gap-1.5 bg-rose-50 px-3 py-1.5 rounded-full border border-rose-200/50">
+              <span className="text-xs text-rose-600 font-medium flex items-center gap-1.5 bg-rose-50/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-rose-200/50">
                 <AlertCircle className="w-3.5 h-3.5" />
                 {error}
               </span>
             )}
             <Link
               to="/"
-              className="text-xs font-bold px-3.5 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-xl transition duration-300 border border-slate-200 flex items-center gap-2"
+              className="text-xs font-bold px-3.5 py-2 liquid-glass-action text-slate-700 rounded-xl transition duration-300 border border-slate-200/80 flex items-center gap-2"
             >
               <Globe className="w-3.5 h-3.5 text-[#C9A227]" />
               <span>Go to Website</span>
@@ -524,56 +525,56 @@ export const UserDashboard = () => {
         </header>
 
         {/* Content */}
-        <div className="flex-grow p-8 overflow-y-auto">
+        <div className="flex-grow p-8 overflow-y-auto z-10">
 
           {/* ── OVERVIEW TAB ────────────────────────────────────────────── */}
           {activeTab === 'overview' && (
             <div className="space-y-8 animate-fade-in">
 
-              {/* Welcome Banner */}
-              <div className="bg-gradient-to-r from-[#0B0F19] to-[#1E293B] rounded-2xl p-7 flex items-center gap-6 shadow-lg border border-[#D4AF37]/15 relative overflow-hidden">
-                <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37]/5 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl pointer-events-none" />
-                <div className="w-14 h-14 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center shrink-0 text-2xl font-black text-[#D4AF37]">
+              {/* Welcome Banner - Dark Liquid Glass */}
+              <div className="liquid-glass-dark rounded-3xl p-7 flex items-center gap-6 relative overflow-hidden liquid-glass-sheen">
+                <div className="absolute top-0 right-0 w-80 h-80 bg-[#D4AF37]/10 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl pointer-events-none" />
+                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 border border-[#D4AF37]/40 flex items-center justify-center shrink-0 text-2xl font-black text-[#D4AF37] shadow-lg">
                   {user.firstName?.[0]}{user.lastName?.[0]}
                 </div>
                 <div className="relative z-10">
                   <p className="text-[#D4AF37] text-xs font-bold tracking-widest uppercase mb-1">Welcome back</p>
                   <h2 className="text-white text-2xl font-black tracking-tight">{user.firstName} {user.lastName}</h2>
-                  <p className="text-slate-400 text-xs mt-1.5 font-medium">{user.email} · <span className="text-slate-300 capitalize">{user.userType}</span></p>
+                  <p className="text-slate-300 text-xs mt-1.5 font-medium">{user.email} · <span className="text-amber-200 capitalize font-bold">{user.userType === 'Horse Seller' ? 'User' : user.userType}</span></p>
                 </div>
               </div>
 
-              {/* Quick Stats Grid with Contact Queries Counter Widget */}
+              {/* Quick Stats Grid with Liquid Glass Cards */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
-                <div className="bg-white border border-slate-200/85 rounded-2xl p-5 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
-                  <div className="w-11 h-11 rounded-xl bg-[#D4AF37]/10 text-[#C9A227] border border-[#D4AF37]/20 flex items-center justify-center shrink-0">
+                <div className="liquid-glass-card rounded-3xl p-5 flex items-center gap-4 liquid-glass-sheen">
+                  <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/15 text-[#C9A227] border border-[#D4AF37]/30 flex items-center justify-center shrink-0 shadow-sm">
                     <Package className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-xl font-black text-slate-800">
+                    <span className="text-2xl font-black text-slate-800">
                       {loading ? (
                         <span className="inline-block w-4 h-4 border-2 border-slate-300 border-t-slate-800 rounded-full animate-spin"></span>
                       ) : (
                         myHorses.filter(h => h.status === 'approved').length
                       )}
                     </span>
-                    <p className="text-[11px] text-slate-500 font-bold uppercase tracking-wide mt-0.5">My Listings</p>
+                    <p className="text-[11px] text-slate-500 font-black uppercase tracking-wider mt-0.5">My Listings</p>
                   </div>
                 </div>
 
-                <div className="bg-white border border-slate-200/85 rounded-2xl p-5 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
-                  <div className="w-11 h-11 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center shrink-0">
+                <div className="liquid-glass-card rounded-3xl p-5 flex items-center gap-4 liquid-glass-sheen">
+                  <div className="w-12 h-12 rounded-2xl bg-blue-500/15 text-blue-600 border border-blue-400/30 flex items-center justify-center shrink-0 shadow-sm">
                     <Trophy className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-xl font-black text-slate-800">
+                    <span className="text-2xl font-black text-slate-800">
                       {loading ? (
                         <span className="inline-block w-4 h-4 border-2 border-slate-300 border-t-slate-800 rounded-full animate-spin"></span>
                       ) : (
                         myBids.length
                       )}
                     </span>
-                    <p className="text-[11px] text-slate-500 font-bold uppercase tracking-wide mt-0.5">Auction Bids</p>
+                    <p className="text-[11px] text-slate-500 font-black uppercase tracking-wider mt-0.5">Auction Bids</p>
                   </div>
                 </div>
 
@@ -581,80 +582,80 @@ export const UserDashboard = () => {
                 <button
                   type="button"
                   onClick={() => setActiveTab('contact')}
-                  className="bg-white border border-slate-200/85 rounded-2xl p-5 flex items-center gap-4 shadow-sm hover:shadow-md hover:border-[#D4AF37]/40 transition-all duration-300 text-left cursor-pointer group"
+                  className="liquid-glass-card rounded-3xl p-5 flex items-center gap-4 text-left cursor-pointer group liquid-glass-sheen"
                 >
-                  <div className="w-11 h-11 rounded-xl bg-amber-50 text-amber-600 border border-amber-200 flex items-center justify-center shrink-0 group-hover:scale-105 transition duration-300">
+                  <div className="w-12 h-12 rounded-2xl bg-amber-500/15 text-amber-600 border border-amber-400/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition duration-300 shadow-sm">
                     <MessageSquare className="w-5 h-5 text-amber-600" />
                   </div>
                   <div>
-                    <span className="text-xl font-black text-slate-800 flex items-center gap-1.5">
+                    <span className="text-2xl font-black text-slate-800 flex items-center gap-1.5">
                       {loading ? (
                         <span className="inline-block w-4 h-4 border-2 border-slate-300 border-t-slate-800 rounded-full animate-spin"></span>
                       ) : (
                         myQueries.length
                       )}
-                      <span className="text-[10px] bg-amber-100 text-amber-900 px-2 py-0.5 rounded-full font-bold">Live</span>
+                      <span className="text-[10px] bg-amber-500/20 text-amber-900 border border-amber-400/40 px-2 py-0.5 rounded-full font-extrabold">Live</span>
                     </span>
-                    <p className="text-[11px] text-slate-500 font-bold uppercase tracking-wide mt-0.5">Contact Queries</p>
+                    <p className="text-[11px] text-slate-500 font-black uppercase tracking-wider mt-0.5">Contact Queries</p>
                   </div>
                 </button>
 
-                <div className="bg-white border border-slate-200/85 rounded-2xl p-5 flex items-center gap-4 shadow-sm hover:shadow-md transition-all duration-300">
-                  <div className="w-11 h-11 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100 flex items-center justify-center shrink-0">
+                <div className="liquid-glass-card rounded-3xl p-5 flex items-center gap-4 liquid-glass-sheen">
+                  <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 text-emerald-600 border border-emerald-400/30 flex items-center justify-center shrink-0 shadow-sm">
                     <CheckCircle className="w-5 h-5" />
                   </div>
                   <div>
-                    <span className="text-xl font-black text-emerald-600 capitalize">{user.status}</span>
-                    <p className="text-[11px] text-slate-500 font-bold uppercase tracking-wide mt-0.5">Account Status</p>
+                    <span className="text-2xl font-black text-emerald-600 capitalize">{user.status}</span>
+                    <p className="text-[11px] text-slate-500 font-black uppercase tracking-wider mt-0.5">Account Status</p>
                   </div>
                 </div>
               </div>
 
-              {/* Quick Actions */}
+              {/* Quick Actions - Liquid Glass Action Widgets */}
               <div>
-                <h3 className="text-sm font-black text-slate-700 uppercase tracking-wider mb-4">Quick Actions</h3>
+                <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-4">Quick Actions</h3>
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   {[
-                    { label: 'Sell a Horse', icon: <Tag className="w-5 h-5" />, to: '/sell', color: 'bg-[#D4AF37]/10 text-[#C9A227] border-[#D4AF37]/20' },
-                    { label: 'Marketplace', icon: <ShoppingBag className="w-5 h-5" />, to: '/marketplace', color: 'bg-blue-50 text-blue-600 border-blue-100' },
-                    { label: 'Live Auctions', icon: <Gavel className="w-5 h-5" />, to: '/auction', color: 'bg-emerald-50 text-emerald-600 border-emerald-100' },
-                    { label: 'AI Vet', icon: <TrendingUp className="w-5 h-5" />, to: '/vet', color: 'bg-purple-50 text-purple-600 border-purple-100' },
+                    { label: 'Sell a Horse', icon: <Tag className="w-5 h-5" />, to: '/sell', color: 'bg-[#D4AF37]/15 text-[#C9A227] border-[#D4AF37]/30' },
+                    { label: 'Marketplace', icon: <ShoppingBag className="w-5 h-5" />, to: '/marketplace', color: 'bg-blue-500/15 text-blue-600 border-blue-400/30' },
+                    { label: 'Live Auctions', icon: <Gavel className="w-5 h-5" />, to: '/auction', color: 'bg-emerald-500/15 text-emerald-600 border-emerald-400/30' },
+                    { label: 'AI Vet', icon: <TrendingUp className="w-5 h-5" />, to: '/vet', color: 'bg-purple-500/15 text-purple-600 border-purple-400/30' },
                   ].map(item => (
                     <Link
                       key={item.label}
                       to={item.to}
-                      className="bg-white border border-slate-200 rounded-2xl p-5 flex flex-col items-center gap-3 hover:shadow-md hover:border-slate-300 transition-all duration-300 group text-center"
+                      className="liquid-glass-action rounded-3xl p-5 flex flex-col items-center gap-3 text-center group cursor-pointer liquid-glass-sheen"
                     >
-                      <div className={`w-11 h-11 rounded-xl flex items-center justify-center border ${item.color}`}>
+                      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center border shadow-sm group-hover:scale-110 transition duration-300 ${item.color}`}>
                         {item.icon}
                       </div>
-                      <span className="text-xs font-bold text-slate-700 group-hover:text-slate-900 transition-colors">{item.label}</span>
+                      <span className="text-xs font-extrabold text-slate-700 group-hover:text-slate-900 transition-colors">{item.label}</span>
                     </Link>
                   ))}
                 </div>
               </div>
 
-              {/* Account Info Card */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
-                <h3 className="text-sm font-black text-slate-700 uppercase tracking-wider mb-5">Account Information</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-5 gap-x-8 text-sm">
+              {/* Account Info Card - Liquid Glass */}
+              <div className="liquid-glass-card rounded-3xl p-7 shadow-lg">
+                <h3 className="text-xs font-black text-slate-500 uppercase tracking-widest mb-6">Account Information</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-y-6 gap-x-8 text-sm">
                   {[
                     { label: 'First Name', value: user.firstName },
                     { label: 'Last Name', value: user.lastName },
                     { label: 'Email', value: user.email },
                     { label: 'Phone', value: user.phone },
                     { label: 'City', value: user.city },
-                    { label: 'Account Type', value: user.userType },
+                    { label: 'Account Type', value: user.userType === 'Horse Seller' ? 'User' : user.userType },
                   ].map(field => (
                     <div key={field.label}>
                       <p className="text-[10px] font-black uppercase tracking-wider text-slate-400 mb-1">{field.label}</p>
-                      <p className="font-semibold text-slate-800 text-sm">{field.value || '—'}</p>
+                      <p className="font-bold text-slate-800 text-sm">{field.value || '—'}</p>
                     </div>
                   ))}
                 </div>
                 <button
                   onClick={() => setActiveTab('profile')}
-                  className="mt-6 text-xs font-bold text-[#C9A227] hover:text-[#B8942A] flex items-center gap-1.5 transition-colors"
+                  className="mt-7 text-xs font-extrabold text-[#C9A227] hover:text-[#B8942A] flex items-center gap-1.5 transition-colors bg-[#D4AF37]/10 px-4 py-2 rounded-xl border border-[#D4AF37]/20 hover:border-[#D4AF37]/40 w-max"
                 >
                   <Edit3 className="w-3.5 h-3.5" /> Edit Profile
                 </button>
@@ -1298,7 +1299,7 @@ export const UserDashboard = () => {
                       onChange={e => setProfile(p => ({ ...p, userType: e.target.value }))}
                       className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-white text-sm text-slate-800 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all"
                     >
-                      {['Horse Buyer', 'Horse Seller', 'Breeder', 'Riding Student'].map(t => (
+                      {['Horse Buyer', 'User', 'Breeder', 'Riding Student'].map(t => (
                         <option key={t} value={t}>{t}</option>
                       ))}
                     </select>

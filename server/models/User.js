@@ -17,7 +17,8 @@ const userSchema = new mongoose.Schema(
     password: { type: String, required: true, minlength: 6, select: false },
     userType: {
       type: String,
-      enum: ["Horse Buyer", "Horse Seller", "Breeder", "Riding Student"],
+      enum: ["Horse Buyer", "User", "Horse Seller", "Breeder", "Riding Student"],
+      default: "User",
       required: true,
     },
     role: {

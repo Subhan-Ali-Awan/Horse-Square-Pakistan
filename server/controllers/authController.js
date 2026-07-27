@@ -36,7 +36,7 @@ exports.registerUser = async (req, res, next) => {
     }
 
     if (!city) city = "Lahore";
-    if (!userType) userType = "Horse Seller";
+    if (!userType || userType === "Horse Seller") userType = "User";
     if (!firstName) firstName = "User";
     if (!lastName) lastName = "Account";
 

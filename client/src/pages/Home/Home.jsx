@@ -166,9 +166,14 @@ export const Home = () => {
   const delays = ['delay-100', 'delay-200', 'delay-300', 'delay-400', 'delay-500'];
 
   return (
-    <div className="w-full min-h-screen bg-[#F8FAFC]">
-      {/* Hero Section with Background Video and Black Blur Overlay */}
-      <div className="relative w-full h-[calc(100vh-80px)] overflow-hidden flex items-center justify-center bg-black">
+    <div className="w-full min-h-screen bg-[#F8FAFC] relative overflow-hidden">
+      {/* Ambient background glow orbs for liquid glass refraction */}
+      <div className="absolute top-1/4 -left-32 w-96 h-96 bg-amber-400/15 rounded-full blur-[130px] pointer-events-none z-0"></div>
+      <div className="absolute top-1/2 -right-32 w-96 h-96 bg-blue-600/10 rounded-full blur-[130px] pointer-events-none z-0"></div>
+      <div className="absolute bottom-1/4 left-1/3 w-96 h-96 bg-amber-500/10 rounded-full blur-[140px] pointer-events-none z-0"></div>
+
+      {/* Hero Section with Background Video and Liquid Glass Overlay & Widgets */}
+      <div className="relative w-full min-h-[calc(100vh-80px)] py-16 overflow-hidden flex items-center justify-center bg-black">
         {/* Background Video */}
         <video
           autoPlay
@@ -185,39 +190,60 @@ export const Home = () => {
         </video>
 
         {/* Black Blur Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/40 to-black/80 backdrop-blur-[0.5px]"></div>
+        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-slate-950/90 backdrop-blur-[1px]"></div>
+
+        {/* Hero Ambient Glass Glow */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-amber-500/15 rounded-full blur-[140px] pointer-events-none"></div>
 
         {/* Hero Content */}
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto text-white flex flex-col items-center">
+          {/* Liquid Glass Floating Badge */}
+          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full liquid-glass-dark mb-6 border border-amber-500/40 text-amber-400 text-xs sm:text-sm font-semibold shadow-xl backdrop-blur-xl animate-fade-up">
+            <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
+            <span>Pakistan's Premier Equine Platform</span>
+          </div>
+
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4 leading-tight animate-fade-up">
             Experience the Legacy of <span className="animate-shimmer">Horse-Square</span>
           </h1>
           <p className="text-slate-300 text-sm sm:text-lg font-light mb-8 max-w-2xl mx-auto leading-relaxed animate-fade-up delay-150">
             The ultimate digital marketplace for horse trading, live auctions, professional breeding, AI-assisted vet diagnostics, and certified riding school networks.
           </p>
+
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center items-center animate-fade-up delay-250">
             <Link
               to="/marketplace"
-              className="w-full sm:w-auto bg-gradient-to-r from-[#D4AF37] to-[#C9A227] hover:from-[#C9A227] hover:to-[#B8860B] text-[#0F172A] font-bold py-3.5 px-8 rounded-lg shadow-lg hover:shadow-amber-500/30 transition-all duration-300 text-center animate-glow"
+              className="w-full sm:w-auto bg-gradient-to-r from-[#D4AF37] to-[#C9A227] hover:from-[#C9A227] hover:to-[#B8860B] text-[#0F172A] font-bold py-3.5 px-8 rounded-xl shadow-xl hover:shadow-amber-500/30 transition-all duration-300 text-center animate-glow"
             >
               Explore Marketplace
             </Link>
             <Link
               to="/vet"
-              className="w-full sm:w-auto bg-white/10 hover:bg-white/20 text-white font-semibold py-3.5 px-8 rounded-lg border border-white/20 hover:border-white/30 backdrop-blur transition-all duration-300 text-center"
+              className="w-full sm:w-auto liquid-glass-dark hover:border-amber-400/50 text-white font-semibold py-3.5 px-8 rounded-xl border border-white/20 backdrop-blur-xl transition-all duration-300 text-center shadow-xl"
             >
               Consult AI Vet
             </Link>
+          </div>
+
+          {/* Liquid Glass Hero Quick Stats Bar */}
+          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-3xl liquid-glass-dark rounded-2xl p-4 sm:p-5 border border-amber-500/35 shadow-2xl backdrop-blur-2xl animate-fade-up delay-300">
+            {stats.map((stat, idx) => (
+              <div key={idx} className="text-center px-2 py-1">
+                <div className="text-xl sm:text-2xl font-extrabold text-amber-400 tracking-tight">{stat.value}</div>
+                <div className="text-[11px] text-slate-300 font-medium uppercase tracking-wider mt-0.5">{stat.label}</div>
+              </div>
+            ))}
           </div>
         </div>
       </div>
 
       {/* Main Content Sections */}
-      <div className="max-w-6xl mx-auto px-4 py-16 space-y-24">
+      <div className="relative z-10 max-w-6xl mx-auto px-4 py-16 space-y-24">
 
         {/* Core Features Showcase Section */}
         <section className="space-y-10">
           <div className="text-center max-w-2xl mx-auto space-y-2 animate-fade-up">
+            <span className="text-[#D4AF37] text-xs font-bold uppercase tracking-wider">Services</span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">Our Premium Services</h2>
             <p className="text-slate-500 text-sm sm:text-base font-light">
               Horse-Square Pakistan offers state-of-the-art features tailored for equine enthusiasts, breeders, and buyers nationwide.
@@ -228,17 +254,17 @@ export const Home = () => {
             {features.map((feature, idx) => (
               <div
                 key={idx}
-                className={`bg-white rounded-2xl p-6 border border-slate-200 shadow-md hover:shadow-xl hover:border-[#D4AF37] transition-all duration-500 flex flex-col justify-between group relative overflow-hidden animate-fade-up ${delays[idx % delays.length]}`}
+                className={`liquid-glass-card liquid-glass-sheen rounded-3xl p-7 border border-white/80 shadow-xl hover:shadow-2xl transition-all duration-500 flex flex-col justify-between group relative overflow-hidden animate-fade-up ${delays[idx % delays.length]}`}
               >
-                {/* Accent border highlight on hover */}
+                {/* Accent gold top border highlight */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-[#D4AF37] to-[#C9A227] transform -translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
 
                 <div>
-                  <div className="w-12 h-12 rounded-xl bg-amber-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 rounded-2xl liquid-glass-gold flex items-center justify-center mb-5 group-hover:scale-110 transition-transform duration-300 shadow-sm border border-amber-500/30">
                     {feature.icon}
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold text-[#0F172A] mb-2">{feature.title}</h3>
-                  <p className="text-slate-600 text-sm leading-relaxed mb-6">{feature.description}</p>
+                  <h3 className="text-lg sm:text-xl font-bold text-[#0F172A] mb-2.5">{feature.title}</h3>
+                  <p className="text-slate-600 text-sm leading-relaxed mb-6 font-normal">{feature.description}</p>
                 </div>
 
                 <Link
@@ -252,20 +278,20 @@ export const Home = () => {
           </div>
         </section>
 
-        {/* Platform Statistics Section */}
-        <section className="bg-[#0F172A] text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-xl animate-fade-up delay-100">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
-          <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 text-center divide-y lg:divide-y-0 lg:divide-x divide-slate-800">
+        {/* Platform Statistics Section in Dark Liquid Glass */}
+        <section className="liquid-glass-dark text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl animate-fade-up delay-100 border border-amber-500/40">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
+          <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
             {stats.map((stat, idx) => (
               <div
                 key={idx}
-                className={`flex flex-col items-center justify-center p-4 first:pt-0 sm:pt-4 lg:pt-0 animate-fade-up ${delays[idx % delays.length]}`}
+                className={`liquid-glass-dark p-6 rounded-2xl border border-white/10 hover:border-amber-500/40 transition-all duration-300 flex flex-col items-center justify-center shadow-lg group hover:-translate-y-1 animate-fade-up ${delays[idx % delays.length]}`}
               >
-                <div className="bg-slate-800 p-3 rounded-full mb-3 group hover:scale-110 transition-transform duration-300">
+                <div className="bg-amber-500/15 p-3.5 rounded-xl mb-3.5 border border-amber-500/30 group-hover:scale-110 transition-transform duration-300">
                   {stat.icon}
                 </div>
-                <span className="text-3xl sm:text-4xl font-extrabold text-white mb-1 tracking-tight">{stat.value}</span>
-                <span className="text-slate-400 text-xs sm:text-sm uppercase tracking-wider">{stat.label}</span>
+                <span className="text-3xl sm:text-4xl font-extrabold text-amber-400 mb-1 tracking-tight">{stat.value}</span>
+                <span className="text-slate-300 text-xs sm:text-sm uppercase tracking-wider font-medium">{stat.label}</span>
               </div>
             ))}
           </div>
@@ -274,6 +300,7 @@ export const Home = () => {
         {/* Pakistani Breeds Spotlight */}
         <section className="space-y-10">
           <div className="text-center max-w-2xl mx-auto space-y-2 animate-fade-up">
+            <span className="text-[#D4AF37] text-xs font-bold uppercase tracking-wider">Heritage & Pedigree</span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">Equestrian Breeds Spotlight</h2>
             <p className="text-slate-500 text-sm sm:text-base font-light">
               Explore the iconic breeds found, traded, and bred within Pakistan's premier horse community.
@@ -284,19 +311,19 @@ export const Home = () => {
             {breeds.map((breed, idx) => (
               <div
                 key={idx}
-                className={`bg-white rounded-2xl overflow-hidden border border-slate-200 shadow-md hover:shadow-xl hover:border-[#D4AF37]/50 transition-all duration-500 flex flex-col sm:flex-row sm:h-60 group animate-fade-up ${delays[idx % delays.length]}`}
+                className={`liquid-glass-card liquid-glass-sheen rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 flex flex-col sm:flex-row sm:h-64 group border border-white/80 animate-fade-up ${delays[idx % delays.length]}`}
               >
-                <div className="sm:w-2/5 h-48 sm:h-full relative overflow-hidden">
+                <div className="sm:w-2/5 h-52 sm:h-full relative overflow-hidden">
                   <img
                     src={breed.imageUrl}
                     alt={breed.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
                   />
-                  <div className="absolute top-3 left-3 bg-[#0F172A]/80 text-[#D4AF37] text-[10px] font-bold tracking-widest uppercase px-2.5 py-1 rounded">
+                  <div className="absolute top-3 left-3 liquid-glass-dark text-[#D4AF37] text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-lg border border-amber-500/40 shadow-md backdrop-blur-md">
                     {breed.origin}
                   </div>
                 </div>
-                <div className="sm:w-3/5 p-6 flex flex-col justify-center space-y-2 bg-white">
+                <div className="sm:w-3/5 p-6 flex flex-col justify-center space-y-2">
                   <h3 className="text-xl font-bold text-[#0F172A] group-hover:text-[#D4AF37] transition-colors">{breed.name}</h3>
                   <p className="text-slate-600 text-sm leading-relaxed">{breed.description}</p>
                 </div>
@@ -319,10 +346,10 @@ export const Home = () => {
             {academies.map((academy, idx) => (
               <div
                 key={idx}
-                className={`bg-white rounded-2xl p-6 border border-slate-200 shadow-md hover:shadow-xl hover:border-[#D4AF37]/50 transition-all duration-300 flex flex-col justify-between group animate-fade-up ${delays[idx % delays.length]}`}
+                className={`liquid-glass-card liquid-glass-sheen rounded-3xl p-7 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group border border-white/80 animate-fade-up ${delays[idx % delays.length]}`}
               >
                 <div>
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 rounded-2xl liquid-glass-gold flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-amber-500/30 shadow-sm">
                     {academy.icon}
                   </div>
                   <h3 className="text-lg font-bold text-[#0F172A] mb-2">{academy.title}</h3>
@@ -335,7 +362,7 @@ export const Home = () => {
           <div className="pt-2 text-center animate-fade-up">
             <Link
               to="/riding-school"
-              className="inline-flex items-center gap-2 bg-[#0F172A] hover:bg-[#1E293B] text-white font-semibold text-sm px-6 py-3.5 rounded-lg shadow-md transition"
+              className="inline-flex items-center gap-2 liquid-glass-dark hover:border-amber-500/50 text-white font-semibold text-sm px-8 py-3.5 rounded-xl shadow-xl transition-all duration-300 border border-amber-500/30 hover:scale-105"
             >
               Browse Riding Schools <ArrowRight className="w-4 h-4 text-[#D4AF37]" />
             </Link>
@@ -356,14 +383,14 @@ export const Home = () => {
             {events.map((event, idx) => (
               <div
                 key={idx}
-                className={`bg-white rounded-2xl p-6 border border-slate-200 shadow-md hover:shadow-xl hover:border-[#D4AF37]/50 transition-all duration-300 flex flex-col justify-between group relative overflow-hidden animate-fade-up ${delays[idx % delays.length]}`}
+                className={`liquid-glass-card liquid-glass-sheen rounded-3xl p-7 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group relative overflow-hidden border border-white/80 animate-fade-up ${delays[idx % delays.length]}`}
               >
-                <div className="absolute top-0 right-0 bg-[#0F172A] text-amber-300 text-[10px] font-bold px-3 py-1.5 rounded-bl-lg border-l border-b border-slate-800">
+                <div className="absolute top-0 right-0 liquid-glass-dark text-amber-300 text-[11px] font-bold px-4 py-1.5 rounded-bl-2xl border-l border-b border-amber-500/40 shadow-md backdrop-blur-md">
                   {event.date}
                 </div>
 
                 <div className="mt-2">
-                  <div className="w-10 h-10 rounded-xl bg-amber-500/10 flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300">
+                  <div className="w-12 h-12 rounded-2xl liquid-glass-gold flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300 border border-amber-500/30 shadow-sm">
                     {event.icon}
                   </div>
                   <h3 className="text-lg font-bold text-[#0F172A] mb-2 pr-16">{event.title}</h3>
@@ -377,13 +404,15 @@ export const Home = () => {
           </div>
         </section>
 
-        {/* Horse Care Tips & Insights */}
-        <section className="bg-slate-50 border border-slate-200 rounded-3xl p-8 sm:p-12 space-y-8 animate-fade-up">
-          <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
-            <BookOpen className="w-6 h-6 text-[#D4AF37]" />
+        {/* Horse Care Tips & Insights in Liquid Glass Container */}
+        <section className="liquid-glass-card rounded-3xl p-8 sm:p-12 space-y-8 animate-fade-up border border-amber-500/30 shadow-2xl relative overflow-hidden">
+          <div className="flex items-center gap-3 border-b border-amber-500/20 pb-4">
+            <div className="p-2.5 rounded-xl liquid-glass-gold border border-amber-500/40">
+              <BookOpen className="w-6 h-6 text-[#D4AF37]" />
+            </div>
             <div>
               <h2 className="text-2xl font-bold text-[#0F172A]">Essential Equine Care Guide</h2>
-              <p className="text-slate-500 text-sm">Professional advice to keep your horse healthy, robust, and active.</p>
+              <p className="text-slate-500 text-sm font-light">Professional advice to keep your horse healthy, robust, and active.</p>
             </div>
           </div>
 
@@ -391,7 +420,7 @@ export const Home = () => {
             {tips.map((tip, idx) => (
               <div
                 key={idx}
-                className={`bg-white border border-slate-100 rounded-xl p-6 shadow-sm hover:shadow-md hover:border-[#D4AF37]/35 transition-all duration-300 animate-fade-up ${delays[idx % delays.length]}`}
+                className={`liquid-glass-gold border border-amber-500/40 rounded-2xl p-6 shadow-md hover:shadow-xl transition-all duration-300 animate-fade-up hover:-translate-y-1 ${delays[idx % delays.length]}`}
               >
                 <h3 className="font-bold text-[#0F172A] text-base sm:text-lg mb-2 flex items-center gap-2">
                   <span className="w-1.5 h-6 bg-[#D4AF37] rounded-full inline-block"></span>
@@ -405,7 +434,7 @@ export const Home = () => {
           <div className="pt-4 text-center">
             <Link
               to="/vet"
-              className="inline-flex items-center gap-2 bg-[#0F172A] hover:bg-[#1E293B] text-white font-semibold text-sm px-6 py-3.5 rounded-lg shadow-md hover:shadow-amber-500/10 transition animate-glow"
+              className="inline-flex items-center gap-2.5 liquid-glass-dark text-white hover:border-amber-500/60 font-semibold text-sm px-8 py-4 rounded-xl shadow-xl transition-all duration-300 border border-amber-500/40 hover:scale-105 animate-glow"
             >
               Need Medical Advice? Consult AI Vet Doctor <ArrowRight className="w-4 h-4 text-[#D4AF37] animate-pulse" />
             </Link>
