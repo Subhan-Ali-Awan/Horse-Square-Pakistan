@@ -340,3 +340,74 @@
   -webkit-backdrop-filter: none;
   box-shadow: none;
 }
+
+/* ==========================================
+   MODERN LIQUID GEL GLASSMORPHIC BUTTONS
+   Default: White Glass Bubble with Black Font
+   Hover: Golden Liquid Gel Fill (Website Scheme)
+   ========================================== */
+
+@keyframes liquidGlassReflection {
+  0% {
+    transform: translateX(-120%) skewX(-20deg);
+  }
+
+  100% {
+    transform: translateX(180%) skewX(-20deg);
+  }
+}
+
+.liquid-gel-auth-btn {
+  position: relative;
+  overflow: hidden;
+  border-radius: 9999px;
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.95) 0%, rgba(241, 245, 249, 0.88) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  color: #0F172A !important;
+  font-weight: 800;
+  letter-spacing: 0.025em;
+  box-shadow: inset 0 1.5px 2px rgba(255, 255, 255, 1), 0 4px 14px rgba(0, 0, 0, 0.18);
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Glossy reflection sheen sweep across background */
+.liquid-gel-auth-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.7) 50%,
+      rgba(255, 255, 255, 0) 100%);
+  transform: translateX(-120%) skewX(-20deg);
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.3s ease;
+}
+
+.liquid-gel-auth-btn:hover::before {
+  animation: liquidGlassReflection 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* Hover State: Metallic Golden Liquid Fill Effect */
+.liquid-gel-auth-btn:hover {
+  background: linear-gradient(135deg, #F59E0B 0%, #D4AF37 50%, #B8860B 100%) !important;
+  border-color: rgba(255, 235, 150, 0.9) !important;
+  color: #0F172A !important;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: inset 0 1.5px 3px rgba(255, 255, 255, 0.85), 0 8px 25px rgba(212, 175, 55, 0.65) !important;
+}
+
+.liquid-gel-auth-btn:active {
+  transform: translateY(0) scale(0.98);
+}

@@ -1,10 +1,23 @@
 import React, { useState } from 'react';
-import { Compass, CheckCircle, Award, ShieldCheck, Sparkles, BookOpen, Target, CheckCircle2, ChevronRight, UserCheck, Quote, Flame } from 'lucide-react';
+import { Compass, CheckCircle, Award, ShieldCheck, Sparkles, BookOpen, Target, CheckCircle2, ChevronRight, UserCheck, Quote, Flame, Calendar, Clock, MapPin, Send, Check } from 'lucide-react';
 import { Modal } from '../../components/Modal';
+import { useAuth } from '../../context/AuthContext';
 
 export const RidingSchool = () => {
-  const [booked, setBooked] = useState(false);
-  const [session, setSession] = useState('');
+  const { user } = useAuth();
+  const [selectedProgram, setSelectedProgram] = useState(null);
+  const [formData, setFormData] = useState({
+    name: '',
+    phone: '',
+    email: '',
+    city: 'Lahore',
+    ridingLevel: 'Beginner',
+    preferredSlot: 'Weekend Morning',
+    experienceDetails: ''
+  });
+  const [submitting, setSubmitting] = useState(false);
+  const [submittedSuccess, setSubmittedSuccess] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const programs = [
     {
@@ -98,292 +111,272 @@ export const RidingSchool = () => {
     {
       name: 'Imperial Riding Club',
       location: 'Faisalabad',
-      focus: 'Premium equestrian training at TUF campus.',
-      website: 'https://tuf.edu.pk',
-      phone: '+92 300 8669803'
-    },
-    {
-      name: 'Ashal Horse & Saddle',
-      location: 'Multan',
-      focus: 'Professional coaching and stables in DHA Multan.',
-      website: 'https://dhamultan.org',
-      phone: '+92 309 8476144'
-    },
-    {
-      name: 'Coral Horse Riding Club',
-      location: 'Faisalabad',
-      focus: 'Group horseback sessions and tent pegging.',
-      website: 'https://facebook.com/Coralriding/',
-      phone: '+92 320 0000228'
-    },
-    {
-      name: 'Garrison Polo & Saddle',
-      location: 'Gujranwala',
-      focus: 'Military-managed professional equestrian facilities.',
-      website: 'https://efp.com.pk',
-      phone: '+92 300 8476144'
+      focus: 'Spacious training rings & certified instructors.',
+      website: 'https://imperialridingclub.com',
+      phone: '+92 300 6601122'
     }
   ];
 
-  const handleBook = (e) => {
+  const handleOpenBookingModal = (prog) => {
+    setSelectedProgram(prog);
+    setFormData({
+      name: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() : '',
+      phone: user?.phone || '',
+      email: user?.email || '',
+      city: 'Hafizabad',
+      ridingLevel: prog.badge.includes('Beginner') ? 'Beginner' : prog.badge.includes('Intermediate') ? 'Intermediate' : 'Advanced',
+      preferredSlot: 'Weekend Morning',
+      experienceDetails: ''
+    });
+    setSubmittedSuccess(false);
+    setGeneratedWaUrl('');
+    setErrorMessage('');
+  };
+
+  const handleSubmitBooking = async (e) => {
     e.preventDefault();
-    setBooked(true);
-    setTimeout(() => {
-      setBooked(false);
-      setSession('');
-    }, 3000);
+    if (!formData.name || !formData.phone || !formData.email) {
+      setErrorMessage('Please enter your full name, phone number, and email address.');
+      return;
+    }
+
+    try {
+      setSubmitting(true);
+      setErrorMessage('');
+
+      const res = await fetch('/api/contact/riding-trial', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          ...formData,
+          courseTitle: selectedProgram.title,
+          userId: user?._id
+        })
+      });
+
+      const data = await res.json();
+      if (data.success) {
+        setSubmittedSuccess(true);
+        setGeneratedWaUrl(data.whatsappUrl || '');
+      } else {
+        setErrorMessage(data.message || 'Failed to submit booking request.');
+      }
+    } catch (err) {
+      setErrorMessage('Server connection error. Please try again.');
+    } finally {
+      setSubmitting(false);
+    }
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-up space-y-12">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 animate-fade-up">
       
-      {/* Top Banner Header */}
-      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl border border-slate-800 relative overflow-hidden gold-gradient-bar">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
-          <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-black uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Certified Equestrian Coaching
-            </span>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight flex items-center gap-3">
-              <Compass className="w-8 h-8 text-[#D4AF37]" /> HS Riding Academy ♞
-            </h1>
-            <p className="text-slate-300 text-sm font-light max-w-xl">
-              Structured riding courses from beginner mounting balance to intermediate canter control and advanced championship tent pegging.
-            </p>
-          </div>
-
-          <div className="p-4 bg-slate-900/90 rounded-2xl border border-slate-800 text-right shrink-0 hidden sm:block">
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Academy Accreditation</span>
-            <span className="text-sm font-black text-[#D4AF37]">EFI & EFP Certified Trainers</span>
-          </div>
+      {/* Header Banner */}
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border border-slate-800">
+        <div className="space-y-4 max-w-2xl relative z-10">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full text-xs font-black uppercase tracking-wider backdrop-blur-md">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Professional Riding Academy
+          </span>
+          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+            Master Equestrian Skills & Horsemanship
+          </h1>
+          <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal">
+            Book a trial riding session with Pakistan's top certified equestrian instructors. Learn balance, canter control, and traditional Nezabazi (Tent Pegging) mastery.
+          </p>
         </div>
       </div>
 
-      {/* 2-Column Main Layout Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      {/* Main Grid: Left Column (Tips & Safety) + Right Column (Courses) */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
 
-        {/* LEFT COLUMN: TECHNIQUE SUGGESTIONS SIDEBAR WIDGETS */}
+        {/* LEFT COLUMN: RIDING TIPS & SAFETY GEAR WIDGETS */}
         <div className="lg:col-span-4 space-y-6">
-
-          {/* WIDGET 1: Beginner Techniques */}
           <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-3">
             <div className="flex justify-between items-center pb-2 border-b">
               <h3 className="font-extrabold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-emerald-600" /> Beginner Riding Tips
               </h3>
-              <span className="text-[10px] bg-emerald-100 text-emerald-800 font-extrabold px-2 py-0.5 rounded">
-                Level 1
-              </span>
+              <span className="text-[10px] bg-emerald-100 text-emerald-900 font-extrabold px-2 py-0.5 rounded">Level 1</span>
             </div>
-            
             <ul className="space-y-2.5 text-xs text-slate-600 font-medium">
-              <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                <span><strong>Heels Down & Back Straight:</strong> Keep weight in stirrup heels for instant core balance.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
-                <span><strong>Posting Trot Timing:</strong> Rise and sit smoothly with the horse's outside shoulder rhythm.</span>
-              </li>
+              <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" /> <span><strong>Heels Down & Back Straight:</strong> Keep weight in stirrup heels for instant core balance.</span></li>
+              <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" /> <span><strong>Posting Trot Timing:</strong> Rise and sit smoothly with the horse's outside shoulder rhythm.</span></li>
             </ul>
           </div>
 
-          {/* WIDGET 2: Intermediate Techniques */}
           <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-3">
             <div className="flex justify-between items-center pb-2 border-b">
               <h3 className="font-extrabold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
                 <Target className="w-4 h-4 text-amber-500" /> Intermediate Riding Tips
               </h3>
-              <span className="text-[10px] bg-amber-100 text-amber-900 font-extrabold px-2 py-0.5 rounded">
-                Level 2
-              </span>
+              <span className="text-[10px] bg-amber-100 text-amber-900 font-extrabold px-2 py-0.5 rounded">Level 2</span>
             </div>
-
             <ul className="space-y-2.5 text-xs text-slate-600 font-medium">
-              <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                <span><strong>Canter Lead Aids:</strong> Apply inside leg at girth and outside leg behind girth to cue correct lead.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" />
-                <span><strong>Trail & Obstacle Navigation:</strong> Maintain steady seat contact and soft reins over uneven ground.</span>
-              </li>
+              <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" /> <span><strong>Canter Lead Aids:</strong> Apply inside leg at girth and outside leg behind girth to cue correct lead.</span></li>
+              <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" /> <span><strong>Trail & Obstacle Navigation:</strong> Maintain steady seat contact and soft reins over uneven ground.</span></li>
             </ul>
-          </div>
-
-          {/* WIDGET 3: Advanced Techniques */}
-          <div className="bg-gradient-to-r from-slate-900 to-[#1E293B] text-white p-6 rounded-3xl border border-slate-800 shadow-md space-y-3">
-            <div className="flex justify-between items-center pb-2 border-b border-slate-800">
-              <h3 className="font-extrabold text-xs uppercase tracking-wider text-amber-400 flex items-center gap-2">
-                <Award className="w-4 h-4 text-amber-400" /> Advanced & Tent Pegging
-              </h3>
-              <span className="text-[10px] bg-amber-500/20 text-amber-300 font-extrabold px-2 py-0.5 rounded border border-amber-500/30">
-                Level 3
-              </span>
-            </div>
-
-            <ul className="space-y-2.5 text-xs text-slate-300 font-normal">
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <span><strong>Full Gallop Lance Stability:</strong> Secure lower leg grip while locking eyes on the target peg.</span>
-              </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle2 className="w-4 h-4 text-amber-400 shrink-0 mt-0.5" />
-                <span><strong>Flying Lead Changes:</strong> Shift seat weight effortlessly during high-speed arena turns.</span>
-              </li>
-            </ul>
-          </div>
-
-          {/* WIDGET 4: Safety & Gear Checklist */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-3">
-            <h3 className="font-extrabold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2 pb-2 border-b">
-              <ShieldCheck className="w-4.5 h-4.5 text-emerald-600" /> Required Safety Gear
-            </h3>
-            <div className="space-y-2 text-xs text-slate-600 font-medium">
-              <div className="flex justify-between p-2 rounded-xl bg-slate-50">
-                <span>Riding Helmet</span>
-                <span className="font-bold text-emerald-700">ASTM / SEI Certified</span>
-              </div>
-              <div className="flex justify-between p-2 rounded-xl bg-slate-50">
-                <span>Footwear</span>
-                <span className="font-bold text-slate-800">Heel Riding Boots</span>
-              </div>
-              <div className="flex justify-between p-2 rounded-xl bg-slate-50">
-                <span>Safety Vest</span>
-                <span className="font-bold text-amber-700">Protective Body Armor</span>
-              </div>
-            </div>
-          </div>
-
-        </div>
-
-        {/* RIGHT COLUMN: RIDING COURSES & SESSIONS */}
-        <div className="lg:col-span-8 space-y-6">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-            {programs.map((prog) => (
-              <div key={prog.id} className="bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between hover:border-[#D4AF37] transition duration-300">
-                <div>
-                  <div className="flex justify-between items-start mb-3">
-                    <span className="bg-amber-100 text-amber-900 font-extrabold text-[10px] uppercase px-3 py-1 rounded-full border border-amber-300">
-                      {prog.badge}
-                    </span>
-                    <span className="font-black text-[#0F172A] text-sm bg-slate-100 px-3 py-1 rounded-xl border">
-                      {prog.fee}
-                    </span>
-                  </div>
-
-                  <h3 className="text-lg font-black text-[#0F172A] mt-2 leading-snug">{prog.title}</h3>
-                  <p className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider mt-1 mb-3">{prog.duration}</p>
-                  <p className="text-xs text-slate-600 leading-relaxed font-normal">{prog.desc}</p>
-                </div>
-
-                <button
-                  onClick={() => setSession(prog.title)}
-                  className="w-full mt-6 py-3.5 bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-2xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer"
-                >
-                  <span>Book Trial Session</span>
-                  <ChevronRight className="w-4 h-4 text-amber-400" />
-                </button>
-              </div>
-            ))}
           </div>
         </div>
 
-      </div>
-
-      {/* Pakistan Riding Schools Finder Section */}
-      <div className="border-t border-slate-200 pt-12">
-        <h2 className="text-2xl font-bold text-[#0F172A] mb-2 flex items-center gap-2">
-          📍 Find Riding Schools & Academies Near You
-        </h2>
-        <p className="text-slate-600 text-sm mb-6">
-          Explore other popular equestrian clubs and riding academies across Pakistan to start your journey.
-        </p>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {externalSchools.map((school, idx) => (
-            <div key={idx} className="bg-white rounded-2xl p-5 border border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+        {/* RIGHT COLUMN: RIDING COURSES */}
+        <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+          {programs.map((prog) => (
+            <div key={prog.id} className="bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between hover:border-[#D4AF37] transition duration-300">
               <div>
-                <span className="text-[10px] font-bold uppercase tracking-wider text-[#D4AF37] bg-amber-50 px-2.5 py-1 rounded-full border border-amber-200">
-                  {school.location}
-                </span>
-                <h4 className="text-base font-bold text-[#0F172A] mt-2.5 mb-1">{school.name}</h4>
-                <p className="text-xs text-slate-500 mb-2 leading-normal">{school.focus}</p>
-                {school.phone && (
-                  <p className="text-[11px] font-semibold text-slate-600 mb-4 flex items-center gap-1">
-                    📞 {school.phone}
-                  </p>
-                )}
+                <div className="flex justify-between items-start mb-3">
+                  <span className="bg-amber-100 text-amber-900 font-extrabold text-[10px] uppercase px-3 py-1 rounded-full border border-amber-300">{prog.badge}</span>
+                  <span className="font-black text-[#0F172A] text-sm bg-slate-100 px-3 py-1 rounded-xl border">{prog.fee}</span>
+                </div>
+                <h3 className="text-lg font-black text-[#0F172A] mt-2 leading-snug">{prog.title}</h3>
+                <p className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider mt-1 mb-3">{prog.duration}</p>
+                <p className="text-xs text-slate-600 leading-relaxed font-normal">{prog.desc}</p>
               </div>
-              <a
-                href={school.website}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="inline-flex items-center justify-center gap-1.5 w-full py-2.5 bg-slate-50 hover:bg-slate-100 border border-slate-200 text-[#0F172A] text-xs font-bold rounded-xl transition"
+              <button
+                onClick={() => handleOpenBookingModal(prog)}
+                className="w-full mt-6 py-3.5 bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-2xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer"
               >
-                Visit Website ↗
-              </a>
+                <span>Book Trial Session</span>
+                <ChevronRight className="w-4 h-4 text-amber-400" />
+              </button>
             </div>
           ))}
         </div>
       </div>
 
-      {/* PAKISTANI LEGENDS & MENTORS BLOG STORIES SECTION (READ-ONLY, NO ACTIONS) */}
+      {/* PAKISTANI LEGENDS BLOG STORIES SECTION */}
       <div className="border-t border-slate-200 pt-12 space-y-8">
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4">
-          <div className="space-y-1">
-            <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-widest text-[#D4AF37] bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
-              <Flame className="w-3.5 h-3.5 text-amber-500" /> Equestrian Heritage & Wisdom
-            </span>
-            <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A] tracking-tight">
-              Pakistani Legends & Mentors for Fresh Riders
-            </h2>
-            <p className="text-slate-500 text-xs sm:text-sm font-normal">
-              Read inspiring horseback journeys and horsemanship lessons directly from Pakistan's most respected veteran mentors.
-            </p>
-          </div>
+        <div className="space-y-1">
+          <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-widest text-[#D4AF37] bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+            <Flame className="w-3.5 h-3.5 text-amber-500" /> Equestrian Heritage & Wisdom
+          </span>
+          <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A]">Pakistani Legends & Mentors</h2>
         </div>
-
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {pakistaniLegends.map((mentor) => (
-            <div key={mentor.id} className="bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-5 hover:border-[#D4AF37] transition duration-300 relative overflow-hidden">
-              <div className="space-y-4">
-                
-                {/* Header Profile Info */}
-                <div className="flex items-center gap-4 border-b border-slate-100 pb-4">
-                  <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-[#D4AF37] shadow-md shrink-0 bg-slate-900">
-                    <img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover" />
-                  </div>
-                  <div>
-                    <h3 className="font-extrabold text-slate-900 text-base leading-snug">{mentor.name}</h3>
-                    <p className="text-[11px] font-bold text-[#D4AF37] mt-0.5">{mentor.title}</p>
-                    <div className="flex items-center gap-2 mt-1 text-[10px] text-slate-400 font-medium">
-                      <span>📍 {mentor.location}</span>
-                      <span>•</span>
-                      <span className="text-emerald-600 font-bold">{mentor.experience}</span>
-                    </div>
-                  </div>
+            <div key={mentor.id} className="bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-5">
+              <div className="flex items-center gap-4 border-b border-slate-100 pb-4">
+                <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-[#D4AF37] bg-slate-900"><img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover" /></div>
+                <div>
+                  <h3 className="font-extrabold text-slate-900 text-base">{mentor.name}</h3>
+                  <p className="text-[11px] font-bold text-[#D4AF37]">{mentor.title}</p>
                 </div>
-
-                {/* Mentor Journey Blog Text */}
-                <div className="space-y-3">
-                  <p className="text-xs text-slate-600 leading-relaxed font-normal italic bg-slate-50 p-4 rounded-2xl border border-slate-100">
-                    "{mentor.story}"
-                  </p>
-                </div>
-
               </div>
-
-              {/* Quote Footer (Read-Only Blog Highlight) */}
-              <div className="pt-3 border-t border-slate-100 flex items-start gap-2 text-xs font-semibold text-amber-900 bg-amber-50/60 p-3 rounded-2xl border border-amber-200/60">
+              <p className="text-xs text-slate-600 italic bg-slate-50 p-4 rounded-2xl border border-slate-100">"{mentor.story}"</p>
+              <div className="pt-3 border-t border-slate-100 flex items-start gap-2 text-xs font-semibold text-amber-900 bg-amber-50/60 p-3 rounded-2xl">
                 <Quote className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                 <span className="italic">{mentor.quote}</span>
               </div>
-
             </div>
           ))}
         </div>
       </div>
 
+      {/* BOOK TRIAL SESSION MODAL */}
+      {selectedProgram && (
+        <Modal isOpen={!!selectedProgram} onClose={() => setSelectedProgram(null)} title="">
+          <div className="space-y-5 p-2">
+            <div className="bg-gradient-to-r from-slate-900 to-[#1E293B] text-white p-5 rounded-2xl border border-slate-800 shadow-md">
+              <span className="text-[10px] font-black uppercase tracking-widest px-2.5 py-1 bg-amber-500/20 text-amber-300 rounded border border-amber-500/40">
+                {selectedProgram.badge}
+              </span>
+              <h3 className="text-lg font-black text-white mt-2">{selectedProgram.title}</h3>
+              <div className="flex items-center gap-4 mt-2 text-xs text-amber-200 font-bold">
+                <span>⏱️ {selectedProgram.duration}</span>
+                <span>•</span>
+                <span>💳 Fee: {selectedProgram.fee}</span>
+              </div>
+            </div>
+
+            {submittedSuccess ? (
+              <div className="p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center space-y-4 animate-fade-in">
+                <div className="w-14 h-14 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto shadow-lg">
+                  <Check className="w-8 h-8 stroke-[3]" />
+                </div>
+                <div>
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 bg-emerald-500/20 text-emerald-800 rounded border border-emerald-500/30">
+                    Automatically Approved
+                  </span>
+                  <h4 className="text-xl font-black text-slate-900 mt-1">Trial Session Confirmed!</h4>
+                </div>
+
+                <p className="text-xs text-slate-700 font-medium leading-relaxed max-w-md mx-auto">
+                  Your trial session request for <strong>{selectedProgram.title}</strong> is <strong>APPROVED</strong>! Your course curriculum, fee breakdown, and official Hafizabad Stud Farm location map link have been generated.
+                </p>
+
+                {/* Hafizabad Stud Farm Location Box */}
+                <div className="p-3.5 bg-white rounded-xl border border-slate-200 text-left text-xs space-y-1.5 shadow-sm">
+                  <p className="font-extrabold text-slate-900 flex items-center gap-1.5">
+                    📍 <span className="text-[#0F172A]">Horse-Square Hafizabad Stud Farm & Riding Academy</span>
+                  </p>
+                  <p className="text-[11px] text-slate-600 font-medium">Hafizabad Stud Farm Complex, Hafizabad, Punjab, Pakistan</p>
+                  <a
+                    href="https://maps.app.goo.gl/6RSSd7M6WTG8r6Qy6"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 hover:text-amber-700 underline pt-0.5"
+                  >
+                    🗺️ Open Google Maps Location (https://maps.app.goo.gl/6RSSd7M6WTG8r6Qy6) ↗
+                  </a>
+                </div>
+
+                <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                  {generatedWaUrl && (
+                    <a
+                      href={generatedWaUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <span>Get Details & Map via WhatsApp 💬</span>
+                    </a>
+                  )}
+                  <button
+                    onClick={() => setSelectedProgram(null)}
+                    className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition cursor-pointer"
+                  >
+                    Close
+                  </button>
+                </div>
+              </div>
+            ) : (
+              <form onSubmit={handleSubmitBooking} className="space-y-4">
+                {errorMessage && <div className="p-3 bg-rose-500/10 border border-rose-500/20 rounded-xl text-xs text-rose-700 font-bold">⚠️ {errorMessage}</div>}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700">Full Name *</label>
+                    <input type="text" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold" />
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700">Phone / WhatsApp *</label>
+                    <input type="tel" required value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold" />
+                  </div>
+                </div>
+                <div className="space-y-1">
+                  <label className="text-xs font-bold text-slate-700">Email Address *</label>
+                  <input type="email" required value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold" />
+                </div>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700">City</label>
+                    <select value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold">
+                      <option value="Lahore">Lahore</option><option value="Islamabad">Islamabad</option><option value="Karachi">Karachi</option><option value="Other">Other City</option>
+                    </select>
+                  </div>
+                  <div className="space-y-1">
+                    <label className="text-xs font-bold text-slate-700">Preferred Slot</label>
+                    <select value={formData.preferredSlot} onChange={(e) => setFormData({...formData, preferredSlot: e.target.value})} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold">
+                      <option value="Weekend Morning">Weekend Morning</option><option value="Weekend Afternoon">Weekend Afternoon</option>
+                    </select>
+                  </div>
+                </div>
+                <button type="submit" disabled={submitting} className="w-full py-3 bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-2">
+                  {submitting ? 'Submitting...' : 'Submit Trial Booking'}
+                </button>
+              </form>
+            )}
+          </div>
+        </Modal>
+      )}
     </div>
   );
 };

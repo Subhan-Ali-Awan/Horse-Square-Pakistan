@@ -818,18 +818,18 @@ export const Marketplace = () => {
                       <h3 className="font-black text-[#0F172A] text-lg leading-tight group-hover:text-[#D4AF37] transition">
                         {horse.name}
                       </h3>
-                      <div className="flex flex-wrap gap-2 mt-2 text-[11px] text-slate-500">
-                        <span className="px-2 py-0.5 bg-slate-50 border rounded-md">{horse.breed}</span>
-                        <span className="px-2 py-0.5 bg-slate-50 border rounded-md">{horse.age} yrs</span>
-                        <span className="px-2 py-0.5 bg-slate-50 border rounded-md">{horse.height}</span>
+                      <div className="flex flex-wrap gap-2 mt-2 text-[11px]">
+                        <span className="px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-lg text-slate-900 font-bold">{horse.breed}</span>
+                        <span className="px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-lg text-slate-900 font-bold">{horse.age} yrs</span>
+                        <span className="px-2.5 py-1 bg-slate-100 border border-slate-200 rounded-lg text-slate-900 font-bold">{horse.height}</span>
                       </div>
-                      <p className="text-slate-500 text-xs mt-3 leading-relaxed line-clamp-2 font-light">
+                      <p className="text-slate-800 text-xs mt-3 leading-relaxed line-clamp-2 font-semibold">
                         {horse.description}
                       </p>
                     </div>
 
-                    <div className="flex items-center justify-between pt-3 border-t border-slate-50 text-xs font-bold">
-                      <span className="flex items-center gap-1 text-slate-500 font-semibold">
+                    <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-bold">
+                      <span className="flex items-center gap-1 text-slate-900 font-extrabold">
                         <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" /> {horse.location}
                       </span>
                       <span className="text-[#D4AF37] group-hover:text-[#0F172A] transition">View Details</span>
@@ -873,20 +873,20 @@ export const Marketplace = () => {
                         </span>
                       </div>
 
-                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 my-3 text-[11px] sm:text-xs text-slate-500 bg-slate-50 p-2.5 rounded-lg border border-slate-100">
-                        <p><strong className="text-slate-800">Breed:</strong> {horse.breed}</p>
-                        <p><strong className="text-slate-800">Age:</strong> {horse.age} yrs</p>
-                        <p><strong className="text-slate-800">Height in inches:</strong> {horse.height}</p>
-                        <p><strong className="text-slate-800">Color:</strong> {horse.color}</p>
+                      <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 my-3 text-[11px] sm:text-xs text-slate-900 bg-slate-100/90 p-2.5 rounded-lg border border-slate-200">
+                        <p><strong className="text-slate-900 font-black">Breed:</strong> <span className="text-slate-900 font-bold">{horse.breed}</span></p>
+                        <p><strong className="text-slate-900 font-black">Age:</strong> <span className="text-slate-900 font-bold">{horse.age} yrs</span></p>
+                        <p><strong className="text-slate-900 font-black">Height:</strong> <span className="text-slate-900 font-bold">{horse.height}</span></p>
+                        <p><strong className="text-slate-900 font-black">Color:</strong> <span className="text-slate-900 font-bold">{horse.color}</span></p>
                       </div>
 
-                      <p className="text-slate-600 text-xs sm:text-sm font-light leading-relaxed line-clamp-2">
+                      <p className="text-slate-800 text-xs sm:text-sm font-semibold leading-relaxed line-clamp-2">
                         {horse.description}
                       </p>
                     </div>
 
                     <div className="flex justify-between items-center pt-3 border-t border-slate-100 text-xs font-bold mt-3">
-                      <span className="flex items-center gap-1 text-slate-500 font-semibold">
+                      <span className="flex items-center gap-1 text-slate-900 font-extrabold">
                         <MapPin className="w-3.5 h-3.5 text-[#D4AF37]" /> {horse.location}
                       </span>
                       <span className="text-[#D4AF37] group-hover:text-[#0F172A] transition">View Details</span>

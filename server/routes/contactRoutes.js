@@ -177,4 +177,258 @@ router.delete("/:id", protect, async (req, res, next) => {
   }
 });
 
+// ===================================================
+// RIDING SCHOOL TRIAL SESSION BOOKINGS
+// ===================================================
+
+const { RidingTrial } = require("../models/Misc");
+
+const COURSE_BREAKDOWN = {
+  "Beginner Riding Foundation": {
+    fee: "Rs. 35,000 PKR",
+    duration: "4 Weeks (12 Sessions)",
+    badge: "Beginner Level",
+    curriculum: [
+      "Week 1: Mounting/dismounting balance, stirrup heel position & horse grooming fundamentals.",
+      "Week 2: Reins steering control, walk-to-trot transitions & posture posture alignment.",
+      "Week 3: Posting trot rhythm, arena circle turns & inside leg aids.",
+      "Week 4: Independent horse control, equestrian safety evaluation & certification."
+    ]
+  },
+  "Intermediate Horsemanship & Canter Control": {
+    fee: "Rs. 52,000 PKR",
+    duration: "6 Weeks (18 Sessions)",
+    badge: "Intermediate Level",
+    curriculum: [
+      "Week 1-2: Smooth canter lead transitions & seat depth balance.",
+      "Week 3-4: Trail riding navigation, outdoor terrain & obstacle handling.",
+      "Week 5-6: Advanced rein releases, half-halts, rhythm control & safety jumps."
+    ]
+  },
+  "Advanced Equestrian Tent Pegging": {
+    fee: "Rs. 75,000 PKR",
+    duration: "8 Weeks (24 Sessions)",
+    badge: "Advanced Level",
+    curriculum: [
+      "Week 1-2: Full gallop lance stability, grip technique & target peg alignment.",
+      "Week 3-4: Flying lead changes & high-speed arena cornering.",
+      "Week 5-6: Unshielded target peg strikes & ground-to-saddle speed balance.",
+      "Week 7-8: Competitive Nezabazi tournament simulation & master certification."
+    ]
+  }
+};
+
+// POST /api/contact/riding-trial -> Submit trial session booking (AUTOMATICALLY APPROVED WITH HAFIZABAD LOCATION)
+router.post("/riding-trial", async (req, res, next) => {
+  try {
+    const { name, phone, email, city, courseTitle, ridingLevel, preferredSlot, experienceDetails, userId } = req.body;
+    if (!name || !phone || !email || !courseTitle) {
+      return res.status(400).json({ success: false, message: "Name, phone, email, and course title are required" });
+    }
+
+    const courseInfo = COURSE_BREAKDOWN[courseTitle] || {
+      fee: "Rs. 35,000 PKR",
+      duration: "Standard Duration",
+      badge: ridingLevel || "Beginner",
+      curriculum: [
+        "Session 1-4: Basic posture, mounting, balance & reins control.",
+        "Session 5-8: Trot, canter transitions & arena obstacle navigation.",
+        "Session 9-12: Advanced horsemanship, trial assessment & certification."
+      ]
+    };
+
+    // Hafizabad Stud Farm Official Riding School Location
+    const HAFIZABAD_LOCATION = {
+      name: "Horse-Square Hafizabad Stud Farm & Riding Academy",
+      address: "Hafizabad Stud Farm Complex, Hafizabad, Punjab, Pakistan",
+      mapsUrl: "https://maps.app.goo.gl/6RSSd7M6WTG8r6Qy6"
+    };
+
+    const cleanPhone = phone.replace(/[^0-9]/g, "");
+    const formattedPhone = cleanPhone.startsWith("0") ? `92${cleanPhone.slice(1)}` : cleanPhone;
+
+    const whatsappMessage = `*🏇 Horse-Square Pakistan Riding Academy*
+*AUTOMATICALLY APPROVED TRIAL SESSION & COURSE CURRICULUM*
+
+Hello *${name}*, your Riding Trial Request for *${courseTitle}* has been *AUTOMATICALLY APPROVED*!
+
+*📋 Course Details:*
+• *Course:* ${courseTitle} (${courseInfo.badge})
+• *Duration:* ${courseInfo.duration}
+• *Fee Structure:* ${courseInfo.fee}
+• *Preferred Slot:* ${preferredSlot || "Weekend Morning"}
+
+*📍 Hafizabad Stud Farm Riding Location & Address:*
+• *Academy:* ${HAFIZABAD_LOCATION.name}
+• *Address:* ${HAFIZABAD_LOCATION.address}
+• *Google Maps Navigation Link:* ${HAFIZABAD_LOCATION.mapsUrl}
+
+*📚 Training Curriculum & Syllabus:*
+${courseInfo.curriculum.map((c, i) => `${i + 1}. ${c}`).join("\n")}
+
+*📍 Next Step:*
+Tap the Hafizabad Stud Farm Google Maps link above (${HAFIZABAD_LOCATION.mapsUrl}) to navigate straight to our academy, and reply to this message to confirm your arrival!
+
+_Horse-Square Pakistan Equestrian Team_`;
+
+    const encodedWA = encodeURIComponent(whatsappMessage);
+    const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedWA}`;
+
+    const trial = await RidingTrial.create({
+      user: userId || undefined,
+      name,
+      phone,
+      email,
+      city: city || "Hafizabad",
+      courseTitle,
+      ridingLevel: ridingLevel || "Beginner",
+      preferredSlot: preferredSlot || "Weekend Morning",
+      experienceDetails: experienceDetails || "Not specified",
+      status: "approved",
+      approvedAt: new Date(),
+      feeStructureSent: true,
+      whatsappMsg: whatsappMessage
+    });
+
+    res.status(201).json({
+      success: true,
+      message: "Trial Session booking request approved! Full fee structure, curriculum, and Hafizabad Stud Farm map link generated.",
+      data: trial,
+      whatsappUrl,
+      whatsappMessage
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// GET /api/contact/riding-trial -> Admin: list all trial booking requests
+router.get("/riding-trial", protect, adminOnly, async (req, res, next) => {
+  try {
+    const trials = await RidingTrial.find().sort({ createdAt: -1 });
+    res.status(200).json({ success: true, count: trials.length, data: trials });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// PUT /api/contact/riding-trial/:id/approve -> Admin: approve trial & generate WhatsApp + Email payload
+router.put("/riding-trial/:id/approve", protect, adminOnly, async (req, res, next) => {
+  try {
+    const trial = await RidingTrial.findById(req.params.id);
+    if (!trial) return res.status(404).json({ success: false, message: "Trial request not found" });
+
+    const courseInfo = COURSE_BREAKDOWN[trial.courseTitle] || {
+      fee: "Rs. 35,000 PKR",
+      duration: "Standard Duration",
+      badge: trial.ridingLevel,
+      curriculum: [
+        "Session 1-4: Basic posture, mounting, balance & reins control.",
+        "Session 5-8: Trot, canter transitions & arena obstacle navigation.",
+        "Session 9-12: Advanced horsemanship, trial assessment & certification."
+      ]
+    };
+
+    trial.status = "approved";
+    trial.approvedAt = new Date();
+    trial.feeStructureSent = true;
+
+    // Generate formatted WhatsApp message text
+    const cleanPhone = trial.phone.replace(/[^0-9]/g, "");
+    const formattedPhone = cleanPhone.startsWith("0") ? `92${cleanPhone.slice(1)}` : cleanPhone;
+
+    const CITY_ACADEMY_LOCATIONS = {
+      "Lahore": {
+        name: "Horse-Square Riding Academy (Bedian Complex, Lahore)",
+        address: "Bedian Road, Near DHA Phase 6 Interchange, Lahore",
+        mapsUrl: "https://maps.google.com/?q=31.4490,74.4380"
+      },
+      "Islamabad": {
+        name: "Horse-Square Riding Club (Chak Shahzad, Islamabad)",
+        address: "Park Road, Near Chak Shahzad Equestrian Center, Islamabad",
+        mapsUrl: "https://maps.google.com/?q=33.6700,73.1200"
+      },
+      "Karachi": {
+        name: "Horse-Square Stables (Malir Cantt Arena, Karachi)",
+        address: "Malir Cantt Cavalry Grounds, Karachi",
+        mapsUrl: "https://maps.google.com/?q=24.9300,67.1800"
+      },
+      "Sargodha": {
+        name: "Horse-Square Nezabazi Grounds (Sargodha)",
+        address: "Stadium Road, Near Sargodha Cavalry Club, Sargodha",
+        mapsUrl: "https://maps.google.com/?q=32.0800,72.6700"
+      },
+      "Faisalabad": {
+        name: "Horse-Square Equestrian Center (Faisalabad)",
+        address: "Canal Expressway, Imperial Stables Complex, Faisalabad",
+        mapsUrl: "https://maps.google.com/?q=31.4180,73.0790"
+      },
+      "Peshawar": {
+        name: "Horse-Square Riding Arena (Peshawar)",
+        address: "Ring Road Equestrian Grounds, Peshawar",
+        mapsUrl: "https://maps.google.com/?q=34.0150,71.5240"
+      }
+    };
+
+    const locationInfo = CITY_ACADEMY_LOCATIONS[trial.city] || {
+      name: `Horse-Square Riding Academy (${trial.city})`,
+      address: `Main Equestrian Complex, ${trial.city}`,
+      mapsUrl: `https://maps.google.com/?q=${encodeURIComponent(trial.city + " Riding Academy")}`
+    };
+
+    const whatsappMessage = `*🏇 Horse-Square Pakistan Riding Academy*
+*APPROVED TRIAL SESSION & COURSE CURRICULUM*
+
+Hello *${trial.name}*, your Riding Trial Request has been *APPROVED* by Admin!
+
+*📋 Course Details:*
+• *Course:* ${trial.courseTitle} (${courseInfo.badge})
+• *Duration:* ${courseInfo.duration}
+• *Fee Structure:* ${courseInfo.fee}
+• *Preferred Slot:* ${trial.preferredSlot}
+
+*📍 Riding School Location & Address:*
+• *Academy:* ${locationInfo.name}
+• *Address:* ${locationInfo.address}
+• *Google Maps Location Link:* ${locationInfo.mapsUrl}
+
+*📚 Training Curriculum & Syllabus:*
+${courseInfo.curriculum.map((c, i) => `${i + 1}. ${c}`).join("\n")}
+
+*📍 Next Step:*
+Click the Google Maps link above to easily navigate to our riding academy, and confirm your arrival slot timing by replying to this message!
+
+_Horse-Square Pakistan Equestrian Team_`;
+
+    trial.whatsappMsg = whatsappMessage;
+    await trial.save();
+
+    const encodedWA = encodeURIComponent(whatsappMessage);
+    const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedWA}`;
+
+    res.status(200).json({
+      success: true,
+      message: `Trial request approved! Fee structure & curriculum generated for ${trial.name}.`,
+      data: trial,
+      whatsappUrl,
+      whatsappMessage
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// DELETE /api/contact/riding-trial/:id -> Admin: delete trial request
+router.delete("/riding-trial/:id", protect, adminOnly, async (req, res, next) => {
+  try {
+    const trial = await RidingTrial.findById(req.params.id);
+    if (!trial) return res.status(404).json({ success: false, message: "Trial request not found" });
+
+    await trial.deleteOne();
+    res.status(200).json({ success: true, message: "Trial request deleted successfully!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
 module.exports = router;

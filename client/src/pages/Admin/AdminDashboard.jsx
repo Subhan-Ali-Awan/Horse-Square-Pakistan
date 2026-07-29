@@ -47,6 +47,7 @@ export const AdminDashboard = () => {
   const [breedingList, setBreedingList] = useState([]);
   const [vetList, setVetList] = useState([]);
   const [contactList, setContactList] = useState([]);
+  const [ridingTrialsList, setRidingTrialsList] = useState([]);
   const [selectedQueryChat, setSelectedQueryChat] = useState(null);
 
   // Search & Filter States
@@ -149,6 +150,9 @@ export const AdminDashboard = () => {
     } else if (activeTab === 'contact') {
       const res = await fetchWithAuth('/contact');
       if (res.success) setContactList(res.data);
+    } else if (activeTab === 'trials') {
+      const res = await fetchWithAuth('/contact/riding-trial');
+      if (res.success) setRidingTrialsList(res.data);
     }
     setLoading(false);
   };
@@ -258,6 +262,7 @@ export const AdminDashboard = () => {
     { id: 'horses', label: 'Horse Listings', icon: <ShoppingBag className="w-4 h-4" /> },
     { id: 'auctions', label: 'Auctions', icon: <Gavel className="w-4 h-4" /> },
     { id: 'breeding', label: 'Breeding Requests', icon: <Dna className="w-4 h-4" /> },
+    { id: 'trials', label: 'Riding School Trials', icon: <Award className="w-4 h-4" /> },
     { id: 'vet', label: 'AI Vet Inquiries', icon: <Stethoscope className="w-4 h-4" /> },
     { id: 'contact', label: 'Contact Messages', icon: <Mail className="w-4 h-4" /> }
   ];
@@ -1111,7 +1116,104 @@ export const AdminDashboard = () => {
               </div>
             </div>
           )}
+          {/* TAB 8: RIDING SCHOOL TRIALS */}
+          {activeTab === 'trials' && (
+            <div className="bg-white rounded-3xl border border-slate-200 shadow-sm p-6 space-y-6 animate-fade-in">
+              <div className="border-b pb-4 flex justify-between items-center">
+                <div>
+                  <h3 className="font-bold text-slate-800 text-sm uppercase">Riding School Trial Session Requests</h3>
+                  <p className="text-slate-500 text-xs mt-0.5">Approve trial bookings to automatically dispatch Fee Structure & Course Curriculum to user's WhatsApp & Email</p>
+                </div>
+              </div>
 
+              <div className="overflow-x-auto">
+                <table className="w-full text-left text-xs text-slate-700">
+                  <thead className="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider text-[10px] border-b">
+                    <tr>
+                      <th className="p-3">Applicant Name</th>
+                      <th className="p-3">Contact (Phone / Email)</th>
+                      <th className="p-3">Course & Level</th>
+                      <th className="p-3">City & Preferred Slot</th>
+                      <th className="p-3">Experience / Goals</th>
+                      <th className="p-3">Status</th>
+                      <th className="p-3 text-right">Actions</th>
+                    </tr>
+                  </thead>
+                  <tbody className="divide-y divide-slate-100">
+                    {ridingTrialsList.map((t) => (
+                      <tr key={t._id} className="hover:bg-slate-50 transition">
+                        <td className="p-3 font-bold text-slate-900">{t.name}</td>
+                        <td className="p-3">
+                          <p className="font-bold text-slate-800">📞 {t.phone}</p>
+                          <p className="text-slate-500 text-[11px]">✉️ {t.email}</p>
+                        </td>
+                        <td className="p-3">
+                          <p className="font-black text-[#0F172A]">{t.courseTitle}</p>
+                          <span className="inline-block mt-0.5 text-[9px] font-bold px-2 py-0.5 rounded bg-amber-100 text-amber-900 border border-amber-300">
+                            {t.ridingLevel}
+                          </span>
+                        </td>
+                        <td className="p-3 text-slate-700">
+                          <p className="font-bold text-slate-800">📍 {t.city}</p>
+                          <p className="text-slate-500 text-[11px]">⏱️ {t.preferredSlot}</p>
+                        </td>
+                        <td className="p-3 text-slate-600 max-w-xs truncate">{t.experienceDetails || 'None specified'}</td>
+                        <td className="p-3">
+                          <span className={getStatusBadgeClass(t.status)}>
+                            {t.status}
+                          </span>
+                        </td>
+                        <td className="p-3 text-right space-x-1.5">
+                          {t.status !== 'approved' ? (
+                            <button
+                              onClick={async () => {
+                                const res = await fetchWithAuth(`/contact/riding-trial/${t._id}/approve`, { method: 'PUT' });
+                                if (res.success) {
+                                  showToast(`Trial Approved! Opening WhatsApp...`);
+                                  if (res.whatsappUrl) {
+                                    window.open(res.whatsappUrl, '_blank');
+                                  }
+                                  loadTabData();
+                                }
+                              }}
+                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-[10px] transition cursor-pointer shadow flex items-center gap-1.5 ml-auto"
+                            >
+                              <span>Approve & Send Curriculum 💬</span>
+                            </button>
+                          ) : (
+                            <button
+                              onClick={() => {
+                                const cleanPhone = t.phone.replace(/[^0-9]/g, "");
+                                const formattedPhone = cleanPhone.startsWith("0") ? `92${cleanPhone.slice(1)}` : cleanPhone;
+                                const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(t.whatsappMsg || 'Approved Riding Trial Course Curriculum')}`;
+                                window.open(url, '_blank');
+                              }}
+                              className="px-3 py-1 bg-[#0F172A] hover:bg-slate-800 text-amber-300 border border-amber-500/30 font-bold rounded-lg text-[10px] transition cursor-pointer"
+                            >
+                              Resend WhatsApp 💬
+                            </button>
+                          )}
+                          <button
+                            onClick={async () => {
+                              if (!confirm('Delete this trial booking request?')) return;
+                              const res = await fetchWithAuth(`/contact/riding-trial/${t._id}`, { method: 'DELETE' });
+                              if (res.success) {
+                                showToast(`Trial request deleted.`);
+                                loadTabData();
+                              }
+                            }}
+                            className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 border border-rose-200 font-bold rounded-lg text-[10px] transition cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          )}
         </div>
       </main>
 

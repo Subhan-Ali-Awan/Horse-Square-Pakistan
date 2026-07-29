@@ -259,11 +259,10 @@ export const Navbar = () => {
 
                 {/* Profile Dropdown Menu */}
                 <div
-                  className={`absolute right-0 mt-2 w-64 bg-[#0F172A] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden transition-all duration-200 origin-top-right z-50 ${
-                    isProfileOpen
+                  className={`absolute right-0 mt-2 w-64 bg-[#0F172A] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden transition-all duration-200 origin-top-right z-50 ${isProfileOpen
                       ? 'opacity-100 scale-100 translate-y-0 visible'
                       : 'opacity-0 scale-95 -translate-y-2 invisible'
-                  }`}
+                    }`}
                 >
                   {/* User Profile Summary Header */}
                   <div className="p-4 bg-gradient-to-r from-slate-900 to-[#1E293B] border-b border-slate-800 flex items-center gap-3">
@@ -307,15 +306,15 @@ export const Navbar = () => {
               <div className="flex items-center gap-3">
                 <Link
                   to="/login"
-                  className="text-xs text-[#0F172A] bg-gradient-to-r from-[#D4AF37] to-[#C9A227] hover:from-[#C9A227] hover:to-[#B8860B] font-bold px-4 py-2 rounded-lg transition shadow"
+                  className="liquid-gel-auth-btn text-xs px-5 py-2.5 rounded-full"
                 >
-                  Login
+                  <span className="relative z-10">Login</span>
                 </Link>
                 <Link
                   to="/register"
-                  className="text-xs text-white bg-slate-800 hover:bg-slate-700 font-semibold px-4 py-2 rounded-lg border border-slate-700/60 transition"
+                  className="liquid-gel-auth-btn text-xs px-5 py-2.5 rounded-full"
                 >
-                  Register
+                  <span className="relative z-10">Register</span>
                 </Link>
               </div>
             )}
@@ -456,16 +455,16 @@ export const Navbar = () => {
                 <Link
                   to="/login"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center bg-gradient-to-r from-[#D4AF37] to-[#C9A227] hover:from-[#C9A227] hover:to-[#B8860B] text-[#0F172A] font-bold py-2.5 rounded-lg transition shadow text-sm"
+                  className="liquid-gel-auth-btn text-sm py-2.5 w-full rounded-full"
                 >
-                  Login
+                  <span className="relative z-10">Login</span>
                 </Link>
                 <Link
                   to="/register"
                   onClick={() => setIsMobileMenuOpen(false)}
-                  className="flex items-center justify-center text-white bg-slate-800 hover:bg-slate-700 font-semibold py-2.5 rounded-lg border border-slate-700 transition text-sm"
+                  className="liquid-gel-auth-btn text-sm py-2.5 w-full rounded-full"
                 >
-                  Register
+                  <span className="relative z-10">Register</span>
                 </Link>
               </div>
             )}

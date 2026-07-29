@@ -37,7 +37,32 @@ const locationLogSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
+// Riding School Trial Session Bookings
+const ridingTrialSchema = new mongoose.Schema(
+  {
+    user: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
+    name: { type: String, required: true },
+    phone: { type: String, required: true },
+    email: { type: String, required: true },
+    city: { type: String, default: "Lahore" },
+    courseTitle: { type: String, required: true },
+    ridingLevel: { type: String, default: "Beginner" },
+    preferredSlot: { type: String, default: "Weekend Morning" },
+    experienceDetails: { type: String },
+    status: {
+      type: String,
+      enum: ["pending", "approved", "rejected"],
+      default: "pending",
+    },
+    approvedAt: { type: Date },
+    feeStructureSent: { type: Boolean, default: false },
+    whatsappMsg: { type: String },
+  },
+  { timestamps: true }
+);
+
 module.exports = {
   ContactMessage: mongoose.model("ContactMessage", contactMessageSchema),
   LocationLog: mongoose.model("LocationLog", locationLogSchema),
+  RidingTrial: mongoose.model("RidingTrial", ridingTrialSchema),
 };
