@@ -98,10 +98,10 @@ exports.createHorse = async (req, res, next) => {
     // ===================================================
     const policyFailures = [];
 
-    // 1. Pricing Policy: Rs. 700,000 to Rs. 17,500,000 PKR
+    // 1. Pricing Policy: Valid positive number
     const numericPrice = Number(price);
-    if (isNaN(numericPrice) || numericPrice < 700000 || numericPrice > 17500000) {
-      policyFailures.push("Price must be between Rs. 700,000 PKR and Rs. 17,500,000 PKR");
+    if (isNaN(numericPrice) || numericPrice <= 0) {
+      policyFailures.push("Price must be a valid positive number");
     }
 
     // 2. Height Policy: 58 inches to 66 inches
@@ -148,7 +148,7 @@ exports.createHorse = async (req, res, next) => {
       age: Number(age) || undefined,
       color,
       height,
-      spotlight: spotlight === "true" || spotlight === true,
+      spotlight: (spotlight === "true" || spotlight === true || numericPrice >= 3500000),
       sire,
       dam,
       images,

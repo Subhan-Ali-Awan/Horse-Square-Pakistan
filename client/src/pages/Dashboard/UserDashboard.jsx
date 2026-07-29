@@ -152,7 +152,7 @@ export const UserDashboard = () => {
   // ── Data fetching ──────────────────────────────────────────────────────────
   useEffect(() => {
     if (!user || !token) return;
-    
+
     const loadData = async () => {
       setLoading(true);
       setError('');
@@ -390,27 +390,27 @@ export const UserDashboard = () => {
 
   const getStatusBadge = (status) => {
     const map = {
-      pending:  'bg-amber-50 text-amber-700 border border-amber-200',
+      pending: 'bg-amber-50 text-amber-700 border border-amber-200',
       approved: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
       rejected: 'bg-rose-50 text-rose-600 border border-rose-200',
-      sold:     'bg-blue-50 text-blue-600 border border-blue-200',
-      live:     'bg-emerald-50 text-emerald-700 border border-emerald-200',
-      ended:    'bg-slate-100 text-slate-500 border border-slate-200',
-      new:      'bg-amber-50 text-amber-800 border border-amber-200',
-      read:     'bg-blue-50 text-blue-700 border border-blue-200',
+      sold: 'bg-blue-50 text-blue-600 border border-blue-200',
+      live: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+      ended: 'bg-slate-100 text-slate-500 border border-slate-200',
+      new: 'bg-amber-50 text-amber-800 border border-amber-200',
+      read: 'bg-blue-50 text-blue-700 border border-blue-200',
       resolved: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
     };
     return `inline-flex items-center px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider ${map[status] || map.ended}`;
   };
 
   const navItems = [
-    { id: 'overview',  label: 'Overview',        icon: <LayoutDashboard className="w-4 h-4" /> },
-    { id: 'listings',  label: 'My Listings',     icon: <ShoppingBag className="w-4 h-4" /> },
-    { id: 'auctions',  label: 'My Auctions',     icon: <Gavel className="w-4 h-4" /> },
-    { id: 'breeding',  label: 'Breeding System', icon: <Dna className="w-4 h-4" /> },
-    { id: 'riding',    label: 'Riding School',   icon: <Compass className="w-4 h-4" /> },
-    { id: 'contact',   label: 'Contact Queries', icon: <MessageSquare className="w-4 h-4" /> },
-    { id: 'profile',   label: 'My Profile',      icon: <User className="w-4 h-4" /> },
+    { id: 'overview', label: 'Overview', icon: <LayoutDashboard className="w-4 h-4" /> },
+    { id: 'listings', label: 'My Listings', icon: <ShoppingBag className="w-4 h-4" /> },
+    { id: 'auctions', label: 'My Auctions', icon: <Gavel className="w-4 h-4" /> },
+    { id: 'breeding', label: 'Breeding System', icon: <Dna className="w-4 h-4" /> },
+    { id: 'riding', label: 'Riding School', icon: <Compass className="w-4 h-4" /> },
+    { id: 'contact', label: 'Contact Queries', icon: <MessageSquare className="w-4 h-4" /> },
+    { id: 'profile', label: 'My Profile', icon: <User className="w-4 h-4" /> },
   ];
 
   // Loading spinner while auth restores
@@ -463,11 +463,10 @@ export const UserDashboard = () => {
               )}
               <button
                 onClick={() => setActiveTab(item.id)}
-                className={`w-full flex items-center gap-3.5 px-4.5 py-3 rounded-2xl text-xs font-bold tracking-wide transition-all duration-300 cursor-pointer ${
-                  activeTab === item.id
-                    ? 'liquid-glass-nav-active font-black'
-                    : 'liquid-glass-nav-inactive'
-                }`}
+                className={`w-full flex items-center gap-3.5 px-4.5 py-3 rounded-2xl text-xs font-bold tracking-wide transition-all duration-300 cursor-pointer ${activeTab === item.id
+                  ? 'liquid-glass-nav-active font-black'
+                  : 'liquid-glass-nav-inactive'
+                  }`}
               >
                 {item.icon}
                 <span>{item.label}</span>
@@ -825,16 +824,14 @@ export const UserDashboard = () => {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
                 <div
                   onClick={() => setBreedingSubTab('services')}
-                  className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer flex items-center justify-between shadow-sm ${
-                    breedingSubTab === 'services'
-                      ? 'bg-gradient-to-r from-[#0F172A] to-[#1E293B] text-white border-[#D4AF37]/50 ring-2 ring-[#D4AF37]/30 shadow-lg'
-                      : 'bg-white text-slate-800 border-slate-200 hover:border-amber-400 hover:shadow-md'
-                  }`}
+                  className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer flex items-center justify-between shadow-sm ${breedingSubTab === 'services'
+                    ? 'bg-gradient-to-r from-[#0F172A] to-[#1E293B] text-white border-[#D4AF37]/50 ring-2 ring-[#D4AF37]/30 shadow-lg'
+                    : 'bg-white text-slate-800 border-slate-200 hover:border-amber-400 hover:shadow-md'
+                    }`}
                 >
                   <div className="space-y-1">
-                    <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
-                      breedingSubTab === 'services' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-amber-50 text-amber-800 border-amber-200'
-                    }`}>
+                    <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${breedingSubTab === 'services' ? 'bg-amber-500/20 text-amber-300 border-amber-500/30' : 'bg-amber-50 text-amber-800 border-amber-200'
+                      }`}>
                       Verified Stallion Studs
                     </span>
                     <h3 className="text-xl font-black">Breeding Services</h3>
@@ -842,25 +839,22 @@ export const UserDashboard = () => {
                       Browse champion stallions & book genetic breeding stud services
                     </p>
                   </div>
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black shrink-0 ${
-                    breedingSubTab === 'services' ? 'bg-[#D4AF37] text-slate-950' : 'bg-amber-50 text-[#C9A227] border border-amber-200'
-                  }`}>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black shrink-0 ${breedingSubTab === 'services' ? 'bg-[#D4AF37] text-slate-950' : 'bg-amber-50 text-[#C9A227] border border-amber-200'
+                    }`}>
                     <Dna className="w-6 h-6" />
                   </div>
                 </div>
 
                 <div
                   onClick={() => setBreedingSubTab('requests')}
-                  className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer flex items-center justify-between shadow-sm ${
-                    breedingSubTab === 'requests'
-                      ? 'bg-gradient-to-r from-[#0F172A] to-[#1E293B] text-white border-[#D4AF37]/50 ring-2 ring-[#D4AF37]/30 shadow-lg'
-                      : 'bg-white text-slate-800 border-slate-200 hover:border-amber-400 hover:shadow-md'
-                  }`}
+                  className={`p-6 rounded-3xl border transition-all duration-300 cursor-pointer flex items-center justify-between shadow-sm ${breedingSubTab === 'requests'
+                    ? 'bg-gradient-to-r from-[#0F172A] to-[#1E293B] text-white border-[#D4AF37]/50 ring-2 ring-[#D4AF37]/30 shadow-lg'
+                    : 'bg-white text-slate-800 border-slate-200 hover:border-amber-400 hover:shadow-md'
+                    }`}
                 >
                   <div className="space-y-1">
-                    <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${
-                      breedingSubTab === 'requests' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-emerald-50 text-emerald-800 border-emerald-200'
-                    }`}>
+                    <span className={`text-[10px] font-black uppercase tracking-wider px-2.5 py-0.5 rounded-full border ${breedingSubTab === 'requests' ? 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30' : 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                      }`}>
                       My Applications ({myBreedingRequests.length})
                     </span>
                     <h3 className="text-xl font-black">Breeding Requests</h3>
@@ -868,9 +862,8 @@ export const UserDashboard = () => {
                       View status updates & details for your submitted breeding applications
                     </p>
                   </div>
-                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black shrink-0 ${
-                    breedingSubTab === 'requests' ? 'bg-[#D4AF37] text-slate-950' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
-                  }`}>
+                  <div className={`w-12 h-12 rounded-2xl flex items-center justify-center font-black shrink-0 ${breedingSubTab === 'requests' ? 'bg-[#D4AF37] text-slate-950' : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
+                    }`}>
                     <MessageSquare className="w-6 h-6" />
                   </div>
                 </div>
@@ -1021,7 +1014,7 @@ export const UserDashboard = () => {
           {/* ── RIDING SCHOOL TAB ─────────────────────────────────────────── */}
           {activeTab === 'riding' && (
             <div className="animate-fade-in space-y-8">
-              
+
               {/* Banner Header */}
               <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-7 text-white shadow-lg border border-slate-800 flex flex-col md:flex-row justify-between items-start md:items-center gap-6">
                 <div className="space-y-2">
@@ -1242,11 +1235,10 @@ export const UserDashboard = () => {
                 </div>
 
                 {profileMsg.text && (
-                  <div className={`mb-5 px-4 py-3 rounded-xl text-xs font-semibold flex items-center gap-2 border ${
-                    profileMsg.type === 'success'
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                      : 'bg-rose-50 text-rose-600 border-rose-200'
-                  }`}>
+                  <div className={`mb-5 px-4 py-3 rounded-xl text-xs font-semibold flex items-center gap-2 border ${profileMsg.type === 'success'
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-rose-50 text-rose-600 border-rose-200'
+                    }`}>
                     {profileMsg.type === 'success' ? <CheckCircle className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
                     {profileMsg.text}
                   </div>
@@ -1341,11 +1333,10 @@ export const UserDashboard = () => {
                 </div>
 
                 {pwMsg.text && (
-                  <div className={`mb-5 px-4 py-3 rounded-xl text-xs font-semibold flex items-center gap-2 border ${
-                    pwMsg.type === 'success'
-                      ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                      : 'bg-rose-50 text-rose-600 border-rose-200'
-                  }`}>
+                  <div className={`mb-5 px-4 py-3 rounded-xl text-xs font-semibold flex items-center gap-2 border ${pwMsg.type === 'success'
+                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                    : 'bg-rose-50 text-rose-600 border-rose-200'
+                    }`}>
                     {pwMsg.type === 'success' ? <CheckCircle className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
                     {pwMsg.text}
                   </div>

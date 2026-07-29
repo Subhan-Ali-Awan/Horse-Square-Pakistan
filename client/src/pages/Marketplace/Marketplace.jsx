@@ -31,6 +31,13 @@ export const Marketplace = () => {
   const [sortBy, setSortBy] = useState('newest');
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   const [selectedHorse, setSelectedHorse] = useState(null);
+  const [modalImageIdx, setModalImageIdx] = useState(0);
+
+  const horseImages = (selectedHorse?.images && selectedHorse.images.length > 0)
+    ? selectedHorse.images
+    : [selectedHorse?.imageUrl || selectedHorse?.image || 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a'];
+
+  const currentImg = horseImages[modalImageIdx] || horseImages[0];
   const [currentPage, setCurrentPage] = useState(1);
 
   // Reset page when filters/sorting change
@@ -47,6 +54,7 @@ export const Marketplace = () => {
 
   const majorCities = [
     { name: 'Lahore', region: 'Punjab' },
+    { name: 'Hafizabad', region: 'Punjab' },
     { name: 'Sargodha', region: 'Punjab' },
     { name: 'Multan', region: 'Punjab' },
     { name: 'Faisalabad', region: 'Punjab' },
@@ -329,10 +337,11 @@ export const Marketplace = () => {
 
     // Distance pricing approximation in PKR
     const rates = {
-      Lahore: { Karachi: 48000, Islamabad: 18000, Rawalpindi: 18000, Multan: 16000, Sargodha: 10000, Faisalabad: 8000, Peshawar: 22000 },
-      Sargodha: { Karachi: 45000, Islamabad: 15000, Rawalpindi: 15000, Multan: 14000, Lahore: 10000, Faisalabad: 7000, Peshawar: 19000 },
-      Multan: { Karachi: 38000, Islamabad: 24000, Rawalpindi: 24000, Sargodha: 14000, Lahore: 16000, Faisalabad: 12000, Peshawar: 28000 },
-      Karachi: { Lahore: 48000, Islamabad: 58000, Rawalpindi: 58000, Multan: 38000, Sargodha: 45000, Faisalabad: 42000, Peshawar: 64000 }
+      Lahore: { Hafizabad: 9000, Karachi: 48000, Islamabad: 18000, Rawalpindi: 18000, Multan: 16000, Sargodha: 10000, Faisalabad: 8000, Peshawar: 22000 },
+      Hafizabad: { Lahore: 9000, Sargodha: 8000, Faisalabad: 8500, Islamabad: 16000, Rawalpindi: 16000, Multan: 17000, Karachi: 46000, Peshawar: 21000 },
+      Sargodha: { Hafizabad: 8000, Karachi: 45000, Islamabad: 15000, Rawalpindi: 15000, Multan: 14000, Lahore: 10000, Faisalabad: 7000, Peshawar: 19000 },
+      Multan: { Hafizabad: 17000, Karachi: 38000, Islamabad: 24000, Rawalpindi: 24000, Sargodha: 14000, Lahore: 16000, Faisalabad: 12000, Peshawar: 28000 },
+      Karachi: { Hafizabad: 46000, Lahore: 48000, Islamabad: 58000, Rawalpindi: 58000, Multan: 38000, Sargodha: 45000, Faisalabad: 42000, Peshawar: 64000 }
     };
 
     const cost = rates[transportFrom]?.[transportTo] || rates[transportTo]?.[transportFrom] || 25000;
@@ -382,7 +391,7 @@ export const Marketplace = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = processedHorses.slice(indexOfFirstItem, indexOfLastItem);
 
-  const spotlightHorses = horses.filter(h => h.spotlight);
+  const spotlightHorses = horses.filter(h => Number(h.price) >= 3500000);
   const avgPrice = horses.length > 0 ? Math.round(horses.reduce((sum, h) => sum + h.price, 0) / horses.length) : 0;
 
 
@@ -485,13 +494,18 @@ export const Marketplace = () => {
                   onClick={() => setSelectedHorse(horse)}
                   className="w-[280px] sm:w-[340px] bg-[#0F172A] text-white rounded-3xl overflow-hidden border border-amber-500/30 hover:border-amber-500 shadow-lg relative group cursor-pointer transition-all duration-300 shrink-0"
                 >
-                  <div className="relative h-44 overflow-hidden">
+                  <div className="relative h-52 sm:h-56 overflow-hidden bg-slate-950 flex items-center justify-center group">
                     <img
                       src={horse.imageUrl}
                       alt={horse.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                      className="absolute inset-0 w-full h-full object-cover object-center blur-md opacity-40 scale-110"
                     />
-                    <span className="absolute top-3 left-3 bg-[#D4AF37] text-[#0F172A] text-[9px] font-black tracking-widest uppercase px-2.5 py-1 rounded shadow">
+                    <img
+                      src={horse.imageUrl}
+                      alt={horse.name}
+                      className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition duration-500"
+                    />
+                    <span className="absolute top-3 left-3 bg-[#D4AF37] text-[#0F172A] text-[9px] font-black tracking-widest uppercase px-2.5 py-1 rounded shadow z-20">
                       Spotlight
                     </span>
                   </div>
@@ -519,7 +533,7 @@ export const Marketplace = () => {
         <div className="lg:col-span-4 space-y-6">
 
           {/* Filters Form */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
+          <div className="liquid-glass-card p-6 rounded-2xl border border-slate-200/80 shadow-lg">
             <h3 className="text-base font-black text-[#0F172A] mb-4 flex items-center gap-2 pb-2 border-b">
               <Search className="w-5 h-5 text-[#D4AF37]" /> Filter Listings
             </h3>
@@ -631,7 +645,7 @@ export const Marketplace = () => {
           </div>
 
           {/* Transport cost estimator */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
+          <div className="liquid-glass-card p-6 rounded-2xl border border-slate-200/80 shadow-lg">
             <h3 className="text-base font-black text-[#0F172A] mb-1 flex items-center gap-2">
               <Truck className="w-5 h-5 text-[#D4AF37]" /> Shipping Cost Estimator
             </h3>
@@ -682,7 +696,7 @@ export const Marketplace = () => {
         <div className="lg:col-span-8 space-y-6">
 
           {/* Header controllers */}
-          <div className="flex flex-col sm:flex-row justify-between items-center gap-4 bg-white p-4 rounded-2xl border border-slate-200/80 shadow-sm">
+          <div className="liquid-glass-card flex flex-col sm:flex-row justify-between items-center gap-4 p-4 rounded-2xl border border-slate-200/80 shadow-md">
             <div className="text-xs sm:text-sm font-bold text-slate-700">
               Showing <span className="text-[#D4AF37]">{processedHorses.length}</span> verified horses
             </div>
@@ -733,20 +747,25 @@ export const Marketplace = () => {
                 <div
                   key={horse._id}
                   onClick={() => setSelectedHorse(horse)}
-                  className="bg-white rounded-3xl overflow-hidden border border-slate-200 shadow-md hover:shadow-xl hover:border-[#D4AF37]/50 transition-all duration-300 flex flex-col group cursor-pointer relative"
+                  className="liquid-glass-card rounded-3xl overflow-hidden border border-slate-200/80 shadow-md hover:shadow-2xl hover:border-[#D4AF37] transition-all duration-300 flex flex-col group cursor-pointer relative"
                 >
-                  <div className="relative h-48 bg-slate-100">
+                  <div className="relative h-56 sm:h-60 bg-slate-950 overflow-hidden flex items-center justify-center group">
                     <img
                       src={horse.imageUrl}
                       alt={horse.name}
-                      className="w-full h-full object-cover group-hover:scale-102 transition duration-500"
+                      className="absolute inset-0 w-full h-full object-cover object-center blur-md opacity-40 scale-110"
                     />
-                    {horse.spotlight && (
-                      <span className="absolute top-4 left-4 bg-amber-500 text-slate-950 text-[9px] font-black tracking-widest uppercase px-2.5 py-1 rounded shadow">
-                        Premium
+                    <img
+                      src={horse.imageUrl}
+                      alt={horse.name}
+                      className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition duration-500"
+                    />
+                    {Number(horse.price) >= 3500000 && (
+                      <span className="absolute top-4 left-4 bg-amber-500 text-slate-950 text-[9px] font-black tracking-widest uppercase px-2.5 py-1 rounded shadow z-20">
+                        Spotlight
                       </span>
                     )}
-                    <span className="absolute bottom-4 right-4 bg-[#0F172A]/85 text-[#D4AF37] font-black text-xs px-3 py-1.5 rounded-lg border border-slate-800">
+                    <span className="absolute bottom-4 right-4 bg-[#0F172A]/90 text-[#D4AF37] font-black text-xs px-3 py-1.5 rounded-lg border border-slate-800 shadow-md z-20">
                       Rs. {Number(horse.price).toLocaleString('en-PK')}
                     </span>
                   </div>
@@ -782,15 +801,20 @@ export const Marketplace = () => {
                 <div
                   key={horse._id}
                   onClick={() => setSelectedHorse(horse)}
-                  className="bg-white rounded-2xl p-4 sm:p-5 border border-slate-200 shadow-md hover:shadow-xl hover:border-[#D4AF37]/50 transition-all duration-300 flex flex-col sm:flex-row gap-5 cursor-pointer group relative overflow-hidden"
+                  className="liquid-glass-card rounded-2xl p-4 sm:p-5 border border-slate-200/80 shadow-md hover:shadow-2xl hover:border-[#D4AF37] transition-all duration-300 flex flex-col sm:flex-row gap-5 cursor-pointer group relative overflow-hidden"
                 >
                   <div className="absolute top-0 bottom-0 left-0 w-1 bg-gradient-to-b from-[#D4AF37] to-[#C9A227] opacity-0 group-hover:opacity-100 transition"></div>
 
-                  <div className="w-full sm:w-44 h-44 bg-slate-100 rounded-xl overflow-hidden shrink-0">
+                  <div className="w-full sm:w-48 h-48 bg-slate-950 rounded-xl overflow-hidden shrink-0 flex items-center justify-center relative group">
                     <img
                       src={horse.imageUrl}
                       alt={horse.name}
-                      className="w-full h-full object-cover group-hover:scale-[1.02] transition duration-500"
+                      className="absolute inset-0 w-full h-full object-cover object-center blur-md opacity-40 scale-110"
+                    />
+                    <img
+                      src={horse.imageUrl}
+                      alt={horse.name}
+                      className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition duration-500"
                     />
                   </div>
 
@@ -869,33 +893,96 @@ export const Marketplace = () => {
 
       <Modal
         isOpen={Boolean(selectedHorse)}
-        onClose={() => setSelectedHorse(null)}
+        onClose={() => {
+          setSelectedHorse(null);
+          setModalImageIdx(0);
+        }}
         maxWidth="max-w-2xl"
       >
         {selectedHorse && (
           <div className="-m-6 flex flex-col max-h-[85vh]">
-            {/* Modal Image Header */}
-            <div className="relative h-52 sm:h-56 bg-slate-900 shrink-0">
-              <img
-                src={selectedHorse.imageUrl}
-                alt={selectedHorse.name}
-                className="w-full h-full object-cover"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
-              <div className="absolute bottom-6 left-6 right-6 text-white flex justify-between items-end">
-                <div>
-                  <span className="px-2.5 py-1 bg-[#D4AF37] text-slate-900 rounded text-[10px] font-bold uppercase tracking-wider">
-                    {selectedHorse.breed}
+              {/* Modal Image Header - Multi-Photo Gallery Carousel */}
+              <div className="relative h-64 sm:h-72 md:h-80 bg-slate-950 shrink-0 overflow-hidden flex items-center justify-center group">
+                {/* Ambient background blur */}
+                <img
+                  src={currentImg}
+                  alt={selectedHorse.name}
+                  className="absolute inset-0 w-full h-full object-cover object-center blur-lg opacity-40 scale-110 transition-all duration-500"
+                />
+                {/* Centered primary horse photo */}
+                <img
+                  src={currentImg}
+                  alt={`${selectedHorse.name} photo ${modalImageIdx + 1}`}
+                  className="relative z-10 max-w-full max-h-full object-contain object-center transition-all duration-300"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent z-20 pointer-events-none"></div>
+
+                {/* Multi-Photo Carousel Controls (Shown if > 1 image) */}
+                {horseImages.length > 1 && (
+                  <>
+                    {/* Left Arrow (Previous Photo) */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setModalImageIdx(prev => (prev === 0 ? horseImages.length - 1 : prev - 1));
+                      }}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-slate-950/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
+                      title="Previous Photo"
+                    >
+                      <ChevronLeft className="w-6 h-6" />
+                    </button>
+
+                    {/* Right Arrow (Next Photo) */}
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setModalImageIdx(prev => (prev === horseImages.length - 1 ? 0 : prev + 1));
+                      }}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-slate-950/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
+                      title="Next Photo"
+                    >
+                      <ChevronRight className="w-6 h-6" />
+                    </button>
+
+                    {/* Photo Counter Badge */}
+                    <div className="absolute top-4 right-4 bg-slate-950/90 text-[#D4AF37] text-xs font-black px-3 py-1 rounded-full border border-amber-500/30 z-30 backdrop-blur-md shadow">
+                      📷 {modalImageIdx + 1} / {horseImages.length} Photos
+                    </div>
+
+                    {/* Pagination Dots */}
+                    <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-30 bg-slate-950/70 px-3 py-1.5 rounded-full backdrop-blur-md border border-slate-800">
+                      {horseImages.map((_, idx) => (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            setModalImageIdx(idx);
+                          }}
+                          className={`h-2 rounded-full transition-all cursor-pointer ${idx === modalImageIdx ? 'bg-[#D4AF37] w-6' : 'bg-white/40 hover:bg-white/80 w-2'}`}
+                          title={`Go to photo ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+                  </>
+                )}
+
+                <div className="absolute bottom-6 left-6 right-6 text-white flex justify-between items-end z-30">
+                  <div>
+                    <span className="px-2.5 py-1 bg-[#D4AF37] text-slate-900 rounded text-[10px] font-bold uppercase tracking-wider shadow">
+                      {selectedHorse.breed}
+                    </span>
+                    <h2 className="text-xl sm:text-2xl font-black mt-2 leading-tight drop-shadow-md">
+                      {selectedHorse.name}
+                    </h2>
+                  </div>
+                  <span className="bg-[#D4AF37] text-slate-950 font-black text-sm sm:text-base px-4 py-2 rounded-xl shadow-lg border border-amber-500/30">
+                    Rs. {Number(selectedHorse.price).toLocaleString('en-PK')}
                   </span>
-                  <h2 className="text-xl sm:text-2xl font-black mt-2 leading-tight">
-                    {selectedHorse.name}
-                  </h2>
                 </div>
-                <span className="bg-[#D4AF37] text-slate-950 font-black text-sm sm:text-base px-4 py-2 rounded-xl shadow-lg border border-amber-500/30">
-                  Rs. {Number(selectedHorse.price).toLocaleString('en-PK')}
-                </span>
               </div>
-            </div>
 
             {/* Modal Info Content - Internal scrolling only */}
             <div className="p-6 space-y-6 text-sm overflow-y-auto flex-1">

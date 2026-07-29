@@ -38,7 +38,7 @@ export const AdminDashboard = () => {
   const { user, token, logout, initializing } = useAuth();
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
-  
+
   // Data States
   const [stats, setStats] = useState(null);
   const [usersList, setUsersList] = useState([]);
@@ -48,11 +48,11 @@ export const AdminDashboard = () => {
   const [vetList, setVetList] = useState([]);
   const [contactList, setContactList] = useState([]);
   const [selectedQueryChat, setSelectedQueryChat] = useState(null);
-  
+
   // Search & Filter States
   const [horseFilter, setHorseFilter] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  
+
   // Loading & Toast States
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -147,7 +147,7 @@ export const AdminDashboard = () => {
       const res = await fetchWithAuth('/admin/vet-inquiries');
       if (res.success) setVetList(res.data);
     } else if (activeTab === 'contact') {
-      const res = await fetchWithAuth('/contact'); 
+      const res = await fetchWithAuth('/contact');
       if (res.success) setContactList(res.data);
     }
     setLoading(false);
@@ -289,7 +289,7 @@ export const AdminDashboard = () => {
   const filterList = (list, keys) => {
     if (!searchQuery) return list;
     const q = searchQuery.toLowerCase();
-    return list.filter(item => 
+    return list.filter(item =>
       keys.some(key => {
         const val = item[key];
         return val && String(val).toLowerCase().includes(q);
@@ -320,10 +320,10 @@ export const AdminDashboard = () => {
 
   return (
     <div className="h-screen w-screen flex bg-[#F8FAFC] overflow-hidden text-slate-800 font-sans">
-      
+
       {/* Sidebar Navigation */}
       <aside className="w-64 liquid-glass-sidebar flex flex-col shrink-0 shadow-2xl z-20">
-        
+
         {/* Brand Header */}
         <div className="p-6 border-b border-white/10 flex items-center gap-3 relative z-10">
           <div className="w-10 h-10 rounded-full overflow-hidden border border-[#D4AF37]/60 p-0.5 bg-[#020B21] shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center shrink-0">
@@ -346,11 +346,10 @@ export const AdminDashboard = () => {
                   setActiveTab(item.id);
                   setSearchQuery('');
                 }}
-                className={`w-full flex items-center justify-between px-4.5 py-3 rounded-2xl text-xs font-bold tracking-wide transition-all duration-300 cursor-pointer ${
-                  isActive
-                    ? 'liquid-glass-nav-active font-black'
-                    : 'liquid-glass-nav-inactive'
-                }`}
+                className={`w-full flex items-center justify-between px-4.5 py-3 rounded-2xl text-xs font-bold tracking-wide transition-all duration-300 cursor-pointer ${isActive
+                  ? 'liquid-glass-nav-active font-black'
+                  : 'liquid-glass-nav-inactive'
+                  }`}
               >
                 <div className="flex items-center gap-3.5">
                   {item.icon}
@@ -379,8 +378,8 @@ export const AdminDashboard = () => {
               <span className="text-[10px] text-amber-200/80 font-bold block truncate">{user?.email || 'admin@horsesquare.pk'}</span>
             </div>
           </div>
-          <button 
-            onClick={handleLogout} 
+          <button
+            onClick={handleLogout}
             className="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/15 rounded-xl transition duration-300 shrink-0 cursor-pointer"
             title="Logout"
           >
@@ -791,9 +790,8 @@ export const AdminDashboard = () => {
                     <button
                       key={st}
                       onClick={() => setHorseFilter(st)}
-                      className={`px-3 py-1 rounded-xl text-xs font-bold capitalize transition cursor-pointer ${
-                        horseFilter === st ? 'bg-[#0F172A] text-amber-300' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
-                      }`}
+                      className={`px-3 py-1 rounded-xl text-xs font-bold capitalize transition cursor-pointer ${horseFilter === st ? 'bg-[#0F172A] text-amber-300' : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                        }`}
                     >
                       {st || 'All'}
                     </button>

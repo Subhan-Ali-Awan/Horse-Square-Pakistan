@@ -41,7 +41,7 @@ export const SellHorse = () => {
     sellerPhone: user ? user.phone || '' : '',
   });
   const [listingType, setListingType] = useState('marketplace'); // 'marketplace' or 'auction'
-  const [imageFile, setImageFile] = useState(null);
+  const [imageFiles, setImageFiles] = useState([]);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -51,9 +51,23 @@ export const SellHorse = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
+  const handleImageChange = (e) => {
+    if (e.target.files && e.target.files.length > 0) {
+      const selected = Array.from(e.target.files);
+      setImageFiles(prev => {
+        const combined = [...prev, ...selected];
+        return combined.slice(0, 3); // Maximum 3 photos limit
+      });
+    }
+  };
+
+  const handleRemoveImage = (indexToRemove) => {
+    setImageFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
+  };
+
   // Real-time Policy Validation Indicators
   const numPrice = Number(formData.price);
-  const isPriceValid = !isNaN(numPrice) && numPrice >= 700000 && numPrice <= 17500000;
+  const isPriceValid = !isNaN(numPrice) && numPrice > 0;
   
   let heightInches = 0;
   const hMatch = String(formData.height).match(/\d+/);
@@ -63,7 +77,7 @@ export const SellHorse = () => {
   const cleanPhone = String(formData.sellerPhone).replace(/[- ]/g, "");
   const isPhoneValid = /^03\d{9}$/.test(cleanPhone);
 
-  const hasPhoto = Boolean(imageFile);
+  const hasPhoto = imageFiles.length > 0;
 
   // Quick Description Suggestions
   const descriptionSuggestions = [
@@ -116,10 +130,10 @@ export const SellHorse = () => {
         data.append('sellerName', formData.sellerName || 'Verified Seller');
         data.append('startingBid', formData.price);
         data.append('durationHours', '24');
-        if (imageFile) {
-          data.append('image', imageFile);
-          data.append('images', imageFile);
-        }
+        imageFiles.forEach((file) => {
+          data.append('image', file);
+          data.append('images', file);
+        });
 
         const res = await fetch('/api/auctions', {
           method: 'POST',
@@ -150,9 +164,9 @@ export const SellHorse = () => {
         data.append('phone', formData.sellerPhone);
         data.append('sellerName', formData.sellerName || 'Guest Seller');
         
-        if (imageFile) {
-          data.append('images', imageFile);
-        }
+        imageFiles.forEach((file) => {
+          data.append('images', file);
+        });
 
         const res = await fetch('/api/horses', {
           method: 'POST',
@@ -187,20 +201,12 @@ export const SellHorse = () => {
       <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl border border-slate-800 relative overflow-hidden gold-gradient-bar">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
           <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-black uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Instant Auto-Approval Marketplace
-            </span>
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
               Sell Your Horse
             </h1>
             <p className="text-slate-300 text-sm font-light max-w-xl">
-              Fill in your horse details below. Listings meeting all platform policy bounds are **instantly auto-approved** and published immediately!
+              Fill in your horse details below to publish your listing on HorseSquare Pakistan marketplace!
             </p>
-          </div>
-
-          <div className="p-4 bg-slate-900/90 rounded-2xl border border-slate-800 text-right shrink-0 hidden sm:block">
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Allowed Price Bounds</span>
-            <span className="text-sm font-black text-[#D4AF37]">Rs. 700k - 17.5M PKR</span>
           </div>
         </div>
       </div>
@@ -215,7 +221,7 @@ export const SellHorse = () => {
           <div className="bg-gradient-to-r from-slate-900 to-[#1E293B] text-white p-6 rounded-3xl border border-slate-800 shadow-md space-y-4">
             <div className="flex justify-between items-center pb-2 border-b border-slate-800">
               <h3 className="font-extrabold text-xs uppercase tracking-wider text-amber-400 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" /> Platform Auto-Approval Policy
+                <ShieldCheck className="w-4 h-4 text-emerald-400" /> Listing Quality Checks
               </h3>
               <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/20">
                 Live Checks
@@ -223,13 +229,6 @@ export const SellHorse = () => {
             </div>
 
             <div className="space-y-3 text-xs font-semibold">
-              <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-800/60 border border-slate-800">
-                {isPriceValid ? <Check className="w-4 h-4 text-emerald-400 shrink-0" /> : <X className="w-4 h-4 text-slate-500 shrink-0" />}
-                <span className={isPriceValid ? 'text-emerald-300' : 'text-slate-400'}>
-                  Price: Rs. 700,000 - 17,500,000 PKR
-                </span>
-              </div>
-
               <div className="flex items-center gap-2.5 p-2.5 rounded-xl bg-slate-800/60 border border-slate-800">
                 {isHeightValid ? <Check className="w-4 h-4 text-emerald-400 shrink-0" /> : <X className="w-4 h-4 text-slate-500 shrink-0" />}
                 <span className={isHeightValid ? 'text-emerald-300' : 'text-slate-400'}>
@@ -633,26 +632,62 @@ export const SellHorse = () => {
                 </div>
               </div>
 
-              {/* Section 5: Photo Upload */}
+              {/* Section 5: Photo Upload (Max 3 Photos) */}
               <div className="space-y-4">
-                <h3 className="text-sm font-black uppercase tracking-wider text-[#0F172A] border-b pb-2 flex items-center gap-2">
-                  <Upload className="w-4 h-4 text-[#D4AF37]" /> 5. Horse Photo (Required)
-                </h3>
-
-                <div className="border-2 border-dashed border-slate-300 rounded-2xl p-8 text-center bg-slate-50 hover:bg-slate-100/60 transition cursor-pointer relative shadow-inner">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    required
-                    onChange={(e) => setImageFile(e.target.files[0])}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  />
-                  <Upload className="w-10 h-10 text-[#D4AF37] mx-auto mb-2" />
-                  <p className="text-sm font-extrabold text-slate-800">
-                    {imageFile ? `Selected File: ${imageFile.name}` : 'Click or drag horse photo here to upload'}
-                  </p>
-                  <p className="text-xs text-slate-400 mt-1">PNG, JPG up to 10MB</p>
+                <div className="flex justify-between items-center border-b pb-2">
+                  <h3 className="text-sm font-black uppercase tracking-wider text-[#0F172A] flex items-center gap-2">
+                    <Upload className="w-4 h-4 text-[#D4AF37]" /> 5. Horse Photos (Max 3 - Required)
+                  </h3>
+                  <span className="text-xs font-bold text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full border border-amber-200">
+                    {imageFiles.length} / 3 Selected
+                  </span>
                 </div>
+
+                {imageFiles.length < 3 && (
+                  <div className="border-2 border-dashed border-slate-300 rounded-2xl p-6 text-center bg-slate-50 hover:bg-amber-50/40 transition cursor-pointer relative shadow-inner group">
+                    <input
+                      type="file"
+                      accept="image/*"
+                      multiple
+                      required={imageFiles.length === 0}
+                      onChange={handleImageChange}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <Upload className="w-9 h-9 text-[#D4AF37] mx-auto mb-2 group-hover:scale-110 transition duration-300" />
+                    <p className="text-sm font-extrabold text-slate-800">
+                      Click or drag up to 3 horse photos here to upload
+                    </p>
+                    <p className="text-xs text-slate-400 mt-1">PNG, JPG, JPEG up to 10MB per file (Maximum 3 photos)</p>
+                  </div>
+                )}
+
+                {/* Selected Images Grid / Preview */}
+                {imageFiles.length > 0 && (
+                  <div className="grid grid-cols-3 gap-4 pt-2">
+                    {imageFiles.map((file, idx) => (
+                      <div key={idx} className="relative rounded-2xl overflow-hidden border-2 border-slate-200 bg-slate-900 group shadow-md aspect-square">
+                        <img
+                          src={URL.createObjectURL(file)}
+                          alt={`Horse photo ${idx + 1}`}
+                          className="w-full h-full object-cover group-hover:scale-105 transition duration-300"
+                        />
+                        <div className="absolute inset-0 bg-slate-950/40 opacity-0 group-hover:opacity-100 transition duration-200 flex items-center justify-center">
+                          <button
+                            type="button"
+                            onClick={() => handleRemoveImage(idx)}
+                            className="p-2 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-lg cursor-pointer"
+                            title="Remove photo"
+                          >
+                            <X className="w-4 h-4" />
+                          </button>
+                        </div>
+                        <span className="absolute bottom-2 left-2 bg-slate-950/80 text-white text-[10px] font-bold px-2 py-0.5 rounded-full backdrop-blur-md">
+                          Photo #{idx + 1}
+                        </span>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               {/* Submit Action */}

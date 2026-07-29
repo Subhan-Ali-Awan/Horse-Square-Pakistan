@@ -224,16 +224,6 @@ export const Home = () => {
               Consult AI Vet
             </Link>
           </div>
-
-          {/* Liquid Glass Hero Quick Stats Bar */}
-          <div className="mt-12 grid grid-cols-2 sm:grid-cols-4 gap-4 w-full max-w-3xl liquid-glass-dark rounded-2xl p-4 sm:p-5 border border-amber-500/35 shadow-2xl backdrop-blur-2xl animate-fade-up delay-300">
-            {stats.map((stat, idx) => (
-              <div key={idx} className="text-center px-2 py-1">
-                <div className="text-xl sm:text-2xl font-extrabold text-amber-400 tracking-tight">{stat.value}</div>
-                <div className="text-[11px] text-slate-300 font-medium uppercase tracking-wider mt-0.5">{stat.label}</div>
-              </div>
-            ))}
-          </div>
         </div>
       </div>
 

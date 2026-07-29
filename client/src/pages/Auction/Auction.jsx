@@ -260,16 +260,21 @@ export const Auction = () => {
                   className="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden hover:border-[#D4AF37] transition group flex flex-col justify-between"
                 >
                   <div>
-                    <div className="relative h-60 overflow-hidden bg-slate-900">
+                    <div className="relative h-60 overflow-hidden bg-slate-950 flex items-center justify-center group">
                       <img
                         src={auc.image || auc.imageUrl}
                         alt={auc.horseName}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        className="absolute inset-0 w-full h-full object-cover object-center blur-md opacity-40 scale-110"
                       />
-                      <div className="absolute top-3 left-3 bg-[#0F172A]/90 text-white text-[10px] px-3 py-1 rounded-full font-bold flex items-center gap-1.5 backdrop-blur-md shadow border border-slate-700">
+                      <img
+                        src={auc.image || auc.imageUrl}
+                        alt={auc.horseName}
+                        className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
+                      />
+                      <div className="absolute top-3 left-3 bg-[#0F172A]/90 text-white text-[10px] px-3 py-1 rounded-full font-bold flex items-center gap-1.5 backdrop-blur-md shadow border border-slate-700 z-20">
                         <Clock className="w-3.5 h-3.5 text-amber-400" /> Live Auction
                       </div>
-                      <span className="absolute bottom-3 right-3 bg-[#D4AF37] text-slate-950 font-black text-[10px] uppercase px-2.5 py-0.5 rounded shadow">
+                      <span className="absolute bottom-3 right-3 bg-[#D4AF37] text-slate-950 font-black text-[10px] uppercase px-2.5 py-0.5 rounded shadow z-20">
                         {auc.breed || 'Verified Breed'}
                       </span>
                     </div>

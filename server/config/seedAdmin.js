@@ -14,7 +14,7 @@ async function seedAdmin() {
     if (!admin) {
       admin = await User.create({
         firstName: "Admin",
-        lastName: "",
+        lastName: "Account",
         email: adminEmail,
         phone: "+923000000000",
         city: "Lahore",
@@ -29,7 +29,7 @@ async function seedAdmin() {
       console.log("   ⚠️  Change this password after first login in a real deployment.");
     } else if (admin.firstName === "Super" || (admin.firstName + " " + admin.lastName).trim() === "Super Admin") {
       admin.firstName = "Admin";
-      admin.lastName = "";
+      admin.lastName = "Account";
       await admin.save();
     }
 
