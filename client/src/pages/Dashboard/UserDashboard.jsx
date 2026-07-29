@@ -430,6 +430,13 @@ export const UserDashboard = () => {
 
   if (!user) return null;
 
+  const cleanFn = (user.firstName || '').replace(/\baccount\b/gi, '').trim();
+  const cleanLn = (user.lastName || '').replace(/\baccount\b/gi, '').trim();
+  const userDisplayName = `${cleanFn} ${cleanLn}`.trim() || cleanFn || 'User';
+  const userAvatarInitials = cleanLn
+    ? `${cleanFn[0] || ''}${cleanLn[0] || ''}`.toUpperCase()
+    : (cleanFn.substring(0, 2).toUpperCase() || 'U');
+
   // ─────────────────────────────────────────────────────────────────────────
   return (
     <div className="h-screen w-screen flex bg-[#F8FAFC] overflow-hidden text-slate-800 font-sans">
@@ -457,7 +464,7 @@ export const UserDashboard = () => {
                   to="/sell"
                   className="w-full flex items-center gap-3.5 px-4.5 py-3 rounded-2xl text-xs font-bold tracking-wide transition-all duration-300 liquid-glass-nav-inactive cursor-pointer"
                 >
-                  <Plus className="w-4 h-4 text-[#D4AF37]" />
+                  <Tag className="w-4 h-4 text-white" />
                   <span>Sell a Horse</span>
                 </Link>
               )}
@@ -479,11 +486,11 @@ export const UserDashboard = () => {
         <div className="p-4.5 liquid-glass-sidebar-footer flex items-center justify-between gap-2.5 relative z-10">
           <div className="flex items-center gap-2.5 overflow-hidden">
             <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 flex items-center justify-center shrink-0 border border-[#D4AF37]/40 text-xs font-extrabold uppercase text-[#D4AF37] shadow">
-              {user.firstName?.[0]}{user.lastName?.[0]}
+              {userAvatarInitials}
             </div>
             <div className="overflow-hidden">
-              <span className="text-xs font-bold text-slate-200 block truncate">{user.firstName} {user.lastName}</span>
-              <span className="text-[10px] text-amber-200/80 font-bold block truncate">{user.userType === 'Horse Seller' ? 'User' : user.userType}</span>
+              <span className="text-xs font-bold text-slate-200 block truncate">{userDisplayName}</span>
+              <span className="text-[10px] text-amber-200/80 font-bold block truncate">{user.userType === 'Horse Seller' ? 'User' : (user.userType || 'Verified Member')}</span>
             </div>
           </div>
           <button onClick={handleLogout} className="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/15 rounded-xl transition duration-300 shrink-0" title="Logout">
@@ -533,13 +540,19 @@ export const UserDashboard = () => {
               {/* Welcome Banner - Dark Liquid Glass */}
               <div className="liquid-glass-dark rounded-3xl p-7 flex items-center gap-6 relative overflow-hidden liquid-glass-sheen">
                 <div className="absolute top-0 right-0 w-80 h-80 bg-[#D4AF37]/10 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl pointer-events-none" />
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 border border-[#D4AF37]/40 flex items-center justify-center shrink-0 text-2xl font-black text-[#D4AF37] shadow-lg">
-                  {user.firstName?.[0]}{user.lastName?.[0]}
+                <div className="w-14 h-14 rounded-2xl bg-slate-950/80 border border-[#D4AF37]/60 p-1 flex items-center justify-center shrink-0 shadow-lg shadow-[#D4AF37]/20 relative group overflow-hidden">
+                  <img
+                    src="/login and registeration .png"
+                    alt="HorseSquare Logo"
+                    className="w-full h-full object-cover rounded-xl group-hover:scale-110 transition duration-300"
+                  />
                 </div>
                 <div className="relative z-10">
                   <p className="text-[#D4AF37] text-xs font-bold tracking-widest uppercase mb-1">Welcome back</p>
-                  <h2 className="text-white text-2xl font-black tracking-tight">{user.firstName} {user.lastName}</h2>
-                  <p className="text-slate-300 text-xs mt-1.5 font-medium">{user.email} · <span className="text-amber-200 capitalize font-bold">{user.userType === 'Horse Seller' ? 'User' : user.userType}</span></p>
+                  <h2 className="text-white text-2xl font-black tracking-tight">{userDisplayName}</h2>
+                  <p className="text-slate-300 text-xs mt-1 font-medium">
+                    <span className="text-amber-200 capitalize font-bold">{user.userType === 'Horse Seller' ? 'User' : (user.userType || 'Verified Member')}</span>
+                  </p>
                 </div>
               </div>
 

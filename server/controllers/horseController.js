@@ -148,7 +148,7 @@ exports.createHorse = async (req, res, next) => {
       age: Number(age) || undefined,
       color,
       height,
-      spotlight: (spotlight === "true" || spotlight === true || numericPrice >= 3500000),
+      spotlight: (spotlight === "true" || spotlight === true || numericPrice >= 3000000),
       sire,
       dam,
       images,

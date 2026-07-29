@@ -33,10 +33,19 @@ export const Marketplace = () => {
   const [selectedHorse, setSelectedHorse] = useState(null);
   const [modalImageIdx, setModalImageIdx] = useState(0);
 
-  const horseImages = (selectedHorse?.images && selectedHorse.images.length > 0)
-    ? selectedHorse.images
-    : [selectedHorse?.imageUrl || selectedHorse?.image || 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a'];
+  const formatImgUrl = (url) => {
+    if (!url) return '/uploads/media__1785359752827.jpg';
+    if (url.startsWith('data:') || url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.startsWith('/uploads/')) return url;
+    if (url.startsWith('uploads/')) return '/' + url;
+    return '/uploads/' + url;
+  };
 
+  const rawImages = (selectedHorse?.images && selectedHorse.images.length > 0)
+    ? selectedHorse.images
+    : [selectedHorse?.imageUrl || selectedHorse?.image || '/uploads/media__1785359752827.jpg'];
+
+  const horseImages = rawImages.map(formatImgUrl);
   const currentImg = horseImages[modalImageIdx] || horseImages[0];
   const [currentPage, setCurrentPage] = useState(1);
 
@@ -199,6 +208,32 @@ export const Marketplace = () => {
       spotlight: true
     },
     {
+      _id: '10',
+      name: 'Zarrar (Desert Stallion)',
+      breed: 'Arabian',
+      age: 6,
+      color: 'White',
+      height: '62 inches',
+      location: 'Karachi',
+      price: 4200000,
+      description: 'Stunning desert stallion built for speed and endurance. It is a straight arabian horse bloodline import from Iraq.',
+      sellerName: 'Super Admin',
+      sellerPhone: '+923000000000',
+      sellerRating: 4.8,
+      sellerType: 'Elite Stable',
+      sire: 'Amir',
+      dam: 'salma',
+      temperament: '8/10',
+      healthStatus: 'Fully Vaccinated',
+      training: 'Show & Halter Trained',
+      imageUrl: '/uploads/media__1785359752827.jpg',
+      images: [
+        '/uploads/media__1785359752827.jpg',
+        '/uploads/media__1785359784589.jpg'
+      ],
+      spotlight: true
+    },
+    {
       _id: '9',
       name: 'Desert Wind (Mare)',
       breed: 'Arabian',
@@ -325,26 +360,26 @@ export const Marketplace = () => {
     fetchHorses();
   };
 
-  // Distance/Rate matrix calculation for Transport Estimator
+  // Distance/Rate matrix calculation for Transport Estimator (Doubled rates)
   const calculateTransport = (e) => {
     e.preventDefault();
     if (!transportFrom || !transportTo) return;
 
     if (transportFrom === transportTo) {
-      setTransportCost(6000); // Local delivery
+      setTransportCost(12000); // Local delivery doubled from 6000
       return;
     }
 
-    // Distance pricing approximation in PKR
+    // Distance pricing approximation in PKR (Doubled)
     const rates = {
-      Lahore: { Hafizabad: 9000, Karachi: 48000, Islamabad: 18000, Rawalpindi: 18000, Multan: 16000, Sargodha: 10000, Faisalabad: 8000, Peshawar: 22000 },
-      Hafizabad: { Lahore: 9000, Sargodha: 8000, Faisalabad: 8500, Islamabad: 16000, Rawalpindi: 16000, Multan: 17000, Karachi: 46000, Peshawar: 21000 },
-      Sargodha: { Hafizabad: 8000, Karachi: 45000, Islamabad: 15000, Rawalpindi: 15000, Multan: 14000, Lahore: 10000, Faisalabad: 7000, Peshawar: 19000 },
-      Multan: { Hafizabad: 17000, Karachi: 38000, Islamabad: 24000, Rawalpindi: 24000, Sargodha: 14000, Lahore: 16000, Faisalabad: 12000, Peshawar: 28000 },
-      Karachi: { Hafizabad: 46000, Lahore: 48000, Islamabad: 58000, Rawalpindi: 58000, Multan: 38000, Sargodha: 45000, Faisalabad: 42000, Peshawar: 64000 }
+      Lahore: { Hafizabad: 18000, Karachi: 96000, Islamabad: 36000, Rawalpindi: 36000, Multan: 32000, Sargodha: 20000, Faisalabad: 16000, Peshawar: 44000 },
+      Hafizabad: { Lahore: 18000, Sargodha: 16000, Faisalabad: 17000, Islamabad: 32000, Rawalpindi: 32000, Multan: 34000, Karachi: 92000, Peshawar: 42000 },
+      Sargodha: { Hafizabad: 16000, Karachi: 90000, Islamabad: 30000, Rawalpindi: 30000, Multan: 28000, Lahore: 20000, Faisalabad: 14000, Peshawar: 38000 },
+      Multan: { Hafizabad: 34000, Karachi: 76000, Islamabad: 48000, Rawalpindi: 48000, Sargodha: 28000, Lahore: 32000, Faisalabad: 24000, Peshawar: 56000 },
+      Karachi: { Hafizabad: 92000, Lahore: 96000, Islamabad: 116000, Rawalpindi: 116000, Multan: 76000, Sargodha: 90000, Faisalabad: 84000, Peshawar: 128000 }
     };
 
-    const cost = rates[transportFrom]?.[transportTo] || rates[transportTo]?.[transportFrom] || 25000;
+    const cost = rates[transportFrom]?.[transportTo] || rates[transportTo]?.[transportFrom] || 50000;
     setTransportCost(cost);
   };
 
@@ -391,7 +426,16 @@ export const Marketplace = () => {
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = processedHorses.slice(indexOfFirstItem, indexOfLastItem);
 
-  const spotlightHorses = horses.filter(h => Number(h.price) >= 3500000);
+  const rawSpotlight = horses.filter(h => (h.spotlight || Number(h.price) >= 3000000) && Number(h.price) >= 3000000);
+  const spotlightHorses = Array.from(
+    new Map(rawSpotlight.map(h => [h._id || h.name, h])).values()
+  );
+
+  const marqueeItems = spotlightHorses.length > 0
+    ? (spotlightHorses.length < 5
+        ? [...spotlightHorses, ...spotlightHorses, ...spotlightHorses, ...spotlightHorses]
+        : [...spotlightHorses, ...spotlightHorses])
+    : [];
   const avgPrice = horses.length > 0 ? Math.round(horses.reduce((sum, h) => sum + h.price, 0) / horses.length) : 0;
 
 
@@ -469,7 +513,7 @@ export const Marketplace = () => {
               display: flex;
               gap: 24px;
               width: max-content;
-              animation: marquee 35s linear infinite;
+              animation: marquee 60s linear infinite;
             }
             .animate-marquee-container:hover {
               animation-play-state: paused;
@@ -486,9 +530,9 @@ export const Marketplace = () => {
           </div>
 
           <div className="w-full overflow-hidden pb-4 pt-1">
-            {/* Double the array elements to make infinite marquee seamless */}
+            {/* Seamless continuous loop without blank spaces */}
             <div className="animate-marquee-container">
-              {[...spotlightHorses, ...spotlightHorses].map((horse, idx) => (
+              {marqueeItems.map((horse, idx) => (
                 <div
                   key={`${horse._id}-${idx}`}
                   onClick={() => setSelectedHorse(horse)}
@@ -496,12 +540,12 @@ export const Marketplace = () => {
                 >
                   <div className="relative h-52 sm:h-56 overflow-hidden bg-slate-950 flex items-center justify-center group">
                     <img
-                      src={horse.imageUrl}
+                      src={formatImgUrl(horse.imageUrl || horse.images?.[0])}
                       alt={horse.name}
                       className="absolute inset-0 w-full h-full object-cover object-center blur-md opacity-40 scale-110"
                     />
                     <img
-                      src={horse.imageUrl}
+                      src={formatImgUrl(horse.imageUrl || horse.images?.[0])}
                       alt={horse.name}
                       className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition duration-500"
                     />
@@ -540,11 +584,11 @@ export const Marketplace = () => {
             <form onSubmit={handleFilterSubmit} className="space-y-4">
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase">Breed</label>
+                <label className="text-xs font-black text-slate-900 uppercase">Breed</label>
                 <select
                   value={breedFilter}
                   onChange={(e) => setBreedFilter(e.target.value)}
-                  className="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:outline-none focus:border-[#D4AF37]"
+                  className="w-full p-2.5 border border-slate-300 rounded-xl bg-white text-sm font-bold text-slate-900 focus:outline-none focus:border-[#D4AF37] shadow-sm"
                 >
                   <option value="">All Breeds</option>
                   <option value="Thoroughbred">Thoroughbred</option>
@@ -553,15 +597,15 @@ export const Marketplace = () => {
                 </select>
               </div>
 
-              <div className="space-y-3 p-3 bg-slate-100/50 rounded-xl border border-slate-100">
+              <div className="space-y-3 p-3.5 bg-slate-100 rounded-xl border border-slate-200">
                 <div className="flex justify-between items-center">
-                  <label className="text-xs font-bold text-slate-700 uppercase">Price Range (PKR)</label>
+                  <label className="text-xs font-black text-slate-900 uppercase">Price Range (PKR)</label>
                 </div>
 
                 <div className="space-y-1">
-                  <div className="flex justify-between items-center text-[10px] text-slate-500">
-                    <span>Min Price:</span>
-                    <span className="font-bold text-slate-700">Rs. {Number(minPriceFilter).toLocaleString('en-PK')}</span>
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="font-bold text-slate-700">Min Price:</span>
+                    <span className="font-black text-slate-900">Rs. {Number(minPriceFilter).toLocaleString('en-PK')}</span>
                   </div>
                   <input
                     type="range"
@@ -573,14 +617,14 @@ export const Marketplace = () => {
                       const val = Number(e.target.value);
                       if (val <= maxPriceFilter) setMinPriceFilter(val);
                     }}
-                    className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
+                    className="w-full h-1.5 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
                   />
                 </div>
 
                 <div className="space-y-1">
-                  <div className="flex justify-between items-center text-[10px] text-slate-500">
-                    <span>Max Price:</span>
-                    <span className="font-bold text-slate-700">Rs. {Number(maxPriceFilter).toLocaleString('en-PK')}</span>
+                  <div className="flex justify-between items-center text-[11px]">
+                    <span className="font-bold text-slate-700">Max Price:</span>
+                    <span className="font-black text-slate-900">Rs. {Number(maxPriceFilter).toLocaleString('en-PK')}</span>
                   </div>
                   <input
                     type="range"
@@ -592,30 +636,30 @@ export const Marketplace = () => {
                       const val = Number(e.target.value);
                       if (val >= minPriceFilter) setMaxPriceFilter(val);
                     }}
-                    className="w-full h-1 bg-slate-200 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
+                    className="w-full h-1.5 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-[#D4AF37]"
                   />
                 </div>
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase">Location</label>
+                <label className="text-xs font-black text-slate-900 uppercase">Location</label>
                 <input
                   type="text"
                   placeholder="e.g. Lahore, Sargodha"
                   value={locationFilter}
                   onChange={(e) => setLocationFilter(e.target.value)}
-                  className="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:outline-none focus:border-[#D4AF37]"
+                  className="w-full p-2.5 border border-slate-300 rounded-xl bg-white text-sm font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none focus:border-[#D4AF37] shadow-sm"
                 />
               </div>
 
               <div className="space-y-1">
-                <label className="text-xs font-bold text-slate-500 uppercase">Keyword Search</label>
+                <label className="text-xs font-black text-slate-900 uppercase">Keyword Search</label>
                 <input
                   type="text"
                   placeholder="Search name, description..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
-                  className="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 text-sm focus:outline-none focus:border-[#D4AF37]"
+                  className="w-full p-2.5 border border-slate-300 rounded-xl bg-white text-sm font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none focus:border-[#D4AF37] shadow-sm"
                 />
               </div>
 
@@ -649,14 +693,14 @@ export const Marketplace = () => {
             <h3 className="text-base font-black text-[#0F172A] mb-1 flex items-center gap-2">
               <Truck className="w-5 h-5 text-[#D4AF37]" /> Shipping Cost Estimator
             </h3>
-            <p className="text-xs text-slate-400 font-light mb-4 leading-normal">
+            <p className="text-xs text-slate-700 font-semibold mb-4 leading-normal">
               Calculate the cost of safe horse trailer transport across cities.
             </p>
             <form onSubmit={calculateTransport} className="space-y-3">
               <select
                 value={transportFrom}
                 onChange={(e) => setTransportFrom(e.target.value)}
-                className="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 text-xs focus:outline-none focus:border-[#D4AF37]"
+                className="w-full p-2.5 border border-slate-300 rounded-xl bg-white text-xs font-bold text-slate-900 focus:outline-none focus:border-[#D4AF37] shadow-sm"
                 required
               >
                 <option value="">Select Pickup City</option>
@@ -666,7 +710,7 @@ export const Marketplace = () => {
               <select
                 value={transportTo}
                 onChange={(e) => setTransportTo(e.target.value)}
-                className="w-full p-2.5 border border-slate-200 rounded-xl bg-slate-50 text-xs focus:outline-none focus:border-[#D4AF37]"
+                className="w-full p-2.5 border border-slate-300 rounded-xl bg-white text-xs font-bold text-slate-900 focus:outline-none focus:border-[#D4AF37] shadow-sm"
                 required
               >
                 <option value="">Select Delivery City</option>
@@ -751,16 +795,16 @@ export const Marketplace = () => {
                 >
                   <div className="relative h-56 sm:h-60 bg-slate-950 overflow-hidden flex items-center justify-center group">
                     <img
-                      src={horse.imageUrl}
+                      src={formatImgUrl(horse.imageUrl || horse.images?.[0])}
                       alt={horse.name}
                       className="absolute inset-0 w-full h-full object-cover object-center blur-md opacity-40 scale-110"
                     />
                     <img
-                      src={horse.imageUrl}
+                      src={formatImgUrl(horse.imageUrl || horse.images?.[0])}
                       alt={horse.name}
                       className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition duration-500"
                     />
-                    {Number(horse.price) >= 3500000 && (
+                    {Number(horse.price) >= 3000000 && (
                       <span className="absolute top-4 left-4 bg-amber-500 text-slate-950 text-[9px] font-black tracking-widest uppercase px-2.5 py-1 rounded shadow z-20">
                         Spotlight
                       </span>
@@ -807,12 +851,12 @@ export const Marketplace = () => {
 
                   <div className="w-full sm:w-48 h-48 bg-slate-950 rounded-xl overflow-hidden shrink-0 flex items-center justify-center relative group">
                     <img
-                      src={horse.imageUrl}
+                      src={formatImgUrl(horse.imageUrl || horse.images?.[0])}
                       alt={horse.name}
                       className="absolute inset-0 w-full h-full object-cover object-center blur-md opacity-40 scale-110"
                     />
                     <img
-                      src={horse.imageUrl}
+                      src={formatImgUrl(horse.imageUrl || horse.images?.[0])}
                       alt={horse.name}
                       className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition duration-500"
                     />
@@ -908,12 +952,14 @@ export const Marketplace = () => {
                   src={currentImg}
                   alt={selectedHorse.name}
                   className="absolute inset-0 w-full h-full object-cover object-center blur-lg opacity-40 scale-110 transition-all duration-500"
+                  onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/media__1785359752827.jpg'; }}
                 />
                 {/* Centered primary horse photo */}
                 <img
                   src={currentImg}
                   alt={`${selectedHorse.name} photo ${modalImageIdx + 1}`}
                   className="relative z-10 max-w-full max-h-full object-contain object-center transition-all duration-300"
+                  onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/media__1785359752827.jpg'; }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent z-20 pointer-events-none"></div>
 

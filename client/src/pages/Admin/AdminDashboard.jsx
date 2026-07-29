@@ -440,16 +440,25 @@ export const AdminDashboard = () => {
 
               {/* Top Banner Header - Dark Liquid Glass */}
               <div className="liquid-glass-dark rounded-3xl p-7 text-white shadow-xl flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative overflow-hidden liquid-glass-sheen">
-                <div className="space-y-1 relative z-10">
-                  <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full text-xs font-black uppercase tracking-wider backdrop-blur-md">
-                    <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Executive Overview
-                  </span>
-                  <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white mt-1">
-                    Welcome back, {user?.firstName && user.firstName !== 'Super' ? user.firstName : 'Admin'}!
-                  </h2>
-                  <p className="text-slate-300 text-xs font-medium">
-                    Direct controls and live domain metrics for Users, Horse Listings, Auctions, Breeding, and AI Vet services.
-                  </p>
+                <div className="flex items-center gap-5 relative z-10">
+                  <div className="w-14 h-14 rounded-2xl bg-slate-950/80 border border-[#D4AF37]/60 p-1 flex items-center justify-center shrink-0 shadow-lg shadow-[#D4AF37]/20 relative group overflow-hidden">
+                    <img
+                      src="/login and registeration .png"
+                      alt="HorseSquare Logo"
+                      className="w-full h-full object-cover rounded-xl group-hover:scale-110 transition duration-300"
+                    />
+                  </div>
+                  <div className="space-y-1">
+                    <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full text-xs font-black uppercase tracking-wider backdrop-blur-md">
+                      <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Executive Overview
+                    </span>
+                    <h2 className="text-xl sm:text-2xl font-black tracking-tight text-white mt-1">
+                      Welcome back, {user?.firstName && user.firstName !== 'Super' && !user.firstName.toLowerCase().includes('account') ? user.firstName : 'Admin'}!
+                    </h2>
+                    <p className="text-slate-300 text-xs font-medium">
+                      Direct controls and live domain metrics for Users, Horse Listings, Auctions, Breeding, and AI Vet services.
+                    </p>
+                  </div>
                 </div>
               </div>
 
@@ -745,34 +754,50 @@ export const AdminDashboard = () => {
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
-                    {filterList(usersList, ['firstName', 'lastName', 'email', 'role']).map((u) => (
-                      <tr key={u._id} className="hover:bg-slate-50/80 transition">
-                        <td className="p-3 font-bold text-slate-900">{u.firstName} {u.lastName}</td>
-                        <td className="p-3 text-slate-600">{u.email}</td>
-                        <td className="p-3 font-bold uppercase text-[10px]">
-                          <span className={u.role === 'admin' ? 'text-[#C9A227]' : 'text-slate-600'}>{u.role}</span>
-                        </td>
-                        <td className="p-3">
-                          <span className={getStatusBadgeClass(u.isBlocked ? 'blocked' : 'active')}>
-                            {u.isBlocked ? 'Blocked' : 'Active'}
-                          </span>
-                        </td>
-                        <td className="p-3 text-right space-x-2">
-                          <button
-                            onClick={() => handleBlockUser(u._id, u.isBlocked)}
-                            className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[10px] font-bold transition cursor-pointer"
-                          >
-                            {u.isBlocked ? 'Unblock' : 'Block'}
-                          </button>
-                          <button
-                            onClick={() => handleDeleteUser(u._id)}
-                            className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold transition cursor-pointer"
-                          >
-                            Delete
-                          </button>
-                        </td>
-                      </tr>
-                    ))}
+                    {filterList(usersList, ['firstName', 'lastName', 'email', 'role']).map((u) => {
+                      const isUserAdmin = u.role === 'admin';
+                      const rawName = `${u.firstName || ''} ${u.lastName || ''}`.trim();
+                      const displayName = isUserAdmin || rawName.toLowerCase().includes('admin')
+                        ? 'Admin'
+                        : rawName || 'User';
+
+                      return (
+                        <tr key={u._id} className="hover:bg-slate-50/80 transition">
+                          <td className="p-3 font-bold text-slate-900">{displayName}</td>
+                          <td className="p-3 text-slate-600">{u.email}</td>
+                          <td className="p-3 font-bold uppercase text-[10px]">
+                            <span className={isUserAdmin ? 'text-[#C9A227] font-black' : 'text-slate-600'}>{u.role}</span>
+                          </td>
+                          <td className="p-3">
+                            <span className={getStatusBadgeClass(u.isBlocked ? 'blocked' : 'active')}>
+                              {u.isBlocked ? 'Blocked' : 'Active'}
+                            </span>
+                          </td>
+                          <td className="p-3 text-right space-x-2">
+                            {isUserAdmin ? (
+                              <span className="text-[10px] text-amber-600 font-extrabold px-2.5 py-1 bg-amber-500/10 rounded-lg border border-amber-500/20 shadow-sm">
+                                Protected Admin
+                              </span>
+                            ) : (
+                              <>
+                                <button
+                                  onClick={() => handleBlockUser(u._id, u.isBlocked)}
+                                  className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-800 rounded-lg text-[10px] font-bold transition cursor-pointer"
+                                >
+                                  {u.isBlocked ? 'Unblock' : 'Block'}
+                                </button>
+                                <button
+                                  onClick={() => handleDeleteUser(u._id)}
+                                  className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-600 rounded-lg text-[10px] font-bold transition cursor-pointer"
+                                >
+                                  Delete
+                                </button>
+                              </>
+                            )}
+                          </td>
+                        </tr>
+                      );
+                    })}
                   </tbody>
                 </table>
               </div>

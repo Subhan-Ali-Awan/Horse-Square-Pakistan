@@ -35,7 +35,7 @@ export const Auction = () => {
       status: 'live',
       breed: 'Arabian',
       location: 'Rawalpindi Stud',
-      imageUrl: 'https://images.unsplash.com/photo-1593034510222-0a1fb8c9cd02?auto=format&fit=crop&q=80&w=600',
+      imageUrl: '/uploads/media__1785359752827.jpg',
       bids: [
         { bidderName: 'Sardar Tariq Khan', amount: 4500000, time: '15 mins ago' },
         { bidderName: 'Syed Shahzad', amount: 4200000, time: '2 hours ago' }

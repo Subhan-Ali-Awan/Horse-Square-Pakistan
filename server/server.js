@@ -18,6 +18,7 @@ app.use(morgan("dev")); // logs every request to the console - helpful while dev
 // Serve uploaded images statically, e.g. http://localhost:5000/uploads/abc.jpg
 app.use("/uploads", express.static("C:/Users/Acer/.gemini/antigravity-ide/brain/a0eb1cf8-0b87-4cc6-a5a3-d942d01e9d56"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static("C:\\Users\\Acer\\.gemini\\antigravity-ide\\brain\\0fc4e334-b54a-4ab2-bf1a-f66adb6fcaf0"));
 
 // ---------- Routes ----------
 app.use("/api/auth", require("./routes/authRoutes"));

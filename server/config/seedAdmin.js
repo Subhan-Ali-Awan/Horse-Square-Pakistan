@@ -1,6 +1,32 @@
 const User = require("../models/User");
 const Horse = require("../models/Horse");
 const Auction = require("../models/Auction");
+const fs = require("fs");
+const path = require("path");
+
+// Automatically copy artifact images to upload directories on start
+try {
+  const artifactDir = "C:\\Users\\Acer\\.gemini\\antigravity-ide\\brain\\0fc4e334-b54a-4ab2-bf1a-f66adb6fcaf0";
+  const targetDirs = [
+    path.join(__dirname, "..", "uploads"),
+    path.join(__dirname, "..", "..", "client", "public", "uploads")
+  ];
+
+  targetDirs.forEach(dir => {
+    if (!fs.existsSync(dir)) fs.mkdirSync(dir, { recursive: true });
+  });
+
+  ["media__1785359752827.jpg", "media__1785359784589.jpg"].forEach(filename => {
+    const srcFile = path.join(artifactDir, filename);
+    if (fs.existsSync(srcFile)) {
+      targetDirs.forEach(dir => {
+        fs.copyFileSync(srcFile, path.join(dir, filename));
+      });
+    }
+  });
+} catch (e) {
+  console.log("Image copy notice:", e.message);
+}
 
 // Automatically creates a default admin account on first server start,
 // using ADMIN_EMAIL / ADMIN_PASSWORD from your .env file.
@@ -69,14 +95,19 @@ async function seedMockData(adminId) {
           location: "Karachi",
           sellerName: "Super Admin",
           phone: "+923000000000",
-          description: "Stunning desert stallion built for speed and endurance.",
+          description: "Stunning desert stallion built for speed and endurance. It is a straight arabian horse bloodline import from Iraq.",
           status: "approved",
-          images: ["https://images.unsplash.com/photo-1593034510222-0a1fb8c9cd02?auto=format&fit=crop&q=80&w=600"],
+          sire: "Amir",
+          dam: "salma",
+          images: [
+            "/uploads/media__1785359752827.jpg",
+            "/uploads/media__1785359784589.jpg"
+          ],
           postedBy: adminId,
           age: 6,
-          color: "Grey",
+          color: "White",
           height: "62 inches",
-          spotlight: false
+          spotlight: true
         },
         {
           name: "Thunderbolt (Stallion)",
@@ -256,6 +287,22 @@ async function seedMockData(adminId) {
             sire: "Ghulam Muhammad",
             dam: "Bella",
             images: ["/uploads/media__1784677431875.jpg"]
+          }
+        }
+      );
+      await Horse.updateMany(
+        { name: { $regex: /Zarrar/i } },
+        {
+          $set: {
+            sire: "Amir",
+            dam: "salma",
+            description: "Stunning desert stallion built for speed and endurance. It is a straight arabian horse bloodline import from Iraq.",
+            color: "White",
+            spotlight: true,
+            images: [
+              "/uploads/media__1785359752827.jpg",
+              "/uploads/media__1785359784589.jpg"
+            ]
           }
         }
       );
