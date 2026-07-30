@@ -2,6 +2,44 @@ const express = require("express");
 const router = express.Router();
 const { ContactMessage } = require("../models/Misc");
 const { protect, adminOnly } = require("../middleware/auth");
+const { sendRidingTrialEmail } = require("../utils/emailService");
+
+// Helper function to automatically dispatch in-app contact message & email for trial session
+async function dispatchTrialApprovalMessages(trial, courseInfo, locationInfo) {
+  try {
+    // 1. Create / Send In-App Contact Message (Delivered to User Dashboard Messages Inbox)
+    await ContactMessage.create({
+      user: trial.user || undefined,
+      name: trial.name,
+      email: trial.email,
+      phone: trial.phone,
+      subject: `🏇 APPROVED: Riding Trial Session & Fee Structure (${trial.courseTitle})`,
+      message: `Your trial booking for ${trial.courseTitle} has been AUTOMATICALLY APPROVED! Fee Structure: ${courseInfo.fee}, Duration: ${courseInfo.duration}. Location: ${locationInfo.name} (${locationInfo.mapsUrl})`,
+      status: "resolved",
+      replies: [
+        {
+          sender: "admin",
+          senderName: "Horse-Square Riding Academy",
+          message: trial.whatsappMsg || `Hello ${trial.name}, your Riding Trial for ${trial.courseTitle} has been approved!\n\nLocation: ${locationInfo.name}\nMaps Link: ${locationInfo.mapsUrl}`,
+          createdAt: new Date(),
+        },
+      ],
+    });
+
+    // 2. Dispatch Automated Email via Nodemailer (horsesquarepakistan@gmail.com)
+    const emailResult = await sendRidingTrialEmail(trial, locationInfo, courseInfo);
+
+    // 3. Mark dispatch status on RidingTrial record
+    trial.autoSent = true;
+    trial.autoSentAt = new Date();
+    trial.emailSent = emailResult.success;
+    trial.inAppSent = true;
+    trial.feeStructureSent = true;
+    await trial.save();
+  } catch (err) {
+    console.error("[AUTO DISPATCH ERROR] Failed to send automatic trial messages:", err.message);
+  }
+}
 
 // ===================================================
 // POST /api/contact -> Contact Us page form
@@ -68,9 +106,9 @@ router.put("/:id", protect, async (req, res, next) => {
 
     // Allow if user is owner or admin
     const isOwner = query.user && query.user.toString() === req.user._id.toString() ||
-                    query.email === req.user.email ||
-                    query.phone === req.user.phone;
-                    
+      query.email === req.user.email ||
+      query.phone === req.user.phone;
+
     if (!isOwner && req.user.role !== 'admin') {
       return res.status(403).json({ success: false, message: "Not authorized to update this query" });
     }
@@ -102,8 +140,8 @@ router.post("/:id/reply", protect, async (req, res, next) => {
     if (!query) return res.status(404).json({ success: false, message: "Query not found" });
 
     const isOwner = (query.user && query.user.toString() === req.user._id.toString()) ||
-                    query.email === req.user.email ||
-                    query.phone === req.user.phone;
+      query.email === req.user.email ||
+      query.phone === req.user.phone;
 
     if (!isOwner && req.user.role !== 'admin') {
       return res.status(403).json({ success: false, message: "Not authorized to reply to this query" });
@@ -139,8 +177,8 @@ router.put("/:id/resolve", protect, async (req, res, next) => {
     if (!query) return res.status(404).json({ success: false, message: "Query not found" });
 
     const isOwner = (query.user && query.user.toString() === req.user._id.toString()) ||
-                    query.email === req.user.email ||
-                    query.phone === req.user.phone;
+      query.email === req.user.email ||
+      query.phone === req.user.phone;
 
     if (!isOwner && req.user.role !== 'admin') {
       return res.status(403).json({ success: false, message: "Not authorized to resolve this query" });
@@ -163,8 +201,8 @@ router.delete("/:id", protect, async (req, res, next) => {
     if (!query) return res.status(404).json({ success: false, message: "Query not found" });
 
     const isOwner = query.user && query.user.toString() === req.user._id.toString() ||
-                    query.email === req.user.email ||
-                    query.phone === req.user.phone;
+      query.email === req.user.email ||
+      query.phone === req.user.phone;
 
     if (!isOwner && req.user.role !== 'admin') {
       return res.status(403).json({ success: false, message: "Not authorized to delete this query" });
@@ -218,6 +256,45 @@ const COURSE_BREAKDOWN = {
   }
 };
 
+// City-based Riding Academy Locations (used in both POST auto-approve and PUT admin approve)
+const CITY_ACADEMY_LOCATIONS = {
+  "Hafizabad": {
+    name: "Horse-Square Hafizabad Stud Farm & Riding Academy",
+    address: "Hafizabad Stud Farm Complex, Hafizabad, Punjab, Pakistan",
+    mapsUrl: "https://maps.app.goo.gl/6RSSd7M6WTG8r6Qy6"
+  },
+  "Lahore": {
+    name: "Horse-Square Riding Academy (Bedian Complex, Lahore)",
+    address: "Bedian Road, Near DHA Phase 6 Interchange, Lahore",
+    mapsUrl: "https://maps.google.com/maps?q=Horse+Square+Riding+Academy+Lahore+Bedian+Road"
+  },
+  "Islamabad": {
+    name: "Horse-Square Riding Club (Chak Shahzad, Islamabad)",
+    address: "Park Road, Near Chak Shahzad Equestrian Center, Islamabad",
+    mapsUrl: "https://maps.google.com/maps?q=Chak+Shahzad+Equestrian+Center+Islamabad"
+  },
+  "Karachi": {
+    name: "Horse-Square Stables (Malir Cantt Arena, Karachi)",
+    address: "Malir Cantt Cavalry Grounds, Karachi",
+    mapsUrl: "https://maps.google.com/maps?q=Malir+Cantt+Cavalry+Grounds+Karachi"
+  },
+  "Sargodha": {
+    name: "Horse-Square Nezabazi Grounds (Sargodha)",
+    address: "Stadium Road, Near Sargodha Cavalry Club, Sargodha",
+    mapsUrl: "https://maps.google.com/maps?q=Sargodha+Cavalry+Club+Sargodha"
+  },
+  "Faisalabad": {
+    name: "Horse-Square Equestrian Center (Faisalabad)",
+    address: "Canal Expressway, Imperial Stables Complex, Faisalabad",
+    mapsUrl: "https://maps.google.com/maps?q=Imperial+Stables+Canal+Expressway+Faisalabad"
+  },
+  "Peshawar": {
+    name: "Horse-Square Riding Arena (Peshawar)",
+    address: "Ring Road Equestrian Grounds, Peshawar",
+    mapsUrl: "https://maps.google.com/maps?q=Ring+Road+Equestrian+Grounds+Peshawar"
+  }
+};
+
 // POST /api/contact/riding-trial -> Submit trial session booking (AUTOMATICALLY APPROVED WITH HAFIZABAD LOCATION)
 router.post("/riding-trial", async (req, res, next) => {
   try {
@@ -237,49 +314,50 @@ router.post("/riding-trial", async (req, res, next) => {
       ]
     };
 
-    // Hafizabad Stud Farm Official Riding School Location
-    const HAFIZABAD_LOCATION = {
-      name: "Horse-Square Hafizabad Stud Farm & Riding Academy",
-      address: "Hafizabad Stud Farm Complex, Hafizabad, Punjab, Pakistan",
-      mapsUrl: "https://maps.app.goo.gl/6RSSd7M6WTG8r6Qy6"
+    // Determine location based on the city the user selected in the form
+    const selectedCity = city || "Hafizabad";
+    const locationInfo = CITY_ACADEMY_LOCATIONS[selectedCity] || {
+      name: `Horse-Square Riding Academy (${selectedCity})`,
+      address: `Main Equestrian Complex, ${selectedCity}, Pakistan`,
+      mapsUrl: `https://maps.google.com/maps?q=Horse+Square+Riding+Academy+${encodeURIComponent(selectedCity)}`
     };
 
     const cleanPhone = phone.replace(/[^0-9]/g, "");
     const formattedPhone = cleanPhone.startsWith("0") ? `92${cleanPhone.slice(1)}` : cleanPhone;
 
-    const whatsappMessage = `*🏇 Horse-Square Pakistan Riding Academy*
-*AUTOMATICALLY APPROVED TRIAL SESSION & COURSE CURRICULUM*
+    const whatsappMessage = `🏇 Horse-Square Pakistan Riding Academy
+AUTOMATICALLY APPROVED TRIAL SESSION & COURSE CURRICULUM
 
-Hello *${name}*, your Riding Trial Request for *${courseTitle}* has been *AUTOMATICALLY APPROVED*!
+Hello ${name}, your Riding Trial Request for ${courseTitle} has been AUTOMATICALLY APPROVED!
 
-*📋 Course Details:*
-• *Course:* ${courseTitle} (${courseInfo.badge})
-• *Duration:* ${courseInfo.duration}
-• *Fee Structure:* ${courseInfo.fee}
-• *Preferred Slot:* ${preferredSlot || "Weekend Morning"}
+📋 Course Details:
+• Course: ${courseTitle} (${courseInfo.badge})
+• Duration: ${courseInfo.duration}
+• Fee Structure: ${courseInfo.fee}
+• Preferred Slot: ${preferredSlot || "Weekend Morning"}
 
-*📍 Hafizabad Stud Farm Riding Location & Address:*
-• *Academy:* ${HAFIZABAD_LOCATION.name}
-• *Address:* ${HAFIZABAD_LOCATION.address}
-• *Google Maps Navigation Link:* ${HAFIZABAD_LOCATION.mapsUrl}
+📍 ${selectedCity} Riding School Location & Address:
+• Academy: ${locationInfo.name}
+• Address: ${locationInfo.address}
+• Google Maps Navigation Link: ${locationInfo.mapsUrl}
 
-*📚 Training Curriculum & Syllabus:*
+📚 Training Curriculum & Syllabus:
 ${courseInfo.curriculum.map((c, i) => `${i + 1}. ${c}`).join("\n")}
 
-*📍 Next Step:*
-Tap the Hafizabad Stud Farm Google Maps link above (${HAFIZABAD_LOCATION.mapsUrl}) to navigate straight to our academy, and reply to this message to confirm your arrival!
+📍 Next Step:
+Tap the Google Maps link above (${locationInfo.mapsUrl}) to navigate straight to our academy, and reply to this message to confirm your arrival!
 
-_Horse-Square Pakistan Equestrian Team_`;
+Horse-Square Pakistan Equestrian Team`;
 
     const encodedWA = encodeURIComponent(whatsappMessage);
-    const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedWA}`;
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodedWA}`;
 
     const trial = await RidingTrial.create({
       user: userId || undefined,
       name,
       phone,
       email,
-      city: city || "Hafizabad",
+      city: selectedCity,
       courseTitle,
       ridingLevel: ridingLevel || "Beginner",
       preferredSlot: preferredSlot || "Weekend Morning",
@@ -287,12 +365,17 @@ _Horse-Square Pakistan Equestrian Team_`;
       status: "approved",
       approvedAt: new Date(),
       feeStructureSent: true,
+      autoSent: true,
+      autoSentAt: new Date(),
       whatsappMsg: whatsappMessage
     });
 
+    // AUTOMATICALLY DISPATCH In-App Contact Message & Email from horsesquarepakistan@gmail.com
+    await dispatchTrialApprovalMessages(trial, courseInfo, locationInfo);
+
     res.status(201).json({
       success: true,
-      message: "Trial Session booking request approved! Full fee structure, curriculum, and Hafizabad Stud Farm map link generated.",
+      message: "Trial Session booking request approved! Details automatically sent to user's Email (horsesquarepakistan@gmail.com) and WhatsApp.",
       data: trial,
       whatsappUrl,
       whatsappMessage
@@ -337,81 +420,89 @@ router.put("/riding-trial/:id/approve", protect, adminOnly, async (req, res, nex
     const cleanPhone = trial.phone.replace(/[^0-9]/g, "");
     const formattedPhone = cleanPhone.startsWith("0") ? `92${cleanPhone.slice(1)}` : cleanPhone;
 
-    const CITY_ACADEMY_LOCATIONS = {
-      "Lahore": {
-        name: "Horse-Square Riding Academy (Bedian Complex, Lahore)",
-        address: "Bedian Road, Near DHA Phase 6 Interchange, Lahore",
-        mapsUrl: "https://maps.google.com/?q=31.4490,74.4380"
-      },
-      "Islamabad": {
-        name: "Horse-Square Riding Club (Chak Shahzad, Islamabad)",
-        address: "Park Road, Near Chak Shahzad Equestrian Center, Islamabad",
-        mapsUrl: "https://maps.google.com/?q=33.6700,73.1200"
-      },
-      "Karachi": {
-        name: "Horse-Square Stables (Malir Cantt Arena, Karachi)",
-        address: "Malir Cantt Cavalry Grounds, Karachi",
-        mapsUrl: "https://maps.google.com/?q=24.9300,67.1800"
-      },
-      "Sargodha": {
-        name: "Horse-Square Nezabazi Grounds (Sargodha)",
-        address: "Stadium Road, Near Sargodha Cavalry Club, Sargodha",
-        mapsUrl: "https://maps.google.com/?q=32.0800,72.6700"
-      },
-      "Faisalabad": {
-        name: "Horse-Square Equestrian Center (Faisalabad)",
-        address: "Canal Expressway, Imperial Stables Complex, Faisalabad",
-        mapsUrl: "https://maps.google.com/?q=31.4180,73.0790"
-      },
-      "Peshawar": {
-        name: "Horse-Square Riding Arena (Peshawar)",
-        address: "Ring Road Equestrian Grounds, Peshawar",
-        mapsUrl: "https://maps.google.com/?q=34.0150,71.5240"
-      }
-    };
-
-    const locationInfo = CITY_ACADEMY_LOCATIONS[trial.city] || {
+    // Use the shared CITY_ACADEMY_LOCATIONS to look up the correct city-based location
+    const approveLocationInfo = CITY_ACADEMY_LOCATIONS[trial.city] || {
       name: `Horse-Square Riding Academy (${trial.city})`,
-      address: `Main Equestrian Complex, ${trial.city}`,
-      mapsUrl: `https://maps.google.com/?q=${encodeURIComponent(trial.city + " Riding Academy")}`
+      address: `Main Equestrian Complex, ${trial.city}, Pakistan`,
+      mapsUrl: `https://maps.google.com/maps?q=Horse+Square+Riding+Academy+${encodeURIComponent(trial.city)}`
     };
 
-    const whatsappMessage = `*🏇 Horse-Square Pakistan Riding Academy*
-*APPROVED TRIAL SESSION & COURSE CURRICULUM*
+    const whatsappMessage = `🏇 Horse-Square Pakistan Riding Academy
+AUTOMATICALLY APPROVED TRIAL SESSION & COURSE CURRICULUM
 
-Hello *${trial.name}*, your Riding Trial Request has been *APPROVED* by Admin!
+Hello ${trial.name}, your Riding Trial Request for ${trial.courseTitle} has been AUTOMATICALLY APPROVED!
 
-*📋 Course Details:*
-• *Course:* ${trial.courseTitle} (${courseInfo.badge})
-• *Duration:* ${courseInfo.duration}
-• *Fee Structure:* ${courseInfo.fee}
-• *Preferred Slot:* ${trial.preferredSlot}
+📋 Course Details:
+• Course: ${trial.courseTitle} (${courseInfo.badge})
+• Duration: ${courseInfo.duration}
+• Fee Structure: ${courseInfo.fee}
+• Preferred Slot: ${trial.preferredSlot}
 
-*📍 Riding School Location & Address:*
-• *Academy:* ${locationInfo.name}
-• *Address:* ${locationInfo.address}
-• *Google Maps Location Link:* ${locationInfo.mapsUrl}
+📍 ${trial.city} Riding School Location & Address:
+• Academy: ${approveLocationInfo.name}
+• Address: ${approveLocationInfo.address}
+• Google Maps Navigation Link: ${approveLocationInfo.mapsUrl}
 
-*📚 Training Curriculum & Syllabus:*
+📚 Training Curriculum & Syllabus:
 ${courseInfo.curriculum.map((c, i) => `${i + 1}. ${c}`).join("\n")}
 
-*📍 Next Step:*
-Click the Google Maps link above to easily navigate to our riding academy, and confirm your arrival slot timing by replying to this message!
+📍 Next Step:
+Tap the Google Maps link above (${approveLocationInfo.mapsUrl}) to navigate straight to our academy, and reply to this message to confirm your arrival!
 
-_Horse-Square Pakistan Equestrian Team_`;
+Horse-Square Pakistan Equestrian Team`;
 
     trial.whatsappMsg = whatsappMessage;
     await trial.save();
 
+    // AUTOMATICALLY DISPATCH In-App Contact Message & Email to User
+    await dispatchTrialApprovalMessages(trial, courseInfo, approveLocationInfo);
+
     const encodedWA = encodeURIComponent(whatsappMessage);
-    const whatsappUrl = `https://wa.me/${formattedPhone}?text=${encodedWA}`;
+    const whatsappUrl = `https://api.whatsapp.com/send?phone=${formattedPhone}&text=${encodedWA}`;
 
     res.status(200).json({
       success: true,
-      message: `Trial request approved! Fee structure & curriculum generated for ${trial.name}.`,
+      message: `Trial request approved! Details automatically sent to ${trial.name}'s Email (horsesquarepakistan@gmail.com) and WhatsApp.`,
       data: trial,
       whatsappUrl,
       whatsappMessage
+    });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// POST /api/contact/riding-trial/:id/resend-email -> Admin: manually resend confirmation email
+router.post("/riding-trial/:id/resend-email", protect, adminOnly, async (req, res, next) => {
+  try {
+    const trial = await RidingTrial.findById(req.params.id);
+    if (!trial) return res.status(404).json({ success: false, message: "Trial request not found" });
+
+    const courseInfo = COURSE_BREAKDOWN[trial.courseTitle] || {
+      fee: "Rs. 35,000 PKR",
+      duration: "Standard Duration",
+      badge: trial.ridingLevel,
+      curriculum: [
+        "Session 1-4: Basic posture, mounting, balance & reins control.",
+        "Session 5-8: Trot, canter transitions & arena obstacle navigation.",
+        "Session 9-12: Advanced horsemanship, trial assessment & certification."
+      ]
+    };
+
+    const HAFIZABAD_LOCATION = {
+      name: "Horse-Square Hafizabad Stud Farm & Riding Academy",
+      address: "Hafizabad Stud Farm Complex, Hafizabad, Punjab, Pakistan",
+      mapsUrl: "https://maps.app.goo.gl/6RSSd7M6WTG8r6Qy6"
+    };
+
+    const emailResult = await sendRidingTrialEmail(trial, HAFIZABAD_LOCATION, courseInfo);
+    trial.emailSent = emailResult.success;
+    await trial.save();
+
+    res.status(200).json({
+      success: true,
+      message: `Automated confirmation email resent to ${trial.email} from horsesquarepakistan@gmail.com!`,
+      data: trial
     });
   } catch (error) {
     next(error);

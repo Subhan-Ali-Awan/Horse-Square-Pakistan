@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import {
   Gavel,
   Dna,
@@ -15,9 +16,115 @@ import {
   BookOpen,
   MapPin
 } from 'lucide-react';
-import heroVideo from '../../assets/hero_section_video.mp4';
+import heroVideo from '../../assets/Hero final.mov';
 
 export const Home = () => {
+  const { user } = useAuth();
+  const [featuredHorses, setFeaturedHorses] = useState([]);
+
+  const formatImgUrl = (url) => {
+    if (!url) return 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600';
+    if (url.startsWith('data:') || url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.startsWith('/uploads/')) return url;
+    if (url.startsWith('uploads/')) return '/' + url;
+    return '/uploads/' + url;
+  };
+
+  const sampleFeaturedHorses = [
+    {
+      _id: '1',
+      name: 'Thunderbolt (Stallion)',
+      breed: 'Thoroughbred',
+      age: 4,
+      color: 'Dark Bay',
+      location: 'Lahore',
+      price: 2500000,
+      description: 'Champion bloodline, excellent temperament, fully vaccinated. Top speed record holder at Lahore Turf Club.',
+      imageUrl: 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600'
+    },
+    {
+      _id: '2',
+      name: 'Nukra Royal Prince (NezaBazi)',
+      breed: 'Nukra / Desi',
+      age: 5,
+      color: 'Pure White (Nukra)',
+      location: 'Faisalabad',
+      price: 3800000,
+      description: 'Elite Nukra stallion trained for Tent Pegging (Nezabazi). High speed, flawless posture, and blue eyes.',
+      imageUrl: 'https://images.unsplash.com/photo-1598974357801-cbca10065a71?auto=format&fit=crop&q=80&w=600'
+    },
+    {
+      _id: '3',
+      name: 'Zarrar (Desert Stallion)',
+      breed: 'Arabian',
+      age: 6,
+      color: 'White',
+      location: 'Karachi',
+      price: 4200000,
+      description: 'Stunning desert stallion built for speed and endurance. Imported straight Arabian bloodline lineage.',
+      imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=600'
+    },
+    {
+      _id: '4',
+      name: 'Sultan (Show Jumper)',
+      breed: 'Thoroughbred',
+      age: 6,
+      color: 'Chestnut',
+      location: 'Islamabad',
+      price: 3100000,
+      description: 'Experienced in 1.20m obstacle clearance. Graceful gait, calm temperament, ideal for competition.',
+      imageUrl: 'https://images.unsplash.com/photo-1598974357832-6a68b030fb3f?auto=format&fit=crop&q=80&w=600'
+    },
+    {
+      _id: '5',
+      name: 'Nabiya (Sindhi Mare)',
+      breed: 'Sindhi',
+      age: 4,
+      color: 'Bay',
+      location: 'Hyderabad',
+      price: 1900000,
+      description: 'High head carriage, elegant gait, extremely resilient to heat. Ideal for breeding or riding.',
+      imageUrl: 'https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&q=80&w=600'
+    },
+    {
+      _id: '6',
+      name: 'Shadow (Friesian Stallion)',
+      breed: 'Friesian',
+      age: 5,
+      color: 'Jet Black',
+      location: 'Rawalpindi',
+      price: 4500000,
+      description: 'Exotic Friesian stallion with heavy manes and feathered legs. Ideal for royal processions and shows.',
+      imageUrl: 'https://images.unsplash.com/photo-1605258277235-8f645a7ec8c9?auto=format&fit=crop&q=80&w=600'
+    }
+  ];
+
+  useEffect(() => {
+    const fetchHorses = async () => {
+      try {
+        const res = await fetch('/api/horses?limit=6');
+        if (res.ok) {
+          const data = await res.json();
+          if (data.success && data.data && data.data.length > 0) {
+            const formatted = data.data.map(h => ({
+              ...h,
+              price: Number(h.price),
+              imageUrl: h.images && h.images.length > 0 ? h.images[0] : (h.imageUrl || 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600')
+            }));
+            setFeaturedHorses(formatted);
+          } else {
+            setFeaturedHorses(sampleFeaturedHorses);
+          }
+        } else {
+          setFeaturedHorses(sampleFeaturedHorses);
+        }
+      } catch (err) {
+        setFeaturedHorses(sampleFeaturedHorses);
+      }
+    };
+    fetchHorses();
+  }, []);
+
   const features = [
     {
       title: "Horse Marketplace",
@@ -180,29 +287,20 @@ export const Home = () => {
           loop
           muted
           playsInline
-          className="absolute inset-0 w-full h-full object-cover opacity-80"
+          className="absolute inset-0 w-full h-full object-cover opacity-100 brightness-[1.5] contrast-[1.05]"
         >
-          <source
-            src={heroVideo}
-            type="video/mp4"
-          />
+          <source src={heroVideo} />
           Your browser does not support the video tag.
         </video>
 
-        {/* Black Blur Overlay */}
-        <div className="absolute inset-0 bg-gradient-to-b from-black/80 via-black/50 to-slate-950/90 backdrop-blur-[1px]"></div>
+        {/* Lightened Ambient Overlay for Bright Video Display */}
+        <div className="absolute inset-0 bg-gradient-to-b from-black/45 via-black/20 to-slate-950/65"></div>
 
         {/* Hero Ambient Glass Glow */}
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-amber-500/15 rounded-full blur-[140px] pointer-events-none"></div>
 
         {/* Hero Content */}
         <div className="relative z-10 text-center px-4 max-w-4xl mx-auto text-white flex flex-col items-center">
-          {/* Liquid Glass Floating Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full liquid-glass-dark mb-6 border border-amber-500/40 text-amber-400 text-xs sm:text-sm font-semibold shadow-xl backdrop-blur-xl animate-fade-up">
-            <Sparkles className="w-4 h-4 text-amber-400 animate-pulse" />
-            <span>Pakistan's Premier Equine Platform</span>
-          </div>
-
           <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4 leading-tight animate-fade-up">
             Experience the Legacy of <span className="animate-shimmer">Horse-Square</span>
           </h1>
@@ -213,13 +311,13 @@ export const Home = () => {
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center items-center animate-fade-up delay-250">
             <Link
               to="/marketplace"
-              className="w-full sm:w-auto bg-gradient-to-r from-[#D4AF37] to-[#C9A227] hover:from-[#C9A227] hover:to-[#B8860B] text-[#0F172A] font-bold py-3.5 px-8 rounded-xl shadow-xl hover:shadow-amber-500/30 transition-all duration-300 text-center animate-glow"
+              className="w-full sm:w-auto bg-gradient-to-r from-[#D4AF37]/90 via-[#E5C158]/85 to-[#C9A227]/90 hover:from-[#D4AF37] hover:to-[#B8860B] text-[#0F172A] font-black py-3.5 px-8 rounded-xl border border-amber-200/70 backdrop-blur-2xl transition-all duration-300 text-center shadow-[0_8px_32px_rgba(212,175,55,0.45)] hover:shadow-[0_14px_45px_rgba(212,175,55,0.65)] hover:-translate-y-0.5 animate-glow"
             >
               Explore Marketplace
             </Link>
             <Link
               to="/vet"
-              className="w-full sm:w-auto liquid-glass-dark hover:border-amber-400/50 text-white font-semibold py-3.5 px-8 rounded-xl border border-white/20 backdrop-blur-xl transition-all duration-300 text-center shadow-xl"
+              className="w-full sm:w-auto bg-white/20 hover:bg-white/35 text-white font-extrabold py-3.5 px-8 rounded-xl border border-white/60 backdrop-blur-2xl transition-all duration-300 text-center shadow-[0_8px_32px_rgba(0,0,0,0.37)] hover:border-[#D4AF37] hover:shadow-[0_12px_40px_rgba(212,175,55,0.35)] hover:-translate-y-0.5"
             >
               Consult AI Vet
             </Link>
@@ -287,35 +385,77 @@ export const Home = () => {
           </div>
         </section>
 
-        {/* Pakistani Breeds Spotlight */}
+        {/* Featured Marketplace Horse Ads */}
         <section className="space-y-10">
-          <div className="text-center max-w-2xl mx-auto space-y-2 animate-fade-up">
-            <span className="text-[#D4AF37] text-xs font-bold uppercase tracking-wider">Heritage & Pedigree</span>
-            <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">Equestrian Breeds Spotlight</h2>
-            <p className="text-slate-500 text-sm sm:text-base font-light">
-              Explore the iconic breeds found, traded, and bred within Pakistan's premier horse community.
-            </p>
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 animate-fade-up">
+            <div>
+              <span className="text-[#D4AF37] text-xs font-bold uppercase tracking-wider">Live Marketplace</span>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">Featured Marketplace Listings</h2>
+              <p className="text-slate-500 text-sm sm:text-base font-light">
+                Discover verified horses listed for sale by top breeders and sellers across Pakistan.
+              </p>
+            </div>
+            <Link
+              to="/marketplace"
+              className="inline-flex items-center gap-2 text-sm font-bold text-[#D4AF37] hover:text-[#0F172A] transition-colors shrink-0"
+            >
+              Browse All Marketplace Ads <ArrowRight className="w-4 h-4" />
+            </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-            {breeds.map((breed, idx) => (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredHorses.slice(0, 6).map((horse, idx) => (
               <div
-                key={idx}
-                className={`liquid-glass-card liquid-glass-sheen rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 flex flex-col sm:flex-row sm:h-64 group border border-white/80 animate-fade-up ${delays[idx % delays.length]}`}
+                key={horse._id || idx}
+                className={`liquid-glass-card liquid-glass-sheen rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 flex flex-col justify-between group border border-white/80 animate-fade-up ${delays[idx % delays.length]}`}
               >
-                <div className="sm:w-2/5 h-52 sm:h-full relative overflow-hidden">
-                  <img
-                    src={breed.imageUrl}
-                    alt={breed.name}
-                    className="w-full h-full object-cover group-hover:scale-105 transition duration-700"
-                  />
-                  <div className="absolute top-3 left-3 liquid-glass-dark text-[#D4AF37] text-[10px] font-bold tracking-widest uppercase px-3 py-1 rounded-lg border border-amber-500/40 shadow-md backdrop-blur-md">
-                    {breed.origin}
+                <div>
+                  <div className="relative h-56 sm:h-60 bg-slate-950 overflow-hidden flex items-center justify-center group">
+                    <img
+                      src={formatImgUrl(horse.imageUrl || horse.images?.[0] || horse.image)}
+                      alt={horse.name}
+                      className="absolute inset-0 w-full h-full object-cover object-center blur-md opacity-40 scale-110"
+                    />
+                    <img
+                      src={formatImgUrl(horse.imageUrl || horse.images?.[0] || horse.image)}
+                      alt={horse.name}
+                      className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition duration-500"
+                    />
+                    <div className="absolute top-3 left-3 bg-[#0B0F19]/80 backdrop-blur-md text-amber-400 text-[10px] font-bold tracking-wider uppercase px-3 py-1 rounded-lg border border-amber-500/30 z-20">
+                      {horse.breed || 'Purebred'}
+                    </div>
+                    {horse.location && (
+                      <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-md text-slate-200 text-[10px] font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1 z-20">
+                        <MapPin className="w-3 h-3 text-[#D4AF37]" /> {horse.location}
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="p-6 space-y-3">
+                    <div className="flex items-center justify-between">
+                      <span className="text-xs font-semibold text-slate-500">{horse.age ? `${horse.age} Yrs` : 'Adult'} • {horse.color || 'Solid'}</span>
+                      <span className="text-lg font-black text-[#D4AF37]">
+                        Rs. {Number(horse.price || 0).toLocaleString()}
+                      </span>
+                    </div>
+
+                    <h3 className="text-lg font-bold text-[#0F172A] group-hover:text-[#D4AF37] transition-colors line-clamp-1">
+                      {horse.name}
+                    </h3>
+
+                    <p className="text-slate-600 text-xs line-clamp-2 leading-relaxed font-normal">
+                      {horse.description}
+                    </p>
                   </div>
                 </div>
-                <div className="sm:w-3/5 p-6 flex flex-col justify-center space-y-2">
-                  <h3 className="text-xl font-bold text-[#0F172A] group-hover:text-[#D4AF37] transition-colors">{breed.name}</h3>
-                  <p className="text-slate-600 text-sm leading-relaxed">{breed.description}</p>
+
+                <div className="p-6 pt-0">
+                  <Link
+                    to="/marketplace"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#D4AF37] text-white hover:text-[#0F172A] font-bold text-xs py-3 px-4 rounded-xl transition-all duration-300 shadow-md"
+                  >
+                    View Listing Details <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
                 </div>
               </div>
             ))}

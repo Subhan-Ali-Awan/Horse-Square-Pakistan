@@ -672,6 +672,145 @@ export const UserDashboard = () => {
                   <Edit3 className="w-3.5 h-3.5" /> Edit Profile
                 </button>
               </div>
+
+              {/* Featured Services & Widgets Hub */}
+              <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+
+                {/* Widget 1: Breeding Registry & Lineage Widget */}
+                <div className="liquid-glass-card rounded-3xl p-7 flex flex-col justify-between shadow-lg relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none" />
+
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#D4AF37]/25 via-amber-500/15 to-amber-300/20 border border-[#D4AF37]/50 text-[#C9A227] flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition duration-300">
+                          <Dna className="w-6 h-6 text-[#C9A227]" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-black text-[#D4AF37] uppercase tracking-widest block">Pedigree & Stud Match</span>
+                          <h4 className="font-extrabold text-slate-800 text-base">Breeding Registry Services</h4>
+                        </div>
+                      </div>
+                      <span className="text-[10px] bg-amber-500/15 text-amber-900 border border-amber-400/40 px-2.5 py-1 rounded-full font-black uppercase">Active</span>
+                    </div>
+
+                    <p className="text-slate-600 text-xs leading-relaxed mb-5">
+                      Find certified stud matches for your stallion or mare. Track lineage certificates and connect with top Pakistani stud owners.
+                    </p>
+
+                    {/* Featured Stud Preview Cards */}
+                    <div className="space-y-2.5 mb-6">
+                      <div className="p-3 bg-white/70 rounded-2xl border border-slate-200/80 flex items-center justify-between text-xs font-semibold">
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />
+                          <span className="text-slate-800 font-extrabold">Sufi (Nukra Champion)</span>
+                        </div>
+                        <span className="text-[#C9A227] font-black">Fee: Rs. 250,000</span>
+                      </div>
+                      <div className="p-3 bg-white/70 rounded-2xl border border-slate-200/80 flex items-center justify-between text-xs font-semibold">
+                        <div className="flex items-center gap-2.5">
+                          <span className="w-2 h-2 rounded-full bg-blue-500" />
+                          <span className="text-slate-800 font-extrabold">Al-Burraq (Arabian Champion)</span>
+                        </div>
+                        <span className="text-blue-600 font-black">Fee: Rs. 180,000</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => setActiveTab('breeding')}
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#D4AF37] text-white hover:text-[#0F172A] font-bold text-xs py-3 px-4 rounded-2xl transition-all duration-300 shadow-md cursor-pointer"
+                  >
+                    <span>Browse Stud Registry</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+
+                {/* Widget 2: AI Vet Diagnostics Assistant */}
+                <div className="liquid-glass-card rounded-3xl p-7 flex flex-col justify-between shadow-lg relative overflow-hidden group">
+                  <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl pointer-events-none" />
+
+                  <div>
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="flex items-center gap-3">
+                        <div className="w-12 h-12 rounded-2xl bg-emerald-500/15 border border-emerald-400/40 text-emerald-600 flex items-center justify-center shrink-0 shadow-sm group-hover:scale-110 transition duration-300">
+                          <Stethoscope className="w-6 h-6 text-emerald-600" />
+                        </div>
+                        <div>
+                          <span className="text-[10px] font-black text-emerald-600 uppercase tracking-widest block">Instant Healthcare</span>
+                          <h4 className="font-extrabold text-slate-800 text-base">AI Vet Diagnostics</h4>
+                        </div>
+                      </div>
+                      <span className="text-[10px] bg-emerald-500/15 text-emerald-900 border border-emerald-400/40 px-2.5 py-1 rounded-full font-black uppercase">24/7 AI Online</span>
+                    </div>
+
+                    <p className="text-slate-600 text-xs leading-relaxed mb-5">
+                      Get instant AI-driven diagnostic analysis for common horse symptoms, generate health reports, and locate verified local veterinarians.
+                    </p>
+
+                    <div className="grid grid-cols-2 gap-3 mb-6">
+                      <div className="p-3 bg-emerald-50/60 rounded-2xl border border-emerald-100 flex flex-col justify-center">
+                        <span className="text-[10px] font-extrabold text-emerald-800 uppercase">Symptom Checker</span>
+                        <span className="text-xs font-bold text-slate-700 mt-0.5">Colic, Lameness, Skin</span>
+                      </div>
+                      <div className="p-3 bg-amber-50/60 rounded-2xl border border-amber-100 flex flex-col justify-center">
+                        <span className="text-[10px] font-extrabold text-amber-800 uppercase">Vaccine Tracker</span>
+                        <span className="text-xs font-bold text-slate-700 mt-0.5">Tetanus & Influenza</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <Link
+                    to="/vet"
+                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-emerald-600 text-white font-bold text-xs py-3 px-4 rounded-2xl transition-all duration-300 shadow-md cursor-pointer"
+                  >
+                    <span>Consult AI Vet Doctor</span> <ArrowRight className="w-3.5 h-3.5" />
+                  </Link>
+                </div>
+
+              </div>
+
+              {/* Widget 3: Riding Schools & Live Auctions Banner */}
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                {/* Riding School Banner */}
+                <div className="liquid-glass-card rounded-3xl p-6 flex items-center justify-between gap-4 shadow-lg group">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-sky-500/15 border border-sky-400/40 text-sky-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition duration-300">
+                      <Compass className="w-6 h-6 text-sky-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-slate-800 text-sm">Riding Schools & Academies</h4>
+                      <p className="text-slate-500 text-xs mt-0.5">Locate certified riding instructors and training arenas.</p>
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => setActiveTab('riding')}
+                    className="px-4 py-2.5 bg-[#0F172A] hover:bg-sky-600 text-white rounded-xl text-xs font-bold shrink-0 transition cursor-pointer"
+                  >
+                    Explore Schools
+                  </button>
+                </div>
+
+                {/* Live Auction Banner */}
+                <div className="liquid-glass-card rounded-3xl p-6 flex items-center justify-between gap-4 shadow-lg group">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 rounded-2xl bg-amber-500/15 border border-amber-400/40 text-amber-600 flex items-center justify-center shrink-0 group-hover:scale-110 transition duration-300">
+                      <Gavel className="w-6 h-6 text-amber-600" />
+                    </div>
+                    <div>
+                      <h4 className="font-extrabold text-slate-800 text-sm">Live Equine Auctions</h4>
+                      <p className="text-slate-500 text-xs mt-0.5">Place real-time bids on verified champion breeds.</p>
+                    </div>
+                  </div>
+                  <Link
+                    to="/auction"
+                    className="px-4 py-2.5 bg-[#0F172A] hover:bg-[#D4AF37] hover:text-[#0F172A] text-white rounded-xl text-xs font-bold shrink-0 transition cursor-pointer"
+                  >
+                    Join Auctions
+                  </Link>
+                </div>
+
+              </div>
             </div>
           )}
 

@@ -1,10 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Compass, CheckCircle, Award, ShieldCheck, Sparkles, BookOpen, Target, CheckCircle2, ChevronRight, UserCheck, Quote, Flame, Calendar, Clock, MapPin, Send, Check } from 'lucide-react';
 import { Modal } from '../../components/Modal';
 import { useAuth } from '../../context/AuthContext';
 
 export const RidingSchool = () => {
   const { user } = useAuth();
+  const navigate = useNavigate();
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [formData, setFormData] = useState({
     name: '',
@@ -17,7 +19,9 @@ export const RidingSchool = () => {
   });
   const [submitting, setSubmitting] = useState(false);
   const [submittedSuccess, setSubmittedSuccess] = useState(false);
+  const [generatedWaUrl, setGeneratedWaUrl] = useState('');
   const [errorMessage, setErrorMessage] = useState('');
+  const [countdown, setCountdown] = useState(10);
 
   const programs = [
     {
@@ -131,6 +135,7 @@ export const RidingSchool = () => {
     setSubmittedSuccess(false);
     setGeneratedWaUrl('');
     setErrorMessage('');
+    setCountdown(10);
   };
 
   const handleSubmitBooking = async (e) => {
@@ -158,6 +163,23 @@ export const RidingSchool = () => {
       if (data.success) {
         setSubmittedSuccess(true);
         setGeneratedWaUrl(data.whatsappUrl || '');
+        setCountdown(10);
+
+        // Immediately open WhatsApp with auto-generated curriculum payload
+        if (data.whatsappUrl) {
+          window.open(data.whatsappUrl, '_blank');
+        }
+
+        let currentCount = 10;
+        const interval = setInterval(() => {
+          currentCount -= 1;
+          setCountdown(currentCount);
+          if (currentCount <= 0) {
+            clearInterval(interval);
+            setSelectedProgram(null);
+            navigate('/dashboard');
+          }
+        }, 1000);
       } else {
         setErrorMessage(data.message || 'Failed to submit booking request.');
       }
@@ -289,18 +311,22 @@ export const RidingSchool = () => {
 
             {submittedSuccess ? (
               <div className="p-6 bg-emerald-500/10 border border-emerald-500/20 rounded-2xl text-center space-y-4 animate-fade-in">
-                <div className="w-14 h-14 bg-emerald-500 text-white rounded-full flex items-center justify-center mx-auto shadow-lg">
-                  <Check className="w-8 h-8 stroke-[3]" />
+                <div className="w-16 h-16 bg-gradient-to-tr from-emerald-600 to-teal-500 text-white rounded-full flex items-center justify-center mx-auto shadow-xl animate-pulse">
+                  <Check className="w-9 h-9 stroke-[3]" />
                 </div>
                 <div>
-                  <span className="text-[10px] font-extrabold uppercase tracking-widest px-2.5 py-0.5 bg-emerald-500/20 text-emerald-800 rounded border border-emerald-500/30">
-                    Automatically Approved
+                  <span className="text-[10px] font-extrabold uppercase tracking-widest px-3 py-1 bg-emerald-500/20 text-emerald-800 rounded-full border border-emerald-500/30">
+                    Booking Submitted & Approved
                   </span>
-                  <h4 className="text-xl font-black text-slate-900 mt-1">Trial Session Confirmed!</h4>
+                  <h4 className="text-2xl font-black text-slate-900 mt-2">Thanks For Interested!</h4>
+                  <p className="text-xs font-bold text-emerald-700 mt-1 flex items-center justify-center gap-1.5">
+                    <span>Redirecting to your User Dashboard in</span>
+                    <span className="inline-block px-2 py-0.5 bg-slate-900 text-amber-300 rounded font-black text-sm shadow">{countdown}s</span>
+                  </p>
                 </div>
 
-                <p className="text-xs text-slate-700 font-medium leading-relaxed max-w-md mx-auto">
-                  Your trial session request for <strong>{selectedProgram.title}</strong> is <strong>APPROVED</strong>! Your course curriculum, fee breakdown, and official Hafizabad Stud Farm location map link have been generated.
+                <p className="text-xs text-slate-700 font-medium leading-relaxed max-w-md mx-auto bg-white/70 p-3 rounded-xl border border-slate-200">
+                  Your trial request for <strong>{selectedProgram.title}</strong> is <strong>APPROVED</strong>! Your course curriculum, fee structure, and location map link have been automatically delivered to your Email and Dashboard Inbox.
                 </p>
 
                 {/* Hafizabad Stud Farm Location Box */}
@@ -315,7 +341,7 @@ export const RidingSchool = () => {
                     rel="noopener noreferrer"
                     className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 hover:text-amber-700 underline pt-0.5"
                   >
-                    🗺️ Open Google Maps Location (https://maps.app.goo.gl/6RSSd7M6WTG8r6Qy6) ↗
+                    🗺️ Open Google Maps Location ↗
                   </a>
                 </div>
 
@@ -327,14 +353,17 @@ export const RidingSchool = () => {
                       rel="noopener noreferrer"
                       className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      <span>Get Details & Map via WhatsApp 💬</span>
+                      <span>Get Details via WhatsApp 💬</span>
                     </a>
                   )}
                   <button
-                    onClick={() => setSelectedProgram(null)}
-                    className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition cursor-pointer"
+                    onClick={() => {
+                      setSelectedProgram(null);
+                      navigate('/dashboard');
+                    }}
+                    className="px-5 py-3 bg-slate-900 hover:bg-slate-800 text-amber-300 font-bold rounded-xl text-xs transition cursor-pointer"
                   >
-                    Close
+                    Go to Dashboard Now →
                   </button>
                 </div>
               </div>

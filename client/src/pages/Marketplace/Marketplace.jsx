@@ -76,6 +76,29 @@ export const Marketplace = () => {
   // Rich sample listing data
   const sampleHorses = [
     {
+      _id: 'faiz_miran_1',
+      name: 'Faiz Miran',
+      breed: 'Local / Desi',
+      age: 8,
+      color: 'black',
+      height: '62 inches',
+      location: 'Lahore',
+      price: 1000000,
+      description: 'Pure Desi horse with Ravi bloodline especially for nezabazi and race.',
+      sellerName: 'Ibrahim',
+      sellerPhone: '+923001234567',
+      sellerRating: 4.8,
+      sellerType: 'CNIC Verified',
+      sire: 'Asbha Siraj',
+      dam: 'karmawali',
+      temperament: '8/10',
+      healthStatus: 'Fully Vaccinated',
+      training: 'Basic Trained',
+      imageUrl: '/uploads/media__1785445045636.jpg',
+      images: ['/uploads/media__1785445045636.jpg'],
+      spotlight: true
+    },
+    {
       _id: '1',
       name: 'Thunderbolt (Stallion)',
       breed: 'Thoroughbred',

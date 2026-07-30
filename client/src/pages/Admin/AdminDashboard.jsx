@@ -1122,7 +1122,9 @@ export const AdminDashboard = () => {
               <div className="border-b pb-4 flex justify-between items-center">
                 <div>
                   <h3 className="font-bold text-slate-800 text-sm uppercase">Riding School Trial Session Requests</h3>
-                  <p className="text-slate-500 text-xs mt-0.5">Approve trial bookings to automatically dispatch Fee Structure & Course Curriculum to user's WhatsApp & Email</p>
+                  <p className="text-emerald-700 text-xs font-bold mt-0.5 flex items-center gap-1.5">
+                    <span>⚡ Trial bookings are automatically approved & dispatched to user's WhatsApp & Email (horsesquarepakistan@gmail.com)</span>
+                  </p>
                 </div>
               </div>
 
@@ -1159,9 +1161,14 @@ export const AdminDashboard = () => {
                         </td>
                         <td className="p-3 text-slate-600 max-w-xs truncate">{t.experienceDetails || 'None specified'}</td>
                         <td className="p-3">
-                          <span className={getStatusBadgeClass(t.status)}>
-                            {t.status}
-                          </span>
+                          <div className="space-y-1">
+                            <span className={getStatusBadgeClass(t.status)}>
+                              {t.status}
+                            </span>
+                            <span className="inline-block px-2 py-0.5 text-[9px] font-extrabold bg-emerald-500/10 text-emerald-700 border border-emerald-500/20 rounded">
+                              ⚡ Auto-Dispatched
+                            </span>
+                          </div>
                         </td>
                         <td className="p-3 text-right space-x-1.5">
                           {t.status !== 'approved' ? (
@@ -1169,29 +1176,43 @@ export const AdminDashboard = () => {
                               onClick={async () => {
                                 const res = await fetchWithAuth(`/contact/riding-trial/${t._id}/approve`, { method: 'PUT' });
                                 if (res.success) {
-                                  showToast(`Trial Approved! Opening WhatsApp...`);
+                                  showToast(`Trial Approved! Message auto-dispatched to Email & WhatsApp`);
                                   if (res.whatsappUrl) {
                                     window.open(res.whatsappUrl, '_blank');
                                   }
                                   loadTabData();
                                 }
                               }}
-                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-[10px] transition cursor-pointer shadow flex items-center gap-1.5 ml-auto"
+                              className="px-3 py-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-lg text-[10px] transition cursor-pointer shadow inline-flex items-center gap-1.5"
                             >
-                              <span>Approve & Send Curriculum 💬</span>
+                              <span>Approve & Dispatch 💬</span>
                             </button>
                           ) : (
-                            <button
-                              onClick={() => {
-                                const cleanPhone = t.phone.replace(/[^0-9]/g, "");
-                                const formattedPhone = cleanPhone.startsWith("0") ? `92${cleanPhone.slice(1)}` : cleanPhone;
-                                const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(t.whatsappMsg || 'Approved Riding Trial Course Curriculum')}`;
-                                window.open(url, '_blank');
-                              }}
-                              className="px-3 py-1 bg-[#0F172A] hover:bg-slate-800 text-amber-300 border border-amber-500/30 font-bold rounded-lg text-[10px] transition cursor-pointer"
-                            >
-                              Resend WhatsApp 💬
-                            </button>
+                            <>
+                              <button
+                                onClick={() => {
+                                  const cleanPhone = t.phone.replace(/[^0-9]/g, "");
+                                  const formattedPhone = cleanPhone.startsWith("0") ? `92${cleanPhone.slice(1)}` : cleanPhone;
+                                  const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(t.whatsappMsg || 'Approved Riding Trial Course Curriculum')}`;
+                                  window.open(url, '_blank');
+                                  showToast(`Opening WhatsApp message for ${t.name}...`);
+                                }}
+                                className="px-2.5 py-1 bg-[#0F172A] hover:bg-slate-800 text-amber-300 border border-amber-500/30 font-bold rounded-lg text-[10px] transition cursor-pointer"
+                              >
+                                Resend WhatsApp 💬
+                              </button>
+                              <button
+                                onClick={async () => {
+                                  const res = await fetchWithAuth(`/contact/riding-trial/${t._id}/resend-email`, { method: 'POST' });
+                                  if (res.success) {
+                                    showToast(`Email resent from horsesquarepakistan@gmail.com to ${t.email}`);
+                                  }
+                                }}
+                                className="px-2.5 py-1 bg-blue-50 hover:bg-blue-100 text-blue-700 border border-blue-200 font-bold rounded-lg text-[10px] transition cursor-pointer"
+                              >
+                                Resend Email 📧
+                              </button>
+                            </>
                           )}
                           <button
                             onClick={async () => {

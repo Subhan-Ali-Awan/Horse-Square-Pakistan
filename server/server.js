@@ -16,8 +16,9 @@ app.use(express.urlencoded({ extended: true }));
 app.use(morgan("dev")); // logs every request to the console - helpful while developing/demoing
 
 // Serve uploaded images statically, e.g. http://localhost:5000/uploads/abc.jpg
-app.use("/uploads", express.static("C:/Users/Acer/.gemini/antigravity-ide/brain/a0eb1cf8-0b87-4cc6-a5a3-d942d01e9d56"));
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static("C:/Users/Acer/.gemini/antigravity-ide/brain/21a51727-f483-4294-802a-34ec284f2761"));
+app.use("/uploads", express.static("C:/Users/Acer/.gemini/antigravity-ide/brain/a0eb1cf8-0b87-4cc6-a5a3-d942d01e9d56"));
 app.use("/uploads", express.static("C:\\Users\\Acer\\.gemini\\antigravity-ide\\brain\\0fc4e334-b54a-4ab2-bf1a-f66adb6fcaf0"));
 
 // ---------- Routes ----------
@@ -47,6 +48,45 @@ const PORT = process.env.PORT || 5000;
 
 connectDB().then(async () => {
   await seedAdmin(); // creates the default admin account on first run
+
+  try {
+    const fs = require("fs");
+    const srcImg = "C:/Users/Acer/.gemini/antigravity-ide/brain/21a51727-f483-4294-802a-34ec284f2761/media__1785445045636.jpg";
+    const targetDir = path.join(__dirname, "uploads");
+    if (!fs.existsSync(targetDir)) fs.mkdirSync(targetDir, { recursive: true });
+    const targetImg = path.join(targetDir, "media__1785445045636.jpg");
+    if (fs.existsSync(srcImg)) {
+      fs.copyFileSync(srcImg, targetImg);
+      const clientPublicUploads = path.join(__dirname, "..", "client", "public", "uploads");
+      if (fs.existsSync(clientPublicUploads)) {
+        fs.copyFileSync(srcImg, path.join(clientPublicUploads, "media__1785445045636.jpg"));
+      }
+      console.log("📸 Image copied to server & client uploads:", targetImg);
+    }
+    const Horse = require("./models/Horse");
+    const updateRes = await Horse.updateMany(
+      {
+        $or: [
+          { name: /Faiz Miran/i },
+          { description: /fhaiip/i },
+          { sire: /ishtaq/i }
+        ]
+      },
+      {
+        $set: {
+          age: 8,
+          description: "Pure Desi horse with Ravi bloodline especially for nezabazi and race.",
+          sire: "Asbha Siraj",
+          dam: "karmawali",
+          images: ["/uploads/media__1785445045636.jpg"],
+          imageUrl: "/uploads/media__1785445045636.jpg"
+        }
+      }
+    );
+    console.log("🐎 Updated Faiz Miran listing in DB:", updateRes);
+  } catch (e) {
+    console.error("Listing update error:", e);
+  }
 
   const server = app.listen(PORT, () => {
     console.log(`🚀 HorseSquare Backend API running on http://localhost:${PORT}/api`);

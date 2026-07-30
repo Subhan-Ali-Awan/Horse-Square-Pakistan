@@ -21,27 +21,51 @@ export const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const storedToken = localStorage.getItem('token');
-    const storedUser = localStorage.getItem('user');
+    const verifyAuth = async () => {
+      const storedToken = localStorage.getItem('token');
+      const storedUser = localStorage.getItem('user');
 
-    if (storedToken && storedUser) {
-      try {
-        setToken(storedToken);
-        const parsed = JSON.parse(storedUser);
-        const cleaned = sanitizeUser(parsed);
-        setUser(cleaned);
-        if (JSON.stringify(cleaned) !== storedUser) {
-          localStorage.setItem('user', JSON.stringify(cleaned));
+      if (storedToken && storedUser) {
+        try {
+          const res = await fetch('/api/auth/me', {
+            headers: {
+              Authorization: `Bearer ${storedToken}`
+            }
+          });
+
+          if (res.ok) {
+            const data = await res.json();
+            if (data.success && data.user) {
+              const cleaned = sanitizeUser(data.user);
+              setToken(storedToken);
+              setUser(cleaned);
+              localStorage.setItem('user', JSON.stringify(cleaned));
+            } else {
+              logout();
+            }
+          } else {
+            logout();
+          }
+        } catch (e) {
+          console.error('Error verifying stored auth:', e);
+          try {
+            const parsed = JSON.parse(storedUser);
+            const cleaned = sanitizeUser(parsed);
+            setToken(storedToken);
+            setUser(cleaned);
+          } catch (err) {
+            logout();
+          }
         }
-      } catch (e) {
-        console.error('Error parsing user', e);
-        localStorage.removeItem('token');
-        localStorage.removeItem('user');
+      } else {
+        setUser(null);
+        setToken('');
       }
-    }
-    // Mark auth as fully initialized regardless of outcome
-    setInitializing(false);
-  }, []); // runs once on mount
+      setInitializing(false);
+    };
+
+    verifyAuth();
+  }, []);
 
   const login = (newToken, userData) => {
     const cleaned = sanitizeUser(userData);

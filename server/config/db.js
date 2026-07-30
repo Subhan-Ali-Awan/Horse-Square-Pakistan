@@ -14,8 +14,8 @@ const DIRECT_ATLAS_SEEDLIST =
 const connectDB = async () => {
   const uri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/horsesquare";
   const fastConnectOptions = {
-    serverSelectionTimeoutMS: 5000, // Fast 5s timeout to avoid 30s-60s server startup hangs
-    connectTimeoutMS: 10000,
+    serverSelectionTimeoutMS: 15000, // 15s timeout to give Atlas SSL/TLS handshake & latency enough time
+    connectTimeoutMS: 15000,
     family: 4,
   };
 
