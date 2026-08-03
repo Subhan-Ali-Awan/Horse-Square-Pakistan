@@ -6,7 +6,7 @@ const horseSchema = new mongoose.Schema(
     breed: {
       type: String,
       required: true,
-      enum: ["Arabian", "Spanish", "Local / Desi", "Thoroughbred"],
+      enum: ["Arabian", "Local / Desi", "Thoroughbred"],
     },
     price: { type: Number, required: true, min: 0 },
     location: { type: String, required: true, trim: true },

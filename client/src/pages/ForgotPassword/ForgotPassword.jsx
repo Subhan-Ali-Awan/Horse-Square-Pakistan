@@ -149,6 +149,66 @@ export const ForgotPassword = () => {
                   onChange={(e) => setNewPassword(e.target.value)}
                   className="w-full p-3 border border-slate-300 rounded-xl bg-slate-50 text-sm focus:border-[#D4AF37] transition"
                 />
+                
+                {/* Live 3-Bar Password Strength Calculator */}
+                {newPassword.length > 0 && (() => {
+                  const getStrength = (pass) => {
+                    if (pass.length < 6) {
+                      return {
+                        label: 'Basic / Weak',
+                        textClass: 'text-rose-500 font-bold',
+                        bars: ['bg-rose-500', 'bg-slate-200', 'bg-slate-200']
+                      };
+                    }
+                    const hasUpper = /[A-Z]/.test(pass);
+                    const hasNum = /[0-9]/.test(pass);
+                    const hasSpecial = /[^A-Za-z0-9]/.test(pass);
+
+                    let score = 0;
+                    if (pass.length >= 6) score += 1;
+                    if (pass.length >= 8 && (hasUpper || hasNum)) score += 1;
+                    if (pass.length >= 10 && hasUpper && hasNum && hasSpecial) score += 1;
+
+                    if (score <= 1) {
+                      // Basic: Left bar RED
+                      return {
+                        label: 'Basic / Weak',
+                        textClass: 'text-rose-500 font-bold',
+                        bars: ['bg-rose-500', 'bg-slate-200', 'bg-slate-200']
+                      };
+                    } else if (score === 2) {
+                      // Medium: Left & Middle ORANGE
+                      return {
+                        label: 'Medium Strength',
+                        textClass: 'text-amber-500 font-bold',
+                        bars: ['bg-amber-500', 'bg-amber-500', 'bg-slate-200']
+                      };
+                    } else {
+                      // Strong: All three bars GREEN
+                      return {
+                        label: 'Strong Password',
+                        textClass: 'text-emerald-500 font-bold',
+                        bars: ['bg-emerald-500', 'bg-emerald-500', 'bg-emerald-500']
+                      };
+                    }
+                  };
+
+                  const str = getStrength(newPassword);
+
+                  return (
+                    <div className="pt-2 space-y-1">
+                      <div className="grid grid-cols-3 gap-1.5 h-1.5 w-full">
+                        <div className={`h-full rounded-full transition-all duration-300 ${str.bars[0]}`}></div>
+                        <div className={`h-full rounded-full transition-all duration-300 ${str.bars[1]}`}></div>
+                        <div className={`h-full rounded-full transition-all duration-300 ${str.bars[2]}`}></div>
+                      </div>
+                      <div className="flex justify-between items-center text-[10px]">
+                        <span className="text-slate-400 font-medium">Strength Meter</span>
+                        <span className={str.textClass}>{str.label}</span>
+                      </div>
+                    </div>
+                  );
+                })()}
               </div>
 
               <button

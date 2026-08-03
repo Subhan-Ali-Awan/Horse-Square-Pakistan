@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Gavel, Clock, Trophy, ArrowUpRight, ShieldCheck, Sparkles, AlertCircle, TrendingUp, DollarSign, HelpCircle, CheckCircle } from 'lucide-react';
+import { Gavel, Clock, Trophy, ArrowUpRight, ShieldCheck, Sparkles, AlertCircle, TrendingUp, DollarSign, HelpCircle, CheckCircle, CheckCircle2, UserCheck, Flame } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 
@@ -8,6 +8,14 @@ export const Auction = () => {
   const [auctions, setAuctions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [bidAmount, setBidAmount] = useState({});
+
+  const formatImgUrl = (url) => {
+    if (!url) return '/uploads/media__1785445045636.jpg';
+    if (url.startsWith('data:') || url.startsWith('http://') || url.startsWith('https://')) return url;
+    if (url.startsWith('/uploads/')) return url;
+    if (url.startsWith('uploads/')) return '/' + url;
+    return '/uploads/' + url;
+  };
 
   const sampleAuctions = [
     {
@@ -19,7 +27,7 @@ export const Auction = () => {
       status: 'live',
       breed: 'Thoroughbred',
       location: 'Lahore Race Club',
-      imageUrl: 'https://images.unsplash.com/photo-1621993202323-f438eec934ff?auto=format&fit=crop&q=80&w=600',
+      imageUrl: 'https://images.unsplash.com/photo-1593113630400-ea4288922497?auto=format&fit=crop&q=80&w=600',
       bids: [
         { bidderName: 'Malik Usman', amount: 3850000, time: '10 mins ago' },
         { bidderName: 'Chaudhry Bilal', amount: 3500000, time: '1 hour ago' },
@@ -35,7 +43,7 @@ export const Auction = () => {
       status: 'live',
       breed: 'Arabian',
       location: 'Rawalpindi Stud',
-      imageUrl: '/uploads/media__1785359752827.jpg',
+      imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=600',
       bids: [
         { bidderName: 'Sardar Tariq Khan', amount: 4500000, time: '15 mins ago' },
         { bidderName: 'Syed Shahzad', amount: 4200000, time: '2 hours ago' }
@@ -50,7 +58,7 @@ export const Auction = () => {
       status: 'live',
       breed: 'Local / Desi (Nukra)',
       location: 'Sargodha Stud Farm',
-      imageUrl: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&q=80&w=600',
+      imageUrl: '/uploads/media__1785445045636.jpg',
       bids: [
         { bidderName: 'Mian Farhan', amount: 5200000, time: '5 mins ago' },
         { bidderName: 'Malik Faisal', amount: 4900000, time: '40 mins ago' }
@@ -65,7 +73,7 @@ export const Auction = () => {
       status: 'live',
       breed: 'Local / Desi',
       location: 'Multan Club',
-      imageUrl: 'https://images.unsplash.com/photo-1551887196-72e32fad773a?auto=format&fit=crop&q=80&w=600',
+      imageUrl: 'https://images.unsplash.com/photo-1598974357801-cbca100e65d3?auto=format&fit=crop&q=80&w=600',
       bids: [
         { bidderName: 'Nawabzada Ali', amount: 2900000, time: '30 mins ago' },
         { bidderName: 'Chaudhry Kamran', amount: 2600000, time: '2 hours ago' }
@@ -135,28 +143,33 @@ export const Auction = () => {
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-up space-y-8">
+    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-up space-y-8">
 
-      {/* Top Banner Header */}
-      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl border border-slate-800 relative overflow-hidden gold-gradient-bar">
+      {/* Top Luxury Banner Header */}
+      <div className="bg-gradient-to-r from-[#0B0F19] via-[#0F172A] to-[#1E293B] rounded-3xl p-8 sm:p-10 text-white shadow-2xl border border-slate-800 relative overflow-hidden">
+        {/* Top Metallic Gold Line */}
+        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] via-amber-400 to-transparent"></div>
+        {/* Ambient Glow background */}
+        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
+
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
           <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 px-3.5 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-black uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> High-Stakes Verified Bidding
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 rounded-full text-[10px] font-extrabold uppercase tracking-widest">
+              <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" /> High-Stakes Verified Bidding
             </span>
-            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight flex items-center gap-3">
+            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white flex items-center gap-3">
               <Gavel className="w-8 h-8 text-[#D4AF37]" /> Live Equine Auctions
             </h1>
-            <p className="text-slate-300 text-sm font-light max-w-xl">
+            <p className="text-slate-300 text-xs sm:text-sm font-normal max-w-2xl leading-relaxed">
               Participate in verified, escrow-protected bidding for Pakistan's premier Thoroughbreds, Arabian, and Nukra champion horses.
             </p>
           </div>
 
-          <div className="p-4 bg-slate-900/90 rounded-2xl border border-slate-800 text-right shrink-0 flex items-center gap-3">
+          <div className="p-4 bg-slate-900/90 rounded-2xl border border-slate-800 text-right shrink-0 flex items-center gap-3 shadow-md backdrop-blur-md">
             <span className="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
             <div>
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Live Auction Status</span>
-              <span className="text-xs font-black text-amber-400">Bidding Active</span>
+              <span className="text-xs font-black text-[#D4AF37]">Bidding Active</span>
             </div>
           </div>
         </div>
@@ -165,16 +178,16 @@ export const Auction = () => {
       {/* 2-Column Main Layout Grid */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
 
-        {/* LEFT COLUMN: SIDEBAR WIDGETS */}
+        {/* LEFT COLUMN: SIDEBAR WIDGETS (4 COLS) */}
         <div className="lg:col-span-4 space-y-6">
 
           {/* WIDGET 1: Auction Rules & Security */}
-          <div className="bg-gradient-to-r from-slate-900 to-[#1E293B] text-white p-6 rounded-3xl border border-slate-800 shadow-md space-y-3">
-            <div className="flex justify-between items-center pb-2 border-b border-slate-800">
-              <h3 className="font-extrabold text-xs uppercase tracking-wider text-amber-400 flex items-center gap-2">
-                <ShieldCheck className="w-4 h-4 text-emerald-400" /> Escrow Protected Bidding
+          <div className="bg-gradient-to-br from-[#0B0F19] via-slate-900 to-[#0F172A] text-white p-6 rounded-3xl border border-slate-800 shadow-xl space-y-3 relative overflow-hidden">
+            <div className="flex justify-between items-center pb-3 border-b border-slate-800">
+              <h3 className="font-black text-xs uppercase tracking-wider text-[#D4AF37] flex items-center gap-2">
+                <ShieldCheck className="w-4.5 h-4.5 text-[#D4AF37]" /> Escrow Protected Bidding
               </h3>
-              <span className="text-[10px] text-emerald-400 font-bold bg-emerald-500/10 px-2.5 py-0.5 rounded border border-emerald-500/20">
+              <span className="text-[10px] text-emerald-400 font-extrabold bg-emerald-500/10 px-2.5 py-0.5 rounded-full border border-emerald-500/30">
                 100% Safe
               </span>
             </div>
@@ -184,153 +197,159 @@ export const Auction = () => {
           </div>
 
           {/* WIDGET 2: Bidding Tips & Buyer Guidelines */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-4">
-            <h3 className="font-extrabold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2 pb-2 border-b">
+          <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-md space-y-4">
+            <h3 className="font-black text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
               <HelpCircle className="w-4.5 h-4.5 text-[#D4AF37]" /> Bidding Suggestions & Tips
             </h3>
 
-            <ul className="space-y-2.5 text-xs text-slate-600 font-medium">
-              <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+            <ul className="space-y-3 text-xs text-slate-600 font-medium">
+              <li className="flex items-start gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                 <span>Verify your account phone number before bidding.</span>
               </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+              <li className="flex items-start gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                 <span>Review veterinary health logs in the listing details.</span>
               </li>
-              <li className="flex items-start gap-2">
-                <CheckCircle className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
+              <li className="flex items-start gap-2.5">
+                <CheckCircle2 className="w-4 h-4 text-emerald-500 shrink-0 mt-0.5" />
                 <span>Set your maximum bid early to ensure win margin.</span>
               </li>
             </ul>
           </div>
 
           {/* WIDGET 3: Auction Metrics */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-4">
-            <h3 className="font-extrabold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2 pb-2 border-b">
+          <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-md space-y-4">
+            <h3 className="font-black text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
               <TrendingUp className="w-4.5 h-4.5 text-emerald-600" /> Today's Auction Metrics
             </h3>
 
             <div className="space-y-2.5 text-xs">
-              <div className="flex justify-between items-center p-2.5 rounded-2xl bg-slate-50 border border-slate-100">
-                <span className="font-semibold text-slate-600">Total Bids Placed Today</span>
-                <span className="font-extrabold text-[#0F172A] text-sm">342 Bids</span>
+              <div className="flex justify-between items-center p-3 rounded-2xl bg-slate-50 border border-slate-100">
+                <span className="font-bold text-slate-600">Total Bids Placed Today</span>
+                <span className="font-black text-[#0F172A] text-sm">342 Bids</span>
               </div>
-              <div className="flex justify-between items-center p-2.5 rounded-2xl bg-emerald-50/60 border border-emerald-100">
-                <span className="font-semibold text-emerald-800">Highest Bid Won</span>
-                <span className="font-extrabold text-emerald-700 text-sm">Rs. 5.2M PKR</span>
+              <div className="flex justify-between items-center p-3 rounded-2xl bg-emerald-50/60 border border-emerald-100">
+                <span className="font-bold text-emerald-800">Highest Bid Won</span>
+                <span className="font-black text-emerald-700 text-sm">Rs. 5.2M PKR</span>
               </div>
-              <div className="flex justify-between items-center p-2.5 rounded-2xl bg-amber-50/60 border border-amber-100">
-                <span className="font-semibold text-amber-800">Seller CNIC Verified</span>
-                <span className="font-extrabold text-amber-900 text-xs">100% Verified</span>
+              <div className="flex justify-between items-center p-3 rounded-2xl bg-amber-50/60 border border-amber-100">
+                <span className="font-bold text-amber-800">Seller CNIC Verified</span>
+                <span className="font-black text-amber-900 text-xs">100% Verified</span>
               </div>
             </div>
           </div>
 
           {/* WIDGET 4: Sell Horse at Auction CTA */}
-          <div className="bg-gradient-to-br from-[#0F172A] to-[#1E293B] text-white p-6 rounded-3xl border border-slate-800 shadow-md space-y-3">
+          <div className="bg-gradient-to-br from-[#0B0F19] via-slate-900 to-[#0F172A] text-white p-6 rounded-3xl border border-slate-800 shadow-xl space-y-3 relative overflow-hidden">
             <span className="text-[10px] font-extrabold text-[#D4AF37] uppercase tracking-wider block">
               LIST YOUR HORSE FOR AUCTION
             </span>
-            <h4 className="font-extrabold text-sm text-white">Have a Premium Stallion to Auction?</h4>
-            <p className="text-xs text-slate-300 font-light leading-relaxed">
+            <h4 className="font-black text-base text-white">Have a Premium Stallion to Auction?</h4>
+            <p className="text-xs text-slate-300 font-normal leading-relaxed">
               Submit your stallion or mare for admin approval to feature in next week's live auction.
             </p>
             <Link
               to="/sell"
-              className="w-full py-2.5 bg-gradient-to-r from-[#D4AF37] to-[#C9A227] hover:from-[#C9A227] text-slate-950 font-black rounded-xl text-xs transition shadow flex items-center justify-center gap-2 mt-2"
+              className="w-full py-3 bg-gradient-to-r from-[#D4AF37] via-[#C9A227] to-[#B8860B] hover:from-[#C9A227] text-slate-950 font-black rounded-2xl text-xs shadow-md transition duration-200 flex items-center justify-center gap-2 mt-2 cursor-pointer"
             >
-              <Gavel className="w-4 h-4" />
+              <Gavel className="w-4 h-4 text-slate-950" />
               <span>Submit Auction Listing</span>
-              <ArrowUpRight className="w-3.5 h-3.5" />
+              <ArrowUpRight className="w-4 h-4 text-slate-950" />
             </Link>
           </div>
 
         </div>
 
-        {/* RIGHT COLUMN: LIVE AUCTIONS GRID */}
+        {/* RIGHT COLUMN: LIVE AUCTIONS GRID (8 COLS) */}
         <div className="lg:col-span-8 space-y-6">
           {loading ? (
-            <div className="text-center py-12 text-slate-500">Loading live auctions...</div>
+            <div className="text-center py-12 text-slate-500 font-bold">Loading live auctions...</div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-              {auctions.map((auc) => (
-                <div
-                  key={auc._id}
-                  className="bg-white rounded-3xl border border-slate-200 shadow-lg overflow-hidden hover:border-[#D4AF37] transition group flex flex-col justify-between"
-                >
-                  <div>
-                    <div className="relative h-60 overflow-hidden bg-slate-950 flex items-center justify-center group">
-                      <img
-                        src={auc.image || auc.imageUrl}
-                        alt={auc.horseName}
-                        className="absolute inset-0 w-full h-full object-cover object-center blur-md opacity-40 scale-110"
-                      />
-                      <img
-                        src={auc.image || auc.imageUrl}
-                        alt={auc.horseName}
-                        className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute top-3 left-3 bg-[#0F172A]/90 text-white text-[10px] px-3 py-1 rounded-full font-bold flex items-center gap-1.5 backdrop-blur-md shadow border border-slate-700 z-20">
-                        <Clock className="w-3.5 h-3.5 text-amber-400" /> Live Auction
-                      </div>
-                      <span className="absolute bottom-3 right-3 bg-[#D4AF37] text-slate-950 font-black text-[10px] uppercase px-2.5 py-0.5 rounded shadow z-20">
-                        {auc.breed || 'Verified Breed'}
-                      </span>
-                    </div>
-
-                    <div className="p-6 space-y-4">
-                      <div>
-                        <h3 className="text-lg font-extrabold text-[#0F172A] leading-snug">{auc.horseName}</h3>
-                        <p className="text-xs text-slate-400 font-medium mt-0.5">{auc.location || 'Pakistan'}</p>
-                      </div>
-
-                      <div className="flex justify-between items-center bg-amber-50/80 p-3.5 rounded-2xl border border-amber-200/60">
-                        <div>
-                          <p className="text-[10px] font-bold text-amber-800 uppercase tracking-wider">Current Highest Bid</p>
-                          <p className="text-xl font-black text-[#0F172A] mt-0.5">
-                            Rs. {Number(auc.currentBid).toLocaleString('en-PK')}
-                          </p>
+              {auctions.map((auc) => {
+                const mainImg = formatImgUrl(auc.image || auc.imageUrl);
+                return (
+                  <div
+                    key={auc._id}
+                    className="bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden hover:border-[#D4AF37] transition duration-300 group flex flex-col justify-between"
+                  >
+                    <div>
+                      {/* Image Header Zone */}
+                      <div className="relative h-60 sm:h-64 overflow-hidden bg-slate-950">
+                        <img
+                          src={mainImg}
+                          alt={auc.horseName}
+                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                        <div className="absolute top-3 left-3 bg-slate-950/85 text-amber-400 text-[10px] font-black uppercase px-3 py-1.5 rounded-xl border border-amber-500/30 flex items-center gap-1.5 backdrop-blur-md shadow">
+                          <Clock className="w-3.5 h-3.5 text-amber-400" /> Live Auction
                         </div>
-                        <Trophy className="w-7 h-7 text-[#D4AF37]" />
+                        <span className="absolute top-3 right-3 bg-[#D4AF37] text-slate-950 font-black text-[10px] uppercase px-3 py-1 rounded-xl shadow">
+                          {auc.breed || 'Verified Breed'}
+                        </span>
                       </div>
 
-                      {auc.bids && auc.bids.length > 0 && (
+                      {/* Content Body */}
+                      <div className="p-6 space-y-4">
                         <div>
-                          <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider mb-1.5">Recent Bidders</p>
-                          <div className="space-y-1.5">
-                            {auc.bids.slice(0, 2).map((b, idx) => (
-                              <div key={idx} className="flex justify-between text-xs text-slate-600 bg-slate-50 p-2 rounded-xl border border-slate-100">
-                                <span className="font-semibold text-slate-700">{b.bidderName}</span>
-                                <span className="font-bold text-[#0F172A]">Rs. {Number(b.amount).toLocaleString('en-PK')}</span>
-                              </div>
-                            ))}
+                          <h3 className="text-base font-black text-[#0F172A] leading-snug line-clamp-1">{auc.horseName}</h3>
+                          <p className="text-xs text-slate-400 font-semibold mt-0.5">{auc.location || 'Pakistan'}</p>
+                        </div>
+
+                        {/* Current Highest Bid Banner */}
+                        <div className="bg-gradient-to-r from-slate-900 to-[#0F172A] text-white p-4 rounded-2xl border border-slate-800 flex justify-between items-center shadow-inner">
+                          <div>
+                            <p className="text-[10px] font-bold text-amber-300 uppercase tracking-wider">Current Highest Bid</p>
+                            <p className="text-xl font-black text-[#D4AF37] mt-0.5">
+                              Rs. {Number(auc.currentBid).toLocaleString('en-PK')}
+                            </p>
+                          </div>
+                          <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] shrink-0">
+                            <Trophy className="w-5 h-5" />
                           </div>
                         </div>
-                      )}
-                    </div>
-                  </div>
 
-                  <div className="p-6 pt-0 border-t border-slate-100 mt-auto">
-                    <div className="flex gap-2.5 mt-4">
-                      <input
-                        type="number"
-                        placeholder={`Min Rs. ${(auc.currentBid + 50000).toLocaleString('en-PK')}`}
-                        value={bidAmount[auc._id] || ''}
-                        onChange={(e) => setBidAmount({ ...bidAmount, [auc._id]: e.target.value })}
-                        className="flex-1 p-3 border border-slate-300 rounded-2xl text-xs bg-slate-50 focus:outline-none focus:border-[#D4AF37] font-semibold"
-                      />
-                      <button
-                        onClick={() => handlePlaceBid(auc._id, auc.currentBid)}
-                        className="bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold px-4 py-3 rounded-2xl text-xs transition shadow flex items-center justify-center gap-1.5 cursor-pointer shrink-0"
-                      >
-                        <span>Bid</span>
-                        <ArrowUpRight className="w-3.5 h-3.5 text-amber-400" />
-                      </button>
+                        {/* Recent Bidders Table */}
+                        {auc.bids && auc.bids.length > 0 && (
+                          <div className="space-y-2">
+                            <p className="text-[10px] font-extrabold text-slate-400 uppercase tracking-wider">Recent Bidders</p>
+                            <div className="space-y-1.5">
+                              {auc.bids.slice(0, 2).map((b, idx) => (
+                                <div key={idx} className="flex justify-between items-center text-xs text-slate-600 bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                                  <span className="font-bold text-slate-700">{b.bidderName}</span>
+                                  <span className="font-black text-[#0F172A]">Rs. {Number(b.amount).toLocaleString('en-PK')}</span>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Bid Input & Place Bid Action */}
+                    <div className="p-6 pt-0 border-t border-slate-100 mt-auto">
+                      <div className="flex gap-2.5 pt-4">
+                        <input
+                          type="number"
+                          placeholder={`Min Rs. ${(auc.currentBid + 50000).toLocaleString('en-PK')}`}
+                          value={bidAmount[auc._id] || ''}
+                          onChange={(e) => setBidAmount({ ...bidAmount, [auc._id]: e.target.value })}
+                          className="flex-1 p-3 border border-slate-300 rounded-2xl text-xs font-bold text-slate-900 bg-slate-50 focus:outline-none focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 focus:bg-white transition"
+                        />
+                        <button
+                          type="button"
+                          onClick={() => handlePlaceBid(auc._id, auc.currentBid)}
+                          className="bg-gradient-to-r from-[#D4AF37] via-[#C9A227] to-[#B8860B] hover:from-[#C9A227] text-slate-950 font-black px-5 py-3 rounded-2xl text-xs shadow-md transition duration-200 flex items-center justify-center gap-1 cursor-pointer shrink-0"
+                        >
+                          <span>Bid</span>
+                          <ArrowUpRight className="w-4 h-4 text-slate-950 stroke-[2.5]" />
+                        </button>
+                      </div>
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
         </div>

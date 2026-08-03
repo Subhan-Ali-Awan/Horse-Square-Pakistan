@@ -1642,7 +1642,6 @@ export const UserDashboard = () => {
               >
                 <option value="Arabian">Arabian</option>
                 <option value="Thoroughbred">Thoroughbred</option>
-                <option value="Spanish">Spanish</option>
                 <option value="Local / Desi">Local / Desi</option>
               </select>
             </div>

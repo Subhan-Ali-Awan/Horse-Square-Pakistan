@@ -14,7 +14,7 @@ const auctionSchema = new mongoose.Schema(
     horseName: { type: String, required: true },
     breed: {
       type: String,
-      enum: ["Arabian", "Spanish", "Local / Desi", "Thoroughbred"],
+      enum: ["Arabian", "Local / Desi", "Thoroughbred"],
       required: true,
     },
     location: { type: String, required: true },
