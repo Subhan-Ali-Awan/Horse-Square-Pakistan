@@ -147,8 +147,6 @@ export const Auction = () => {
 
       {/* Top Luxury Banner Header */}
       <div className="bg-gradient-to-r from-[#0B0F19] via-[#0F172A] to-[#1E293B] rounded-3xl p-8 sm:p-10 text-white shadow-2xl border border-slate-800 relative overflow-hidden">
-        {/* Top Metallic Gold Line */}
-        <div className="absolute top-0 left-0 right-0 h-[2px] bg-gradient-to-r from-transparent via-[#D4AF37] via-amber-400 to-transparent"></div>
         {/* Ambient Glow background */}
         <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
 

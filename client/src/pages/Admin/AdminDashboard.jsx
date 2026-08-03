@@ -982,9 +982,10 @@ export const AdminDashboard = () => {
                 <table className="w-full text-left text-xs text-slate-700">
                   <thead className="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider text-[10px] border-b">
                     <tr>
-                      <th className="p-3">Mare Owner</th>
+                      <th className="p-3">Mare Owner Name</th>
                       <th className="p-3">Stud Name</th>
                       <th className="p-3">Contact</th>
+                      <th className="p-3">Mare Details / Pedigree</th>
                       <th className="p-3">Status</th>
                       <th className="p-3 text-right">Update Status</th>
                     </tr>
@@ -992,9 +993,10 @@ export const AdminDashboard = () => {
                   <tbody className="divide-y divide-slate-100">
                     {breedingList.map((b) => (
                       <tr key={b._id} className="hover:bg-slate-50/80 transition">
-                        <td className="p-3 font-bold text-slate-900">{b.mareOwnerName || 'Owner'}</td>
-                        <td className="p-3 font-semibold text-slate-700">{b.studName || 'Selected Stud'}</td>
+                        <td className="p-3 font-bold text-slate-900">{b.requesterName || b.mareOwnerName || 'Owner'}</td>
+                        <td className="p-3 font-semibold text-slate-700">{b.breedingHorse?.name || b.studName || b.preferredBreed || 'Selected Stud'}</td>
                         <td className="p-3 text-slate-600">{b.phone}</td>
+                        <td className="p-3 text-slate-600 max-w-xs truncate text-[11px]" title={b.details}>{b.details || b.ownHorseName || '-'}</td>
                         <td className="p-3">
                           <span className={getStatusBadgeClass(b.status)}>
                             {b.status}

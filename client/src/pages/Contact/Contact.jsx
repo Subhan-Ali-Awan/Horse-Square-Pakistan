@@ -47,7 +47,7 @@ export const Contact = () => {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-8 animate-fade-up">
-      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl p-8 text-white mb-8 shadow-xl gold-gradient-bar">
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl p-8 text-white mb-8 shadow-xl">
         <h1 className="text-3xl font-bold flex items-center gap-3">
           <Mail className="w-8 h-8 text-[#D4AF37]" /> Contact HorseSquare Pakistan
         </h1>

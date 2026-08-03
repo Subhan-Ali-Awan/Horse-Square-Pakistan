@@ -146,9 +146,7 @@
 
 .gold-gradient-bar::before {
   content: '';
-  display: block;
-  height: 5px;
-  background: linear-gradient(90deg, #D4AF37, #C9A227, #D4AF37);
+  display: none;
 }
 
 /* ==========================================

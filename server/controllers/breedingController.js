@@ -1,3 +1,4 @@
+const mongoose = require("mongoose");
 const { BreedingHorse, BreedingRequest } = require("../models/Breeding");
 
 // ===================================================
