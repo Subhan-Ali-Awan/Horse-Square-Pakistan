@@ -131,7 +131,74 @@ const sendRidingTrialEmail = async (trial, locationInfo, courseInfo) => {
   return await sendEmail({ to: trial.email, subject, html });
 };
 
+/**
+ * Send Automated Newsletter Subscription Confirmation Email from horsesquarepakistan@gmail.com
+ */
+const sendNewsletterConfirmationEmail = async (subscriberEmail) => {
+  const subject = "🎉 Welcome to Horse-Square Pakistan Newsletter! Official Subscription Confirmation";
+  
+  const html = `
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
+      <div style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); padding: 32px 24px; text-align: center; border-bottom: 3px solid #D4AF37;">
+        <h1 style="color: #D4AF37; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">HORSE-SQUARE PAKISTAN</h1>
+        <p style="color: #94A3B8; margin: 6px 0 0 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Official Newsletter Subscription</p>
+      </div>
+      
+      <div style="padding: 32px 28px; color: #334155; line-height: 1.6;">
+        <h2 style="color: #0F172A; font-size: 20px; margin-top: 0;">Subscription Confirmed! 🐴</h2>
+        <p style="font-size: 14px; color: #475569;">
+          Thank you for subscribing to the <strong>Horse-Square Pakistan</strong> newsletter with <strong>${subscriberEmail}</strong>.
+        </p>
+        <p style="font-size: 14px; color: #475569;">
+          You are now connected directly with Pakistan's premier equestrian network. You will receive exclusive updates on:
+        </p>
+        
+        <ul style="background-color: #F8FAFC; border-left: 4px solid #D4AF37; padding: 16px 20px 16px 36px; margin: 20px 0; border-radius: 0 12px 12px 0; font-size: 13px; color: #1E293B;">
+          <li style="margin-bottom: 6px;">Verified Horse Marketplace listings & fresh breed arrivals</li>
+          <li style="margin-bottom: 6px;">Live Equine Auction schedules & bidding alerts</li>
+          <li style="margin-bottom: 6px;">Elite Stud Breeding Lineage & estrus timing guides</li>
+          <li style="margin-bottom: 6px;">AI Vet Doctor health updates & Riding Academy courses</li>
+        </ul>
+
+        <div style="margin-top: 28px; padding: 16px; background-color: #FEF3C7; border: 1px solid #FCD34D; border-radius: 12px; text-align: center;">
+          <p style="margin: 0; font-size: 12px; color: #92400E; font-weight: 700;">
+            📩 Dispatched automatically by official servers of Horse-Square Pakistan
+          </p>
+          <p style="margin: 4px 0 0 0; font-size: 11px; color: #B45309;">
+            Official Contact Email: <strong>horsesquarepakistan@gmail.com</strong>
+          </p>
+        </div>
+      </div>
+      
+      <div style="background-color: #0F172A; padding: 20px; text-align: center; color: #94A3B8; font-size: 11px;">
+        <p style="margin: 0; font-weight: 600;">© ${new Date().getFullYear()} Horse-Square Pakistan Equestrian Platform</p>
+        <p style="margin: 4px 0 0 0; color: #64748B;">Hafizabad, Punjab, Pakistan • Support: horsesquarepakistan@gmail.com</p>
+      </div>
+    </div>
+  `;
+
+  // Send confirmation email to subscriber
+  const userEmailPromise = sendEmail({ to: subscriberEmail, subject, html });
+
+  // Send notification to admin email horsesquarepakistan@gmail.com
+  const adminSubject = `📩 New Newsletter Subscriber: ${subscriberEmail}`;
+  const adminHtml = `
+    <div style="font-family: Arial, sans-serif; padding: 20px; color: #0F172A;">
+      <h2>New Newsletter Subscriber Registered</h2>
+      <p>A user has subscribed to the Horse-Square Pakistan newsletter from the website footer.</p>
+      <p><strong>Subscriber Email:</strong> ${subscriberEmail}</p>
+      <p><strong>Official Platform Email:</strong> horsesquarepakistan@gmail.com</p>
+      <p><strong>Timestamp:</strong> ${new Date().toLocaleString('en-PK', { timeZone: 'Asia/Karachi' })}</p>
+    </div>
+  `;
+  const adminEmailPromise = sendEmail({ to: "horsesquarepakistan@gmail.com", subject: adminSubject, html: adminHtml });
+
+  const [userResult] = await Promise.all([userEmailPromise, adminEmailPromise]);
+  return userResult;
+};
+
 module.exports = {
   sendEmail,
   sendRidingTrialEmail,
+  sendNewsletterConfirmationEmail,
 };

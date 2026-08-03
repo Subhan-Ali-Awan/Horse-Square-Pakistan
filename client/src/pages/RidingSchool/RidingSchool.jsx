@@ -192,7 +192,7 @@ export const RidingSchool = () => {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 animate-fade-up">
-      
+
       {/* Header Banner */}
       <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border border-slate-800">
         <div className="space-y-4 max-w-2xl relative z-10">
@@ -373,27 +373,27 @@ export const RidingSchool = () => {
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700">Full Name *</label>
-                    <input type="text" required value={formData.name} onChange={(e) => setFormData({...formData, name: e.target.value})} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold" />
+                    <input type="text" required value={formData.name} onChange={(e) => setFormData({ ...formData, name: e.target.value })} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold" />
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700">Phone / WhatsApp *</label>
-                    <input type="tel" required value={formData.phone} onChange={(e) => setFormData({...formData, phone: e.target.value})} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold" />
+                    <input type="tel" required value={formData.phone} onChange={(e) => setFormData({ ...formData, phone: e.target.value })} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold" />
                   </div>
                 </div>
                 <div className="space-y-1">
                   <label className="text-xs font-bold text-slate-700">Email Address *</label>
-                  <input type="email" required value={formData.email} onChange={(e) => setFormData({...formData, email: e.target.value})} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold" />
+                  <input type="email" required value={formData.email} onChange={(e) => setFormData({ ...formData, email: e.target.value })} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold" />
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700">City</label>
-                    <select value={formData.city} onChange={(e) => setFormData({...formData, city: e.target.value})} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold">
+                    <select value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold">
                       <option value="Lahore">Lahore</option><option value="Islamabad">Islamabad</option><option value="Karachi">Karachi</option><option value="Other">Other City</option>
                     </select>
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700">Preferred Slot</label>
-                    <select value={formData.preferredSlot} onChange={(e) => setFormData({...formData, preferredSlot: e.target.value})} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold">
+                    <select value={formData.preferredSlot} onChange={(e) => setFormData({ ...formData, preferredSlot: e.target.value })} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold">
                       <option value="Weekend Morning">Weekend Morning</option><option value="Weekend Afternoon">Weekend Afternoon</option>
                     </select>
                   </div>

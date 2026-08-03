@@ -1,18 +1,18 @@
 import React, { useState } from 'react';
-import { 
-  Stethoscope, 
-  Upload, 
-  Bot, 
-  CheckCircle2, 
-  Activity, 
-  Heart, 
-  Thermometer, 
-  Wind, 
-  AlertTriangle, 
-  Phone, 
-  Info, 
-  ChevronDown, 
-  ChevronUp 
+import {
+  Stethoscope,
+  Upload,
+  Bot,
+  CheckCircle2,
+  Activity,
+  Heart,
+  Thermometer,
+  Wind,
+  AlertTriangle,
+  Phone,
+  Info,
+  ChevronDown,
+  ChevronUp
 } from 'lucide-react';
 
 export const VetDoctor = () => {
@@ -30,85 +30,85 @@ export const VetDoctor = () => {
   ];
 
   const vitalSigns = [
-    { 
-      label: 'Body Temperature', 
-      range: '99°F - 101.5°F', 
-      metric: '(37.2°C - 38.6°C)', 
+    {
+      label: 'Body Temperature',
+      range: '99°F - 101.5°F',
+      metric: '(37.2°C - 38.6°C)',
       icon: <Thermometer className="w-5 h-5 text-red-500" />,
-      desc: 'Use rectal thermometer. Higher indicates fever/infection.' 
+      desc: 'Use rectal thermometer. Higher indicates fever/infection.'
     },
-    { 
-      label: 'Heart Rate (Pulse)', 
-      range: '28 - 44 bpm', 
-      metric: 'beats per minute', 
+    {
+      label: 'Heart Rate (Pulse)',
+      range: '28 - 44 bpm',
+      metric: 'beats per minute',
       icon: <Heart className="w-5 h-5 text-rose-500 animate-pulse" />,
-      desc: 'Measure at lower jaw or behind left elbow. High pulse indicates pain.' 
+      desc: 'Measure at lower jaw or behind left elbow. High pulse indicates pain.'
     },
-    { 
-      label: 'Respiration Rate', 
-      range: '8 - 16 breaths/min', 
-      metric: 'breaths per minute', 
+    {
+      label: 'Respiration Rate',
+      range: '8 - 16 breaths/min',
+      metric: 'breaths per minute',
       icon: <Wind className="w-5 h-5 text-cyan-500" />,
-      desc: 'Watch flank movements. Elevated rate suggests heat stress or respiratory illness.' 
+      desc: 'Watch flank movements. Elevated rate suggests heat stress or respiratory illness.'
     }
   ];
 
   const localVets = [
-    { 
-      name: 'UVAS Equine Clinic & Surgery Center', 
+    {
+      name: 'UVAS Equine Clinic & Surgery Center',
       doctor: 'Dr. Aneela Zameer Durrani (Equine Specialist)',
       city: 'Lahore',
-      phone: '+924299211374', 
-      location: 'Outfall Road, Near District Courts, Lahore' 
+      phone: '+924299211374',
+      location: 'Outfall Road, Near District Courts, Lahore'
     },
-    { 
-      name: 'Lahore Race Club Equine Hospital', 
+    {
+      name: 'Lahore Race Club Equine Hospital',
       doctor: 'Dr. Muhammad Asim (Racehorse Practitioner)',
       city: 'Lahore',
-      phone: '+923008456789', 
-      location: 'Kot Lakhpat, Lahore' 
+      phone: '+923008456789',
+      location: 'Kot Lakhpat, Lahore'
     },
-    { 
-      name: 'Richmond Equine Clinic & Surgery', 
+    {
+      name: 'Richmond Equine Clinic & Surgery',
       doctor: 'Dr. Farhan Ali (Equine Surgeon)',
       city: 'Karachi',
-      phone: '+923001234567', 
-      location: 'Malir Cantt, Karachi' 
+      phone: '+923001234567',
+      location: 'Malir Cantt, Karachi'
     },
-    { 
-      name: 'Karachi Race Club Veterinary Hospital', 
+    {
+      name: 'Karachi Race Club Veterinary Hospital',
       doctor: 'Dr. Syed Muhammad Naeem (Orthopedics)',
       city: 'Karachi',
-      phone: '+923332345678', 
-      location: 'Dehih, Karachi' 
+      phone: '+923332345678',
+      location: 'Dehih, Karachi'
     },
-    { 
-      name: 'RVFC Army Equine Hospital', 
+    {
+      name: 'RVFC Army Equine Hospital',
       doctor: 'Col. Dr. Tariq Mahmood (Internal Medicine)',
       city: 'Rawalpindi',
-      phone: '+92515561234', 
-      location: 'Westridge, Rawalpindi Cantonment' 
+      phone: '+92515561234',
+      location: 'Westridge, Rawalpindi Cantonment'
     },
-    { 
-      name: 'NARC Equine & Livestock Hospital', 
+    {
+      name: 'NARC Equine & Livestock Hospital',
       doctor: 'Dr. Khalid Naeem (Large Animal Medicine)',
       city: 'Islamabad',
-      phone: '+92519255012', 
-      location: 'Park Road, Islamabad' 
+      phone: '+92519255012',
+      location: 'Park Road, Islamabad'
     },
-    { 
-      name: 'UAF Veterinary Teaching Hospital', 
+    {
+      name: 'UAF Veterinary Teaching Hospital',
       doctor: 'Dr. Muhammad Tariq (Equine Medicine)',
       city: 'Faisalabad',
-      phone: '+92419200161', 
-      location: 'Jail Road, Faisalabad' 
+      phone: '+92419200161',
+      location: 'Jail Road, Faisalabad'
     },
-    { 
-      name: 'Army Stud Farm Veterinary Center (Mona Depot)', 
+    {
+      name: 'Army Stud Farm Veterinary Center (Mona Depot)',
       doctor: 'Maj. Dr. Shaukat Ali (Breeding & Care)',
       city: 'Sargodha',
-      phone: '+92483211234', 
-      location: 'Mona Depot, Sargodha' 
+      phone: '+92483211234',
+      location: 'Mona Depot, Sargodha'
     }
   ];
 
@@ -210,7 +210,7 @@ export const VetDoctor = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8 animate-fade-up">
-      
+
       {/* Banner */}
       <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden gold-gradient-bar">
         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
@@ -229,10 +229,10 @@ export const VetDoctor = () => {
 
       {/* Main Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-        
+
         {/* Left Columns - Diagnostic Panel */}
         <div className="lg:col-span-7 space-y-6">
-          
+
           {/* Symptoms Analyzer Box */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
             <h2 className="text-xl font-black text-[#0F172A] mb-2 flex items-center gap-2">
@@ -243,7 +243,7 @@ export const VetDoctor = () => {
             </p>
 
             <form onSubmit={handleConsult} className="space-y-6">
-              
+
               {/* Quick Select Tags */}
               <div className="space-y-2">
                 <label className="block text-xs font-extrabold uppercase text-slate-700 tracking-wider">
@@ -343,7 +343,7 @@ export const VetDoctor = () => {
                     </span>
                     <span className="text-sm font-bold text-[#0F172A]">{assessment.urgency}</span>
                   </div>
-                  
+
                   <p className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-2">Recommended First Aid</p>
                   <ul className="space-y-3 text-xs sm:text-sm text-slate-700">
                     {assessment.recommendedActions.map((act, idx) => (
@@ -370,7 +370,7 @@ export const VetDoctor = () => {
 
         {/* Right Columns - Medical Knowledge base & Contacts */}
         <div className="lg:col-span-5 space-y-6">
-          
+
           {/* Vitals Dashboard */}
           <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
             <h2 className="text-lg font-bold text-[#0F172A] mb-1 flex items-center gap-2">

@@ -260,8 +260,8 @@ export const Navbar = () => {
                 {/* Profile Dropdown Menu */}
                 <div
                   className={`absolute right-0 mt-2 w-64 bg-[#0F172A] border border-slate-800 rounded-2xl shadow-2xl overflow-hidden transition-all duration-200 origin-top-right z-50 ${isProfileOpen
-                      ? 'opacity-100 scale-100 translate-y-0 visible'
-                      : 'opacity-0 scale-95 -translate-y-2 invisible'
+                    ? 'opacity-100 scale-100 translate-y-0 visible'
+                    : 'opacity-0 scale-95 -translate-y-2 invisible'
                     }`}
                 >
                   {/* User Profile Summary Header */}

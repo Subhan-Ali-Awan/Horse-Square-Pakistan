@@ -68,7 +68,7 @@ export const SellHorse = () => {
   // Real-time Policy Validation Indicators
   const numPrice = Number(formData.price);
   const isPriceValid = !isNaN(numPrice) && numPrice > 0;
-  
+
   let heightInches = 0;
   const hMatch = String(formData.height).match(/\d+/);
   if (hMatch) heightInches = parseInt(hMatch[0], 10);
@@ -163,7 +163,7 @@ export const SellHorse = () => {
         data.append('dam', formData.dam);
         data.append('phone', formData.sellerPhone);
         data.append('sellerName', formData.sellerName || 'Guest Seller');
-        
+
         imageFiles.forEach((file) => {
           data.append('images', file);
         });
@@ -196,7 +196,7 @@ export const SellHorse = () => {
 
   return (
     <div className="max-w-6xl mx-auto px-4 py-8 animate-fade-up space-y-8">
-      
+
       {/* Top Banner Header */}
       <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl border border-slate-800 relative overflow-hidden gold-gradient-bar">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
@@ -260,7 +260,7 @@ export const SellHorse = () => {
               </h3>
               <span className="text-[10px] text-slate-400 font-bold">Click to Insert</span>
             </div>
-            
+
             <p className="text-xs text-slate-500 font-normal">
               Tap any of the important performance or pedigree chips below to append them directly into your horse description:
             </p>
@@ -369,11 +369,10 @@ export const SellHorse = () => {
                   <button
                     type="button"
                     onClick={() => setListingType('marketplace')}
-                    className={`p-4 rounded-2xl border text-left transition duration-200 cursor-pointer ${
-                      listingType === 'marketplace'
+                    className={`p-4 rounded-2xl border text-left transition duration-200 cursor-pointer ${listingType === 'marketplace'
                         ? 'bg-amber-500/20 border-[#D4AF37] ring-2 ring-amber-500/40 text-white'
                         : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:bg-slate-800'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="font-extrabold text-sm text-white flex items-center gap-2">
@@ -390,11 +389,10 @@ export const SellHorse = () => {
                   <button
                     type="button"
                     onClick={() => setListingType('auction')}
-                    className={`p-4 rounded-2xl border text-left transition duration-200 cursor-pointer ${
-                      listingType === 'auction'
+                    className={`p-4 rounded-2xl border text-left transition duration-200 cursor-pointer ${listingType === 'auction'
                         ? 'bg-amber-500/20 border-[#D4AF37] ring-2 ring-amber-500/40 text-white'
                         : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:bg-slate-800'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center justify-between mb-1">
                       <span className="font-extrabold text-sm text-white flex items-center gap-2">
@@ -457,9 +455,8 @@ export const SellHorse = () => {
                       placeholder="e.g. 1500000"
                       value={formData.price}
                       onChange={handleChange}
-                      className={`w-full p-3.5 border rounded-xl text-sm transition focus:bg-white ${
-                        formData.price && !isPriceValid ? 'border-rose-400 bg-rose-50 text-rose-900' : 'border-slate-300 bg-slate-50 focus:border-[#D4AF37]'
-                      }`}
+                      className={`w-full p-3.5 border rounded-xl text-sm transition focus:bg-white ${formData.price && !isPriceValid ? 'border-rose-400 bg-rose-50 text-rose-900' : 'border-slate-300 bg-slate-50 focus:border-[#D4AF37]'
+                        }`}
                     />
                   </div>
 
@@ -557,9 +554,8 @@ export const SellHorse = () => {
                       placeholder="03001234567"
                       value={formData.sellerPhone}
                       onChange={handleChange}
-                      className={`w-full p-3.5 border rounded-xl text-sm transition focus:bg-white ${
-                        formData.sellerPhone && !isPhoneValid ? 'border-rose-400 bg-rose-50 text-rose-900' : 'border-slate-300 bg-slate-50 focus:border-[#D4AF37]'
-                      }`}
+                      className={`w-full p-3.5 border rounded-xl text-sm transition focus:bg-white ${formData.sellerPhone && !isPhoneValid ? 'border-rose-400 bg-rose-50 text-rose-900' : 'border-slate-300 bg-slate-50 focus:border-[#D4AF37]'
+                        }`}
                     />
                   </div>
                 </div>

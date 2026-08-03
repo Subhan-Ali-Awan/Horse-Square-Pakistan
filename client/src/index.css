@@ -11,9 +11,28 @@
   body {
     margin: 0;
     font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-    background-color: #F8FAFC;
+    background-color: #FAF7F2;
+    background-image:
+      radial-gradient(at 0% 0%, rgba(245, 230, 200, 0.45) 0px, transparent 50%),
+      radial-gradient(at 100% 0%, rgba(255, 248, 220, 0.4) 0px, transparent 50%),
+      radial-gradient(at 100% 100%, rgba(212, 175, 55, 0.18) 0px, transparent 50%),
+      radial-gradient(at 0% 100%, rgba(245, 222, 179, 0.3) 0px, transparent 50%),
+      linear-gradient(180deg, #FAF8F5 0%, #F4EFE6 35%, #FBF9F6 70%, #F1ECE1 100%);
+    background-attachment: fixed;
     color: #1E293B;
   }
+}
+
+/* Luxury Alabaster Pearl & Frosted Opal Silk Background Utility */
+.bg-luxury-pearl {
+  background-color: #FAF7F2 !important;
+  background-image:
+    radial-gradient(at 10% 15%, rgba(245, 230, 200, 0.45) 0px, transparent 55%),
+    radial-gradient(at 90% 25%, rgba(255, 248, 220, 0.4) 0px, transparent 55%),
+    radial-gradient(at 85% 85%, rgba(212, 175, 55, 0.2) 0px, transparent 55%),
+    radial-gradient(at 15% 85%, rgba(245, 222, 179, 0.35) 0px, transparent 55%),
+    linear-gradient(180deg, #FAF8F5 0%, #F4EFE6 35%, #FBF9F6 70%, #F1ECE1 100%) !important;
+  background-attachment: fixed !important;
 }
 
 @keyframes fadeUp {
@@ -409,5 +428,85 @@
 }
 
 .liquid-gel-auth-btn:active {
+  transform: translateY(0) scale(0.98);
+}
+
+/* ==========================================
+   GLOBAL LIQUID GLASS HEADER & FOOTER & HERO BUTTON
+   ========================================== */
+
+/* Liquid Glass Header Component */
+.liquid-glass-header {
+  background: linear-gradient(135deg, rgba(11, 15, 25, 0.75) 0%, rgba(15, 23, 42, 0.68) 50%, rgba(7, 10, 18, 0.8) 100%) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border-bottom: 1px solid rgba(212, 175, 55, 0.25) !important;
+  box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5), inset 0 1px 1px 0 rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Liquid Glass Footer Component */
+.liquid-glass-footer {
+  background: linear-gradient(180deg, rgba(11, 15, 25, 0.75) 0%, rgba(15, 23, 42, 0.82) 50%, rgba(5, 8, 16, 0.92) 100%) !important;
+  backdrop-filter: blur(24px) saturate(200%) !important;
+  -webkit-backdrop-filter: blur(24px) saturate(200%) !important;
+  border-top: 1px solid rgba(212, 175, 55, 0.3) !important;
+  box-shadow: 0 -10px 40px -10px rgba(0, 0, 0, 0.6), inset 0 1.5px 2px 0 rgba(255, 255, 255, 0.18) !important;
+}
+
+/* Liquid Glass Hero Button (Translucent Glass Effect) */
+.liquid-glass-hero-btn {
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.2) 0%, rgba(212, 175, 55, 0.15) 50%, rgba(255, 255, 255, 0.1) 100%) !important;
+  backdrop-filter: blur(20px) saturate(190%) !important;
+  -webkit-backdrop-filter: blur(20px) saturate(190%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.75) !important;
+  color: #FFFFFF !important;
+  font-weight: 800 !important;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.5);
+  box-shadow:
+    inset 0 2px 3px 0 rgba(255, 255, 255, 0.8),
+    inset 0 -2px 3px 0 rgba(212, 175, 55, 0.3),
+    0 10px 30px -5px rgba(0, 0, 0, 0.4) !important;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) !important;
+}
+
+.liquid-glass-hero-btn::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 45%;
+  height: 100%;
+  background: linear-gradient(90deg,
+      rgba(255, 255, 255, 0) 0%,
+      rgba(255, 255, 255, 0.7) 50%,
+      rgba(255, 255, 255, 0) 100%);
+  transform: translateX(-120%) skewX(-20deg);
+  pointer-events: none;
+  z-index: 2;
+  transition: opacity 0.3s ease;
+}
+
+.liquid-glass-hero-btn:hover::before {
+  animation: liquidGlassReflection 0.9s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.liquid-glass-hero-btn:hover {
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.35) 0%, rgba(212, 175, 55, 0.35) 50%, rgba(255, 255, 255, 0.25) 100%) !important;
+  border-color: rgba(255, 225, 130, 0.95) !important;
+  color: #FFFFFF !important;
+  transform: translateY(-2.5px) scale(1.03);
+  box-shadow:
+    inset 0 2px 4px 0 rgba(255, 255, 255, 0.95),
+    inset 0 -2px 4px 0 rgba(212, 175, 55, 0.5),
+    0 16px 45px rgba(212, 175, 55, 0.5),
+    0 6px 20px rgba(0, 0, 0, 0.4) !important;
+}
+
+.liquid-glass-hero-btn:active {
   transform: translateY(0) scale(0.98);
 }

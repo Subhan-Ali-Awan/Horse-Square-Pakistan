@@ -311,15 +311,9 @@ export const Home = () => {
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center items-center animate-fade-up delay-250">
             <Link
               to="/marketplace"
-              className="w-full sm:w-auto bg-gradient-to-r from-[#D4AF37]/90 via-[#E5C158]/85 to-[#C9A227]/90 hover:from-[#D4AF37] hover:to-[#B8860B] text-[#0F172A] font-black py-3.5 px-8 rounded-xl border border-amber-200/70 backdrop-blur-2xl transition-all duration-300 text-center shadow-[0_8px_32px_rgba(212,175,55,0.45)] hover:shadow-[0_14px_45px_rgba(212,175,55,0.65)] hover:-translate-y-0.5 animate-glow"
+              className="w-full sm:w-auto liquid-glass-hero-btn bg-white/20 hover:bg-white/35 text-white font-extrabold py-3.5 px-9 rounded-xl border border-white/60 hover:border-[#D4AF37] backdrop-blur-2xl transition-all duration-300 text-center shadow-[0_8px_32px_rgba(0,0,0,0.37)] hover:shadow-[0_14px_45px_rgba(212,175,55,0.45)] hover:-translate-y-0.5"
             >
               Explore Marketplace
-            </Link>
-            <Link
-              to="/vet"
-              className="w-full sm:w-auto bg-white/20 hover:bg-white/35 text-white font-extrabold py-3.5 px-8 rounded-xl border border-white/60 backdrop-blur-2xl transition-all duration-300 text-center shadow-[0_8px_32px_rgba(0,0,0,0.37)] hover:border-[#D4AF37] hover:shadow-[0_12px_40px_rgba(212,175,55,0.35)] hover:-translate-y-0.5"
-            >
-              Consult AI Vet
             </Link>
           </div>
         </div>

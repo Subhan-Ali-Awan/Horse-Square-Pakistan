@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { ContactMessage } = require("../models/Misc");
 const { protect, adminOnly } = require("../middleware/auth");
-const { sendRidingTrialEmail } = require("../utils/emailService");
+const { sendRidingTrialEmail, sendNewsletterConfirmationEmail } = require("../utils/emailService");
 
 // Helper function to automatically dispatch in-app contact message & email for trial session
 async function dispatchTrialApprovalMessages(trial, courseInfo, locationInfo) {
@@ -517,6 +517,35 @@ router.delete("/riding-trial/:id", protect, adminOnly, async (req, res, next) =>
 
     await trial.deleteOne();
     res.status(200).json({ success: true, message: "Trial request deleted successfully!" });
+  } catch (error) {
+    next(error);
+  }
+});
+
+// POST /api/contact/newsletter -> Subscribe to newsletter & automatically dispatch email from horsesquarepakistan@gmail.com
+router.post("/newsletter", async (req, res, next) => {
+  try {
+    const { email } = req.body;
+    if (!email || !email.includes("@")) {
+      return res.status(400).json({ success: false, message: "A valid Email address is required." });
+    }
+
+    // 1. Store in Database ContactMessage model as newsletter subscription
+    await ContactMessage.create({
+      name: "Newsletter Subscriber",
+      email: email.trim().toLowerCase(),
+      subject: "Newsletter Subscription",
+      message: `Subscribed to Horse-Square Pakistan newsletter from website footer. Website Email: horsesquarepakistan@gmail.com`,
+    });
+
+    // 2. Dispatch Automated Confirmation Email via Nodemailer (horsesquarepakistan@gmail.com)
+    const emailResult = await sendNewsletterConfirmationEmail(email.trim().toLowerCase());
+
+    res.status(200).json({
+      success: true,
+      message: "Subscribed successfully! Official confirmation email dispatched from horsesquarepakistan@gmail.com.",
+      emailSent: emailResult.success,
+    });
   } catch (error) {
     next(error);
   }
