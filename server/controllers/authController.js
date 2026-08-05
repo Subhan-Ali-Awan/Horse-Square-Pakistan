@@ -107,11 +107,6 @@ exports.loginUser = async (req, res, next) => {
     user.lastLogin = new Date();
     await user.save();
 
-    // Automatically send login notification email from horsesquarepakistan@gmail.com
-    sendWelcomeEmail(user).catch((err) => {
-      console.error("[LOGIN EMAIL DISPATCH ERROR]:", err.message);
-    });
-
     const token = signToken(user._id);
 
     res.status(200).json({
