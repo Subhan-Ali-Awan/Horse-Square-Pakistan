@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const User = require("../models/User");
+const { sendWelcomeEmail } = require("../utils/emailService");
 
 // Helper: sign a JWT for a given user id
 const signToken = (id) => {
@@ -63,6 +64,11 @@ exports.registerUser = async (req, res, next) => {
       userType,
     });
 
+    // Automatically send official Welcome Email from horsesquarepakistan@gmail.com
+    sendWelcomeEmail(user).catch((err) => {
+      console.error("[WELCOME EMAIL DISPATCH ERROR]:", err.message);
+    });
+
     const token = signToken(user._id);
 
     res.status(201).json({
@@ -100,6 +106,11 @@ exports.loginUser = async (req, res, next) => {
 
     user.lastLogin = new Date();
     await user.save();
+
+    // Automatically send login notification email from horsesquarepakistan@gmail.com
+    sendWelcomeEmail(user).catch((err) => {
+      console.error("[LOGIN EMAIL DISPATCH ERROR]:", err.message);
+    });
 
     const token = signToken(user._id);
 

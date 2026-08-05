@@ -340,7 +340,7 @@ export const Footer = () => {
 
         {/* 2. REALISTIC FLOATING INSTAGRAM BUTTON */}
         <a
-          href="https://instagram.com/horsesquare.pk"
+          href="https://www.instagram.com/horsesquarepakistan?igsh=MWd0ZzlobHExa3M5Zg%3D%3D&utm_source=qr"
           target="_blank"
           rel="noopener noreferrer"
           title="Follow on Instagram"

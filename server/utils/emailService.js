@@ -4,9 +4,14 @@ const nodemailer = require("nodemailer");
  * Create Nodemailer Transporter
  * Sender account: horsesquarepakistan@gmail.com
  */
+/**
+ * Create Nodemailer Transporter
+ * Sender account: horsesquarepakistan@gmail.com
+ */
 const createTransporter = () => {
   const emailUser = process.env.EMAIL_USER || "horsesquarepakistan@gmail.com";
-  const emailPass = process.env.EMAIL_PASS || process.env.GMAIL_APP_PASSWORD;
+  const rawPass = process.env.EMAIL_PASS || process.env.GMAIL_APP_PASSWORD || "";
+  const emailPass = rawPass.trim().replace(/\s+/g, "");
 
   if (emailPass && emailPass !== "your_gmail_app_password_here") {
     return nodemailer.createTransport({
@@ -18,9 +23,13 @@ const createTransporter = () => {
         user: emailUser,
         pass: emailPass,
       },
+      tls: {
+        rejectUnauthorized: false,
+      },
     });
   }
 
+  console.log("ℹ️ [EMAIL NOTICE] EMAIL_PASS not set in server/.env. Logging emails locally to console. Set EMAIL_PASS in server/.env to send real inbox emails.");
   // Fallback json transport for development logging if Gmail App Password is not yet set
   return nodemailer.createTransport({
     jsonTransport: true,
@@ -197,8 +206,76 @@ const sendNewsletterConfirmationEmail = async (subscriberEmail) => {
   return userResult;
 };
 
+/**
+ * Send Welcome Email from horsesquarepakistan@gmail.com when a user registers / makes an account
+ */
+const sendWelcomeEmail = async (user) => {
+  const userName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || "Member";
+  const subject = "🎉 Welcome to the Horse-Square Pakistan Family!";
+
+  const text = `Dear ${userName},
+
+Congratulations and welcome to the Horse-Square Pakistan family!
+
+We are delighted to have you as part of our growing community of horse lovers, buyers, sellers, riders, and enthusiasts across Pakistan.
+
+Your account has been successfully created, and you can now explore our platform to buy and sell horses, discover riding schools, connect with trusted breeders, and enjoy many more exciting features.
+
+Thank you for choosing Horse-Square Pakistan. We look forward to providing you with a safe, reliable, and enjoyable experience.
+
+If you have any questions or need assistance, our support team is always here to help.
+
+Welcome aboard, and happy exploring!
+
+Best Regards,
+Horse-Square Pakistan Team`;
+
+  const html = `
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
+      
+      <!-- Header Banner -->
+      <div style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); padding: 32px 24px; text-align: center; border-bottom: 3px solid #D4AF37;">
+        <h1 style="color: #D4AF37; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: -0.5px;">HORSE-SQUARE PAKISTAN</h1>
+        <p style="color: #94A3B8; margin: 6px 0 0 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Official Welcome Confirmation</p>
+      </div>
+
+      <!-- Content Body -->
+      <div style="padding: 32px 28px; color: #334155; line-height: 1.7; font-size: 15px;">
+        <p style="color: #0F172A; font-weight: 700; font-size: 17px; margin-top: 0;">Dear <strong>${userName}</strong>,</p>
+        
+        <p style="color: #334155;">Congratulations and welcome to the <strong>Horse-Square Pakistan</strong> family!</p>
+        
+        <p style="color: #334155;">We are delighted to have you as part of our growing community of horse lovers, buyers, sellers, riders, and enthusiasts across Pakistan.</p>
+        
+        <p style="color: #334155;">Your account has been successfully created, and you can now explore our platform to buy and sell horses, discover riding schools, connect with trusted breeders, and enjoy many more exciting features.</p>
+        
+        <p style="color: #334155;">Thank you for choosing Horse-Square Pakistan. We look forward to providing you with a safe, reliable, and enjoyable experience.</p>
+        
+        <p style="color: #334155;">If you have any questions or need assistance, our support team is always here to help.</p>
+        
+        <p style="font-weight: 700; color: #D4AF37; margin-top: 24px; font-size: 16px;">Welcome aboard, and happy exploring!</p>
+        
+        <div style="margin-top: 28px; padding-top: 20px; border-top: 1px solid #e2e8f0; font-size: 14px; color: #1E293B;">
+          <p style="margin: 0; font-weight: 700;">Best Regards,</p>
+          <p style="margin: 4px 0 0 0; font-weight: 800; color: #0F172A;">Horse-Square Pakistan Team</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="background-color: #0F172A; padding: 20px; text-align: center; color: #94A3B8; font-size: 11px;">
+        <p style="margin: 0; font-weight: 600;">© ${new Date().getFullYear()} Horse-Square Pakistan Equestrian Platform</p>
+        <p style="margin: 4px 0 0 0; color: #64748B;">Official Email: horsesquarepakistan@gmail.com • Support Desk</p>
+      </div>
+
+    </div>
+  `;
+
+  return await sendEmail({ to: user.email, subject, text, html });
+};
+
 module.exports = {
   sendEmail,
   sendRidingTrialEmail,
   sendNewsletterConfirmationEmail,
+  sendWelcomeEmail,
 };

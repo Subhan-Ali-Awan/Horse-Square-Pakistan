@@ -139,6 +139,36 @@ export const Contact = () => {
             </div>
           </div>
 
+          {/* Official Instagram Page Card */}
+          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md flex items-start gap-4 hover:border-[#D4AF37] transition duration-300">
+            <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-[#f09433] via-[#dc2743] to-[#bc1888] text-white flex items-center justify-center shrink-0 shadow-sm">
+              <svg className="w-6 h-6 fill-none stroke-current stroke-[2.2]" viewBox="0 0 24 24">
+                <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+              </svg>
+            </div>
+            <div className="space-y-2">
+              <div>
+                <h3 className="font-extrabold text-[#0F172A] text-sm">Official Instagram</h3>
+                <p className="text-xs font-semibold text-slate-600">@horsesquarepakistan</p>
+              </div>
+              <a
+                href="https://www.instagram.com/horsesquarepakistan?igsh=MWd0ZzlobHExa3M5Zg%3D%3D&utm_source=qr"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 bg-gradient-to-r from-[#dc2743] to-[#bc1888] hover:opacity-95 text-white font-extrabold text-[11px] rounded-xl transition shadow-sm cursor-pointer"
+              >
+                <svg className="w-3.5 h-3.5 fill-none stroke-current stroke-[2.2]" viewBox="0 0 24 24">
+                  <rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect>
+                  <path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path>
+                  <line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line>
+                </svg>
+                <span>Follow on Instagram 📸</span>
+              </a>
+            </div>
+          </div>
+
           {/* Response SLA Notice */}
           <div className="bg-gradient-to-br from-[#0B0F19] to-slate-900 text-white p-5 rounded-3xl border border-slate-800 space-y-2 shadow-lg">
             <div className="flex items-center gap-2 text-xs font-extrabold text-[#D4AF37]">
