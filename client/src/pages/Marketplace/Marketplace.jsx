@@ -25,7 +25,7 @@ export const Marketplace = () => {
   const [loading, setLoading] = useState(true);
   const [breedFilter, setBreedFilter] = useState('');
   const [minPriceFilter, setMinPriceFilter] = useState(0);
-  const [maxPriceFilter, setMaxPriceFilter] = useState(5000000);
+  const [maxPriceFilter, setMaxPriceFilter] = useState(15000000);
   const [locationFilter, setLocationFilter] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
   const [sortBy, setSortBy] = useState('newest');
@@ -417,7 +417,7 @@ export const Marketplace = () => {
     if (minPriceFilter > 0) {
       list = list.filter(h => Number(h.price) >= minPriceFilter);
     }
-    if (maxPriceFilter < 5000000) {
+    if (maxPriceFilter < 15000000) {
       list = list.filter(h => Number(h.price) <= maxPriceFilter);
     }
     if (locationFilter) {
@@ -633,7 +633,7 @@ export const Marketplace = () => {
                   <input
                     type="range"
                     min="0"
-                    max="5000000"
+                    max="15000000"
                     step="100000"
                     value={minPriceFilter}
                     onChange={(e) => {
@@ -652,7 +652,7 @@ export const Marketplace = () => {
                   <input
                     type="range"
                     min="0"
-                    max="5000000"
+                    max="15000000"
                     step="100000"
                     value={maxPriceFilter}
                     onChange={(e) => {
@@ -693,13 +693,13 @@ export const Marketplace = () => {
                 Apply Filters
               </button>
 
-              {(breedFilter || minPriceFilter > 0 || maxPriceFilter < 5000000 || locationFilter || searchTerm) && (
+              {(breedFilter || minPriceFilter > 0 || maxPriceFilter < 15000000 || locationFilter || searchTerm) && (
                 <button
                   type="button"
                   onClick={() => {
                     setBreedFilter('');
                     setMinPriceFilter(0);
-                    setMaxPriceFilter(5000000);
+                    setMaxPriceFilter(15000000);
                     setLocationFilter('');
                     setSearchTerm('');
                   }}

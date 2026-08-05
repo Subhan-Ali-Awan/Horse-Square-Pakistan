@@ -203,21 +203,19 @@ export const SellHorse = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-up space-y-8">
+    <div className="max-w-6xl mx-auto px-4 py-8 space-y-10 animate-fade-up">
 
-      {/* Top Luxury Banner Header */}
-      <div className="bg-gradient-to-r from-[#0B0F19] via-[#0F172A] to-[#1E293B] rounded-3xl p-8 sm:p-10 text-white shadow-2xl border border-slate-800 relative overflow-hidden">
-        {/* Ambient Glow background */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
+      {/* Banner */}
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
         <div className="relative z-10 space-y-2">
-          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D4AF37]/10 border border-[#D4AF37]/30 text-[#D4AF37] text-[10px] font-extrabold uppercase tracking-widest">
-            <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" /> EQUESTRIAN LISTING STUDIO
-          </div>
-          <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Equestrian Listing Studio
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
             Sell Your Horse
           </h1>
-          <p className="text-slate-300 text-xs sm:text-sm font-normal max-w-2xl leading-relaxed">
+          <p className="text-slate-300 text-sm max-w-2xl font-light">
             Fill in your horse details below to publish your verified listing on Pakistan's premier equestrian marketplace!
           </p>
         </div>

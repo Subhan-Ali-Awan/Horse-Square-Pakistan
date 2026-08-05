@@ -3,6 +3,11 @@ const VetInquiry = require("../models/VetInquiry");
 // Same lookup table as the frontend's checkHealth() function, moved server-side
 // so the "AI logic" is no longer fakeable by editing client JS, and every result is logged to DB.
 const SYMPTOM_ADVICE = {
+  anuria: {
+    result:
+      "Anuria (inability to urinate / zero urine output) is a life-threatening renal or urinary tract emergency in horses. Stop all NSAIDs immediately (Banamine/Phenylbutazone worsen kidney damage). Contact an emergency equine veterinarian immediately for urinary catheterization, renal blood panel (BUN/Creatinine), and IV fluid therapy.",
+    severity: "danger",
+  },
   fever: {
     result:
       "Your horse may have an infection or inflammatory condition. Ensure adequate hydration, monitor temperature every 4 hours, and contact your veterinarian immediately if temperature exceeds 39.5°C.",
@@ -53,7 +58,9 @@ exports.checkHealth = async (req, res, next) => {
     }
 
     let matchedKey = "injury";
-    if (rawSymptom.includes("sweat") && rawSymptom.includes("fever")) {
+    if (rawSymptom.includes("anuria") || rawSymptom.includes("urine") || rawSymptom.includes("urinate")) {
+      matchedKey = "anuria";
+    } else if (rawSymptom.includes("sweat") && rawSymptom.includes("fever")) {
       matchedKey = "surra";
     } else if (rawSymptom.includes("sweat")) {
       matchedKey = "heavy sweating";
@@ -83,23 +90,61 @@ exports.checkHealth = async (req, res, next) => {
     res.status(201).json({
       success: true,
       assessment: {
-        possibleCondition: matchedKey === "surra" 
-          ? "Trypanosomiasis (Surra) - Parasitic Fever" 
-          : matchedKey === "colic" 
-            ? "Potential Colic (Gastrointestinal Distress)" 
-            : matchedKey === "foot swelling"
-              ? "Laminitis (Founder) or Sole Bruise"
-              : matchedKey === "cough"
-                ? "Equine Respiratory Infection (Strangles/Influenza)"
-                : "Equine Injury or Wound",
-        urgency: advice.severity === "danger" || advice.severity === "warning" 
-          ? "HIGH - Veterinary Attention Recommended" 
-          : "Moderate - Monitor closely",
+        possibleCondition: matchedKey === "anuria"
+          ? "Equine Anuria (Acute Renal Failure / Urethral Obstruction / Ruptured Bladder)"
+          : matchedKey === "surra" 
+            ? "Trypanosomiasis (Surra) - Parasitic Fever" 
+            : matchedKey === "colic" 
+              ? "Potential Colic (Gastrointestinal Distress)" 
+              : matchedKey === "foot swelling"
+                ? "Laminitis (Founder) or Sole Bruise"
+                : matchedKey === "cough"
+                  ? "Equine Respiratory Infection (Strangles/Influenza)"
+                  : "Equine Injury or Wound",
+        romanUrduCondition: matchedKey === "anuria"
+          ? "Ghode Ko Peshab Na Aana (Gurday Ka Masla Ya Urinary Pathri)"
+          : matchedKey === "surra"
+            ? "Surra Bimari (Peti / Parasite Bukhār)"
+            : matchedKey === "colic"
+              ? "Colic (Pet Ka Dard / Aant Ki Rukawat)"
+              : matchedKey === "foot swelling"
+                ? "Laminitis (Sum Ka Dard / Khur Ki Sujan)"
+                : matchedKey === "cough"
+                  ? "Saans Ki Bimari / Khansi (Strangles Ya Nazla)"
+                  : "Zakhmi Ghoda Ya Chot",
+        urgency: advice.severity === "danger"
+          ? "CRITICAL EMERGENCY - Immediate Vet Catheterization Required"
+          : advice.severity === "warning" 
+            ? "HIGH - Veterinary Attention Recommended" 
+            : "Moderate - Monitor closely",
+        romanUrduUrgency: advice.severity === "danger"
+          ? "SHDEED EMERGENCY - Fauri Doctor Se Catheter Lagwayen"
+          : advice.severity === "warning"
+            ? "SANJEEDA - Doctor Ki Dawai Zaroori Hai"
+            : "AAM - Dehyan Rakhen",
         recommendedActions: [
           advice.result,
           "Ensure clean, fresh water is available at all times.",
           "Check vital signs: normal horse pulse is 28-44 bpm, respiration 8-16 breaths/min."
-        ]
+        ],
+        romanUrduActions: [
+          matchedKey === "anuria"
+            ? "Fauri taur par Banamine ya Phenylbutazone dawaiyan band karen jo gurday kharab karti hain."
+            : matchedKey === "surra"
+              ? "Bimar ghode ko makkhiyon aur machharon se door alag astabal me rakhen."
+              : matchedKey === "colic"
+                ? "Fauri taur par dana, patte aur ghaas khana bilkul band kar den."
+                : "Saaf pani samne rakhen aur ghode par nazar rakhen.",
+          "Saaf aur taza pani har waqt samne rakhen.",
+          "Saans aur dil ki dhadkan (pulse: 28-44 bpm) regular check karte rahen."
+        ],
+        romanUrduSummary: matchedKey === "anuria"
+          ? "Ghode ko peshab na aana renal failure ya nali me rukawat ki waja se ho sakta hai. Painkiller dawaen band karen aur fauri doctor se catheter lagwayen."
+          : matchedKey === "surra"
+            ? "Surra makkhi ke katne se hota hai. Ghode ko alag rakhen aur Quinapyramine injection ke liye doctor se rabta karen."
+            : matchedKey === "colic"
+              ? "Pet dard me ghode ka khana peena roken aur narm zameen par chalayen. Zameen par letne aur rolling se bachayen."
+              : "Ghode ko aaram se rakhen aur fauri doctor se rabta karen."
       },
       data: {
         result: advice.result,

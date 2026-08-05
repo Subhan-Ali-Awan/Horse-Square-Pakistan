@@ -148,33 +148,21 @@ export const Breeding = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-up space-y-8">
+    <div className="max-w-6xl mx-auto px-4 py-8 space-y-10 animate-fade-up">
 
-      {/* Top Luxury Banner Header */}
-      <div className="bg-gradient-to-r from-[#0B0F19] via-[#0F172A] to-[#1E293B] rounded-3xl p-8 sm:p-10 text-white shadow-2xl border border-slate-800 relative overflow-hidden">
-        {/* Ambient Glow background */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
-        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
-          <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 rounded-full text-[10px] font-extrabold uppercase tracking-widest">
-              <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" /> Verified Equine Genetics & Stud Directory
-            </span>
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white flex items-center gap-3">
-              <Dna className="w-8 h-8 text-[#D4AF37]" /> Equine Breeding Services
-            </h1>
-            <p className="text-slate-300 text-xs sm:text-sm font-normal max-w-2xl leading-relaxed">
-              Access Pakistan's premier stud stallions with certified pedigree bloodlines, championship trophies, and verified fertility rates.
-            </p>
-          </div>
-
-          <div className="p-4 bg-slate-900/90 rounded-2xl border border-slate-800 text-right shrink-0 flex items-center gap-3 shadow-md backdrop-blur-md">
-            <div className="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></div>
-            <div>
-              <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Genetic Verification</span>
-              <span className="text-xs font-black text-[#D4AF37]">CNIC & Pedigree Checked</span>
-            </div>
-          </div>
+      {/* Banner */}
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
+        <div className="relative z-10 space-y-2">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
+            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Verified Equine Genetics & Stud Directory
+          </span>
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+            Equine Breeding Services
+          </h1>
+          <p className="text-slate-300 text-sm max-w-2xl font-light">
+            Access Pakistan's premier stud stallions with certified pedigree bloodlines, championship trophies, and verified fertility rates.
+          </p>
         </div>
       </div>
 

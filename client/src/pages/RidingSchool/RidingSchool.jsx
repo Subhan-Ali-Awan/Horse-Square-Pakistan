@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Compass, CheckCircle, Award, ShieldCheck, Sparkles, BookOpen, Target, CheckCircle2, ChevronRight, UserCheck, Quote, Flame, Calendar, Clock, MapPin, Send, Check } from 'lucide-react';
+import { Compass, CheckCircle, Award, ShieldCheck, Sparkles, BookOpen, Target, CheckCircle2, ChevronRight, UserCheck, Quote, Flame, Calendar, Clock, MapPin, Send, Check, Globe, Phone } from 'lucide-react';
 import { Modal } from '../../components/Modal';
 import { useAuth } from '../../context/AuthContext';
 
@@ -53,71 +53,188 @@ export const RidingSchool = () => {
   const pakistaniLegends = [
     {
       id: 'm1',
-      name: 'Malik Sultan Khan Awan',
-      title: 'National Nezabazi (Tent Pegging) Legend',
-      experience: '40+ Years Mastery',
-      location: 'Sargodha, Punjab',
-      avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&q=80&w=400',
-      story: 'My horseback journey started at the age of 8 in the rural grounds of Sargodha. Mounting a horse is not about dominance; it is about building mutual trust. To fresh riders, I always advise: develop a quiet seat first. Once you respect your horse, the reins become an extension of your heart.',
-      quote: '"A horse doesn’t care how much you know until he knows how much you care."'
+      name: 'Malik Ata Muhammad Khan',
+      title: 'First Elected President of Equestrian & Tent Pegging Federation',
+      experience: 'Pioneer of Pakistani Tent Pegging & Bull Racing',
+      location: 'Kot Fateh Khan, Attock, Punjab',
+      avatar: '/malik_ata.jpg',
+      story: 'Malik Ata was known for his equestrian hobbies. He was the first elected President of the Equestrian & Tent Pegging Federation of Pakistan. He was well known in Pakistan for his efforts to promote tent pegging and bull races.',
+      quote: '"Mounting a horse is not about dominance; it is about honor, mutual respect, and keeping traditional equestrian sports alive."'
     },
     {
       id: 'm2',
-      name: 'Chaudhry Zafar Iqbal',
-      title: 'Master Polo & Endurance Riding Coach',
-      experience: '32 Years International Coach',
-      location: 'Lahore Turf Club',
-      avatar: 'https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&q=80&w=400',
-      story: 'When I began my polo training in Lahore, my first instructor made me spend 3 weeks just grooming and feeding the horses before mounting. That taught me patience. Beginners must understand that horsemanship is 80% ground relationship and 20% saddle technique.',
-      quote: '"Patience on the ground creates perfection in the arena."'
+      name: 'Sahibzada Sultan Muhammad Ali',
+      title: 'President of Equestrian Federation of Pakistan (EFP)',
+      experience: 'National & International Equestrian Leader',
+      location: 'Equestrian Federation of Pakistan, Islamabad',
+      avatar: '/sultan_muhammad_ali.jpg',
+      story: 'Sahibzada Sultan Muhammad Ali is the President of the Equestrian Federation of Pakistan (EFP), leading national and international horse sports. He is a prominent figure dedicated to advancing traditional riding, tent pegging, and equestrian standards in Pakistan.',
+      quote: '"Patience, discipline, and dedication to traditional horsemanship create perfection in the equestrian arena."'
     },
     {
       id: 'm3',
-      name: 'Syed Shahzad Ali Shah',
-      title: 'Senior Dressage & Jumping Instructor',
-      experience: '28 Years Equestrian Mentor',
-      location: 'Islamabad Riding Club',
-      avatar: 'https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?auto=format&fit=crop&q=80&w=400',
-      story: 'Over my 28 years of coaching riders in Islamabad, I have seen beginners fear the canter. The key is relaxed hips and breathing rhythmically. Every fall teaches you how to sit deeper. Never give up on your first 10 sessions.',
-      quote: '"Fall 7 times, mount 8 times. The saddle is where resilience is born."'
+      name: 'Sahibzada Sultan Muhammad Bahadar Aziz',
+      title: 'International Nezabazi Champion & M.H Sultania Awan Leader',
+      experience: 'International Equestrian Legend & Judge',
+      location: 'M.H Sultania Awan Horse Club, Punjab',
+      avatar: '/sultan_bahadar.jpg',
+      story: 'Sahibzada Sultan Muhammad Bahadar Aziz is an internationally acclaimed equestrian, tent-pegging (Neza Bazi) champion, and leading figure in traditional Pakistani horse sports, representing the lineage and heritage tied to Hazrat Sultan Bahoo. His journey covers international representation, leadership in the M.H Sultania Awan Horse Tent Pegging Club, and professional judging roles in equestrian events.',
+      quote: '"Preserving our equestrian heritage, honoring Hazrat Sultan Bahoo\'s lineage, and mastering traditional Nezabazi on the world stage."'
     }
   ];
 
+  const [selectedCityFilter, setSelectedCityFilter] = useState('All');
+
   const externalSchools = [
     {
-      name: 'Islamabad Riding Club',
-      location: 'Islamabad',
-      focus: 'Riding lessons, boarding & trail rides in Chak Shahzad.',
+      id: 's1',
+      name: 'Islamabad Riding Club (IRC)',
+      city: 'Islamabad',
+      location: 'Chak Shahzad, Park Road, Islamabad',
+      focus: 'Certified riding lessons, horse boarding, trail rides & show jumping arena.',
       website: 'http://islamabadridingclub.com',
-      phone: '+92 312 5162222'
+      phone: '+92 312 5162222',
+      badge: 'Certified Academy'
     },
     {
-      name: 'Equidome',
-      location: 'Lahore',
-      focus: 'Horsemanship training, tent pegging, and polo.',
-      website: 'https://equidome.pk',
-      phone: '+92 300 8443422'
-    },
-    {
-      name: 'Islamabad Club Riding',
-      location: 'Islamabad',
-      focus: 'Prestigious riding arenas & specialized polo grounds.',
+      id: 's2',
+      name: 'Islamabad Club Riding Section',
+      city: 'Islamabad',
+      location: 'Murree Road, Near Rawal Lake, Islamabad',
+      focus: 'International polo arenas, show jumping rings, dressage & youth coaching.',
       website: 'https://islamabadclub.org.pk/riding',
-      phone: '+92 51 9046000'
+      phone: '+92 51 9046000',
+      badge: 'Premier Polo Club'
     },
     {
-      name: 'Zacky Farms Polo Club',
-      location: 'Lahore',
-      focus: 'Beginner coaching and professional polo clinics.',
+      id: 's3',
+      name: 'Equidome Equestrian Center',
+      city: 'Lahore',
+      location: 'Bedian Road, Near DHA Phase 6, Lahore',
+      focus: 'Horsemanship clinics, tent pegging grounds, polo arena & horse care training.',
+      website: 'https://equidome.pk',
+      phone: '+92 300 8443422',
+      badge: 'Popular Training Center'
+    },
+    {
+      id: 's4',
+      name: 'Zacky Farms & Polo Club',
+      city: 'Lahore',
+      location: 'Barki Road, Near Paragon City, Lahore',
+      focus: 'Polo coaching clinics, riding academy, luxury stabling & stud breeding.',
       website: 'https://zacky-farms.com',
-      phone: '+92 321 4007014'
+      phone: '+92 321 4007014',
+      badge: 'Polo & Breeding'
     },
     {
+      id: 's5',
+      name: 'Lahore Garrison Polo & Riding Club (LGPRC)',
+      city: 'Lahore',
+      location: 'Abid Majid Road, Lahore Cantt, Lahore',
+      focus: 'International polo grounds, army equestrian displays, show jumping & cavalry drill.',
+      website: 'https://lgprc.com.pk',
+      phone: '+92 42 99220556',
+      badge: 'Historic Club'
+    },
+    {
+      id: 's6',
+      name: 'Manege Equestrian Club',
+      city: 'Lahore',
+      location: 'Main Bedian Road, Opposite Askari 11, Lahore',
+      focus: 'Kids pony riding, adult dressage, outdoor trail rides & horse care workshops.',
+      website: 'https://facebook.com/ManegeEquestrianClub',
+      phone: '+92 300 4005990',
+      badge: 'Family Friendly'
+    },
+    {
+      id: 's7',
+      name: 'Karachi Saddle Club',
+      city: 'Karachi',
+      location: 'Near Sea View, DHA Phase 8, Karachi',
+      focus: 'Beach trail riding, show jumping arenas, youth riding programs & pony club.',
+      website: 'https://facebook.com/KarachiSaddleClub',
+      phone: '+92 300 2011456',
+      badge: 'Coastal Riding'
+    },
+    {
+      id: 's8',
+      name: 'Rangers Riding & Polo Club',
+      city: 'Karachi',
+      location: 'HQ Sindh Rangers, North Nazimabad, Karachi',
+      focus: 'Polo matches, traditional tent pegging, obstacle course & cavalry drill.',
+      website: 'https://sindhrangers.gos.pk',
+      phone: '+92 21 99260523',
+      badge: 'Cavalry & Pegging'
+    },
+    {
+      id: 's9',
+      name: 'Rawalpindi Amateur Riding Club',
+      city: 'Rawalpindi',
+      location: 'Old Airport Road, Near Ayub National Park, Rawalpindi',
+      focus: 'Beginner horsemanship, endurance riding, vaulting & weekend riding classes.',
+      website: 'https://facebook.com/RawalpindiRidingClub',
+      phone: '+92 333 5129988',
+      badge: 'Amateur & Youth'
+    },
+    {
+      id: 's10',
       name: 'Imperial Riding Club',
-      location: 'Faisalabad',
-      focus: 'Spacious training rings & certified instructors.',
+      city: 'Faisalabad',
+      location: 'Canal Road, Near East Canal Interchange, Faisalabad',
+      focus: 'Spacious indoor & outdoor training rings, tent pegging, horse boarding & breeding.',
       website: 'https://imperialridingclub.com',
-      phone: '+92 300 6601122'
+      phone: '+92 300 6601122',
+      badge: 'Top Regional Facility'
+    },
+    {
+      id: 's11',
+      name: 'Peshawar Garrison Riding Club',
+      city: 'Peshawar',
+      location: 'Mall Road, Peshawar Cantt, Peshawar',
+      focus: 'Traditional Nezabazi (Tent Pegging), cavalry drill & youth riding academy.',
+      website: 'https://peshawargarrison.com',
+      phone: '+92 91 9212300',
+      badge: 'Traditional Nezabazi'
+    },
+    {
+      id: 's12',
+      name: 'Multan Polo & Riding Club',
+      city: 'Multan',
+      location: 'Multan Cantt, Near Army Officers Mess, Multan',
+      focus: 'Polo clinics, Desi & Thoroughbred riding, local equestrian tournaments.',
+      website: 'https://facebook.com/MultanPoloClub',
+      phone: '+92 301 7401122',
+      badge: 'Polo & Desi Studs'
+    },
+    {
+      id: 's13',
+      name: 'Sargodha Nezabazi & Riding Academy',
+      city: 'Sargodha',
+      location: 'Stadium Road, Near Officers Colony, Sargodha',
+      focus: 'Specialized Tent Pegging (Nezabazi), Desi stud horse handling & competition prep.',
+      website: 'https://facebook.com/SargodhaRidingAcademy',
+      phone: '+92 300 9665544',
+      badge: 'Nezabazi Specialist'
+    },
+    {
+      id: 's14',
+      name: 'Quetta Garrison Equestrian Center',
+      city: 'Quetta',
+      location: 'Cantonment Board Complex, Quetta',
+      focus: 'Mountain trail riding, endurance training, show jumping & military drill.',
+      website: 'https://facebook.com/QuettaEquestrianCenter',
+      phone: '+92 81 9201500',
+      badge: 'Mountain Trail'
+    },
+    {
+      id: 's15',
+      name: 'Sialkot Royal Equestrian Club',
+      city: 'Sialkot',
+      location: 'Marala Road, Near Daska Interchange, Sialkot',
+      focus: 'Outdoor arena riding, endurance clinics, horse care & beginner lessons.',
+      website: 'https://facebook.com/SialkotRoyalEquestrian',
+      phone: '+92 322 7889900',
+      badge: 'Modern Riding Ring'
     }
   ];
 
@@ -191,18 +308,19 @@ export const RidingSchool = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 space-y-12 animate-fade-up">
+    <div className="max-w-6xl mx-auto px-4 py-8 space-y-10 animate-fade-up">
 
-      {/* Header Banner */}
-      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 sm:p-12 text-white shadow-2xl relative overflow-hidden flex flex-col md:flex-row justify-between items-start md:items-center gap-8 border border-slate-800">
-        <div className="space-y-4 max-w-2xl relative z-10">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full text-xs font-black uppercase tracking-wider backdrop-blur-md">
+      {/* Banner */}
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
+        <div className="relative z-10 space-y-2">
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
             <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Professional Riding Academy
           </span>
-          <h1 className="text-3xl sm:text-5xl font-black tracking-tight text-white leading-tight">
+          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
             Master Equestrian Skills & Horsemanship
           </h1>
-          <p className="text-slate-300 text-sm sm:text-base leading-relaxed font-normal">
+          <p className="text-slate-300 text-sm max-w-2xl font-light">
             Book a trial riding session with Pakistan's top certified equestrian instructors. Learn balance, canter control, and traditional Nezabazi (Tent Pegging) mastery.
           </p>
         </div>
@@ -236,6 +354,19 @@ export const RidingSchool = () => {
             <ul className="space-y-2.5 text-xs text-slate-600 font-medium">
               <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" /> <span><strong>Canter Lead Aids:</strong> Apply inside leg at girth and outside leg behind girth to cue correct lead.</span></li>
               <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-amber-500 shrink-0 mt-0.5" /> <span><strong>Trail & Obstacle Navigation:</strong> Maintain steady seat contact and soft reins over uneven ground.</span></li>
+            </ul>
+          </div>
+
+          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-3">
+            <div className="flex justify-between items-center pb-2 border-b">
+              <h3 className="font-extrabold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
+                <Flame className="w-4 h-4 text-purple-600" /> Advanced Equestrian Tent Pegging
+              </h3>
+              <span className="text-[10px] bg-purple-100 text-purple-900 font-extrabold px-2 py-0.5 rounded">Level 3</span>
+            </div>
+            <ul className="space-y-2.5 text-xs text-slate-600 font-medium">
+              <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" /> <span><strong>Gallop & Target Lineage:</strong> Maintain full-speed galloping momentum while locking lance trajectory on ground peg.</span></li>
+              <li className="flex items-start gap-2"><CheckCircle className="w-4 h-4 text-purple-500 shrink-0 mt-0.5" /> <span><strong>Unseating & Wrist Lift:</strong> Extract target peg cleanly with swift wrist action without disrupting horse rhythm.</span></li>
             </ul>
           </div>
         </div>
@@ -277,10 +408,12 @@ export const RidingSchool = () => {
           {pakistaniLegends.map((mentor) => (
             <div key={mentor.id} className="bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-5">
               <div className="flex items-center gap-4 border-b border-slate-100 pb-4">
-                <div className="w-14 h-14 rounded-2xl overflow-hidden border-2 border-[#D4AF37] bg-slate-900"><img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover" /></div>
+                <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-[#D4AF37] bg-slate-900 shrink-0 shadow-md">
+                  <img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover object-top" />
+                </div>
                 <div>
-                  <h3 className="font-extrabold text-slate-900 text-base">{mentor.name}</h3>
-                  <p className="text-[11px] font-bold text-[#D4AF37]">{mentor.title}</p>
+                  <h3 className="font-extrabold text-slate-900 text-sm leading-snug">{mentor.name}</h3>
+                  <p className="text-[11px] font-bold text-[#D4AF37] mt-0.5">{mentor.title}</p>
                 </div>
               </div>
               <p className="text-xs text-slate-600 italic bg-slate-50 p-4 rounded-2xl border border-slate-100">"{mentor.story}"</p>
@@ -290,6 +423,97 @@ export const RidingSchool = () => {
               </div>
             </div>
           ))}
+        </div>
+      </div>
+
+      {/* VERIFIED REAL RIDING SCHOOLS DIRECTORY ACROSS PAKISTAN */}
+      <div className="border-t border-slate-200 pt-12 space-y-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="space-y-1">
+            <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-widest text-[#D4AF37] bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
+              <MapPin className="w-3.5 h-3.5 text-amber-500" /> Nationwide Network
+            </span>
+            <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A]">Real & Active Riding Schools in Pakistan</h2>
+            <p className="text-xs text-slate-500 font-medium max-w-xl">
+              Explore verified equestrian academies, polo clubs, and tent pegging schools with real locations and direct contact details across Pakistan.
+            </p>
+          </div>
+
+          {/* City Filter Tabs */}
+          <div className="flex flex-wrap gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+            {['All', 'Lahore', 'Islamabad', 'Karachi', 'Rawalpindi', 'Faisalabad', 'Peshawar', 'Multan', 'Sargodha'].map((c) => (
+              <button
+                key={c}
+                type="button"
+                onClick={() => setSelectedCityFilter(c)}
+                className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${
+                  selectedCityFilter === c
+                    ? 'bg-[#0F172A] text-amber-400 shadow-sm'
+                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                }`}
+              >
+                {c}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* 15 School Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {externalSchools
+            .filter((s) => selectedCityFilter === 'All' || s.city === selectedCityFilter)
+            .map((school) => (
+              <div
+                key={school.id}
+                className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-md hover:shadow-xl hover:border-[#D4AF37] transition duration-300 flex flex-col justify-between space-y-4 group relative overflow-hidden"
+              >
+                <div className="space-y-3">
+                  <div className="flex justify-between items-start gap-2">
+                    <span className="text-[10px] font-black uppercase tracking-wider text-amber-900 bg-amber-100 px-2.5 py-1 rounded-full border border-amber-300">
+                      {school.badge}
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-[11px] font-extrabold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                      <MapPin className="w-3 h-3 text-[#D4AF37]" /> {school.city}
+                    </span>
+                  </div>
+
+                  <h3 className="font-black text-slate-900 text-base leading-snug group-hover:text-[#B8860B] transition-colors">
+                    {school.name}
+                  </h3>
+
+                  <div className="space-y-1.5 text-xs text-slate-600">
+                    <p className="flex items-start gap-1.5 font-medium">
+                      <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                      <span className="text-slate-700 font-semibold">{school.location}</span>
+                    </p>
+                    <p className="flex items-start gap-1.5 text-[11px] text-slate-500 leading-relaxed bg-slate-50 p-2.5 rounded-xl border border-slate-100">
+                      <Sparkles className="w-3.5 h-3.5 text-[#D4AF37] shrink-0 mt-0.5" />
+                      <span>{school.focus}</span>
+                    </p>
+                  </div>
+                </div>
+
+                <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                  <a
+                    href={`tel:${school.phone}`}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-extrabold rounded-xl text-xs border border-emerald-200 transition"
+                  >
+                    <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                    <span>{school.phone}</span>
+                  </a>
+
+                  <a
+                    href={school.website}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1 px-3 py-2 bg-[#0F172A] hover:bg-[#1E293B] text-amber-300 font-bold rounded-xl text-xs transition shadow-sm"
+                  >
+                    <Globe className="w-3.5 h-3.5 text-amber-400" />
+                    <span>Visit ↗</span>
+                  </a>
+                </div>
+              </div>
+            ))}
         </div>
       </div>
 
@@ -329,12 +553,12 @@ export const RidingSchool = () => {
                   Your trial request for <strong>{selectedProgram.title}</strong> is <strong>APPROVED</strong>! Your course curriculum, fee structure, and location map link have been automatically delivered to your Email and Dashboard Inbox.
                 </p>
 
-                {/* Hafizabad Stud Farm Location Box */}
+                {/* Lahore Stud Farm Location Box */}
                 <div className="p-3.5 bg-white rounded-xl border border-slate-200 text-left text-xs space-y-1.5 shadow-sm">
                   <p className="font-extrabold text-slate-900 flex items-center gap-1.5">
-                    📍 <span className="text-[#0F172A]">Horse-Square Hafizabad Stud Farm & Riding Academy</span>
+                    📍 <span className="text-[#0F172A]">Horse-Square Lahore Stud Farm & Riding Academy</span>
                   </p>
-                  <p className="text-[11px] text-slate-600 font-medium">Hafizabad Stud Farm Complex, Hafizabad, Punjab, Pakistan</p>
+                  <p className="text-[11px] text-slate-600 font-medium">Lahore Stud Farm Complex, Lahore, Punjab, Pakistan</p>
                   <a
                     href="https://maps.app.goo.gl/6RSSd7M6WTG8r6Qy6"
                     target="_blank"

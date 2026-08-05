@@ -143,31 +143,29 @@ export const Auction = () => {
   };
 
   return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 animate-fade-up space-y-8">
+    <div className="max-w-6xl mx-auto px-4 py-8 space-y-10 animate-fade-up">
 
-      {/* Top Luxury Banner Header */}
-      <div className="bg-gradient-to-r from-[#0B0F19] via-[#0F172A] to-[#1E293B] rounded-3xl p-8 sm:p-10 text-white shadow-2xl border border-slate-800 relative overflow-hidden">
-        {/* Ambient Glow background */}
-        <div className="absolute top-0 right-0 w-96 h-96 bg-amber-500/10 rounded-full blur-3xl pointer-events-none"></div>
-
+      {/* Banner */}
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
           <div className="space-y-2">
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-[#D4AF37]/10 text-[#D4AF37] border border-[#D4AF37]/30 rounded-full text-[10px] font-extrabold uppercase tracking-widest">
-              <Sparkles className="w-3.5 h-3.5 text-[#D4AF37]" /> High-Stakes Verified Bidding
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
+              <Sparkles className="w-3.5 h-3.5 text-amber-400" /> High-Stakes Verified Bidding
             </span>
-            <h1 className="text-3xl sm:text-4xl font-black tracking-tight text-white flex items-center gap-3">
-              <Gavel className="w-8 h-8 text-[#D4AF37]" /> Live Equine Auctions
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+              Live Equine Auctions
             </h1>
-            <p className="text-slate-300 text-xs sm:text-sm font-normal max-w-2xl leading-relaxed">
+            <p className="text-slate-300 text-sm max-w-2xl font-light">
               Participate in verified, escrow-protected bidding for Pakistan's premier Thoroughbreds, Arabian, and Nukra champion horses.
             </p>
           </div>
 
-          <div className="p-4 bg-slate-900/90 rounded-2xl border border-slate-800 text-right shrink-0 flex items-center gap-3 shadow-md backdrop-blur-md">
-            <span className="w-3 h-3 rounded-full bg-emerald-400 animate-ping"></span>
+          <div className="p-3.5 bg-slate-900/90 rounded-2xl border border-slate-800 text-right shrink-0 flex items-center gap-3 shadow-md backdrop-blur-md">
+            <span className="w-2.5 h-2.5 rounded-full bg-emerald-400 animate-ping"></span>
             <div>
               <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Live Auction Status</span>
-              <span className="text-xs font-black text-[#D4AF37]">Bidding Active</span>
+              <span className="text-xs font-black text-amber-400">Bidding Active</span>
             </div>
           </div>
         </div>
@@ -243,7 +241,7 @@ export const Auction = () => {
             <span className="text-[10px] font-extrabold text-[#D4AF37] uppercase tracking-wider block">
               LIST YOUR HORSE FOR AUCTION
             </span>
-            <h4 className="font-black text-base text-white">Have a Premium Stallion to Auction?</h4>
+            <h4 className="font-black text-base text-white">Have a Premium Stallion or Mare to Auction?</h4>
             <p className="text-xs text-slate-300 font-normal leading-relaxed">
               Submit your stallion or mare for admin approval to feature in next week's live auction.
             </p>

@@ -226,7 +226,7 @@ export const Footer = () => {
                     <div className="w-7 h-7 rounded-lg bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] shrink-0 mt-0.5">
                       <MapPin className="w-3.5 h-3.5" />
                     </div>
-                    <span>Hafizabad, Punjab, Pakistan</span>
+                    <span>Lahore, Punjab, Pakistan</span>
                   </div>
                 </li>
               </ul>

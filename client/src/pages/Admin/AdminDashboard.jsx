@@ -996,7 +996,45 @@ export const AdminDashboard = () => {
                         <td className="p-3 font-bold text-slate-900">{b.requesterName || b.mareOwnerName || 'Owner'}</td>
                         <td className="p-3 font-semibold text-slate-700">{b.breedingHorse?.name || b.studName || b.preferredBreed || 'Selected Stud'}</td>
                         <td className="p-3 text-slate-600">{b.phone}</td>
-                        <td className="p-3 text-slate-600 max-w-xs truncate text-[11px]" title={b.details}>{b.details || b.ownHorseName || '-'}</td>
+                        <td className="p-3 text-slate-600 min-w-[320px]">
+                          {(() => {
+                            const detailsStr = b.details || b.ownHorseName || '';
+                            if (!detailsStr) return <span className="text-slate-400 font-medium">-</span>;
+                            if (detailsStr.includes('|')) {
+                              const parts = detailsStr.split('|').map(p => p.trim()).filter(Boolean);
+                              return (
+                                <div className="bg-slate-50/90 p-2.5 rounded-2xl border border-slate-200/80 shadow-2xs space-y-1.5 max-w-md">
+                                  <div className="flex flex-wrap gap-1.5">
+                                    {parts.map((part, idx) => {
+                                      const colonIdx = part.indexOf(':');
+                                      if (colonIdx !== -1) {
+                                        const key = part.slice(0, colonIdx).trim();
+                                        const val = part.slice(colonIdx + 1).trim();
+                                        return (
+                                          <span
+                                            key={idx}
+                                            className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-slate-200/90 text-[11px] shadow-2xs"
+                                          >
+                                            <span className="font-extrabold text-slate-500 uppercase text-[9.5px] tracking-wider">{key}:</span>
+                                            <span className="font-black text-slate-900">{val}</span>
+                                          </span>
+                                        );
+                                      }
+                                      return (
+                                        <span key={idx} className="text-xs text-slate-700 font-medium">{part}</span>
+                                      );
+                                    })}
+                                  </div>
+                                </div>
+                              );
+                            }
+                            return (
+                              <div className="bg-slate-50 p-2.5 rounded-xl border border-slate-200 text-xs text-slate-800 font-medium whitespace-normal leading-relaxed">
+                                {detailsStr}
+                              </div>
+                            );
+                          })()}
+                        </td>
                         <td className="p-3">
                           <span className={getStatusBadgeClass(b.status)}>
                             {b.status}

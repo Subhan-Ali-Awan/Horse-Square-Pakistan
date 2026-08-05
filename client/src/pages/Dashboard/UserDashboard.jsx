@@ -557,7 +557,7 @@ export const UserDashboard = () => {
               </div>
 
               {/* Quick Stats Grid with Liquid Glass Cards */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-5">
                 <div className="liquid-glass-card rounded-3xl p-5 flex items-center gap-4 liquid-glass-sheen">
                   <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/15 text-[#C9A227] border border-[#D4AF37]/30 flex items-center justify-center shrink-0 shadow-sm">
                     <Package className="w-5 h-5" />
@@ -587,6 +587,71 @@ export const UserDashboard = () => {
                       )}
                     </span>
                     <p className="text-[11px] text-slate-500 font-black uppercase tracking-wider mt-0.5">Auction Bids</p>
+                  </div>
+                </div>
+
+                {/* Breeding Requests Counter Widget with Pending & Approved live buttons */}
+                <div className="liquid-glass-card rounded-3xl p-5 flex flex-col justify-between gap-3 liquid-glass-sheen relative overflow-hidden group">
+                  <div
+                    onClick={() => {
+                      setActiveTab('breeding');
+                      setBreedingSubTab('requests');
+                    }}
+                    className="flex items-center gap-3.5 cursor-pointer"
+                  >
+                    <div className="w-12 h-12 rounded-2xl bg-purple-500/15 text-purple-600 border border-purple-400/30 flex items-center justify-center shrink-0 group-hover:scale-110 transition duration-300 shadow-sm">
+                      <Dna className="w-5 h-5 text-purple-600" />
+                    </div>
+                    <div>
+                      <span className="text-2xl font-black text-slate-800 flex items-center gap-1.5">
+                        {loading ? (
+                          <span className="inline-block w-4 h-4 border-2 border-slate-300 border-t-slate-800 rounded-full animate-spin"></span>
+                        ) : (
+                          myBreedingRequests.length
+                        )}
+                        <span className="text-[9px] bg-purple-500/20 text-purple-900 border border-purple-400/40 px-1.5 py-0.5 rounded-full font-extrabold">Live</span>
+                      </span>
+                      <p className="text-[11px] text-slate-500 font-black uppercase tracking-wider mt-0.5">Breeding Requests</p>
+                    </div>
+                  </div>
+
+                  {/* Sub buttons with live counts for Pending and Approved */}
+                  <div className="flex items-center gap-2 pt-2 border-t border-slate-200/60">
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveTab('breeding');
+                        setBreedingSubTab('requests');
+                      }}
+                      className="flex-1 py-1 px-2 bg-amber-50 hover:bg-amber-100 border border-amber-200/80 rounded-xl flex items-center justify-between transition cursor-pointer"
+                      title="View Pending Requests"
+                    >
+                      <span className="text-[10px] font-extrabold text-amber-800 flex items-center gap-1">
+                        <Clock className="w-3 h-3 text-amber-600" /> Pending
+                      </span>
+                      <span className="text-[11px] font-black text-amber-900 bg-amber-200/60 px-1.5 py-0.2 rounded-md">
+                        {myBreedingRequests.filter(r => r.status === 'pending' || !r.status).length}
+                      </span>
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setActiveTab('breeding');
+                        setBreedingSubTab('requests');
+                      }}
+                      className="flex-1 py-1 px-2 bg-emerald-50 hover:bg-emerald-100 border border-emerald-200/80 rounded-xl flex items-center justify-between transition cursor-pointer"
+                      title="View Approved Requests"
+                    >
+                      <span className="text-[10px] font-extrabold text-emerald-800 flex items-center gap-1">
+                        <CheckCircle2 className="w-3 h-3 text-emerald-600" /> Approved
+                      </span>
+                      <span className="text-[11px] font-black text-emerald-900 bg-emerald-200/60 px-1.5 py-0.2 rounded-md">
+                        {myBreedingRequests.filter(r => r.status === 'approved' || r.status === 'contacted').length}
+                      </span>
+                    </button>
                   </div>
                 </div>
 
@@ -1136,9 +1201,44 @@ export const UserDashboard = () => {
                                 </span>
                                 <span className={getStatusBadge(req.status)}>{req.status}</span>
                               </div>
-                              <p className="text-xs text-slate-600 leading-relaxed font-normal">
-                                <strong>Mare Details:</strong> {req.details || req.ownHorseName || 'Not specified'}
-                              </p>
+                              {(() => {
+                                const detailsStr = req.details || req.ownHorseName || '';
+                                if (!detailsStr) return null;
+                                if (detailsStr.includes('|')) {
+                                  const parts = detailsStr.split('|').map(p => p.trim()).filter(Boolean);
+                                  return (
+                                    <div className="bg-slate-50 p-2.5 rounded-2xl border border-slate-200/80 my-1">
+                                      <span className="text-[10px] font-extrabold uppercase tracking-wider text-slate-400 block mb-1.5">Mare Details & Pedigree</span>
+                                      <div className="flex flex-wrap gap-1.5">
+                                        {parts.map((part, idx) => {
+                                          const colonIdx = part.indexOf(':');
+                                          if (colonIdx !== -1) {
+                                            const key = part.slice(0, colonIdx).trim();
+                                            const val = part.slice(colonIdx + 1).trim();
+                                            return (
+                                              <span
+                                                key={idx}
+                                                className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white border border-slate-200/90 text-[11px] shadow-2xs"
+                                              >
+                                                <span className="font-extrabold text-slate-500 uppercase text-[9.5px] tracking-wider">{key}:</span>
+                                                <span className="font-black text-slate-900">{val}</span>
+                                              </span>
+                                            );
+                                          }
+                                          return (
+                                            <span key={idx} className="text-xs text-slate-700 font-medium">{part}</span>
+                                          );
+                                        })}
+                                      </div>
+                                    </div>
+                                  );
+                                }
+                                return (
+                                  <p className="text-xs text-slate-600 leading-relaxed font-normal">
+                                    <strong>Mare Details:</strong> {detailsStr}
+                                  </p>
+                                );
+                              })()}
                               <div className="flex items-center gap-3 text-[10px] text-slate-400 font-medium">
                                 <span>📅 {new Date(req.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
                                 <span>•</span>

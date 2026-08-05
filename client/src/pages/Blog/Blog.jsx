@@ -149,8 +149,8 @@ export const Blog = () => {
               key={category}
               onClick={() => setSelectedCategory(category)}
               className={`px-4 py-2 rounded-xl text-xs sm:text-sm font-bold transition cursor-pointer ${selectedCategory === category
-                  ? 'bg-[#D4AF37] text-slate-900 shadow-md shadow-amber-500/10'
-                  : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800'
+                ? 'bg-[#D4AF37] text-slate-900 shadow-md shadow-amber-500/10'
+                : 'bg-slate-50 text-slate-500 hover:bg-slate-100 hover:text-slate-800'
                 }`}
             >
               {category}
