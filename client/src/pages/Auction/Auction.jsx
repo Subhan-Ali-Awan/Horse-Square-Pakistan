@@ -19,15 +19,30 @@ export const Auction = () => {
 
   const sampleAuctions = [
     {
+      _id: 'auc_sher_dil',
+      horseName: 'Sher-Dil (Stallion)',
+      currentBid: 8600000,
+      startingBid: 5000000,
+      endTime: new Date(Date.now() + 86400000 * 3).toISOString(),
+      status: 'live',
+      breed: 'Local / Desi',
+      location: 'Faisalabad Stud',
+      imageUrl: '/uploads/media__1786131562576.jpg',
+      bids: [
+        { bidderName: 'Chaudhry Hammad', amount: 8600000, time: '20 mins ago' },
+        { bidderName: 'Rana Usman', amount: 7500000, time: '2 hours ago' }
+      ]
+    },
+    {
       _id: 'auc1',
-      horseName: 'Shahzadi (Royal Thoroughbred)',
+      horseName: 'Striker',
       currentBid: 3850000,
       startingBid: 2000000,
       endTime: new Date(Date.now() + 86400000 * 2).toISOString(),
       status: 'live',
       breed: 'Thoroughbred',
       location: 'Lahore Race Club',
-      imageUrl: 'https://images.unsplash.com/photo-1593113630400-ea4288922497?auto=format&fit=crop&q=80&w=600',
+      imageUrl: '/uploads/media__1786121064346.jpg',
       bids: [
         { bidderName: 'Malik Usman', amount: 3850000, time: '10 mins ago' },
         { bidderName: 'Chaudhry Bilal', amount: 3500000, time: '1 hour ago' },

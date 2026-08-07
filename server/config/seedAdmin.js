@@ -73,18 +73,25 @@ async function seedMockData(adminId) {
     if (existingHorses.length === 0) {
       await Horse.create([
         {
-          name: "Shahzadi (Royal Thoroughbred)",
+          name: "Striker",
           breed: "Thoroughbred",
           price: 3500000,
           location: "Lahore",
-          sellerName: "Super Admin",
-          phone: "+923000000000",
-          description: "Beautiful royal thoroughbred stallion with championship lineage.",
+          sellerName: "Malik Arsalan",
+          phone: "03006004294",
+          description: "Thoroughbred  bloodline horse specially for Polo, Race cattel/ horse show purposes beautiful neck with stronge legs it is quite Gentle as compare to Desi Bred",
           status: "approved",
-          images: ["https://images.unsplash.com/photo-1621993202323-f438eec934ff?auto=format&fit=crop&q=80&w=600"],
+          sire: "Titan",
+          dam: "lily",
+          images: [
+            "/uploads/media__1786121064346.jpg",
+            "/uploads/media__1786121066306.jpg",
+            "/uploads/media__1786121077858.jpg"
+          ],
+          imageUrl: "/uploads/media__1786121064346.jpg",
           postedBy: adminId,
           age: 5,
-          color: "Chestnut",
+          color: "Brown",
           height: "64 inches",
           spotlight: false
         },
@@ -110,18 +117,24 @@ async function seedMockData(adminId) {
           spotlight: true
         },
         {
-          name: "Thunderbolt (Stallion)",
+          name: "Storm",
           breed: "Thoroughbred",
           price: 2500000,
           location: "Lahore",
-          sellerName: "Malik Shahzad",
-          phone: "+923009876543",
-          description: "Champion bloodline, excellent temperament, fully vaccinated. Top speed record holder at Lahore Turf Club.",
+          sellerName: "Muzamil Hussain",
+          phone: "03005606624",
+          description: "pure brown Thoroughbred for polo race cattel/ horse show purposes beautiful neck with stronge legs and stamina",
           status: "approved",
-          images: ["https://images.unsplash.com/photo-1593113630400-ea4288922497?auto=format&fit=crop&q=80&w=600"],
+          sire: "Crown",
+          dam: "Luminous",
+          images: [
+            "/uploads/media__1786125771563.jpg",
+            "/uploads/media__1786125774118.jpg"
+          ],
+          imageUrl: "/uploads/media__1786125771563.jpg",
           postedBy: adminId,
           age: 4,
-          color: "Dark Bay",
+          color: "Brown",
           height: "66 inches",
           spotlight: true
         },
@@ -168,7 +181,8 @@ async function seedMockData(adminId) {
           phone: "+923021122334",
           description: "Strong bones, highly resilient local stock. Highly trained for Nezabazi tournaments with swift acceleration.",
           status: "approved",
-          images: ["https://images.unsplash.com/photo-1551887196-72e32fad773a?auto=format&fit=crop&q=80&w=600"],
+          images: ["/uploads/rustam_desi_stallion.png"],
+          imageUrl: "/uploads/rustam_desi_stallion.png",
           postedBy: adminId,
           age: 6,
           color: "Bay Brown",
@@ -178,32 +192,46 @@ async function seedMockData(adminId) {
         {
           name: "Sher-Dil (Stallion)",
           breed: "Local / Desi",
-          price: 1500000,
+          price: 8600000,
           location: "Faisalabad",
-          sellerName: "Faisalabad Equine Club",
-          phone: "+923121234567",
-          description: "Exceptional tent pegging speed, very robust hooves. Winner of local village sports cups.",
+          sellerName: "Haseeb Malik",
+          phone: "03213456789",
+          description: "pure brown Straight Ejeypctiob Arabian  bloodline horse specially for race cattel/ horse show purposes beautiful neck with stronge legs it is quite Gentle but also aggressive horse",
           status: "approved",
-          images: ["https://images.unsplash.com/photo-1518895949257-7621c3c786d7?auto=format&fit=crop&q=80&w=600"],
+          sire: "shanshah",
+          dam: "karmawali",
+          images: [
+            "/uploads/media__1786131562576.jpg",
+            "/uploads/media__1786131575185.jpg",
+            "/uploads/media__1786131578525.jpg"
+          ],
+          imageUrl: "/uploads/media__1786131562576.jpg",
           postedBy: adminId,
           age: 5,
-          color: "Dun (Golden Brown)",
+          color: "Brown",
           height: "63 inches",
-          spotlight: false
+          spotlight: true
         },
         {
-          name: "Eclipse (Stallion)",
+          name: "asbe siraj",
           breed: "Thoroughbred",
           price: 2800000,
           location: "Lahore",
-          sellerName: "Lahore Stud & Riding Club",
-          phone: "+923005556667",
-          description: "Imported bloodline lineage. Perfect confirmation for competitive jumping and turf racing.",
+          sellerName: "Muhammad Ali hussnain",
+          phone: "0314169581",
+          description: "pure black ravi bloodline desi horse specially for race and neza bazi purposes beautiful neck with stronge legs it is quite gentle horse",
           status: "approved",
-          images: ["https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&q=80&w=600"],
+          sire: "kariel",
+          dam: "zahra",
+          images: [
+            "/uploads/media__1786127870979.jpg",
+            "/uploads/media__1786127873212.jpg",
+            "/uploads/media__1786127880468.jpg"
+          ],
+          imageUrl: "/uploads/media__1786127870979.jpg",
           postedBy: adminId,
           age: 5,
-          color: "Jet Black",
+          color: "brown and white",
           height: "68 inches",
           spotlight: true
         },
@@ -212,14 +240,17 @@ async function seedMockData(adminId) {
           breed: "Arabian",
           price: 2100000,
           location: "Multan",
-          sellerName: "Multan Stud Farms",
-          phone: "+923061122334",
-          description: "Extremely elegant purebred Arabian mare. Exceptional stamina, trained for endurance racing.",
+          sellerName: "Ali Ahmad",
+          phone: "03123456789",
+          description: "pure white Straight Ejeypctiob Arabian  bloodline horse specially for long race in deserts horse show purposes beautiful neck with stronge legs it is quite Gentle but also aggressive horse with the best stamina from top bred of horses in world",
           status: "approved",
-          images: ["https://images.unsplash.com/photo-1498575637358-821023f27355?auto=format&fit=crop&q=80&w=600"],
+          sire: "badar",
+          dam: "salima",
+          images: ["/uploads/media__1786130581577.jpg"],
+          imageUrl: "/uploads/media__1786130581577.jpg",
           postedBy: adminId,
           age: 4,
-          color: "Chestnut",
+          color: "White",
           height: "60 inches",
           spotlight: false
         },
@@ -381,11 +412,11 @@ async function seedMockData(adminId) {
     if (existingAuctions.length === 0) {
       await Auction.create([
         {
-          horseName: "Shahzadi (Royal Thoroughbred)",
+          horseName: "Striker",
           breed: "Thoroughbred",
           location: "Lahore",
-          sellerName: "Super Admin",
-          image: "https://images.unsplash.com/photo-1621993202323-f438eec934ff?auto=format&fit=crop&q=80&w=600",
+          sellerName: "Malik Arsalan",
+          image: "/uploads/media__1786121064346.jpg",
           startingBid: 2000000,
           currentBid: 3500000,
           highestBidder: "Malik Usman",
@@ -412,9 +443,48 @@ async function seedMockData(adminId) {
             { bidderName: "Rana Hammad", amount: 4200000 }
           ],
           createdBy: adminId,
+        },
+        {
+          horseName: "Sher-Dil (Stallion)",
+          breed: "Local / Desi",
+          location: "Faisalabad",
+          sellerName: "Haseeb Malik",
+          image: "/uploads/media__1786131562576.jpg",
+          startingBid: 5000000,
+          currentBid: 8600000,
+          highestBidder: "Chaudhry Hammad",
+          endTime: new Date(Date.now() + 72 * 60 * 60 * 1000),
+          status: "live",
+          bids: [
+            { bidderName: "Rana Usman", amount: 7500000 },
+            { bidderName: "Chaudhry Hammad", amount: 8600000 }
+          ],
+          createdBy: adminId,
         }
       ]);
       console.log("🔨 Mock auctions seeded.");
+    }
+
+    // 3. Seed Breeding Horses if empty
+    const { BreedingHorse } = require("../models/Breeding");
+    const existingBreeding = await BreedingHorse.find({});
+    if (existingBreeding.length === 0) {
+      await BreedingHorse.create([
+        {
+          name: "Ghulam e murtijz",
+          breed: "Local / Desi",
+          age: 4,
+          location: "Sahiwal Stud Farm",
+          ownerName: "Sajawal",
+          breedingFee: 250000,
+          tag: "Elite bloodline • Active Nezabazi Champion",
+          sire: "Ghulam Muhammad",
+          dam: "Bella",
+          image: "/uploads/media__1784677431875.jpg",
+          status: "available"
+        }
+      ]);
+      console.log("🐎 Mock breeding horses seeded.");
     }
   } catch (error) {
     console.error("Failed to seed mock data:", error.message);

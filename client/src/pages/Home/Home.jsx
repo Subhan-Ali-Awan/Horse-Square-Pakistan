@@ -33,14 +33,14 @@ export const Home = () => {
   const sampleFeaturedHorses = [
     {
       _id: '1',
-      name: 'Thunderbolt (Stallion)',
+      name: 'Storm',
       breed: 'Thoroughbred',
       age: 4,
-      color: 'Dark Bay',
+      color: 'Brown',
       location: 'Lahore',
       price: 2500000,
-      description: 'Champion bloodline, excellent temperament, fully vaccinated. Top speed record holder at Lahore Turf Club.',
-      imageUrl: 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600'
+      description: 'pure brown Thoroughbred for polo race cattel/ horse show purposes beautiful neck with stronge legs and stamina',
+      imageUrl: '/uploads/media__1786125771563.jpg'
     },
     {
       _id: '2',

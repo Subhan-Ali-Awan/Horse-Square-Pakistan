@@ -29,6 +29,17 @@ export const Breeding = () => {
 
   const sampleBreedingHorses = [
     {
+      id: 'b0',
+      name: 'Ghulam e murtijz',
+      breed: 'Local / Desi',
+      studFee: 250000,
+      location: 'Sahiwal Stud Farm',
+      achievements: 'Elite bloodline • Active Nezabazi (tent-pegging) champion',
+      sire: 'Ghulam Muhammad',
+      dam: 'Bella',
+      imageUrl: '/uploads/media__1784677431875.jpg'
+    },
+    {
       id: 'b1',
       name: 'Sufi (Nukra Champion Stallion)',
       breed: 'Local / Desi (Nukra)',
@@ -70,7 +81,7 @@ export const Breeding = () => {
       achievements: 'High Resilient Bloodline • Tent Pegging Specialist',
       sire: 'Ghulam Muhammad',
       dam: 'Bella',
-      imageUrl: 'https://images.unsplash.com/photo-1598974357801-cbca100e65d3?auto=format&fit=crop&q=80&w=600'
+      imageUrl: '/uploads/rustam_desi_stallion.png'
     }
   ];
 
