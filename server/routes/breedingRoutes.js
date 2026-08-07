@@ -9,6 +9,7 @@ const {
   getMyBreedingRequests,
   getBreedingRequests,
   updateBreedingRequestStatus,
+  deleteBreedingRequest,
 } = require("../controllers/breedingController");
 const upload = require("../middleware/upload");
 const { protect, adminOnly } = require("../middleware/auth");
@@ -28,5 +29,8 @@ router.post("/requests", createBreedingRequest);
 // Admin - view & manage requests
 router.get("/requests", protect, adminOnly, getBreedingRequests);
 router.put("/requests/:id", protect, adminOnly, updateBreedingRequestStatus);
+
+// Delete breeding request (User owner or Admin)
+router.delete("/requests/:id", protect, deleteBreedingRequest);
 
 module.exports = router;

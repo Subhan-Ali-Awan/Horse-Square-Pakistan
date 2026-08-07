@@ -12,8 +12,8 @@ const {
   markHorseUnsold,
 } = require("../controllers/adminController");
 const { getAuctions, closeAuction, deleteAuction } = require("../controllers/auctionController");
-const { getBreedingRequests, updateBreedingRequestStatus } = require("../controllers/breedingController");
-const { getInquiries } = require("../controllers/vetController");
+const { getBreedingRequests, updateBreedingRequestStatus, deleteBreedingRequest } = require("../controllers/breedingController");
+const { getInquiries, deleteInquiry } = require("../controllers/vetController");
 const { protect, adminOnly } = require("../middleware/auth");
 
 // every route below requires a logged-in admin
@@ -41,8 +41,10 @@ router.delete("/auctions/:id", deleteAuction);
 // Breeding requests
 router.get("/breeding-requests", getBreedingRequests);
 router.put("/breeding-requests/:id", updateBreedingRequestStatus);
+router.delete("/breeding-requests/:id", deleteBreedingRequest);
 
 // Vet inquiries
 router.get("/vet-inquiries", getInquiries);
+router.delete("/vet-inquiries/:id", deleteInquiry);
 
 module.exports = router;

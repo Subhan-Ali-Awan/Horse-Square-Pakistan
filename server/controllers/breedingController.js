@@ -159,3 +159,29 @@ exports.updateBreedingRequestStatus = async (req, res, next) => {
     next(error);
   }
 };
+
+// ===================================================
+// DELETE /api/breeding/requests/:id -> delete a breeding request (Admin or Owner)
+// ===================================================
+exports.deleteBreedingRequest = async (req, res, next) => {
+  try {
+    const request = await BreedingRequest.findById(req.params.id);
+    if (!request) {
+      return res.status(404).json({ success: false, message: "Breeding request not found" });
+    }
+
+    if (
+      req.user.role !== "admin" &&
+      String(request.submittedBy) !== String(req.user._id) &&
+      request.phone !== req.user.phone
+    ) {
+      return res.status(403).json({ success: false, message: "Not authorized to delete this request" });
+    }
+
+    await request.deleteOne();
+    res.status(200).json({ success: true, message: "Breeding request deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+

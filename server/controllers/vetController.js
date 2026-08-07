@@ -170,3 +170,38 @@ exports.getInquiries = async (req, res, next) => {
     next(error);
   }
 };
+
+// ===================================================
+// GET /api/vet/my-inquiries (protected) -> user dashboard view
+// ===================================================
+exports.getMyInquiries = async (req, res, next) => {
+  try {
+    const query = req.user ? { submittedBy: req.user._id } : {};
+    const inquiries = await VetInquiry.find(query).sort({ createdAt: -1 });
+    res.status(200).json({ success: true, count: inquiries.length, data: inquiries });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ===================================================
+// DELETE /api/vet/inquiries/:id -> delete AI Vet inquiry (Admin or Owner)
+// ===================================================
+exports.deleteInquiry = async (req, res, next) => {
+  try {
+    const inquiry = await VetInquiry.findById(req.params.id);
+    if (!inquiry) {
+      return res.status(404).json({ success: false, message: "AI Vet inquiry not found" });
+    }
+
+    if (req.user.role !== "admin" && String(inquiry.submittedBy) !== String(req.user._id)) {
+      return res.status(403).json({ success: false, message: "Not authorized to delete this inquiry" });
+    }
+
+    await inquiry.deleteOne();
+    res.status(200).json({ success: true, message: "AI Vet inquiry deleted successfully" });
+  } catch (error) {
+    next(error);
+  }
+};
+

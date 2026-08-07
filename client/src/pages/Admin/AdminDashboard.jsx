@@ -235,6 +235,24 @@ export const AdminDashboard = () => {
     }
   };
 
+  const handleDeleteBreedingRequest = async (id) => {
+    if (!confirm('Permanently delete this breeding request query?')) return;
+    const res = await fetchWithAuth(`/admin/breeding-requests/${id}`, { method: 'DELETE' });
+    if (res.success) {
+      showToast('Breeding request deleted successfully.');
+      loadTabData();
+    }
+  };
+
+  const handleDeleteVetInquiry = async (id) => {
+    if (!confirm('Permanently delete this AI Vet inquiry record?')) return;
+    const res = await fetchWithAuth(`/admin/vet-inquiries/${id}`, { method: 'DELETE' });
+    if (res.success) {
+      showToast('AI Vet inquiry deleted successfully.');
+      loadTabData();
+    }
+  };
+
   const handleResolveContact = async (id) => {
     const res = await fetchWithAuth(`/contact/${id}`, {
       method: 'PUT',
@@ -1043,15 +1061,21 @@ export const AdminDashboard = () => {
                         <td className="p-3 text-right space-x-1">
                           <button
                             onClick={() => handleUpdateBreedingStatus(b._id, 'approved')}
-                            className="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold rounded text-[10px] transition"
+                            className="px-2 py-1 bg-emerald-50 hover:bg-emerald-100 text-emerald-700 font-bold rounded text-[10px] transition cursor-pointer"
                           >
                             Approve
                           </button>
                           <button
                             onClick={() => handleUpdateBreedingStatus(b._id, 'rejected')}
-                            className="px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded text-[10px] transition"
+                            className="px-2 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 font-bold rounded text-[10px] transition cursor-pointer"
                           >
                             Reject
+                          </button>
+                          <button
+                            onClick={() => handleDeleteBreedingRequest(b._id)}
+                            className="px-2 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded text-[10px] transition cursor-pointer"
+                          >
+                            Delete
                           </button>
                         </td>
                       </tr>
@@ -1074,16 +1098,28 @@ export const AdminDashboard = () => {
                   <thead className="bg-slate-50 text-slate-500 font-extrabold uppercase tracking-wider text-[10px] border-b">
                     <tr>
                       <th className="p-3">Date</th>
-                      <th className="p-3">User Symptoms</th>
-                      <th className="p-3">Diagnosis</th>
+                      <th className="p-3">Horse / Symptoms</th>
+                      <th className="p-3">AI Diagnosis & Advice</th>
+                      <th className="p-3 text-right">Actions</th>
                     </tr>
                   </thead>
                   <tbody className="divide-y divide-slate-100">
                     {vetList.map((v) => (
                       <tr key={v._id} className="hover:bg-slate-50/80 transition">
                         <td className="p-3 font-semibold text-slate-500">{new Date(v.createdAt).toLocaleDateString()}</td>
-                        <td className="p-3 font-bold text-slate-900 max-w-xs truncate">{v.symptoms}</td>
-                        <td className="p-3 text-slate-600 max-w-md truncate">{v.diagnosis}</td>
+                        <td className="p-3 font-bold text-slate-900 max-w-xs">
+                          <div>{v.horseName || 'My Horse'}</div>
+                          <div className="text-[11px] font-semibold text-amber-700 uppercase tracking-wide mt-0.5">{v.symptoms || v.symptom || v.details}</div>
+                        </td>
+                        <td className="p-3 text-slate-600 max-w-md text-xs leading-relaxed font-normal">{v.diagnosis || v.aiResult}</td>
+                        <td className="p-3 text-right">
+                          <button
+                            onClick={() => handleDeleteVetInquiry(v._id)}
+                            className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 font-bold rounded-lg text-[10px] transition cursor-pointer"
+                          >
+                            Delete
+                          </button>
+                        </td>
                       </tr>
                     ))}
                   </tbody>

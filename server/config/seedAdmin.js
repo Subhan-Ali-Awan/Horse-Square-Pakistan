@@ -224,19 +224,25 @@ async function seedMockData(adminId) {
           spotlight: false
         },
         {
-          name: "Dil-Sikandar (Stallion)",
+          name: "Atish",
           breed: "Local / Desi",
           price: 3400000,
           location: "Sargodha",
-          sellerName: "Chaudhary Zafar",
-          phone: "+923001234567",
-          description: "Elite Nukra lineage. High-stepping gait, trained for local tent pegging (Nezabazi) and dance tournaments.",
+          sellerName: "Asad zulfiqar",
+          phone: "03398860901",
+          description: "pure black ravi bloodline desi horse specially for race and neza bazi purposes beautiful neck with stronge legs it is quite gentle horse",
           status: "approved",
-          images: ["https://images.unsplash.com/photo-1504593811423-6dd665756598?auto=format&fit=crop&q=80&w=600"],
+          images: [
+            "/uploads/media__1786061291706.jpg",
+            "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=800",
+            "https://images.unsplash.com/photo-1598974357801-cbca100e65d3?auto=format&fit=crop&q=80&w=800"
+          ],
           postedBy: adminId,
           age: 4,
-          color: "Pure Nukra White",
+          color: "Black",
           height: "66 inches",
+          sire: "Jabbar",
+          dam: "Layla",
           spotlight: true
         },
         {
@@ -244,15 +250,20 @@ async function seedMockData(adminId) {
           breed: "Arabian",
           price: 2900000,
           location: "Karachi",
-          sellerName: "Karachi Arabian Stud",
-          phone: "+923337654321",
-          description: "Purebred Arabian stallion with deep chestnut coat and white blaze. Exceptional pedigree and show records.",
+          sellerName: "Usman Cheema",
+          phone: "03399019970",
+          description: "pure brown Straight Ejeypctiob Arabian  bloodline horse specially for race cattel/ horse show purposes beautiful neck with stronge legs it is quite Gentle but also aggressive horse",
           status: "approved",
-          images: ["https://images.unsplash.com/photo-1453847668862-487637052f8a?auto=format&fit=crop&q=80&w=600"],
+          images: [
+            "/uploads/media__1786061837109.jpg",
+            "/uploads/media__1786061863452.jpg"
+          ],
           postedBy: adminId,
           age: 5,
-          color: "Chestnut Red",
+          color: "Brown",
           height: "62 inches",
+          sire: "Badar",
+          dam: "Amira",
           spotlight: true
         },
         {
@@ -287,6 +298,59 @@ async function seedMockData(adminId) {
             sire: "Ghulam Muhammad",
             dam: "Bella",
             images: ["/uploads/media__1784677431875.jpg"]
+          }
+        }
+      );
+      await Horse.updateMany(
+        { $or: [{ name: { $regex: /Dil-Sikandar/i } }, { name: { $regex: /Atish/i } }] },
+        {
+          $set: {
+            name: "Atish",
+            color: "Black",
+            description: "pure black ravi bloodline desi horse specially for race and neza bazi purposes beautiful neck with stronge legs it is quite gentle horse",
+            sire: "Jabbar",
+            dam: "Layla",
+            sellerName: "Asad zulfiqar",
+            phone: "03398860901",
+            images: [
+              "/uploads/media__1786061291706.jpg",
+              "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=800",
+              "https://images.unsplash.com/photo-1598974357801-cbca100e65d3?auto=format&fit=crop&q=80&w=800"
+            ]
+          }
+        }
+      );
+      await Horse.updateMany(
+        { name: { $regex: /Desert Flame/i } },
+        {
+          $set: {
+            color: "Brown",
+            description: "pure brown Straight Ejeypctiob Arabian  bloodline horse specially for race cattel/ horse show purposes beautiful neck with stronge legs it is quite Gentle but also aggressive horse",
+            sire: "Badar",
+            dam: "Amira",
+            sellerName: "Usman Cheema",
+            phone: "03399019970",
+            images: [
+              "/uploads/media__1786061837109.jpg",
+              "/uploads/media__1786061863452.jpg"
+            ]
+          }
+        }
+      );
+      await Horse.updateMany(
+        {
+          $or: [
+            { name: { $regex: /2 user/i } },
+            { name: { $regex: /user2/i } },
+            { name: { $regex: /white cloud/i } },
+            { description: { $regex: /fihaipf/i } },
+            { price: 700001 }
+          ]
+        },
+        {
+          $set: {
+            name: "white cloud",
+            description: "Pure iraqi arabian horse with the aggressive attitude also used for neza bazi from last 1.5 years"
           }
         }
       );

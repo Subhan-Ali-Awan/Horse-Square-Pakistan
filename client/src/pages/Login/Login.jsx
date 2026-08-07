@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Lock, Mail, AlertCircle, ArrowRight, Eye, EyeOff, CheckCircle2, ShieldCheck, Gavel, Stethoscope, Sparkles } from 'lucide-react';
@@ -12,6 +12,11 @@ export const Login = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    setEmail('');
+    setPassword('');
+  }, []);
 
   const { login } = useAuth();
   const navigate = useNavigate();
@@ -153,6 +158,9 @@ export const Login = () => {
             )}
 
             <form onSubmit={handleSubmit} className="space-y-4" autoComplete="off">
+              {/* Fake hidden inputs to capture browser autofill attempts */}
+              <input type="text" name="prevent_autofill_email" className="sr-only opacity-0 absolute -z-50 w-0 h-0" tabIndex={-1} autoComplete="off" readOnly />
+              <input type="password" name="prevent_autofill_password" className="sr-only opacity-0 absolute -z-50 w-0 h-0" tabIndex={-1} autoComplete="off" readOnly />
 
               {/* Email field */}
               <div className="space-y-1">
@@ -187,7 +195,7 @@ export const Login = () => {
                     placeholder="••••••••"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    autoComplete="current-password"
+                    autoComplete="new-password"
                     className="w-full pl-11 pr-11 py-3 border border-slate-200 rounded-2xl bg-white text-sm font-semibold text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-[#D4AF37]/15 shadow-sm transition-all duration-300"
                   />
                   <Lock className="w-5 h-5 text-slate-400 group-focus-within:text-[#D4AF37] absolute left-3.5 top-1/2 -translate-y-1/2 transition-colors duration-300 pointer-events-none" />

@@ -446,11 +446,10 @@ export const RidingSchool = () => {
                 key={c}
                 type="button"
                 onClick={() => setSelectedCityFilter(c)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${
-                  selectedCityFilter === c
+                className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${selectedCityFilter === c
                     ? 'bg-[#0F172A] text-amber-400 shadow-sm'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
-                }`}
+                  }`}
               >
                 {c}
               </button>

@@ -48,6 +48,7 @@ export const UserDashboard = () => {
   const [myHorses, setMyHorses] = useState([]);
   const [myBids, setMyBids] = useState([]);
   const [myQueries, setMyQueries] = useState([]);
+  const [myVetInquiries, setMyVetInquiries] = useState([]);
   const [selectedQueryChat, setSelectedQueryChat] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -157,14 +158,16 @@ export const UserDashboard = () => {
       setLoading(true);
       setError('');
       try {
-        const [horsesData, bidsData, queriesData] = await Promise.all([
+        const [horsesData, bidsData, queriesData, vetData] = await Promise.all([
           fetchWithAuth('/horses/my'),
           fetchWithAuth('/auctions/my-bids'),
           fetchWithAuth('/contact/my'),
+          fetchWithAuth('/vet/my-inquiries'),
         ]);
         if (horsesData && horsesData.success) setMyHorses(horsesData.data);
         if (bidsData && bidsData.success) setMyBids(bidsData.data);
         if (queriesData && queriesData.success) setMyQueries(queriesData.data);
+        if (vetData && vetData.success) setMyVetInquiries(vetData.data);
 
         fetchBreedingData();
       } catch {
@@ -338,6 +341,24 @@ export const UserDashboard = () => {
         setTimeout(() => setQueryMsg(''), 3500);
       } else {
         alert(data?.message || 'Failed to delete query.');
+      }
+    } catch (err) {
+      alert('Server connection error.');
+    }
+  };
+
+  const handleDeleteBreedingRequest = async (requestId) => {
+    if (!window.confirm('Are you sure you want to delete this breeding request query?')) return;
+    try {
+      const data = await fetchWithAuth(`/breeding/requests/${requestId}`, {
+        method: 'DELETE'
+      });
+      if (data && data.success) {
+        setMyBreedingRequests(prev => prev.filter(r => r._id !== requestId));
+        setQueryMsg('🗑️ Breeding request query deleted successfully!');
+        setTimeout(() => setQueryMsg(''), 3500);
+      } else {
+        alert(data?.message || 'Failed to delete breeding request.');
       }
     } catch (err) {
       alert('Server connection error.');
@@ -1246,11 +1267,20 @@ export const UserDashboard = () => {
                               </div>
                             </div>
 
-                            <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-right shrink-0">
-                              <span className="text-[9px] text-slate-400 font-bold uppercase block">Status Info</span>
-                              <span className="text-xs font-extrabold text-slate-800">
-                                {req.status === 'pending' ? '⏳ Under Breeder Review' : req.status === 'contacted' ? '📞 Breeder Contacted' : '✅ Request Closed'}
-                              </span>
+                            <div className="bg-slate-50 p-3 rounded-2xl border border-slate-200 text-right shrink-0 flex flex-col items-end gap-2">
+                              <div>
+                                <span className="text-[9px] text-slate-400 font-bold uppercase block">Status Info</span>
+                                <span className="text-xs font-extrabold text-slate-800">
+                                  {req.status === 'pending' ? '⏳ Under Breeder Review' : req.status === 'contacted' ? '📞 Breeder Contacted' : '✅ Request Closed'}
+                                </span>
+                              </div>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteBreedingRequest(req._id)}
+                                className="px-2.5 py-1 bg-rose-50 hover:bg-rose-100 text-rose-700 text-[10px] font-bold rounded-lg border border-rose-200 transition flex items-center gap-1 cursor-pointer"
+                              >
+                                <Trash2 className="w-3 h-3 text-rose-600" /> Delete
+                              </button>
                             </div>
                           </div>
                         ))}

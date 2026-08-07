@@ -247,34 +247,28 @@ export const SellHorse = () => {
             </div>
 
             <div className="space-y-2.5 text-xs font-semibold pt-1">
-              <div className={`flex items-center gap-3 p-3 rounded-2xl border transition duration-200 ${
-                isHeightValid ? 'bg-emerald-950/40 border-emerald-800/80 text-emerald-300' : 'bg-slate-900/60 border-slate-800 text-slate-400'
-              }`}>
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-                  isHeightValid ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-500'
+              <div className={`flex items-center gap-3 p-3 rounded-2xl border transition duration-200 ${isHeightValid ? 'bg-emerald-950/40 border-emerald-800/80 text-emerald-300' : 'bg-slate-900/60 border-slate-800 text-slate-400'
                 }`}>
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${isHeightValid ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-500'
+                  }`}>
                   {isHeightValid ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <X className="w-3.5 h-3.5" />}
                 </div>
                 <span>Height: 58 inches - 66 inches</span>
               </div>
 
-              <div className={`flex items-center gap-3 p-3 rounded-2xl border transition duration-200 ${
-                isPhoneValid ? 'bg-emerald-950/40 border-emerald-800/80 text-emerald-300' : 'bg-slate-900/60 border-slate-800 text-slate-400'
-              }`}>
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-                  isPhoneValid ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-500'
+              <div className={`flex items-center gap-3 p-3 rounded-2xl border transition duration-200 ${isPhoneValid ? 'bg-emerald-950/40 border-emerald-800/80 text-emerald-300' : 'bg-slate-900/60 border-slate-800 text-slate-400'
                 }`}>
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${isPhoneValid ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-500'
+                  }`}>
                   {isPhoneValid ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <X className="w-3.5 h-3.5" />}
                 </div>
                 <span>Seller Phone: 11-Digit Pak Mobile (03XXXXXXXXX)</span>
               </div>
 
-              <div className={`flex items-center gap-3 p-3 rounded-2xl border transition duration-200 ${
-                hasPhoto ? 'bg-emerald-950/40 border-emerald-800/80 text-emerald-300' : 'bg-slate-900/60 border-slate-800 text-slate-400'
-              }`}>
-                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${
-                  hasPhoto ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-500'
+              <div className={`flex items-center gap-3 p-3 rounded-2xl border transition duration-200 ${hasPhoto ? 'bg-emerald-950/40 border-emerald-800/80 text-emerald-300' : 'bg-slate-900/60 border-slate-800 text-slate-400'
                 }`}>
+                <div className={`w-5 h-5 rounded-full flex items-center justify-center shrink-0 ${hasPhoto ? 'bg-emerald-500 text-slate-950' : 'bg-slate-800 text-slate-500'
+                  }`}>
                   {hasPhoto ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <X className="w-3.5 h-3.5" />}
                 </div>
                 <span>Media: At least 1 Horse Photo attached</span>
@@ -401,11 +395,10 @@ export const SellHorse = () => {
                   <button
                     type="button"
                     onClick={() => setListingType('marketplace')}
-                    className={`p-4.5 rounded-2xl border text-left transition duration-300 cursor-pointer ${
-                      listingType === 'marketplace'
+                    className={`p-4.5 rounded-2xl border text-left transition duration-300 cursor-pointer ${listingType === 'marketplace'
                         ? 'bg-amber-500/20 border-[#D4AF37] ring-2 ring-[#D4AF37]/50 text-white shadow-[0_0_20px_rgba(212,175,55,0.25)]'
                         : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:border-slate-700'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="font-black text-sm text-white flex items-center gap-2">
@@ -422,11 +415,10 @@ export const SellHorse = () => {
                   <button
                     type="button"
                     onClick={() => setListingType('auction')}
-                    className={`p-4.5 rounded-2xl border text-left transition duration-300 cursor-pointer ${
-                      listingType === 'auction'
+                    className={`p-4.5 rounded-2xl border text-left transition duration-300 cursor-pointer ${listingType === 'auction'
                         ? 'bg-amber-500/20 border-[#D4AF37] ring-2 ring-[#D4AF37]/50 text-white shadow-[0_0_20px_rgba(212,175,55,0.25)]'
                         : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:border-slate-700'
-                    }`}
+                      }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
                       <span className="font-black text-sm text-white flex items-center gap-2">
@@ -491,11 +483,10 @@ export const SellHorse = () => {
                       placeholder="e.g. 1500000"
                       value={formData.price}
                       onChange={handleChange}
-                      className={`w-full p-3.5 border rounded-xl text-sm font-bold transition focus:bg-white focus:outline-none ${
-                        formData.price && !isPriceValid 
-                          ? 'border-rose-400 bg-rose-50 text-rose-900' 
+                      className={`w-full p-3.5 border rounded-xl text-sm font-bold transition focus:bg-white focus:outline-none ${formData.price && !isPriceValid
+                          ? 'border-rose-400 bg-rose-50 text-rose-900'
                           : 'border-slate-300 bg-slate-50 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 text-slate-900'
-                      }`}
+                        }`}
                     />
                   </div>
 
@@ -598,11 +589,10 @@ export const SellHorse = () => {
                       placeholder="03001234567"
                       value={formData.sellerPhone}
                       onChange={handleChange}
-                      className={`w-full p-3.5 border rounded-xl text-sm font-bold transition focus:bg-white focus:outline-none ${
-                        formData.sellerPhone && !isPhoneValid 
-                          ? 'border-rose-400 bg-rose-50 text-rose-900' 
+                      className={`w-full p-3.5 border rounded-xl text-sm font-bold transition focus:bg-white focus:outline-none ${formData.sellerPhone && !isPhoneValid
+                          ? 'border-rose-400 bg-rose-50 text-rose-900'
                           : 'border-slate-300 bg-slate-50 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 text-slate-900'
-                      }`}
+                        }`}
                     />
                   </div>
                 </div>
