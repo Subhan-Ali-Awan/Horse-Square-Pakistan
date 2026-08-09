@@ -4,17 +4,19 @@ const mongoose = require("mongoose");
 const breedingHorseSchema = new mongoose.Schema(
   {
     name: { type: String, required: true },
-    breed: {
-      type: String,
-      enum: ["Arabian", "Local / Desi", "Thoroughbred"],
-      required: true,
-    },
-    age: { type: Number, required: true },
+    breed: { type: String, required: true },
+    age: { type: Number, default: 5 },
     location: { type: String, required: true },
     ownerName: { type: String, required: true },
+    ownerPhone: { type: String },
     breedingFee: { type: Number, required: true },
     tag: { type: String }, // e.g. "Champion Bloodline"
+    sire: { type: String },
+    dam: { type: String },
     image: { type: String },
+    imageUrl: { type: String },
+    images: [{ type: String }],
+    postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
     status: {
       type: String,
       enum: ["available", "unavailable"],

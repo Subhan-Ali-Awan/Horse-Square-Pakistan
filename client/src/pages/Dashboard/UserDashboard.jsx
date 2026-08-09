@@ -79,17 +79,6 @@ export const UserDashboard = () => {
 
   const sampleBreedingHorses = [
     {
-      id: 'b1',
-      name: 'Sufi (Nukra Champion Stallion)',
-      breed: 'Local / Desi',
-      breedingFee: 250000,
-      location: 'Sargodha Stud Farm',
-      tag: 'Pure White (Pink Skin) • Active Nezabazi & Dancing Champion',
-      sire: 'Shah-Jahan',
-      dam: 'White Beauty',
-      image: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&q=80&w=600'
-    },
-    {
       id: 'b2',
       name: 'Al-Burraq (Arabian Champion)',
       breed: 'Arabian',
@@ -789,9 +778,9 @@ export const UserDashboard = () => {
                       <div className="p-3 bg-white/70 rounded-2xl border border-slate-200/80 flex items-center justify-between text-xs font-semibold">
                         <div className="flex items-center gap-2.5">
                           <span className="w-2 h-2 rounded-full bg-[#D4AF37]" />
-                          <span className="text-slate-800 font-extrabold">Sufi (Nukra Champion)</span>
+                          <span className="text-slate-800 font-extrabold">Rustam (Desi Stud Stallion)</span>
                         </div>
-                        <span className="text-[#C9A227] font-black">Fee: Rs. 250,000</span>
+                        <span className="text-[#C9A227] font-black">Fee: Rs. 160,000</span>
                       </div>
                       <div className="p-3 bg-white/70 rounded-2xl border border-slate-200/80 flex items-center justify-between text-xs font-semibold">
                         <div className="flex items-center gap-2.5">
@@ -1328,21 +1317,21 @@ export const UserDashboard = () => {
                   {[
                     {
                       title: 'Beginner Riding Foundation',
-                      fee: 'Rs. 35,000 / month',
+                      fee: 'Rs. 24,000 / month',
                       duration: '12 Sessions (3x per week)',
                       desc: 'Master mounting posture, rein control, trot rhythm, saddle balance, and essential horse safety fundamentals.',
                       level: 'Beginner'
                     },
                     {
                       title: 'Intermediate Canter & Jumping',
-                      fee: 'Rs. 45,000 / month',
+                      fee: 'Rs. 28,000 / month',
                       duration: '12 Sessions (3x per week)',
                       desc: 'Master smooth canter transitions, obstacle clearance, trail navigation, and arena control under certified coaches.',
                       level: 'Intermediate'
                     },
                     {
                       title: 'Master Polo & Endurance Riding',
-                      fee: 'Rs. 65,000 / month',
+                      fee: 'Rs. 35,000 / month',
                       duration: '16 Intensive Sessions',
                       desc: 'Specialized polo mallet maneuvers, high-speed gallop balance, and endurance trail conditioning for competitive events.',
                       level: 'Advanced'

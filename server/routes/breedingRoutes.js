@@ -16,7 +16,7 @@ const { protect, adminOnly } = require("../middleware/auth");
 
 // Public - breeding horse cards
 router.get("/horses", getBreedingHorses);
-router.post("/horses", protect, adminOnly, upload.single("image"), createBreedingHorse);
+router.post("/horses", protect, upload.array("images", 5), createBreedingHorse);
 router.put("/horses/:id", protect, adminOnly, updateBreedingHorse);
 router.delete("/horses/:id", protect, adminOnly, deleteBreedingHorse);
 

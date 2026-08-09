@@ -223,7 +223,7 @@ const { RidingTrial } = require("../models/Misc");
 
 const COURSE_BREAKDOWN = {
   "Beginner Riding Foundation": {
-    fee: "Rs. 35,000 PKR",
+    fee: "Rs. 24,000 PKR",
     duration: "4 Weeks (12 Sessions)",
     badge: "Beginner Level",
     curriculum: [
@@ -234,7 +234,7 @@ const COURSE_BREAKDOWN = {
     ]
   },
   "Intermediate Horsemanship & Canter Control": {
-    fee: "Rs. 52,000 PKR",
+    fee: "Rs. 28,000 PKR",
     duration: "6 Weeks (18 Sessions)",
     badge: "Intermediate Level",
     curriculum: [
@@ -244,7 +244,7 @@ const COURSE_BREAKDOWN = {
     ]
   },
   "Advanced Equestrian Tent Pegging": {
-    fee: "Rs. 75,000 PKR",
+    fee: "Rs. 35,000 PKR",
     duration: "8 Weeks (24 Sessions)",
     badge: "Advanced Level",
     curriculum: [
@@ -304,7 +304,7 @@ router.post("/riding-trial", async (req, res, next) => {
     }
 
     const courseInfo = COURSE_BREAKDOWN[courseTitle] || {
-      fee: "Rs. 35,000 PKR",
+      fee: "Rs. 24,000 PKR",
       duration: "Standard Duration",
       badge: ridingLevel || "Beginner",
       curriculum: [
@@ -402,7 +402,7 @@ router.put("/riding-trial/:id/approve", protect, adminOnly, async (req, res, nex
     if (!trial) return res.status(404).json({ success: false, message: "Trial request not found" });
 
     const courseInfo = COURSE_BREAKDOWN[trial.courseTitle] || {
-      fee: "Rs. 35,000 PKR",
+      fee: "Rs. 24,000 PKR",
       duration: "Standard Duration",
       badge: trial.ridingLevel,
       curriculum: [
@@ -479,7 +479,7 @@ router.post("/riding-trial/:id/resend-email", protect, adminOnly, async (req, re
     if (!trial) return res.status(404).json({ success: false, message: "Trial request not found" });
 
     const courseInfo = COURSE_BREAKDOWN[trial.courseTitle] || {
-      fee: "Rs. 35,000 PKR",
+      fee: "Rs. 24,000 PKR",
       duration: "Standard Duration",
       badge: trial.ridingLevel,
       curriculum: [

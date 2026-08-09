@@ -1,4 +1,5 @@
 require("dotenv").config();
+require("./copy_image");
 const express = require("express");
 const cors = require("cors");
 const morgan = require("morgan");
@@ -9,14 +10,23 @@ const seedAdmin = require("./config/seedAdmin");
 
 const app = express();
 
-// ---------- Middleware ----------
-app.use(cors()); // allows your frontend HTML files (opened via file:// or any port) to call this API
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
-app.use(morgan("dev")); // logs every request to the console - helpful while developing/demoing
+const fs = require("fs");
+const whiteStallionSrc = "C:/Users/Acer/.gemini/antigravity-ide/brain/e0ae4ece-4960-4040-b4d1-51dbe6a92856/rustam_white_stallion_1786271996920.png";
+try {
+  if (fs.existsSync(whiteStallionSrc)) {
+    const target1 = path.join(__dirname, "uploads", "rustam_desi_stallion.png");
+    const target2 = path.join(__dirname, "..", "client", "public", "uploads", "rustam_desi_stallion.png");
+    fs.copyFileSync(whiteStallionSrc, target1);
+    fs.copyFileSync(whiteStallionSrc, target2);
+    console.log("📸 Synchronized White Stallion Rustam Image to uploads!");
+  }
+} catch (err) {
+  console.error("Failed to copy white stallion image:", err);
+}
 
 // Serve uploaded images statically, e.g. http://localhost:5000/uploads/abc.jpg
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+app.use("/uploads", express.static("C:/Users/Acer/.gemini/antigravity-ide/brain/e0ae4ece-4960-4040-b4d1-51dbe6a92856"));
 app.use("/uploads", express.static("C:/Users/Acer/.gemini/antigravity-ide/brain/34719924-1522-4590-9018-403342db6774"));
 app.use("/uploads", express.static("C:/Users/Acer/.gemini/antigravity-ide/brain/21a51727-f483-4294-802a-34ec284f2761"));
 app.use("/uploads", express.static("C:/Users/Acer/.gemini/antigravity-ide/brain/a0eb1cf8-0b87-4cc6-a5a3-d942d01e9d56"));

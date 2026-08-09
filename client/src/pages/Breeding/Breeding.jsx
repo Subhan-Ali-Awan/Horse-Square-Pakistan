@@ -40,17 +40,6 @@ export const Breeding = () => {
       imageUrl: '/uploads/media__1784677431875.jpg'
     },
     {
-      id: 'b1',
-      name: 'Sufi (Nukra Champion Stallion)',
-      breed: 'Local / Desi (Nukra)',
-      studFee: 250000,
-      location: 'Sargodha Stud Farm',
-      achievements: 'Pure White (Pink Skin) • Active Nezabazi & Dancing Champion',
-      sire: 'Shah-Jahan',
-      dam: 'White Beauty',
-      imageUrl: '/uploads/media__1785445045636.jpg'
-    },
-    {
       id: 'b2',
       name: 'Al-Burraq (Arabian Champion)',
       breed: 'Arabian',

@@ -28,7 +28,7 @@ export const RidingSchool = () => {
       id: 'p1',
       title: 'Beginner Riding Foundation',
       duration: '4 Weeks (12 Sessions)',
-      fee: 'Rs. 35,000',
+      fee: 'Rs. 24,000',
       badge: 'Beginner Level',
       desc: 'Learn mount/dismount balance, basic reins control, posting trot, and grooming fundamentals with certified instructors.'
     },
@@ -36,7 +36,7 @@ export const RidingSchool = () => {
       id: 'p-inter',
       title: 'Intermediate Horsemanship & Canter Control',
       duration: '6 Weeks (18 Sessions)',
-      fee: 'Rs. 52,000',
+      fee: 'Rs. 28,000',
       badge: 'Intermediate Level',
       desc: 'Master smooth canter transitions, trail riding navigation, obstacle handling, saddle balance control, and equestrian safety techniques under professional guidance.'
     },
@@ -44,7 +44,7 @@ export const RidingSchool = () => {
       id: 'p2',
       title: 'Advanced Equestrian Tent Pegging',
       duration: '8 Weeks (24 Sessions)',
-      fee: 'Rs. 75,000',
+      fee: 'Rs. 35,000',
       badge: 'Advanced Level',
       desc: 'Tent Pegging Techniques, course navigation, canter lead changes, and competitive equestrian preparation.'
     }

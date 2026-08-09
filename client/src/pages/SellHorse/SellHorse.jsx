@@ -71,7 +71,8 @@ export const SellHorse = () => {
 
   // Real-time Policy Validation Indicators
   const numPrice = Number(formData.price);
-  const isPriceValid = !isNaN(numPrice) && numPrice > 0;
+  const minPriceLimit = listingType === 'breeding' ? 50000 : 700000;
+  const isPriceValid = !isNaN(numPrice) && numPrice >= minPriceLimit;
 
   let heightInches = 0;
   const hMatch = String(formData.height).match(/\d+/);
@@ -155,6 +156,41 @@ export const SellHorse = () => {
           setTimeout(() => navigate('/auction'), 2000);
         } else {
           setError(resData.message || 'Auction creation failed.');
+        }
+      } else if (listingType === 'breeding') {
+        // --- Submit to Breeding Directory (/api/breeding/horses) ---
+        const data = new FormData();
+        data.append('name', formData.name);
+        data.append('breed', formData.breed);
+        data.append('breedingFee', formData.price);
+        data.append('price', formData.price);
+        data.append('location', formData.location);
+        data.append('description', formData.description);
+        data.append('tag', formData.description || 'Available for Stud service • Verified Genetics');
+        data.append('age', formData.age || '5');
+        data.append('sire', formData.sire);
+        data.append('dam', formData.dam);
+        data.append('ownerPhone', formData.sellerPhone);
+        data.append('phone', formData.sellerPhone);
+        data.append('ownerName', formData.sellerName || 'Verified Breeder');
+
+        imageFiles.forEach((file) => {
+          data.append('images', file);
+          data.append('image', file);
+        });
+
+        const res = await fetch('/api/breeding/horses', {
+          method: 'POST',
+          headers: { Authorization: `Bearer ${token}` },
+          body: data,
+        });
+
+        const resData = await res.json();
+        if (resData.success) {
+          setMessage('🐎 Success! Your horse has been published exclusively in the BREEDING DIRECTORY for stud services!');
+          setTimeout(() => navigate('/breeding'), 2000);
+        } else {
+          setError(resData.message || 'Breeding listing creation failed.');
         }
       } else {
         // --- Submit to Marketplace (/api/horses) ---
@@ -390,24 +426,24 @@ export const SellHorse = () => {
                   </span>
                 </div>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 pt-2">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 pt-2">
                   {/* Option 1: Marketplace Direct Sale */}
                   <button
                     type="button"
                     onClick={() => setListingType('marketplace')}
-                    className={`p-4.5 rounded-2xl border text-left transition duration-300 cursor-pointer ${listingType === 'marketplace'
+                    className={`p-4 rounded-2xl border text-left transition duration-300 cursor-pointer ${listingType === 'marketplace'
                         ? 'bg-amber-500/20 border-[#D4AF37] ring-2 ring-[#D4AF37]/50 text-white shadow-[0_0_20px_rgba(212,175,55,0.25)]'
                         : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:border-slate-700'
                       }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="font-black text-sm text-white flex items-center gap-2">
-                        <Store className="w-4 h-4 text-[#D4AF37]" /> Marketplace Listing
+                      <span className="font-black text-sm text-white flex items-center gap-1.5">
+                        <Store className="w-4 h-4 text-[#D4AF37]" /> Marketplace
                       </span>
                       {listingType === 'marketplace' && <CheckCircle2 className="w-4 h-4 text-[#D4AF37]" />}
                     </div>
                     <p className="text-[11px] text-slate-300 leading-snug">
-                      Fixed price direct sale. Published **exclusively in the Marketplace (`/marketplace`)**.
+                      Fixed price direct sale. Published **exclusively in Marketplace (`/marketplace`)**.
                     </p>
                   </button>
 
@@ -415,19 +451,39 @@ export const SellHorse = () => {
                   <button
                     type="button"
                     onClick={() => setListingType('auction')}
-                    className={`p-4.5 rounded-2xl border text-left transition duration-300 cursor-pointer ${listingType === 'auction'
+                    className={`p-4 rounded-2xl border text-left transition duration-300 cursor-pointer ${listingType === 'auction'
                         ? 'bg-amber-500/20 border-[#D4AF37] ring-2 ring-[#D4AF37]/50 text-white shadow-[0_0_20px_rgba(212,175,55,0.25)]'
                         : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:border-slate-700'
                       }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
-                      <span className="font-black text-sm text-white flex items-center gap-2">
-                        <Gavel className="w-4 h-4 text-[#D4AF37]" /> Live Auction Listing
+                      <span className="font-black text-sm text-white flex items-center gap-1.5">
+                        <Gavel className="w-4 h-4 text-[#D4AF37]" /> Live Auction
                       </span>
                       {listingType === 'auction' && <CheckCircle2 className="w-4 h-4 text-[#D4AF37]" />}
                     </div>
                     <p className="text-[11px] text-slate-300 leading-snug">
                       High-stakes bidding. Published **exclusively in Live Auctions (`/auction`)**.
+                    </p>
+                  </button>
+
+                  {/* Option 3: Horse For Breeding */}
+                  <button
+                    type="button"
+                    onClick={() => setListingType('breeding')}
+                    className={`p-4 rounded-2xl border text-left transition duration-300 cursor-pointer ${listingType === 'breeding'
+                        ? 'bg-amber-500/20 border-[#D4AF37] ring-2 ring-[#D4AF37]/50 text-white shadow-[0_0_20px_rgba(212,175,55,0.25)]'
+                        : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:border-slate-700'
+                      }`}
+                  >
+                    <div className="flex items-center justify-between mb-1.5">
+                      <span className="font-black text-sm text-white flex items-center gap-1.5">
+                        <Dna className="w-4 h-4 text-[#D4AF37]" /> Horse For Breeding
+                      </span>
+                      {listingType === 'breeding' && <CheckCircle2 className="w-4 h-4 text-[#D4AF37]" />}
+                    </div>
+                    <p className="text-[11px] text-slate-300 leading-snug">
+                      Available for stud service. Published **exclusively in Breeding Directory (`/breeding`)**.
                     </p>
                   </button>
                 </div>
@@ -472,15 +528,19 @@ export const SellHorse = () => {
 
                   <div>
                     <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2">
-                      Price (PKR 700,000 - 17,500,000)
+                      {listingType === 'breeding'
+                        ? 'Stud Booking Fee (PKR 50,000 - 2,000,000)'
+                        : listingType === 'auction'
+                          ? 'Starting Bid (PKR 700,000 - 17,500,000)'
+                          : 'Price (PKR 700,000 - 17,500,000)'}
                     </label>
                     <input
                       type="number"
                       name="price"
                       required
-                      min="700000"
-                      max="17500000"
-                      placeholder="e.g. 1500000"
+                      min={listingType === 'breeding' ? "50000" : "700000"}
+                      max={listingType === 'breeding' ? "2000000" : "17500000"}
+                      placeholder={listingType === 'breeding' ? "e.g. 160000 (Min: 50,000)" : "e.g. 1500000"}
                       value={formData.price}
                       onChange={handleChange}
                       className={`w-full p-3.5 border rounded-xl text-sm font-bold transition focus:bg-white focus:outline-none ${formData.price && !isPriceValid
