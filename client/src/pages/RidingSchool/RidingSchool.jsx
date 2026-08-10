@@ -266,7 +266,7 @@ export const RidingSchool = () => {
       setSubmitting(true);
       setErrorMessage('');
 
-      const res = await fetch('/api/contact/riding-trial', {
+      const res = await fetch(getApiUrl('/api/contact/riding-trial'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

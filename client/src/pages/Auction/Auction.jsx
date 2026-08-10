@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Gavel, Clock, Trophy, ArrowUpRight, ShieldCheck, Sparkles, AlertCircle, TrendingUp, DollarSign, HelpCircle, CheckCircle, CheckCircle2, UserCheck, Flame } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { getApiUrl } from '../../config/api';
 
 export const Auction = () => {
   const { token } = useAuth();
@@ -23,7 +24,7 @@ export const Auction = () => {
   useEffect(() => {
     const fetchAuctions = async () => {
       try {
-        const res = await fetch('/api/auctions?status=live');
+        const res = await fetch(getApiUrl('/api/auctions?status=live'));
         if (res.ok) {
           const data = await res.json();
           if (data.success && Array.isArray(data.data)) {
@@ -55,7 +56,7 @@ export const Auction = () => {
     }
 
     try {
-      const res = await fetch(`/api/auctions/${auctionId}/bid`, {
+      const res = await fetch(getApiUrl(`/api/auctions/${auctionId}/bid`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

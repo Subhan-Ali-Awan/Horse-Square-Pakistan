@@ -19,15 +19,15 @@ import {
   CheckCircle2
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
+import { getApiUrl } from '../../config/api';
 
 export const Contact = () => {
   const { user } = useAuth();
-  const navigate = useNavigate();
 
   const [formData, setFormData] = useState({
-    name: '',
-    email: '',
-    phone: '',
+    name: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name : '',
+    email: user ? user.email : '',
+    phone: user ? user.phone || '' : '',
     category: 'Horse Purchase / Sales Inquiry',
     subject: '',
     message: ''
@@ -40,7 +40,7 @@ export const Contact = () => {
     setLoading(true);
     try {
       const fullSubject = `[${formData.category}] ${formData.subject}`;
-      const res = await fetch('/api/contact', {
+      const res = await fetch(getApiUrl('/api/contact'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

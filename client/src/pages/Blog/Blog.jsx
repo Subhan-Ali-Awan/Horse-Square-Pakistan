@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { BookOpen, Search, ArrowLeft, Clock, User, Calendar, Tag, ChevronRight } from 'lucide-react';
+import { getApiUrl } from '../../config/api';
 
 export const Blog = () => {
   const [articles, setArticles] = useState([]);
@@ -12,7 +13,7 @@ export const Blog = () => {
     const fetchArticles = async () => {
       setLoading(true);
       try {
-        const res = await fetch('/api/blogs');
+        const res = await fetch(getApiUrl('/api/blogs'));
         if (res.ok) {
           const data = await res.json();
           if (data.success && Array.isArray(data.data)) {

@@ -17,6 +17,7 @@ import {
   MapPin
 } from 'lucide-react';
 import heroVideo from '../../assets/Hero final.mov';
+import { getApiUrl } from '../../config/api';
 
 export const Home = () => {
   const { user } = useAuth();
@@ -36,7 +37,7 @@ export const Home = () => {
   useEffect(() => {
     const fetchHorses = async () => {
       try {
-        const res = await fetch('/api/horses?limit=6');
+        const res = await fetch(getApiUrl('/api/horses?limit=6'));
         if (res.ok) {
           const data = await res.json();
           if (data.success && Array.isArray(data.data)) {

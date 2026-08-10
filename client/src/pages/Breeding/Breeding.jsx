@@ -3,6 +3,7 @@ import { Award, Dna, Send, CheckCircle, ShieldCheck, Sparkles, Stethoscope, Chec
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Modal } from '../../components/Modal';
+import { getApiUrl } from '../../config/api';
 
 export const Breeding = () => {
   const { user } = useAuth();
@@ -33,7 +34,7 @@ export const Breeding = () => {
   const fetchBreedingHorses = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/breeding/horses');
+      const res = await fetch(getApiUrl('/api/breeding/horses'));
       if (res.ok) {
         const data = await res.json();
         if (data.success && Array.isArray(data.data)) {
@@ -67,7 +68,7 @@ export const Breeding = () => {
     e.preventDefault();
     try {
       const detailsCombined = `Owner: ${ownerName} | CNIC: ${cnic} | Mare: ${mareName || 'Mare'} | Breed: ${mareBreed || selectedHorse?.breed || 'N/A'} | Age: ${mareAge || 'N/A'} Yrs | Pedigree: ${marePedigree || 'N/A'} | Notes: ${mareDetails || 'None'}`;
-      const res = await fetch('/api/breeding/requests', {
+      const res = await fetch(getApiUrl('/api/breeding/requests'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({

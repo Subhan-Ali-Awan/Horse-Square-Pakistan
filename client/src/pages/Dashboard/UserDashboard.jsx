@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { getApiUrl } from '../../config/api';
 import {
   LayoutDashboard,
   ShoppingBag,
@@ -138,7 +139,7 @@ export const UserDashboard = () => {
 
   const fetchBreedingData = async () => {
     try {
-      const horsesRes = await fetch('/api/breeding/horses');
+      const horsesRes = await fetch(getApiUrl('/api/breeding/horses'));
       if (horsesRes.ok) {
         const data = await horsesRes.json();
         if (data.success && Array.isArray(data.data)) {
@@ -162,7 +163,7 @@ export const UserDashboard = () => {
   const handleCreateBreedingRequest = async (e) => {
     e.preventDefault();
     try {
-      const res = await fetch('/api/breeding/requests', {
+      const res = await fetch(getApiUrl('/api/breeding/requests'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -194,7 +195,7 @@ export const UserDashboard = () => {
   };
 
   const fetchWithAuth = async (path, options = {}) => {
-    const res = await fetch(`/api${path}`, {
+    const res = await fetch(getApiUrl(`/api${path}`), {
       ...options,
       headers: {
         ...options.headers,

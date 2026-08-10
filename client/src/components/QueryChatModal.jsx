@@ -1,15 +1,15 @@
 import React, { useState } from 'react';
 import { Send, CheckCircle, Clock, User, ShieldCheck, MessageSquare, X } from 'lucide-react';
 import { Modal } from './Modal';
+import { getApiUrl } from '../config/api';
 
-export const QueryChatModal = ({ isOpen, onClose, query, currentUser, onQueryUpdated }) => {
+export const QueryChatModal = ({ isOpen, onClose, query, currentUser, token, onQueryUpdated }) => {
   const [replyText, setReplyText] = useState('');
   const [sending, setSending] = useState(false);
   const [resolving, setResolving] = useState(false);
 
   if (!query) return null;
 
-  const token = localStorage.getItem('token');
   const isAdmin = currentUser?.role === 'admin';
 
   const handleSendReply = async (e) => {
@@ -18,7 +18,7 @@ export const QueryChatModal = ({ isOpen, onClose, query, currentUser, onQueryUpd
 
     setSending(true);
     try {
-      const res = await fetch(`/api/contact/${query._id}/reply`, {
+      const res = await fetch(getApiUrl(`/api/contact/${query._id}/reply`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -43,7 +43,7 @@ export const QueryChatModal = ({ isOpen, onClose, query, currentUser, onQueryUpd
   const handleMarkResolved = async () => {
     setResolving(true);
     try {
-      const res = await fetch(`/api/contact/${query._id}/resolve`, {
+      const res = await fetch(getApiUrl(`/api/contact/${query._id}/resolve`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

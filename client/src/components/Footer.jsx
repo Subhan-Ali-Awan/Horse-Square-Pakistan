@@ -4,6 +4,7 @@ import {
   Phone, Mail, MapPin, Send, CheckCircle2, Sparkles,
   ShieldCheck, Gavel, Stethoscope, Truck, ChevronRight, ArrowUp
 } from 'lucide-react';
+import { getApiUrl } from '../config/api';
 
 export const Footer = () => {
   const [subscribed, setSubscribed] = useState(false);
@@ -22,7 +23,7 @@ export const Footer = () => {
     setSubscribedMsg('');
 
     try {
-      const response = await fetch('/api/contact/newsletter', {
+      const response = await fetch(getApiUrl('/api/contact/newsletter'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email: cleanEmail }),

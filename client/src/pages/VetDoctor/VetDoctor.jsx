@@ -138,7 +138,7 @@ export const VetDoctor = () => {
       formData.append('symptoms', symptoms);
       if (symptomFile) formData.append('images', symptomFile);
 
-      const res = await fetch('/api/vet/check', {
+      const res = await fetch(getApiUrl('/api/vet/check'), {
         method: 'POST',
         body: formData
       });

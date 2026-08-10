@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { getApiUrl } from '../../config/api';
+
+// ... lucide imports ...
 import {
   LayoutDashboard,
   Users,
@@ -93,7 +96,7 @@ export const AdminDashboard = () => {
   const fetchWithAuth = async (path, options = {}) => {
     setError('');
     try {
-      const res = await fetch(`/api${path}`, {
+      const res = await fetch(getApiUrl(`/api${path}`), {
         ...options,
         headers: {
           ...options.headers,
@@ -166,7 +169,7 @@ export const AdminDashboard = () => {
       if (res.success) setRidingTrialsList(res.data);
     } else if (activeTab === 'blogs') {
       try {
-        const res = await fetch('/api/blogs');
+        const res = await fetch(getApiUrl('/api/blogs'));
         const data = await res.json();
         if (data.success) setBlogsList(data.data);
       } catch (err) {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { getApiUrl } from '../../config/api';
 import {
   PlusCircle,
   Upload,
@@ -144,7 +145,7 @@ export const SellHorse = () => {
           data.append('images', file);
         });
 
-        const res = await fetch('/api/auctions', {
+        const res = await fetch(getApiUrl('/api/auctions'), {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
           body: data,
@@ -179,7 +180,7 @@ export const SellHorse = () => {
           data.append('image', file);
         });
 
-        const res = await fetch('/api/breeding/horses', {
+        const res = await fetch(getApiUrl('/api/breeding/horses'), {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
           body: data,
@@ -212,7 +213,7 @@ export const SellHorse = () => {
           data.append('images', file);
         });
 
-        const res = await fetch('/api/horses', {
+        const res = await fetch(getApiUrl('/api/horses'), {
           method: 'POST',
           headers: { Authorization: `Bearer ${token}` },
           body: data,

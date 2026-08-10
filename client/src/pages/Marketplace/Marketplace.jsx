@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { getApiUrl } from '../../config/api';
 import {
   Search,
   MapPin,
@@ -79,7 +80,7 @@ export const Marketplace = () => {
   const fetchHorses = async () => {
     setLoading(true);
     try {
-      const res = await fetch('/api/horses?limit=1000');
+      const res = await fetch(getApiUrl('/api/horses?limit=1000'));
       if (res.ok) {
         const data = await res.json();
         if (data.success && Array.isArray(data.data)) {
