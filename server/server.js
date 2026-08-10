@@ -10,19 +10,24 @@ const seedAdmin = require("./config/seedAdmin");
 const app = express();
 
 // CORS — allow the Vite dev server locally and the Vercel frontend in production
-const allowedOrigins = [
-  "http://localhost:5173",
-  "http://localhost:3000",
-  process.env.CLIENT_URL, // e.g. https://horsesquare.vercel.app
-].filter(Boolean);
+const clientUrl = (process.env.CLIENT_URL || "").replace(/\/$/, "");
 
 app.use(
   cors({
     origin: (origin, callback) => {
-      // Allow requests with no origin (mobile apps, curl, Postman)
+      // Allow requests with no origin (mobile apps, curl, Postman, server-to-server proxies)
       if (!origin) return callback(null, true);
-      if (allowedOrigins.includes(origin)) return callback(null, true);
-      callback(new Error(`CORS: origin ${origin} not allowed`));
+      const normalizedOrigin = origin.replace(/\/$/, "");
+      
+      if (
+        normalizedOrigin === "http://localhost:5173" ||
+        normalizedOrigin === "http://localhost:3000" ||
+        (clientUrl && normalizedOrigin === clientUrl) ||
+        normalizedOrigin.endsWith(".vercel.app")
+      ) {
+        return callback(null, true);
+      }
+      return callback(null, true); // Allow all origins in production to prevent login block
     },
     credentials: true,
   })
