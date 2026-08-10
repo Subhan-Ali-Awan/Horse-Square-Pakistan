@@ -1,0 +1,33 @@
+# Dependencies
+node_modules/
+client/node_modules/
+server/node_modules/
+
+# Build output
+client/dist/
+
+# Environment secrets - NEVER commit these
+server/.env
+client/.env
+client/.env.local
+.env
+
+# Uploads (images are stored on Cloudinary, not local disk in production)
+server/uploads/*
+!server/uploads/.gitkeep
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+*.swp
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temp/test files
+test_pdf_libs.py
+server/update_faiz_miran.js

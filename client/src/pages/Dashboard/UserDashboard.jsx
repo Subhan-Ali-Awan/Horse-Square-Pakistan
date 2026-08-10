@@ -15,8 +15,6 @@ import {
   AlertCircle,
   Edit3,
   Lock,
-  Eye,
-  EyeOff,
   Save,
   TrendingUp,
   Package,
@@ -32,10 +30,12 @@ import {
   Sparkles,
   Stethoscope,
   ArrowRight,
-  BookOpen,
-  Target,
   CheckCircle2,
-  Phone
+  Phone,
+  Menu,
+  X,
+  LayoutGrid,
+  List
 } from 'lucide-react';
 import { Modal } from '../../components/Modal';
 import { QueryChatModal } from '../../components/QueryChatModal';
@@ -45,11 +45,14 @@ export const UserDashboard = () => {
   const navigate = useNavigate();
 
   const [activeTab, setActiveTab] = useState('overview');
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [myHorses, setMyHorses] = useState([]);
   const [myBids, setMyBids] = useState([]);
   const [myQueries, setMyQueries] = useState([]);
   const [myVetInquiries, setMyVetInquiries] = useState([]);
   const [selectedQueryChat, setSelectedQueryChat] = useState(null);
+  const [contactViewMode, setContactViewMode] = useState('grid');
+  const [listingsViewMode, setListingsViewMode] = useState('grid');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -76,42 +79,6 @@ export const UserDashboard = () => {
   const [breedingMareDetails, setBreedingMareDetails] = useState('');
   const [breedingPreferredBreed, setBreedingPreferredBreed] = useState('Arabian');
   const [breedingSubmitSuccess, setBreedingSubmitSuccess] = useState('');
-
-  const sampleBreedingHorses = [
-    {
-      id: 'b2',
-      name: 'Al-Burraq (Arabian Champion)',
-      breed: 'Arabian',
-      breedingFee: 180000,
-      location: 'Lahore Stud Farm',
-      tag: 'Multiple National Show Champion 2024 • Pure Bloodline',
-      sire: 'Al-Murtajiz',
-      dam: 'Desert Rose',
-      image: 'https://images.pexels.com/photos/29632852/pexels-photo-29632852.jpeg'
-    },
-    {
-      id: 'b3',
-      name: 'Bucephalus (Thoroughbred Stallion)',
-      breed: 'Thoroughbred',
-      breedingFee: 220000,
-      location: 'Rawalpindi Turf Club',
-      tag: 'Derby Winner & Speed Record Holder at Lahore Turf Club',
-      sire: 'Storm Cat II',
-      dam: 'Lady Pearl',
-      image: 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600'
-    },
-    {
-      id: 'b4',
-      name: 'Rustam (Desi Stud Stallion)',
-      breed: 'Local / Desi',
-      breedingFee: 160000,
-      location: 'Multan Stud Farms',
-      tag: 'High Resilient Bloodline • Tent Pegging Specialist',
-      sire: 'Ghulam Muhammad',
-      dam: 'Bella',
-      image: 'https://images.unsplash.com/photo-1551887196-72e32fad773a?auto=format&fit=crop&q=80&w=600'
-    }
-  ];
 
   // Password form state
   const [pwForm, setPwForm] = useState({ currentPassword: '', newPassword: '', confirmNewPassword: '' });
@@ -174,13 +141,13 @@ export const UserDashboard = () => {
       const horsesRes = await fetch('/api/breeding/horses');
       if (horsesRes.ok) {
         const data = await horsesRes.json();
-        if (data.success && data.data && data.data.length > 0) {
+        if (data.success && Array.isArray(data.data)) {
           setBreedingHorses(data.data);
         } else {
-          setBreedingHorses(sampleBreedingHorses);
+          setBreedingHorses([]);
         }
       } else {
-        setBreedingHorses(sampleBreedingHorses);
+        setBreedingHorses([]);
       }
 
       const reqRes = await fetchWithAuth('/breeding/my-requests');
@@ -438,7 +405,24 @@ export const UserDashboard = () => {
     );
   }
 
-  if (!user) return null;
+  if (!user) {
+    return (
+      <div className="min-h-screen w-full flex items-center justify-center bg-[#F8FAFC] p-4">
+        <div className="flex flex-col items-center gap-4 p-6 sm:p-8 bg-white rounded-3xl shadow-xl border border-slate-200/80 text-center max-w-sm w-full animate-fade-in">
+          <div className="w-12 h-12 rounded-2xl bg-amber-50 text-[#C9A227] flex items-center justify-center border border-amber-200/60 shadow-sm">
+            <Lock className="w-6 h-6" />
+          </div>
+          <div className="space-y-1">
+            <h2 className="text-base font-black text-slate-900">Session Required</h2>
+            <p className="text-xs text-slate-500 font-medium">Please sign in to access your HorseSquare account dashboard.</p>
+          </div>
+          <Link to="/login" className="w-full py-3 bg-gradient-to-r from-[#D4AF37] to-[#C9A227] text-slate-950 font-black text-xs rounded-2xl shadow-md hover:shadow-lg transition">
+            Go to Login
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const cleanFn = (user.firstName || '').replace(/\baccount\b/gi, '').trim();
   const cleanLn = (user.lastName || '').replace(/\baccount\b/gi, '').trim();
@@ -449,10 +433,91 @@ export const UserDashboard = () => {
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
-    <div className="h-screen w-screen flex bg-[#F8FAFC] overflow-hidden text-slate-800 font-sans">
+    <div className="h-screen w-full flex flex-col lg:flex-row bg-[#F8FAFC] overflow-hidden text-slate-800 font-sans">
 
-      {/* ── Sidebar ─────────────────────────────────────────────────────── */}
-      <aside className="w-64 liquid-glass-sidebar flex flex-col shrink-0 z-20 shadow-2xl">
+      {/* Mobile Slide-Out Backdrop Overlay */}
+      {mobileMenuOpen && (
+        <div
+          onClick={() => setMobileMenuOpen(false)}
+          className="lg:hidden fixed inset-0 bg-slate-950/85 z-50 transition-opacity duration-300 animate-fade-in"
+        />
+      )}
+
+      {/* Mobile Slide-Out Left Navigation Drawer */}
+      <aside
+        className={`lg:hidden fixed top-0 left-0 bottom-0 h-full w-80 max-w-[85vw] bg-[#0B0F19] border-r border-white/10 flex flex-col justify-between shrink-0 z-50 shadow-2xl transform transition-transform duration-300 ease-in-out ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
+          }`}
+      >
+        {/* Brand & Close Button */}
+        <div className="p-5 border-b border-white/10 flex items-center justify-between gap-3 relative z-10">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full overflow-hidden border border-[#D4AF37]/60 p-0.5 bg-[#020B21] shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center shrink-0">
+              <img src="/login and registeration .png" alt="HorseSquare Logo" className="w-full h-full object-cover rounded-full" />
+            </div>
+            <div>
+              <h2 className="font-black text-sm tracking-tight text-white leading-none">Horse-Square-Pakistan</h2>
+              <span className="text-[9px] font-extrabold text-[#D4AF37] tracking-[0.2em] uppercase block mt-1">My Dashboard</span>
+            </div>
+          </div>
+          <button
+            onClick={() => setMobileMenuOpen(false)}
+            className="p-2 text-slate-400 hover:text-white hover:bg-white/10 rounded-xl transition cursor-pointer"
+            aria-label="Close navigation menu"
+          >
+            <X className="w-5 h-5" />
+          </button>
+        </div>
+
+        {/* Nav */}
+        <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto relative z-10">
+          {navItems.map((item) => (
+            <React.Fragment key={item.id}>
+              {item.id === 'auctions' && (
+                <Link
+                  to="/sell"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className="w-full flex items-center gap-3 py-3 px-4 rounded-2xl text-xs font-black tracking-wide transition-all duration-300 liquid-glass-nav-inactive cursor-pointer"
+                >
+                  <Tag className="w-4 h-4 text-white" />
+                  <span>Sell a Horse</span>
+                </Link>
+              )}
+              <button
+                onClick={() => {
+                  setActiveTab(item.id);
+                  setMobileMenuOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 py-3 px-4 rounded-2xl text-xs font-black tracking-wide transition-all duration-300 cursor-pointer ${activeTab === item.id
+                  ? 'liquid-glass-nav-active'
+                  : 'liquid-glass-nav-inactive'
+                  }`}
+              >
+                {item.icon}
+                <span>{item.label}</span>
+              </button>
+            </React.Fragment>
+          ))}
+        </nav>
+
+        {/* User footer */}
+        <div className="p-4 liquid-glass-sidebar-footer flex items-center justify-between gap-2.5 relative z-10">
+          <div className="flex items-center gap-2.5 overflow-hidden">
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 flex items-center justify-center shrink-0 border border-[#D4AF37]/40 text-xs font-extrabold uppercase text-[#D4AF37] shadow">
+              {userAvatarInitials}
+            </div>
+            <div className="overflow-hidden">
+              <span className="text-xs font-bold text-slate-200 block truncate">{userDisplayName}</span>
+              <span className="text-[10px] text-amber-200/80 font-bold block truncate">{user.userType === 'Horse Seller' ? 'User' : (user.userType || 'Verified Member')}</span>
+            </div>
+          </div>
+          <button onClick={handleLogout} className="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/15 rounded-xl transition duration-300 shrink-0" title="Logout">
+            <LogOut className="w-4 h-4" />
+          </button>
+        </div>
+      </aside>
+
+      {/* Permanent Desktop Sidebar */}
+      <aside className="hidden lg:flex w-64 liquid-glass-sidebar flex-col shrink-0 z-20 shadow-2xl">
 
         {/* Brand */}
         <div className="p-6 border-b border-white/10 flex items-center gap-3 relative z-10">
@@ -509,39 +574,51 @@ export const UserDashboard = () => {
         </div>
       </aside>
 
-      {/* ── Main Content ─────────────────────────────────────────────────── */}
-      <main className="flex-1 flex flex-col bg-gradient-to-br from-slate-100 via-slate-50 to-amber-50/20 overflow-hidden relative">
+      {/* Main Content Area */}
+      <main className="flex-1 flex flex-col bg-gradient-to-br from-slate-100 via-slate-50 to-amber-50/20 overflow-hidden relative min-w-0 h-full">
         {/* Ambient Glowing Background Liquid Blobs */}
         <div className="absolute top-12 left-1/4 w-96 h-96 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none animate-pulse" />
         <div className="absolute bottom-12 right-12 w-[30rem] h-[30rem] bg-sky-500/10 rounded-full blur-3xl pointer-events-none animate-pulse" style={{ animationDelay: '2s' }} />
 
         {/* Topbar */}
-        <header className="h-16 border-b border-slate-200/80 flex items-center justify-between px-8 bg-white/70 backdrop-blur-md shrink-0 shadow-sm z-10">
-          <h1 className="text-lg font-black tracking-tight text-slate-800 flex items-center gap-2.5">
-            {navItems.find(i => i.id === activeTab)?.icon && (
-              <span className="text-[#C9A227]">{navItems.find(i => i.id === activeTab)?.icon}</span>
-            )}
-            <span>{navItems.find(i => i.id === activeTab)?.label}</span>
-          </h1>
-          <div className="flex items-center gap-3">
+        <header className="h-16 border-b border-slate-200 flex items-center justify-between px-4 sm:px-6 lg:px-8 bg-white shrink-0 shadow-sm z-10 min-w-0">
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              onClick={() => setMobileMenuOpen(true)}
+              className="lg:hidden px-3 py-2 bg-[#020B21] text-[#D4AF37] border border-[#D4AF37]/50 rounded-2xl transition cursor-pointer flex items-center justify-center shrink-0 shadow-sm hover:border-[#D4AF37]"
+              aria-label="Open navigation menu"
+            >
+              <Menu className="w-5 h-5 text-[#D4AF37]" />
+            </button>
+
+            <h1 className="text-base sm:text-lg font-black tracking-tight text-slate-800 flex items-center gap-2.5 truncate min-w-0">
+              {navItems.find(i => i.id === activeTab)?.icon && (
+                <span className="text-[#C9A227] shrink-0">{navItems.find(i => i.id === activeTab)?.icon}</span>
+              )}
+              <span className="truncate">{navItems.find(i => i.id === activeTab)?.label}</span>
+            </h1>
+          </div>
+
+          <div className="flex items-center gap-2 sm:gap-3 shrink-0">
             {error && (
-              <span className="text-xs text-rose-600 font-medium flex items-center gap-1.5 bg-rose-50/80 backdrop-blur-md px-3 py-1.5 rounded-full border border-rose-200/50">
-                <AlertCircle className="w-3.5 h-3.5" />
-                {error}
+              <span className="text-xs text-rose-600 font-medium flex items-center gap-1.5 bg-rose-50 px-2.5 sm:px-3 py-1.5 rounded-full border border-rose-200 max-w-[150px] sm:max-w-none truncate">
+                <AlertCircle className="w-3.5 h-3.5 shrink-0" />
+                <span className="truncate">{error}</span>
               </span>
             )}
             <Link
               to="/"
-              className="text-xs font-bold px-3.5 py-2 liquid-glass-action text-slate-700 rounded-xl transition duration-300 border border-slate-200/80 flex items-center gap-2"
+              className="text-xs font-bold px-3 sm:px-4 py-2 liquid-glass-action text-slate-700 rounded-xl transition duration-300 border border-slate-200/80 flex items-center gap-2 shrink-0"
             >
-              <Globe className="w-3.5 h-3.5 text-[#C9A227]" />
-              <span>Go to Website</span>
+              <Globe className="w-3.5 h-3.5 text-[#C9A227] shrink-0" />
+              <span className="hidden sm:inline">Go to Website</span>
+              <span className="sm:hidden text-[10px]">Website</span>
             </Link>
           </div>
         </header>
 
         {/* Content */}
-        <div className="flex-grow p-8 overflow-y-auto z-10">
+        <div className="flex-1 p-4 sm:p-6 lg:p-8 overflow-y-auto space-y-6 sm:space-y-8 z-10 max-w-[1600px] w-full mx-auto min-w-0">
 
           {/* ── OVERVIEW TAB ────────────────────────────────────────────── */}
           {activeTab === 'overview' && (
@@ -898,7 +975,45 @@ export const UserDashboard = () => {
                   <span>{listingMsg}</span>
                 </div>
               )}
-              <div className="bg-white border border-slate-200 rounded-2xl overflow-hidden shadow-sm">
+              <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm space-y-6 min-w-0">
+                <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 min-w-0">
+                  <div>
+                    <h3 className="font-extrabold text-slate-900 text-sm flex items-center gap-2">
+                      <ShoppingBag className="w-4 h-4 text-[#D4AF37]" /> My Published Horse Listings
+                    </h3>
+                    <p className="text-slate-500 text-xs mt-0.5">Manage your active marketplace horse ads and sales status</p>
+                  </div>
+                  <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                    {/* View Switcher Controls (Grid Cards vs Table List) */}
+                    <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200 shrink-0">
+                      <button
+                        onClick={() => setListingsViewMode('grid')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${
+                          listingsViewMode === 'grid'
+                            ? 'bg-[#0F172A] text-amber-300 shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <LayoutGrid className="w-3.5 h-3.5" /> Grid
+                      </button>
+                      <button
+                        onClick={() => setListingsViewMode('list')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${
+                          listingsViewMode === 'list'
+                            ? 'bg-[#0F172A] text-amber-300 shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <List className="w-3.5 h-3.5" /> List
+                      </button>
+                    </div>
+
+                    <Link to="/sell" className="px-4 py-2 bg-gradient-to-r from-[#0F172A] to-[#1E293B] text-[#D4AF37] text-xs font-bold rounded-xl border border-[#D4AF37]/20 shadow hover:shadow-md transition-all shrink-0">
+                      + Sell a Horse
+                    </Link>
+                  </div>
+                </div>
+
                 {loading ? (
                   <div className="py-20 text-center text-slate-400 text-xs font-semibold flex items-center justify-center gap-3">
                     <svg className="animate-spin h-5 w-5 text-[#C9A227]" fill="none" viewBox="0 0 24 24">
@@ -917,60 +1032,128 @@ export const UserDashboard = () => {
                     </Link>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs border-collapse">
-                      <thead>
-                        <tr className="border-b border-slate-200 bg-slate-50/75">
-                          {['Horse', 'Breed', 'Price', 'Location', 'Status', 'Date Listed', 'Actions'].map(h => (
-                            <th key={h} className="px-6 py-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">{h}</th>
-                          ))}
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {myHorses.map(h => (
-                          <tr key={h._id} className="border-b border-slate-100 hover:bg-slate-50/50 transition duration-150 bg-white">
-                            <td className="px-6 py-4 font-bold text-slate-900 flex items-center gap-3">
-                              {h.images?.[0] ? (
-                                <img src={h.images[0]} alt={h.name} className="w-9 h-9 rounded-lg object-cover border border-slate-200 shrink-0" />
-                              ) : (
-                                <div className="w-9 h-9 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0">
-                                  <ShoppingBag className="w-4 h-4 text-slate-400" />
+                  <>
+                    {/* GRID VIEW (CARDS) */}
+                    {listingsViewMode === 'grid' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+                        {myHorses.map((h) => (
+                          <div
+                            key={h._id}
+                            className="bg-slate-50/70 hover:bg-amber-50/30 rounded-3xl border border-slate-200/90 shadow-sm hover:shadow-md transition-all duration-300 overflow-hidden flex flex-col justify-between group"
+                          >
+                            <div>
+                              <div className="relative h-48 overflow-hidden bg-slate-900">
+                                <img
+                                  src={h.images && h.images.length > 0 ? h.images[0] : 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600'}
+                                  alt={h.name}
+                                  className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                                />
+                                <span className="absolute top-3 left-3 shrink-0">
+                                  <span className={getStatusBadge(h.status)}>
+                                    {h.status}
+                                  </span>
+                                </span>
+                                <span className="absolute bottom-3 right-3 bg-[#0F172A] text-amber-300 font-black text-xs px-3 py-1 rounded-full border border-amber-500/30 shadow">
+                                  ₨ {Number(h.price).toLocaleString()}
+                                </span>
+                              </div>
+
+                              <div className="p-5 space-y-2">
+                                <div>
+                                  <h4 className="font-extrabold text-base text-slate-900 leading-snug">{h.name}</h4>
+                                  <p className="text-xs text-slate-500 font-semibold mt-0.5">{h.breed} • {h.location}</p>
                                 </div>
-                              )}
-                              {h.name}
-                            </td>
-                            <td className="px-6 py-4 text-slate-700 font-medium">{h.breed}</td>
-                            <td className="px-6 py-4 text-[#C9A227] font-black">₨ {Number(h.price).toLocaleString()}</td>
-                            <td className="px-6 py-4 text-slate-600">{h.location}</td>
-                            <td className="px-6 py-4"><span className={getStatusBadge(h.status)}>{h.status}</span></td>
-                            <td className="px-6 py-4 text-slate-500 font-medium">
-                              {new Date(h.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
-                            </td>
-                            <td className="px-6 py-4">
-                              {h.status === 'approved' && (
-                                <button
-                                  type="button"
-                                  onClick={() => handleToggleSoldStatus(h._id, 'sold')}
-                                  className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-[10px] transition cursor-pointer"
-                                >
-                                  Mark Sold
-                                </button>
-                              )}
-                              {h.status === 'sold' && (
-                                <button
-                                  type="button"
-                                  onClick={() => handleToggleSoldStatus(h._id, 'approved')}
-                                  className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-bold rounded-lg text-[10px] transition cursor-pointer"
-                                >
-                                  Mark Unsold
-                                </button>
-                              )}
-                            </td>
-                          </tr>
+                                <p className="text-[11px] text-slate-400 font-medium">
+                                  Listed: {new Date(h.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                </p>
+                              </div>
+                            </div>
+
+                            <div className="p-5 pt-0">
+                              <div className="pt-3 border-t border-slate-200/70 flex items-center justify-end">
+                                {h.status === 'approved' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleToggleSoldStatus(h._id, 'sold')}
+                                    className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-xs transition cursor-pointer"
+                                  >
+                                    Mark Sold
+                                  </button>
+                                )}
+                                {h.status === 'sold' && (
+                                  <button
+                                    type="button"
+                                    onClick={() => handleToggleSoldStatus(h._id, 'approved')}
+                                    className="w-full py-2 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-bold rounded-xl text-xs transition cursor-pointer"
+                                  >
+                                    Mark Unsold
+                                  </button>
+                                )}
+                              </div>
+                            </div>
+                          </div>
                         ))}
-                      </tbody>
-                    </table>
-                  </div>
+                      </div>
+                    )}
+
+                    {/* LIST VIEW (TABLE) */}
+                    {listingsViewMode === 'list' && (
+                      <div className="overflow-x-auto min-w-0 rounded-2xl border border-slate-200/80">
+                        <table className="w-full text-left text-xs border-collapse min-w-[650px]">
+                          <thead>
+                            <tr className="border-b border-slate-200 bg-slate-50/75">
+                              {['Horse', 'Breed', 'Price', 'Location', 'Status', 'Date Listed', 'Actions'].map(h => (
+                                <th key={h} className="px-4 sm:px-6 py-4 text-[10px] font-black uppercase text-slate-500 tracking-wider whitespace-nowrap">{h}</th>
+                              ))}
+                            </tr>
+                          </thead>
+                          <tbody>
+                            {myHorses.map(h => (
+                              <tr key={h._id} className="border-b border-slate-100 hover:bg-slate-50/50 transition duration-150 bg-white">
+                                <td className="px-4 sm:px-6 py-4 font-bold text-slate-900 flex items-center gap-3 min-w-[140px]">
+                                  {h.images?.[0] ? (
+                                    <img src={h.images[0]} alt={h.name} className="w-9 h-9 rounded-lg object-cover border border-slate-200 shrink-0" />
+                                  ) : (
+                                    <div className="w-9 h-9 rounded-lg bg-slate-100 border border-slate-200 flex items-center justify-center shrink-0">
+                                      <ShoppingBag className="w-4 h-4 text-slate-400" />
+                                    </div>
+                                  )}
+                                  <span className="truncate">{h.name}</span>
+                                </td>
+                                <td className="px-4 sm:px-6 py-4 text-slate-700 font-medium whitespace-nowrap">{h.breed}</td>
+                                <td className="px-4 sm:px-6 py-4 text-[#C9A227] font-black whitespace-nowrap">₨ {Number(h.price).toLocaleString()}</td>
+                                <td className="px-4 sm:px-6 py-4 text-slate-600 whitespace-nowrap">{h.location}</td>
+                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap"><span className={getStatusBadge(h.status)}>{h.status}</span></td>
+                                <td className="px-4 sm:px-6 py-4 text-slate-500 font-medium whitespace-nowrap">
+                                  {new Date(h.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
+                                </td>
+                                <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
+                                  {h.status === 'approved' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleToggleSoldStatus(h._id, 'sold')}
+                                      className="px-2.5 py-1 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-lg text-[10px] transition cursor-pointer"
+                                    >
+                                      Mark Sold
+                                    </button>
+                                  )}
+                                  {h.status === 'sold' && (
+                                    <button
+                                      type="button"
+                                      onClick={() => handleToggleSoldStatus(h._id, 'approved')}
+                                      className="px-2.5 py-1 bg-amber-50 hover:bg-amber-100 text-amber-700 border border-amber-200 font-bold rounded-lg text-[10px] transition cursor-pointer"
+                                    >
+                                      Mark Unsold
+                                    </button>
+                                  )}
+                                </td>
+                              </tr>
+                            ))}
+                          </tbody>
+                        </table>
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -998,12 +1181,12 @@ export const UserDashboard = () => {
                     </Link>
                   </div>
                 ) : (
-                  <div className="overflow-x-auto">
-                    <table className="w-full text-left text-xs border-collapse">
+                  <div className="overflow-x-auto min-w-0 rounded-2xl border border-slate-200/80">
+                    <table className="w-full text-left text-xs border-collapse min-w-[650px]">
                       <thead>
                         <tr className="border-b border-slate-200 bg-slate-50/75">
                           {['Horse', 'Breed', 'My Highest Bid', 'Current Bid', 'Status', 'Ends'].map(h => (
-                            <th key={h} className="px-6 py-4 text-[10px] font-black uppercase text-slate-500 tracking-wider">{h}</th>
+                            <th key={h} className="px-4 sm:px-6 py-4 text-[10px] font-black uppercase text-slate-500 tracking-wider whitespace-nowrap">{h}</th>
                           ))}
                         </tr>
                       </thead>
@@ -1012,17 +1195,17 @@ export const UserDashboard = () => {
                           const isWinning = a.highestBidder && a.myHighestBid >= a.currentBid;
                           return (
                             <tr key={a._id} className="border-b border-slate-100 hover:bg-slate-50/50 transition duration-150 bg-white">
-                              <td className="px-6 py-4 font-bold text-slate-900">{a.horseName}</td>
-                              <td className="px-6 py-4 text-slate-700 font-medium">{a.breed}</td>
-                              <td className="px-6 py-4">
+                              <td className="px-4 sm:px-6 py-4 font-bold text-slate-900 whitespace-nowrap">{a.horseName}</td>
+                              <td className="px-4 sm:px-6 py-4 text-slate-700 font-medium whitespace-nowrap">{a.breed}</td>
+                              <td className="px-4 sm:px-6 py-4 whitespace-nowrap">
                                 <span className="text-[#C9A227] font-black">₨ {Number(a.myHighestBid).toLocaleString()}</span>
                                 {isWinning && a.status === 'live' && (
                                   <span className="ml-2 text-[9px] font-black text-emerald-600 bg-emerald-50 border border-emerald-100 px-1.5 py-0.5 rounded-full uppercase tracking-wide">Winning</span>
                                 )}
                               </td>
-                              <td className="px-6 py-4 text-slate-700 font-semibold">₨ {Number(a.currentBid).toLocaleString()}</td>
-                              <td className="px-6 py-4"><span className={getStatusBadge(a.status)}>{a.status}</span></td>
-                              <td className="px-6 py-4 text-slate-500 font-medium">
+                              <td className="px-4 sm:px-6 py-4 text-slate-700 font-semibold whitespace-nowrap">₨ {Number(a.currentBid).toLocaleString()}</td>
+                              <td className="px-4 sm:px-6 py-4 whitespace-nowrap"><span className={getStatusBadge(a.status)}>{a.status}</span></td>
+                              <td className="px-4 sm:px-6 py-4 text-slate-500 font-medium whitespace-nowrap">
                                 {new Date(a.endTime).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}
                               </td>
                             </tr>
@@ -1124,7 +1307,7 @@ export const UserDashboard = () => {
                               alt={horse.name}
                               className="w-full h-full object-cover"
                             />
-                            <span className="absolute top-3 left-3 bg-[#0F172A]/90 text-[#D4AF37] border border-amber-500/30 text-[10px] font-black tracking-widest uppercase px-3 py-1 rounded-full backdrop-blur-md shadow">
+                            <span className="absolute top-3 left-3 bg-[#0F172A] text-[#D4AF37] border border-amber-500/30 text-[10px] font-black tracking-widest uppercase px-3 py-1 rounded-full shadow">
                               {horse.breed}
                             </span>
                           </div>
@@ -1387,7 +1570,7 @@ export const UserDashboard = () => {
 
           {/* ── CONTACT QUERIES TAB ────────────────────────────────────────── */}
           {activeTab === 'contact' && (
-            <div className="animate-fade-in space-y-6">
+            <div className="animate-fade-in space-y-6 min-w-0">
               {queryMsg && (
                 <div className="bg-emerald-50 text-emerald-900 p-4 rounded-2xl border border-emerald-200 flex items-center gap-3 font-bold text-xs shadow-sm">
                   <CheckCircle className="w-5 h-5 text-emerald-600 shrink-0" />
@@ -1395,20 +1578,46 @@ export const UserDashboard = () => {
                 </div>
               )}
 
-              <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
-                <div className="p-6 border-b border-slate-100 flex justify-between items-center bg-slate-50/50">
+              <div className="bg-white border border-slate-200 rounded-3xl p-4 sm:p-6 shadow-sm space-y-6 min-w-0">
+                <div className="border-b border-slate-100 pb-4 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3 min-w-0">
                   <div>
                     <h3 className="font-extrabold text-slate-900 text-sm flex items-center gap-2">
                       <MessageSquare className="w-4 h-4 text-[#D4AF37]" /> My Contact Queries
                     </h3>
                     <p className="text-slate-500 text-xs mt-0.5">Manage and edit your submitted contact messages & helpdesk inquiries</p>
                   </div>
-                  <Link
-                    to="/contact"
-                    className="px-4 py-2 bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-bold rounded-xl transition shadow flex items-center gap-1.5"
-                  >
-                    <Plus className="w-3.5 h-3.5 text-amber-400" /> New Query
-                  </Link>
+                  <div className="flex items-center gap-2 w-full sm:w-auto justify-between sm:justify-end">
+                    {/* View Switcher Controls (Grid Cards vs Table List) */}
+                    <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200 shrink-0">
+                      <button
+                        onClick={() => setContactViewMode('grid')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${
+                          contactViewMode === 'grid'
+                            ? 'bg-[#0F172A] text-amber-300 shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <LayoutGrid className="w-3.5 h-3.5" /> Grid Cards
+                      </button>
+                      <button
+                        onClick={() => setContactViewMode('list')}
+                        className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${
+                          contactViewMode === 'list'
+                            ? 'bg-[#0F172A] text-amber-300 shadow-sm'
+                            : 'text-slate-600 hover:text-slate-900'
+                        }`}
+                      >
+                        <List className="w-3.5 h-3.5" /> Table List
+                      </button>
+                    </div>
+
+                    <Link
+                      to="/contact"
+                      className="px-4 py-2 bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-bold rounded-xl transition shadow flex items-center gap-1.5 shrink-0"
+                    >
+                      <Plus className="w-3.5 h-3.5 text-amber-400" /> New Query
+                    </Link>
+                  </div>
                 </div>
 
                 {loading ? (
@@ -1428,62 +1637,115 @@ export const UserDashboard = () => {
                     </Link>
                   </div>
                 ) : (
-                  <div className="divide-y divide-slate-100">
-                    {myQueries.map((q) => (
-                      <div
-                        key={q._id}
-                        onClick={() => setSelectedQueryChat(q)}
-                        className="p-6 hover:bg-amber-50/40 transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer group"
-                      >
-                        <div className="space-y-1.5 max-w-xl">
-                          <div className="flex items-center gap-2.5">
-                            <span className="font-extrabold text-sm text-slate-900 group-hover:text-[#D4AF37] transition">{q.subject || 'General Inquiry'}</span>
-                            <span className={getStatusBadge(q.status)}>{q.status}</span>
-                            {q.replies && q.replies.length > 0 && (
-                              <span className="text-[10px] bg-blue-100 text-blue-900 px-2 py-0.5 rounded-full font-bold">
-                                {q.replies.length} {q.replies.length === 1 ? 'Reply' : 'Replies'}
-                              </span>
-                            )}
-                          </div>
-                          <p className="text-xs text-slate-600 leading-relaxed font-normal">{q.message}</p>
-                          <div className="flex items-center gap-3 text-[10px] text-slate-400 font-medium">
-                            <span>📅 {new Date(q.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
-                            <span>•</span>
-                            <span>📞 {q.phone || 'No Phone'}</span>
-                          </div>
-                        </div>
-
-                        <div className="flex items-center gap-2 shrink-0 w-full sm:w-auto" onClick={(e) => e.stopPropagation()}>
-                          <button
-                            type="button"
+                  <>
+                    {/* GRID CARDS VIEW */}
+                    {contactViewMode === 'grid' && (
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                        {myQueries.map((q) => (
+                          <div
+                            key={q._id}
                             onClick={() => setSelectedQueryChat(q)}
-                            className="px-3.5 py-2 bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-bold rounded-xl transition shadow flex items-center gap-1.5 cursor-pointer"
+                            className="bg-slate-50/70 hover:bg-amber-50/40 rounded-3xl border border-slate-200/90 p-5 shadow-sm hover:shadow-md transition-all duration-300 cursor-pointer flex flex-col justify-between space-y-4 group relative overflow-hidden"
                           >
-                            <MessageSquare className="w-3.5 h-3.5 text-amber-400" /> Chat Thread
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => {
-                              setEditingQuery(q);
-                              setEditSubject(q.subject || '');
-                              setEditPhone(q.phone || '');
-                              setEditMessage(q.message || '');
-                            }}
-                            className="px-3.5 py-2 bg-slate-100 hover:bg-amber-50 hover:text-amber-900 text-slate-700 text-xs font-bold rounded-xl border border-slate-200 transition flex items-center gap-1.5 cursor-pointer"
-                          >
-                            <Edit3 className="w-3.5 h-3.5 text-[#D4AF37]" /> Edit
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => handleDeleteQuery(q._id)}
-                            className="px-3.5 py-2 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-xl border border-rose-200 transition flex items-center gap-1.5 cursor-pointer"
-                          >
-                            <Trash2 className="w-3.5 h-3.5 text-rose-600" /> Delete
-                          </button>
-                        </div>
+                            <div className="space-y-3">
+                              <div className="flex items-start justify-between gap-2">
+                                <span className="font-extrabold text-xs text-slate-900 group-hover:text-[#C9A227] transition truncate">
+                                  {q.subject || 'General Inquiry'}
+                                </span>
+                                <span className={getStatusBadge(q.status) + ' shrink-0'}>{q.status}</span>
+                              </div>
+
+                              <p className="text-xs text-slate-600 line-clamp-3 leading-relaxed font-normal p-3 bg-white rounded-2xl border border-slate-200/80">
+                                {q.message}
+                              </p>
+                            </div>
+
+                            <div className="pt-3 border-t border-slate-200/70 flex items-center justify-between gap-2" onClick={(e) => e.stopPropagation()}>
+                              <span className="text-[10px] text-slate-400 font-semibold flex items-center gap-1">
+                                <Clock className="w-3 h-3 text-slate-400" /> {new Date(q.createdAt).toLocaleDateString()}
+                              </span>
+                              <div className="flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedQueryChat(q)}
+                                  className="px-2.5 py-1 bg-[#0F172A] hover:bg-[#1E293B] text-white text-[10px] font-bold rounded-xl transition shadow flex items-center gap-1 cursor-pointer"
+                                >
+                                  <MessageSquare className="w-3 h-3 text-amber-400" /> Chat
+                                </button>
+                                <button
+                                  type="button"
+                                  onClick={() => {
+                                    setEditingQuery(q);
+                                    setEditSubject(q.subject || '');
+                                    setEditPhone(q.phone || '');
+                                    setEditMessage(q.message || '');
+                                  }}
+                                  className="px-2 py-1 bg-slate-100 hover:bg-amber-50 text-slate-700 text-[10px] font-bold rounded-xl border border-slate-200 transition cursor-pointer"
+                                >
+                                  Edit
+                                </button>
+                              </div>
+                            </div>
+                          </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    )}
+
+                    {/* LIST VIEW */}
+                    {contactViewMode === 'list' && (
+                      <div className="divide-y divide-slate-100 border border-slate-100 rounded-2xl overflow-hidden">
+                        {myQueries.map((q) => (
+                          <div
+                            key={q._id}
+                            onClick={() => setSelectedQueryChat(q)}
+                            className="p-4 sm:p-5 hover:bg-amber-50/40 transition flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 cursor-pointer group min-w-0"
+                          >
+                            <div className="space-y-1.5 max-w-xl min-w-0 w-full">
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="font-extrabold text-sm text-slate-900 group-hover:text-[#D4AF37] transition truncate">{q.subject || 'General Inquiry'}</span>
+                                <span className={getStatusBadge(q.status)}>{q.status}</span>
+                              </div>
+                              <p className="text-xs text-slate-600 leading-relaxed font-normal">{q.message}</p>
+                              <div className="flex flex-wrap items-center gap-2 sm:gap-3 text-[10px] text-slate-400 font-medium">
+                                <span>📅 {new Date(q.createdAt).toLocaleDateString('en-GB', { day: '2-digit', month: 'short', year: 'numeric' })}</span>
+                                <span>•</span>
+                                <span>📞 {q.phone || 'No Phone'}</span>
+                              </div>
+                            </div>
+
+                            <div className="flex flex-wrap items-center gap-2 shrink-0 w-full sm:w-auto" onClick={(e) => e.stopPropagation()}>
+                              <button
+                                type="button"
+                                onClick={() => setSelectedQueryChat(q)}
+                                className="flex-1 sm:flex-none px-3 py-1.5 bg-[#0F172A] hover:bg-[#1E293B] text-white text-xs font-bold rounded-xl transition shadow flex items-center justify-center gap-1.5 cursor-pointer"
+                              >
+                                <MessageSquare className="w-3.5 h-3.5 text-amber-400" /> Chat Thread
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => {
+                                  setEditingQuery(q);
+                                  setEditSubject(q.subject || '');
+                                  setEditPhone(q.phone || '');
+                                  setEditMessage(q.message || '');
+                                }}
+                                className="px-3 py-1.5 bg-slate-100 hover:bg-amber-50 hover:text-amber-900 text-slate-700 text-xs font-bold rounded-xl border border-slate-200 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                              >
+                                <Edit3 className="w-3.5 h-3.5 text-[#D4AF37]" /> Edit
+                              </button>
+                              <button
+                                type="button"
+                                onClick={() => handleDeleteQuery(q._id)}
+                                className="px-3 py-1.5 bg-rose-50 hover:bg-rose-100 text-rose-700 text-xs font-bold rounded-xl border border-rose-200 transition flex items-center justify-center gap-1.5 cursor-pointer"
+                              >
+                                <Trash2 className="w-3.5 h-3.5 text-rose-600" /> Delete
+                              </button>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </>
                 )}
               </div>
             </div>
@@ -1491,12 +1753,12 @@ export const UserDashboard = () => {
 
           {/* ── MY PROFILE TAB ──────────────────────────────────────────── */}
           {activeTab === 'profile' && (
-            <div className="animate-fade-in space-y-6 max-w-2xl">
+            <div className="animate-fade-in space-y-6 max-w-2xl min-w-0">
 
               {/* Profile Info Form */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
+              <div className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 shadow-sm">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/10 text-[#C9A227] border border-[#D4AF37]/20 flex items-center justify-center">
+                  <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/10 text-[#C9A227] border border-[#D4AF37]/20 flex items-center justify-center shrink-0">
                     <Edit3 className="w-4.5 h-4.5" />
                   </div>
                   <div>
@@ -1516,7 +1778,7 @@ export const UserDashboard = () => {
                 )}
 
                 <form onSubmit={handleSaveProfile} className="space-y-4" autoComplete="off">
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     {[
                       { label: 'First Name', key: 'firstName', placeholder: 'Muhammad' },
                       { label: 'Last Name', key: 'lastName', placeholder: 'Ali' },
@@ -1533,7 +1795,7 @@ export const UserDashboard = () => {
                       </div>
                     ))}
                   </div>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <div className="space-y-1.5">
                       <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">Phone</label>
                       <input

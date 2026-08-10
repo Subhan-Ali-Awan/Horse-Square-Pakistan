@@ -24,7 +24,7 @@ function AppContent() {
 
   if (hideHeaderFooter) {
     return (
-      <main className="h-screen w-screen overflow-hidden bg-white">
+      <div className="min-h-screen lg:h-screen w-full overflow-x-hidden bg-white">
         <Routes>
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
@@ -32,7 +32,7 @@ function AppContent() {
           <Route path="/admin" element={<AdminDashboard />} />
           <Route path="/dashboard" element={<UserDashboard />} />
         </Routes>
-      </main>
+      </div>
     );
   }
 

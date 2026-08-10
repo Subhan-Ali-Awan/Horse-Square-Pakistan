@@ -1,8 +1,8 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { 
-  Phone, Mail, MapPin, Send, CheckCircle2, Sparkles, 
-  ShieldCheck, Gavel, Stethoscope, Truck, ChevronRight, ArrowUp 
+import {
+  Phone, Mail, MapPin, Send, CheckCircle2, Sparkles,
+  ShieldCheck, Gavel, Stethoscope, Truck, ChevronRight, ArrowUp
 } from 'lucide-react';
 
 export const Footer = () => {
@@ -72,7 +72,7 @@ export const Footer = () => {
 
           {/* Feature Highlights / Trust Bar */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 pb-10 border-b border-slate-800/80">
-            <div className="bg-slate-900/60 border border-slate-800/90 rounded-2xl p-4 flex items-center gap-3.5 hover:border-[#D4AF37]/40 transition duration-300 group shadow-md backdrop-blur-sm">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3.5 hover:border-[#D4AF37]/40 transition duration-300 group shadow-md">
               <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] group-hover:scale-110 group-hover:bg-[#D4AF37]/20 transition shrink-0">
                 <ShieldCheck className="w-5 h-5" />
               </div>
@@ -82,7 +82,7 @@ export const Footer = () => {
               </div>
             </div>
 
-            <div className="bg-slate-900/60 border border-slate-800/90 rounded-2xl p-4 flex items-center gap-3.5 hover:border-[#D4AF37]/40 transition duration-300 group shadow-md backdrop-blur-sm">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3.5 hover:border-[#D4AF37]/40 transition duration-300 group shadow-md">
               <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] group-hover:scale-110 group-hover:bg-[#D4AF37]/20 transition shrink-0">
                 <Gavel className="w-5 h-5" />
               </div>
@@ -92,7 +92,7 @@ export const Footer = () => {
               </div>
             </div>
 
-            <div className="bg-slate-900/60 border border-slate-800/90 rounded-2xl p-4 flex items-center gap-3.5 hover:border-[#D4AF37]/40 transition duration-300 group shadow-md backdrop-blur-sm">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3.5 hover:border-[#D4AF37]/40 transition duration-300 group shadow-md">
               <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] group-hover:scale-110 group-hover:bg-[#D4AF37]/20 transition shrink-0">
                 <Stethoscope className="w-5 h-5" />
               </div>
@@ -102,7 +102,7 @@ export const Footer = () => {
               </div>
             </div>
 
-            <div className="bg-slate-900/60 border border-slate-800/90 rounded-2xl p-4 flex items-center gap-3.5 hover:border-[#D4AF37]/40 transition duration-300 group shadow-md backdrop-blur-sm">
+            <div className="bg-slate-900 border border-slate-800 rounded-2xl p-4 flex items-center gap-3.5 hover:border-[#D4AF37]/40 transition duration-300 group shadow-md">
               <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] group-hover:scale-110 group-hover:bg-[#D4AF37]/20 transition shrink-0">
                 <Truck className="w-5 h-5" />
               </div>
@@ -161,8 +161,8 @@ export const Footer = () => {
                   { name: 'Contact Us', path: '/contact' },
                 ].map((link, idx) => (
                   <li key={idx}>
-                    <Link 
-                      to={link.path} 
+                    <Link
+                      to={link.path}
                       className="group flex items-center gap-1.5 hover:text-[#D4AF37] transition duration-200 py-0.5"
                     >
                       <ChevronRight className="w-3 h-3 text-[#D4AF37]/50 group-hover:text-[#D4AF37] group-hover:translate-x-0.5 transition" />
@@ -270,7 +270,7 @@ export const Footer = () => {
                 </div>
 
                 {subscribed && (
-                  <div className="text-xs font-semibold text-emerald-400 bg-emerald-950/80 border border-emerald-700/80 p-3 rounded-xl flex items-start gap-2.5 animate-fade-up shadow-lg backdrop-blur-sm">
+                  <div className="text-xs font-semibold text-emerald-400 bg-emerald-950 border border-emerald-700 p-3 rounded-xl flex items-start gap-2.5 animate-fade-up shadow-lg">
                     <CheckCircle2 className="w-4 h-4 text-emerald-400 shrink-0 mt-0.5" />
                     <div className="min-w-0 flex-1 leading-snug break-all">
                       <span>{subscribedMsg || 'Subscribed successfully! Confirmation email dispatched from horsesquarepakistan@gmail.com.'}</span>
@@ -279,7 +279,7 @@ export const Footer = () => {
                 )}
 
                 {errorMsg && (
-                  <div className="text-xs font-semibold text-rose-400 bg-rose-950/80 border border-rose-700/80 p-3 rounded-xl flex items-start gap-2.5 animate-fade-up shadow-lg backdrop-blur-sm">
+                  <div className="text-xs font-semibold text-rose-400 bg-rose-950 border border-rose-700 p-3 rounded-xl flex items-start gap-2.5 animate-fade-up shadow-lg">
                     <div className="min-w-0 flex-1 leading-snug break-all">
                       <span>⚠️ {errorMsg}</span>
                     </div>
@@ -305,7 +305,7 @@ export const Footer = () => {
                 Terms & Conditions
               </Link>
               <span className="text-slate-700">•</span>
-              <button 
+              <button
                 onClick={scrollToTop}
                 className="flex items-center gap-1 text-slate-400 hover:text-[#D4AF37] transition duration-200 cursor-pointer bg-slate-900 border border-slate-800 px-2.5 py-1 rounded-lg hover:border-[#D4AF37]/50"
               >
@@ -319,7 +319,7 @@ export const Footer = () => {
       </footer>
 
       {/* REALISTIC FLOATING SOCIAL MEDIA BUTTONS (RIGHT BOTTOM) */}
-      <div className="fixed bottom-5 right-5 z-50 flex flex-col items-center gap-2.5">
+      <div className="fixed bottom-4 right-3 sm:bottom-5 sm:right-5 z-50 flex flex-col items-center gap-2 sm:gap-2.5">
 
         {/* 1. REALISTIC FLOATING WHATSAPP BUTTON */}
         <a
@@ -327,7 +327,7 @@ export const Footer = () => {
           target="_blank"
           rel="noopener noreferrer"
           title="Chat on WhatsApp"
-          className="w-10.5 h-10.5 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all duration-300 group relative border border-white/30"
+          className="w-9 h-9 sm:w-10.5 sm:h-10.5 rounded-full bg-[#25D366] hover:bg-[#20bd5a] text-white flex items-center justify-center shadow-xl hover:scale-110 active:scale-95 transition-all duration-300 group relative border border-white/30"
         >
           {/* Authentic WhatsApp Icon SVG */}
           <svg className="w-5.5 h-5.5 fill-current" viewBox="0 0 24 24">

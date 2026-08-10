@@ -242,26 +242,26 @@ export const SellHorse = () => {
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-10 animate-fade-up">
 
       {/* Banner */}
-      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
         <div className="relative z-10 space-y-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Equestrian Listing Studio
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
+            <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" /> Equestrian Listing Studio
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
             Sell Your Horse
           </h1>
-          <p className="text-slate-300 text-sm max-w-2xl font-light">
+          <p className="text-slate-300 text-xs sm:text-sm max-w-2xl font-light">
             Fill in your horse details below to publish your verified listing on Pakistan's premier equestrian marketplace!
           </p>
         </div>
       </div>
 
       {/* 2-Column Main Layout Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
 
-        {/* LEFT COLUMN: SIDEBAR WIDGETS & SUGGESTION ASSISTANT (5 COLS) */}
-        <div className="lg:col-span-5 space-y-6">
+        {/* LEFT COLUMN: SIDEBAR WIDGETS & SUGGESTION ASSISTANT (5 COLS - Order last on mobile so main form is top priority) */}
+        <div className="lg:col-span-5 space-y-6 order-last lg:order-none">
 
           {/* WIDGET 1: Real-time Auto-Approval Policy Checklist */}
           <div className="bg-gradient-to-br from-[#0B0F19] via-slate-900 to-[#0F172A] text-white p-6 rounded-3xl border border-slate-800 shadow-xl space-y-4 relative overflow-hidden">
@@ -390,11 +390,11 @@ export const SellHorse = () => {
 
         {/* RIGHT COLUMN: MAIN FORM BODY (7 COLS) */}
         <div className="lg:col-span-7 space-y-6">
-          <div className="bg-white rounded-3xl p-6 sm:p-10 shadow-2xl border border-slate-200/90 space-y-8">
+          <div className="bg-white rounded-2xl sm:rounded-3xl p-4 sm:p-10 shadow-2xl border border-slate-200/90 space-y-6 sm:space-y-8">
 
             {error && (
-              <div className="bg-rose-50 text-rose-900 p-5 rounded-2xl border border-rose-200 space-y-2">
-                <div className="flex items-center gap-2 font-bold text-sm">
+              <div className="bg-rose-50 text-rose-900 p-4 sm:p-5 rounded-2xl border border-rose-200 space-y-2">
+                <div className="flex items-center gap-2 font-bold text-xs sm:text-sm">
                   <AlertCircle className="w-5 h-5 shrink-0 text-rose-600" /> {error}
                 </div>
                 {policyFailures.length > 0 && (
@@ -408,15 +408,15 @@ export const SellHorse = () => {
             )}
 
             {message && (
-              <div className="bg-emerald-50 text-emerald-900 p-5 rounded-2xl border border-emerald-200 flex items-center gap-3 shadow-sm font-extrabold text-sm">
+              <div className="bg-emerald-50 text-emerald-900 p-4 sm:p-5 rounded-2xl border border-emerald-200 flex items-center gap-3 shadow-sm font-extrabold text-xs sm:text-sm">
                 <CheckCircle className="w-6 h-6 shrink-0 text-emerald-600" /> {message}
               </div>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-8">
+            <form onSubmit={handleSubmit} className="space-y-6 sm:space-y-8">
 
               {/* SELECT LISTING DESTINATION: MARKETPLACE vs LIVE AUCTION */}
-              <div className="space-y-3 p-5 sm:p-6 bg-gradient-to-br from-[#0B0F19] via-slate-900 to-[#0F172A] text-white rounded-3xl border border-slate-800 shadow-xl relative overflow-hidden">
+              <div className="space-y-3 p-4 sm:p-6 bg-gradient-to-br from-[#0B0F19] via-slate-900 to-[#0F172A] text-white rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl relative overflow-hidden">
                 <div className="flex items-center justify-between border-b border-slate-800 pb-3">
                   <h3 className="text-xs font-black uppercase tracking-wider text-[#D4AF37] flex items-center gap-2">
                     <Tag className="w-4 h-4 text-[#D4AF37]" /> Select Listing Destination
@@ -746,7 +746,7 @@ export const SellHorse = () => {
                 </div>
 
                 {imageFiles.length < 3 && (
-                  <div className="border-2 border-dashed border-slate-300 hover:border-[#D4AF37] rounded-3xl p-8 text-center bg-slate-50/80 hover:bg-amber-50/30 transition duration-300 cursor-pointer relative shadow-inner group">
+                  <div className="border-2 border-dashed border-slate-300 hover:border-[#D4AF37] rounded-2xl sm:rounded-3xl p-4 sm:p-8 text-center bg-slate-50/80 hover:bg-amber-50/30 transition duration-300 cursor-pointer relative shadow-inner group">
                     <input
                       type="file"
                       accept="image/*"
@@ -755,21 +755,21 @@ export const SellHorse = () => {
                       onChange={handleImageChange}
                       className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
                     />
-                    <div className="w-12 h-12 rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] mx-auto mb-3 group-hover:scale-110 group-hover:bg-[#D4AF37] group-hover:text-slate-950 transition duration-300 shadow-sm">
-                      <Upload className="w-6 h-6" />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] mx-auto mb-2 sm:mb-3 group-hover:scale-110 group-hover:bg-[#D4AF37] group-hover:text-slate-950 transition duration-300 shadow-sm">
+                      <Upload className="w-5 h-5 sm:w-6 sm:h-6" />
                     </div>
-                    <p className="text-sm font-black text-slate-800">
+                    <p className="text-xs sm:text-sm font-black text-slate-800">
                       Click or drag up to 3 horse photos here to upload
                     </p>
-                    <p className="text-xs text-slate-400 font-medium mt-1">PNG, JPG, JPEG up to 10MB per file (Maximum 3 photos)</p>
+                    <p className="text-[10px] sm:text-xs text-slate-400 font-medium mt-1">PNG, JPG, JPEG up to 10MB per file (Maximum 3 photos)</p>
                   </div>
                 )}
 
                 {/* Selected Images Grid / Preview */}
                 {imageFiles.length > 0 && (
-                  <div className="grid grid-cols-3 gap-4 pt-2">
+                  <div className="grid grid-cols-3 gap-2 sm:gap-4 pt-2">
                     {imageFiles.map((file, idx) => (
-                      <div key={idx} className="relative rounded-2xl overflow-hidden border-2 border-slate-200 bg-slate-900 group shadow-md aspect-square">
+                      <div key={idx} className="relative rounded-xl sm:rounded-2xl overflow-hidden border-2 border-slate-200 bg-slate-900 group shadow-md aspect-square">
                         <img
                           src={URL.createObjectURL(file)}
                           alt={`Horse photo ${idx + 1}`}
@@ -779,13 +779,13 @@ export const SellHorse = () => {
                           <button
                             type="button"
                             onClick={() => handleRemoveImage(idx)}
-                            className="p-2.5 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-xl cursor-pointer"
+                            className="p-2 sm:p-2.5 bg-rose-600 text-white rounded-full hover:bg-rose-700 transition shadow-xl cursor-pointer"
                             title="Remove photo"
                           >
-                            <X className="w-4 h-4" />
+                            <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
                           </button>
                         </div>
-                        <span className="absolute bottom-2 left-2 bg-slate-950/85 text-white text-[10px] font-extrabold px-2.5 py-0.5 rounded-full backdrop-blur-md border border-white/20">
+                        <span className="absolute bottom-1.5 left-1.5 sm:bottom-2 sm:left-2 bg-slate-950 text-white text-[9px] sm:text-[10px] font-extrabold px-2 py-0.5 rounded-full border border-white/20">
                           Photo #{idx + 1}
                         </span>
                       </div>
@@ -798,20 +798,22 @@ export const SellHorse = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full py-4.5 bg-gradient-to-r from-[#D4AF37] via-[#C9A227] to-[#B8860B] hover:from-[#C9A227] hover:to-[#A67C00] text-slate-950 font-black rounded-2xl text-base shadow-[0_6px_25px_rgba(212,175,55,0.35)] hover:shadow-[0_8px_30px_rgba(212,175,55,0.5)] active:scale-[0.99] transition duration-300 cursor-pointer flex items-center justify-center gap-2.5 disabled:opacity-50"
+                className="w-full py-4 sm:py-5 bg-gradient-to-r from-[#D4AF37] via-[#C9A227] to-[#B8860B] hover:from-[#C9A227] hover:to-[#A67C00] text-slate-950 font-black rounded-xl sm:rounded-2xl text-sm sm:text-base shadow-[0_6px_25px_rgba(212,175,55,0.35)] hover:shadow-[0_8px_30px_rgba(212,175,55,0.5)] active:scale-[0.98] transition-all duration-300 cursor-pointer flex items-center justify-center gap-2.5 disabled:opacity-50"
               >
                 {loading ? (
                   <span className="flex items-center gap-2">
                     <span className="w-4 h-4 border-2 border-slate-950 border-t-transparent rounded-full animate-spin"></span>
-                    Publishing Listing to {listingType === 'auction' ? 'Live Auctions' : 'Marketplace'}...
+                    Publishing Listing...
                   </span>
                 ) : (
                   <>
-                    <Sparkles className="w-5 h-5 text-slate-950" />
+                    <Sparkles className="w-5 h-5 text-slate-950 stroke-[2.5]" />
                     <span>
                       {listingType === 'auction'
-                        ? 'Publish to Live Auctions (/auction)'
-                        : 'Publish to Marketplace (/marketplace)'}
+                        ? 'Publish to Live Auctions'
+                        : listingType === 'breeding'
+                          ? 'Publish to Breeding Directory'
+                          : 'Publish to Marketplace'}
                     </span>
                   </>
                 )}

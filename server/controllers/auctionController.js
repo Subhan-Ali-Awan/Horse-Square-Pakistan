@@ -90,9 +90,9 @@ exports.createAuction = async (req, res, next) => {
 
     let image;
     if (req.file) {
-      image = `/uploads/${req.file.filename}`;
+      image = await uploadToCloudinary(req.file.path, "horsesquare/auctions");
     } else if (req.files && req.files.length > 0) {
-      image = `/uploads/${req.files[0].filename}`;
+      image = await uploadToCloudinary(req.files[0].path, "horsesquare/auctions");
     }
 
     const auction = await Auction.create({

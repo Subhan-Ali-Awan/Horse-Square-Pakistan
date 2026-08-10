@@ -1,4 +1,5 @@
 const Horse = require("../models/Horse");
+const { uploadToCloudinary } = require("../utils/cloudinary");
 
 // ===================================================
 // GET /api/horses   -> Home page listings + "Search Horses" filters
@@ -78,7 +79,10 @@ exports.createHorse = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Please fill in all required fields" });
     }
 
-    const images = req.files ? req.files.map((file) => `/uploads/${file.filename}`) : [];
+    let images = [];
+    if (req.files && req.files.length > 0) {
+      images = await Promise.all(req.files.map((file) => uploadToCloudinary(file.path, "horsesquare/marketplace")));
+    }
 
     // Optionally extract user ID from JWT if present in the headers (since this route has no protect middleware)
     let postedBy = req.user ? req.user._id : undefined;
@@ -211,7 +215,7 @@ exports.updateHorse = async (req, res, next) => {
     });
 
     if (req.files && req.files.length > 0) {
-      horse.images = req.files.map((file) => `/uploads/${file.filename}`);
+      horse.images = await Promise.all(req.files.map((file) => uploadToCloudinary(file.path, "horsesquare/marketplace")));
     }
 
     // Any edit by a normal user sends it back for re-approval

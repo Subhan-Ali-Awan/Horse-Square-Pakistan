@@ -27,52 +27,8 @@ export const Breeding = () => {
     return '/uploads/' + url;
   };
 
-  const sampleBreedingHorses = [
-    {
-      id: 'b0',
-      name: 'Ghulam e murtijz',
-      breed: 'Local / Desi',
-      studFee: 250000,
-      location: 'Sahiwal Stud Farm',
-      achievements: 'Elite bloodline • Active Nezabazi (tent-pegging) champion',
-      sire: 'Ghulam Muhammad',
-      dam: 'Bella',
-      imageUrl: '/uploads/media__1784677431875.jpg'
-    },
-    {
-      id: 'b2',
-      name: 'Al-Burraq (Arabian Champion)',
-      breed: 'Arabian',
-      studFee: 180000,
-      location: 'Lahore Stud Farm',
-      achievements: 'Multiple National Show Champion 2024 • Pure Bloodline',
-      sire: 'Al-Murtajiz',
-      dam: 'Desert Rose',
-      imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=600'
-    },
-    {
-      id: 'b3',
-      name: 'Bucephalus (Thoroughbred Stallion)',
-      breed: 'Thoroughbred',
-      studFee: 220000,
-      location: 'Rawalpindi Turf Club',
-      achievements: 'Derby Winner & Speed Record Holder at Lahore Turf Club',
-      sire: 'Storm Cat II',
-      dam: 'Lady Pearl',
-      imageUrl: 'https://images.unsplash.com/photo-1593113630400-ea4288922497?auto=format&fit=crop&q=80&w=600'
-    },
-    {
-      id: 'b4',
-      name: 'Rustam (Desi Stud Stallion)',
-      breed: 'Local / Desi',
-      studFee: 160000,
-      location: 'Multan Stud Farms',
-      achievements: 'High Resilient Bloodline • Tent Pegging Specialist',
-      sire: 'Ghulam Muhammad',
-      dam: 'Bella',
-      imageUrl: '/uploads/rustam_desi_stallion.png'
-    }
-  ];
+  // Dynamic Breeding Horses state initialized from API
+  const sampleBreedingHorses = [];
 
   const fetchBreedingHorses = async () => {
     setLoading(true);
@@ -80,7 +36,7 @@ export const Breeding = () => {
       const res = await fetch('/api/breeding/horses');
       if (res.ok) {
         const data = await res.json();
-        if (data.success && data.data && data.data.length > 0) {
+        if (data.success && Array.isArray(data.data)) {
           const formatted = data.data.map(h => ({
             ...h,
             id: h._id,
@@ -91,14 +47,13 @@ export const Breeding = () => {
             dam: h.dam || 'Verified Dam'
           }));
           setBreedingHorses(formatted);
-        } else {
-          setBreedingHorses(sampleBreedingHorses);
+          return;
         }
-      } else {
-        setBreedingHorses(sampleBreedingHorses);
       }
+      setBreedingHorses([]);
     } catch (err) {
-      setBreedingHorses(sampleBreedingHorses);
+      console.error("Failed to fetch breeding horses from API:", err);
+      setBreedingHorses([]);
     } finally {
       setLoading(false);
     }
@@ -151,29 +106,29 @@ export const Breeding = () => {
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-10 animate-fade-up">
 
       {/* Banner */}
-      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
         <div className="relative z-10 space-y-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Verified Equine Genetics & Stud Directory
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
+            <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" /> Verified Equine Genetics & Stud Directory
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
             Equine Breeding Services
           </h1>
-          <p className="text-slate-300 text-sm max-w-2xl font-light">
+          <p className="text-slate-300 text-xs sm:text-sm max-w-2xl font-light">
             Access Pakistan's premier stud stallions with certified pedigree bloodlines, championship trophies, and verified fertility rates.
           </p>
         </div>
       </div>
 
       {/* 2-Column Main Layout Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
 
-        {/* LEFT COLUMN: SIDEBAR WIDGETS (4 COLS) */}
-        <div className="lg:col-span-4 space-y-6">
+        {/* LEFT COLUMN: SIDEBAR WIDGETS (4 COLS - Order last on mobile so stud stallion cards are top priority) */}
+        <div className="lg:col-span-4 space-y-6 order-last lg:order-none">
 
           {/* WIDGET 1: Stud Lineage Guarantee */}
-          <div className="bg-gradient-to-br from-[#0B0F19] via-slate-900 to-[#0F172A] text-white p-6 rounded-3xl border border-slate-800 shadow-xl space-y-3 relative overflow-hidden">
+          <div className="bg-gradient-to-br from-[#0B0F19] via-slate-900 to-[#0F172A] text-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl space-y-3 relative overflow-hidden">
             <div className="flex justify-between items-center pb-3 border-b border-slate-800">
               <h3 className="font-black text-xs uppercase tracking-wider text-[#D4AF37] flex items-center gap-2">
                 <ShieldCheck className="w-4.5 h-4.5 text-[#D4AF37]" /> Certified Stud Lineage
@@ -188,21 +143,21 @@ export const Breeding = () => {
           </div>
 
           {/* WIDGET 2: Breeding Season Insights */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-md space-y-4">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-md space-y-4">
             <h3 className="font-black text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
               <Award className="w-4.5 h-4.5 text-[#D4AF37]" /> Breeding Season Insights
             </h3>
 
             <div className="space-y-2.5 text-xs">
-              <div className="flex justify-between items-center p-3 rounded-2xl bg-slate-50 border border-slate-100">
+              <div className="flex justify-between items-center p-3 rounded-xl sm:rounded-2xl bg-slate-50 border border-slate-100">
                 <span className="font-bold text-slate-600">Active Stud Bookings</span>
-                <span className="font-black text-[#0F172A] text-sm">185+ Matings</span>
+                <span className="font-black text-[#0F172A] text-xs sm:text-sm">185+ Matings</span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-2xl bg-emerald-50/60 border border-emerald-100">
+              <div className="flex justify-between items-center p-3 rounded-xl sm:rounded-2xl bg-emerald-50/60 border border-emerald-100">
                 <span className="font-bold text-emerald-800">Conception Rate</span>
-                <span className="font-black text-emerald-700 text-sm">98.4% Success</span>
+                <span className="font-black text-emerald-700 text-xs sm:text-sm">98.4% Success</span>
               </div>
-              <div className="flex justify-between items-center p-3 rounded-2xl bg-amber-50/60 border border-amber-100">
+              <div className="flex justify-between items-center p-3 rounded-xl sm:rounded-2xl bg-amber-50/60 border border-amber-100">
                 <span className="font-bold text-amber-800">Top Breed Requested</span>
                 <span className="font-black text-amber-900 text-xs">Nukra & Arabian</span>
               </div>
@@ -210,7 +165,7 @@ export const Breeding = () => {
           </div>
 
           {/* WIDGET 3: Mare Pre-Breeding Checklist */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-md space-y-4">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-md space-y-4">
             <h3 className="font-black text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
               <CheckCircle2 className="w-4.5 h-4.5 text-emerald-600" /> Mare Pre-Breeding Checklist
             </h3>
@@ -232,17 +187,17 @@ export const Breeding = () => {
           </div>
 
           {/* WIDGET 4: AI Vet Genetic Pairing CTA */}
-          <div className="bg-gradient-to-br from-[#0B0F19] via-slate-900 to-[#0F172A] text-white p-6 rounded-3xl border border-slate-800 shadow-xl space-y-3 relative overflow-hidden">
+          <div className="bg-gradient-to-br from-[#0B0F19] via-slate-900 to-[#0F172A] text-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-800 shadow-xl space-y-3 relative overflow-hidden">
             <span className="text-[10px] font-extrabold text-[#D4AF37] uppercase tracking-wider block">
               AI VET DOCTOR ASSISTANT
             </span>
-            <h4 className="font-black text-base text-white">Need Genetic Pairing Consultation?</h4>
+            <h4 className="font-black text-sm sm:text-base text-white">Need Genetic Pairing Consultation?</h4>
             <p className="text-xs text-slate-300 font-normal leading-relaxed">
               Use our AI Vet Assistant to analyze bloodline compatibility and health before booking.
             </p>
             <Link
               to="/vet"
-              className="w-full py-3 bg-gradient-to-r from-[#D4AF37] via-[#C9A227] to-[#B8860B] hover:from-[#C9A227] text-slate-950 font-black rounded-2xl text-xs shadow-md transition duration-200 flex items-center justify-center gap-2 mt-2 cursor-pointer"
+              className="w-full py-3.5 bg-gradient-to-r from-[#D4AF37] via-[#C9A227] to-[#B8860B] hover:from-[#C9A227] text-slate-950 font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm shadow-md transition duration-200 flex items-center justify-center gap-2 mt-2 cursor-pointer"
             >
               <Stethoscope className="w-4 h-4 text-slate-950" />
               <span>Consult AI Vet Doctor</span>
@@ -257,60 +212,60 @@ export const Breeding = () => {
           {loading ? (
             <div className="text-center py-12 text-slate-500 font-bold">Loading breeding stud directory...</div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
               {breedingHorses.map((horse) => {
                 const mainImg = formatImgUrl(horse.imageUrl);
                 return (
                   <div
                     key={horse.id}
-                    className="bg-white rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden hover:border-[#D4AF37] transition duration-300 group flex flex-col justify-between"
+                    className="bg-white rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-xl overflow-hidden hover:border-[#D4AF37] transition duration-300 group flex flex-col justify-between"
                   >
                     <div>
                       {/* Image Header */}
-                      <div className="relative h-60 sm:h-64 overflow-hidden bg-slate-950">
+                      <div className="relative h-48 sm:h-64 overflow-hidden bg-slate-950">
                         <img
                           src={mainImg}
                           alt={horse.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                         />
-                        <span className="absolute top-3 left-3 bg-[#D4AF37] text-slate-950 font-black text-[10px] uppercase px-3 py-1 rounded-xl shadow">
+                        <span className="absolute top-3 left-3 bg-[#D4AF37] text-slate-950 font-black text-[10px] uppercase px-2.5 py-1 rounded-lg sm:rounded-xl shadow">
                           {horse.breed || 'Verified Breed'}
                         </span>
-                        <span className="absolute top-3 right-3 bg-slate-950/85 text-emerald-400 text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-xl border border-emerald-500/30 backdrop-blur-md">
+                        <span className="absolute top-3 right-3 bg-slate-950 text-emerald-400 text-[10px] font-extrabold uppercase px-2.5 py-1 rounded-lg sm:rounded-xl border border-emerald-500/30">
                           Verified Stud
                         </span>
                       </div>
 
                       {/* Content Body */}
-                      <div className="p-6 space-y-4">
+                      <div className="p-4 sm:p-6 space-y-3 sm:space-y-4">
                         <div>
-                          <h3 className="text-base font-black text-[#0F172A] leading-snug line-clamp-1">{horse.name}</h3>
+                          <h3 className="text-sm sm:text-base font-black text-[#0F172A] leading-snug line-clamp-1">{horse.name}</h3>
                           <p className="text-xs text-slate-500 font-medium mt-1 flex items-center gap-1.5">
                             <Award className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" /> {horse.achievements}
                           </p>
                         </div>
 
                         {/* Sire & Dam Pedigree Pill */}
-                        <div className="grid grid-cols-2 gap-2 text-xs p-3 bg-slate-50 rounded-2xl border border-slate-100">
+                        <div className="grid grid-cols-2 gap-2 text-xs p-2.5 sm:p-3 bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-100">
                           <div>
-                            <span className="text-[10px] text-slate-400 font-bold uppercase block">Father (Sire)</span>
-                            <span className="font-extrabold text-slate-800 truncate block">{horse.sire || 'Verified Sire'}</span>
+                            <span className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase block">Father (Sire)</span>
+                            <span className="font-extrabold text-slate-800 text-xs truncate block">{horse.sire || 'Verified Sire'}</span>
                           </div>
                           <div>
-                            <span className="text-[10px] text-slate-400 font-bold uppercase block">Mother (Dam)</span>
-                            <span className="font-extrabold text-slate-800 truncate block">{horse.dam || 'Verified Dam'}</span>
+                            <span className="text-[9px] sm:text-[10px] text-slate-400 font-bold uppercase block">Mother (Dam)</span>
+                            <span className="font-extrabold text-slate-800 text-xs truncate block">{horse.dam || 'Verified Dam'}</span>
                           </div>
                         </div>
 
                         {/* Stud Booking Fee Banner */}
-                        <div className="bg-gradient-to-r from-slate-900 to-[#0F172A] text-white p-4 rounded-2xl border border-slate-800 flex justify-between items-center shadow-inner">
+                        <div className="bg-gradient-to-r from-slate-900 to-[#0F172A] text-white p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-800 flex justify-between items-center shadow-inner">
                           <div>
-                            <p className="text-[10px] font-bold text-amber-300 uppercase tracking-wider">Stud Booking Fee</p>
-                            <p className="text-xl font-black text-[#D4AF37] mt-0.5">
+                            <p className="text-[9px] sm:text-[10px] font-bold text-amber-300 uppercase tracking-wider">Stud Booking Fee</p>
+                            <p className="text-lg sm:text-xl font-black text-[#D4AF37] mt-0.5">
                               Rs. {Number(horse.studFee).toLocaleString('en-PK')}
                             </p>
                           </div>
-                          <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] shrink-0 font-bold text-xs">
+                          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-xl bg-[#D4AF37]/20 border border-[#D4AF37]/40 flex items-center justify-center text-[#D4AF37] shrink-0 font-bold text-xs">
                             PKR
                           </div>
                         </div>
@@ -318,11 +273,11 @@ export const Breeding = () => {
                     </div>
 
                     {/* Book Request Action */}
-                    <div className="p-6 pt-0 mt-auto">
+                    <div className="p-4 sm:p-6 pt-0 mt-auto">
                       <button
                         type="button"
                         onClick={() => setSelectedHorse(horse)}
-                        className="w-full py-3.5 bg-gradient-to-r from-[#D4AF37] via-[#C9A227] to-[#B8860B] hover:from-[#C9A227] text-slate-950 font-black rounded-2xl text-xs shadow-md transition duration-200 flex items-center justify-center gap-2 cursor-pointer"
+                        className="w-full py-3.5 sm:py-4 bg-gradient-to-r from-[#D4AF37] via-[#C9A227] to-[#B8860B] hover:from-[#C9A227] text-slate-950 font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm shadow-md hover:shadow-xl active:scale-[0.98] transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
                       >
                         <Send className="w-4 h-4 text-slate-950 stroke-[2.5]" />
                         <span>Book Breeding Request</span>
@@ -485,17 +440,17 @@ export const Breeding = () => {
                   ></textarea>
                 </div>
 
-                <div className="flex gap-3 pt-2">
+                <div className="flex flex-col sm:flex-row gap-2.5 pt-2">
                   <button
                     type="button"
                     onClick={() => setSelectedHorse(null)}
-                    className="flex-1 py-3.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-2xl text-xs transition cursor-pointer"
+                    className="w-full sm:flex-1 py-3.5 sm:py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl sm:rounded-2xl text-xs sm:text-sm transition cursor-pointer"
                   >
                     Cancel
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-3.5 bg-gradient-to-r from-[#D4AF37] via-[#C9A227] to-[#B8860B] text-slate-950 font-black rounded-2xl text-xs shadow-md transition cursor-pointer"
+                    className="w-full sm:flex-1 py-3.5 sm:py-4 bg-gradient-to-r from-[#D4AF37] via-[#C9A227] to-[#B8860B] hover:from-[#C9A227] text-slate-950 font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm shadow-md hover:shadow-xl active:scale-[0.98] transition-all cursor-pointer"
                   >
                     Confirm Request
                   </button>

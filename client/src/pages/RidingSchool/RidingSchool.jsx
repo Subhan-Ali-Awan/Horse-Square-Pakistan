@@ -311,27 +311,27 @@ export const RidingSchool = () => {
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-10 animate-fade-up">
 
       {/* Banner */}
-      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
         <div className="relative z-10 space-y-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Professional Riding Academy
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
+            <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" /> Professional Riding Academy
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
             Master Equestrian Skills & Horsemanship
           </h1>
-          <p className="text-slate-300 text-sm max-w-2xl font-light">
+          <p className="text-slate-300 text-xs sm:text-sm max-w-2xl font-light">
             Book a trial riding session with Pakistan's top certified equestrian instructors. Learn balance, canter control, and traditional Nezabazi (Tent Pegging) mastery.
           </p>
         </div>
       </div>
 
       {/* Main Grid: Left Column (Tips & Safety) + Right Column (Courses) */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
 
-        {/* LEFT COLUMN: RIDING TIPS & SAFETY GEAR WIDGETS */}
-        <div className="lg:col-span-4 space-y-6">
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-3">
+        {/* LEFT COLUMN: RIDING TIPS & SAFETY GEAR WIDGETS (Order last on mobile so course cards are top priority) */}
+        <div className="lg:col-span-4 space-y-6 order-last lg:order-none">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-md space-y-3">
             <div className="flex justify-between items-center pb-2 border-b">
               <h3 className="font-extrabold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
                 <BookOpen className="w-4 h-4 text-emerald-600" /> Beginner Riding Tips
@@ -344,7 +344,7 @@ export const RidingSchool = () => {
             </ul>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-3">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-md space-y-3">
             <div className="flex justify-between items-center pb-2 border-b">
               <h3 className="font-extrabold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
                 <Target className="w-4 h-4 text-amber-500" /> Intermediate Riding Tips
@@ -357,7 +357,7 @@ export const RidingSchool = () => {
             </ul>
           </div>
 
-          <div className="bg-white p-6 rounded-3xl border border-slate-200 shadow-md space-y-3">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-md space-y-3">
             <div className="flex justify-between items-center pb-2 border-b">
               <h3 className="font-extrabold text-xs uppercase tracking-wider text-slate-800 flex items-center gap-2">
                 <Flame className="w-4 h-4 text-purple-600" /> Advanced Equestrian Tent Pegging
@@ -372,24 +372,24 @@ export const RidingSchool = () => {
         </div>
 
         {/* RIGHT COLUMN: RIDING COURSES */}
-        <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-6">
+        <div className="lg:col-span-8 grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           {programs.map((prog) => (
-            <div key={prog.id} className="bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between hover:border-[#D4AF37] transition duration-300">
+            <div key={prog.id} className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-lg flex flex-col justify-between hover:border-[#D4AF37] transition duration-300">
               <div>
                 <div className="flex justify-between items-start mb-3">
                   <span className="bg-amber-100 text-amber-900 font-extrabold text-[10px] uppercase px-3 py-1 rounded-full border border-amber-300">{prog.badge}</span>
-                  <span className="font-black text-[#0F172A] text-sm bg-slate-100 px-3 py-1 rounded-xl border">{prog.fee}</span>
+                  <span className="font-black text-[#0F172A] text-xs sm:text-sm bg-slate-100 px-3 py-1 rounded-xl border">{prog.fee}</span>
                 </div>
-                <h3 className="text-lg font-black text-[#0F172A] mt-2 leading-snug">{prog.title}</h3>
+                <h3 className="text-base sm:text-lg font-black text-[#0F172A] mt-2 leading-snug">{prog.title}</h3>
                 <p className="text-xs font-bold text-[#D4AF37] uppercase tracking-wider mt-1 mb-3">{prog.duration}</p>
                 <p className="text-xs text-slate-600 leading-relaxed font-normal">{prog.desc}</p>
               </div>
               <button
                 onClick={() => handleOpenBookingModal(prog)}
-                className="w-full mt-6 py-3.5 bg-[#0F172A] hover:bg-[#1E293B] text-white font-bold rounded-2xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer"
+                className="w-full mt-6 py-3.5 sm:py-4 bg-[#0F172A] hover:bg-[#1E293B] text-white font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm shadow-md hover:shadow-xl active:scale-[0.98] transition-all flex items-center justify-center gap-2 cursor-pointer"
               >
                 <span>Book Trial Session</span>
-                <ChevronRight className="w-4 h-4 text-amber-400" />
+                <ChevronRight className="w-4 h-4 text-amber-400 stroke-[2.5]" />
               </button>
             </div>
           ))}
@@ -397,27 +397,27 @@ export const RidingSchool = () => {
       </div>
 
       {/* PAKISTANI LEGENDS BLOG STORIES SECTION */}
-      <div className="border-t border-slate-200 pt-12 space-y-8">
+      <div className="border-t border-slate-200 pt-10 sm:pt-12 space-y-6 sm:space-y-8">
         <div className="space-y-1">
           <span className="inline-flex items-center gap-1 text-[10px] font-extrabold uppercase tracking-widest text-[#D4AF37] bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
             <Flame className="w-3.5 h-3.5 text-amber-500" /> Equestrian Heritage & Wisdom
           </span>
-          <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A]">Pakistani Legends & Mentors</h2>
+          <h2 className="text-xl sm:text-3xl font-black text-[#0F172A]">Pakistani Legends & Mentors</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-6">
           {pakistaniLegends.map((mentor) => (
-            <div key={mentor.id} className="bg-white rounded-3xl p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-5">
-              <div className="flex items-center gap-4 border-b border-slate-100 pb-4">
-                <div className="w-16 h-16 rounded-2xl overflow-hidden border-2 border-[#D4AF37] bg-slate-900 shrink-0 shadow-md">
+            <div key={mentor.id} className="bg-white rounded-2xl sm:rounded-3xl p-5 sm:p-6 border border-slate-200 shadow-lg flex flex-col justify-between space-y-4 sm:space-y-5">
+              <div className="flex items-center gap-3.5 border-b border-slate-100 pb-4">
+                <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-2xl overflow-hidden border-2 border-[#D4AF37] bg-slate-900 shrink-0 shadow-md">
                   <img src={mentor.avatar} alt={mentor.name} className="w-full h-full object-cover object-top" />
                 </div>
                 <div>
-                  <h3 className="font-extrabold text-slate-900 text-sm leading-snug">{mentor.name}</h3>
-                  <p className="text-[11px] font-bold text-[#D4AF37] mt-0.5">{mentor.title}</p>
+                  <h3 className="font-extrabold text-slate-900 text-xs sm:text-sm leading-snug">{mentor.name}</h3>
+                  <p className="text-[10px] sm:text-[11px] font-bold text-[#D4AF37] mt-0.5">{mentor.title}</p>
                 </div>
               </div>
-              <p className="text-xs text-slate-600 italic bg-slate-50 p-4 rounded-2xl border border-slate-100">"{mentor.story}"</p>
-              <div className="pt-3 border-t border-slate-100 flex items-start gap-2 text-xs font-semibold text-amber-900 bg-amber-50/60 p-3 rounded-2xl">
+              <p className="text-xs text-slate-600 italic bg-slate-50 p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-100">"{mentor.story}"</p>
+              <div className="pt-3 border-t border-slate-100 flex items-start gap-2 text-xs font-semibold text-amber-900 bg-amber-50/60 p-3 rounded-xl sm:rounded-2xl">
                 <Quote className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                 <span className="italic">{mentor.quote}</span>
               </div>
@@ -427,26 +427,26 @@ export const RidingSchool = () => {
       </div>
 
       {/* VERIFIED REAL RIDING SCHOOLS DIRECTORY ACROSS PAKISTAN */}
-      <div className="border-t border-slate-200 pt-12 space-y-8">
+      <div className="border-t border-slate-200 pt-10 sm:pt-12 space-y-6 sm:space-y-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1">
             <span className="inline-flex items-center gap-1.5 text-[10px] font-extrabold uppercase tracking-widest text-[#D4AF37] bg-amber-50 px-3 py-1 rounded-full border border-amber-200">
               <MapPin className="w-3.5 h-3.5 text-amber-500" /> Nationwide Network
             </span>
-            <h2 className="text-2xl sm:text-3xl font-black text-[#0F172A]">Real & Active Riding Schools in Pakistan</h2>
+            <h2 className="text-xl sm:text-3xl font-black text-[#0F172A]">Real & Active Riding Schools in Pakistan</h2>
             <p className="text-xs text-slate-500 font-medium max-w-xl">
               Explore verified equestrian academies, polo clubs, and tent pegging schools with real locations and direct contact details across Pakistan.
             </p>
           </div>
 
           {/* City Filter Tabs */}
-          <div className="flex flex-wrap gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200">
+          <div className="flex flex-wrap gap-1.5 bg-slate-100 p-1.5 rounded-2xl border border-slate-200 max-w-full overflow-x-auto">
             {['All', 'Lahore', 'Islamabad', 'Karachi', 'Rawalpindi', 'Faisalabad', 'Peshawar', 'Multan', 'Sargodha'].map((c) => (
               <button
                 key={c}
                 type="button"
                 onClick={() => setSelectedCityFilter(c)}
-                className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer ${selectedCityFilter === c
+                className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer shrink-0 ${selectedCityFilter === c
                     ? 'bg-[#0F172A] text-amber-400 shadow-sm'
                     : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                   }`}

@@ -94,22 +94,23 @@ export const Navbar = () => {
   };
 
   return (
-    <header className="sticky top-0 z-50 bg-[#0B0F19]/95 backdrop-blur-md border-b border-slate-800/80 text-white shadow-md">
+    <header className="sticky top-0 z-50 bg-[#0B0F19] border-b border-slate-800 text-white shadow-md">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
 
           {/* Logo / Brand */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="w-10 h-10 rounded-full overflow-hidden border border-[#D4AF37]/60 p-0.5 bg-[#020B21] shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
+          <Link to="/" className="flex items-center gap-2 sm:gap-2.5 shrink-0 group mr-3 lg:mr-5 xl:mr-8">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full overflow-hidden border border-[#D4AF37]/60 p-0.5 bg-[#020B21] shadow-[0_0_15px_rgba(212,175,55,0.3)] flex items-center justify-center shrink-0 group-hover:scale-105 transition-transform duration-300">
               <img src="/login and registeration .png" alt="HorseSquare Logo" className="w-full h-full object-cover rounded-full" />
             </div>
-            <span className="text-xl sm:text-2xl font-black tracking-tight bg-gradient-to-r from-white via-amber-100 to-[#D4AF37] bg-clip-text text-transparent group-hover:opacity-90 transition">
-              Horse-Square-Pakistan
+            <span className="text-base sm:text-lg lg:text-xl xl:text-2xl font-black tracking-tight bg-gradient-to-r from-white via-amber-100 to-[#D4AF37] bg-clip-text text-transparent group-hover:opacity-90 transition whitespace-nowrap">
+              <span className="hidden xl:inline">Horse-Square-Pakistan</span>
+              <span className="xl:hidden">Horse-Square</span>
             </span>
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className="hidden md:flex items-center gap-6">
+          <nav className="hidden lg:flex items-center gap-3.5 xl:gap-6 shrink-0">
             <Link
               to="/"
               className={`text-sm font-semibold tracking-wide hover:text-[#D4AF37] transition ${isActive('/') ? 'text-[#D4AF37]' : 'text-slate-300'
@@ -236,7 +237,7 @@ export const Navbar = () => {
           </nav>
 
           {/* Desktop Authentication / User info */}
-          <div className="hidden md:flex items-center gap-4">
+          <div className="hidden lg:flex items-center gap-3 xl:gap-4 shrink-0">
             {user ? (
               <div
                 className="relative"
@@ -321,7 +322,7 @@ export const Navbar = () => {
           </div>
 
           {/* Mobile hamburger menu button */}
-          <div className="flex md:hidden">
+          <div className="flex lg:hidden">
             <button
               onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               className="text-slate-300 hover:text-white p-2 focus:outline-none cursor-pointer"
@@ -335,7 +336,7 @@ export const Navbar = () => {
 
       {/* Mobile Drawer Navigation Menu */}
       <div
-        className={`md:hidden border-t border-slate-800 transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'max-h-[1000px] opacity-100 visible' : 'max-h-0 opacity-0 invisible'
+        className={`lg:hidden border-t border-slate-800 transition-all duration-300 overflow-hidden ${isMobileMenuOpen ? 'max-h-[1000px] opacity-100 visible' : 'max-h-0 opacity-0 invisible'
           }`}
       >
         <div className="px-4 pt-2 pb-6 space-y-4 bg-[#0B0F19]">

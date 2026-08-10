@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const { BreedingHorse, BreedingRequest } = require("../models/Breeding");
+const { uploadToCloudinary } = require("../utils/cloudinary");
 
 // ===================================================
 // GET /api/breeding/horses -> "Available Breeding Horses" cards
@@ -16,17 +17,6 @@ exports.getBreedingHorses = async (req, res, next) => {
         fs.copyFileSync(whiteStallionSrc, target1);
         fs.copyFileSync(whiteStallionSrc, target2);
       }
-    } catch (e) {}
-
-    try {
-      await BreedingHorse.deleteMany({ name: /Sufi/i });
-    } catch (e) {}
-
-    try {
-      await BreedingHorse.updateMany(
-        { name: /Rustam/i },
-        { $set: { image: "/uploads/rustam_desi_stallion.png", status: "available" } }
-      );
     } catch (e) {}
 
     const filter = { status: "available" };
@@ -61,9 +51,10 @@ exports.createBreedingHorse = async (req, res, next) => {
 
     let imagesArr = [];
     if (req.files && Array.isArray(req.files) && req.files.length > 0) {
-      imagesArr = req.files.map(f => `/uploads/${f.filename}`);
+      imagesArr = await Promise.all(req.files.map(f => uploadToCloudinary(f.path, "horsesquare/breeding")));
     } else if (req.file) {
-      imagesArr = [`/uploads/${req.file.filename}`];
+      const singleUrl = await uploadToCloudinary(req.file.path, "horsesquare/breeding");
+      imagesArr = [singleUrl];
     } else {
       imagesArr = ['/uploads/rustam_desi_stallion.png'];
     }

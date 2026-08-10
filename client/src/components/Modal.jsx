@@ -33,11 +33,11 @@ export const Modal = ({
   if (!isOpen) return null;
 
   return ReactDOM.createPortal(
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-4">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center p-2 sm:p-4">
       
       {/* Backdrop overlay */}
       <div
-        className="fixed inset-0 bg-[#0B0F19]/85 backdrop-blur-md transition-opacity duration-300"
+        className="fixed inset-0 bg-slate-950/85 transition-opacity duration-300"
         onClick={onClose}
         aria-hidden="true"
       />
@@ -46,12 +46,12 @@ export const Modal = ({
       <div
         role="dialog"
         aria-modal="true"
-        className={`bg-white rounded-3xl border border-slate-200 shadow-2xl overflow-hidden ${maxWidth} w-full max-h-[90vh] flex flex-col fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100000] animate-fade-up`}
+        className={`bg-white rounded-2xl sm:rounded-3xl border border-slate-200 shadow-2xl overflow-hidden ${maxWidth} w-[92vw] sm:w-full max-h-[92vh] sm:max-h-[90vh] flex flex-col fixed top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-[100000] animate-fade-up`}
       >
         {/* Header (If Title provided) */}
         {title && (
-          <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
-            <h3 className="text-lg font-bold text-[#0F172A] truncate pr-4">
+          <div className="px-4 sm:px-6 py-3 sm:py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
+            <h3 className="text-base sm:text-lg font-bold text-[#0F172A] truncate pr-4">
               {title}
             </h3>
             <button
@@ -65,7 +65,7 @@ export const Modal = ({
         )}
 
         {/* Content Container - Internal Scroll Only */}
-        <div className="p-6 overflow-y-auto flex-1 custom-scrollbar">
+        <div className="p-3.5 sm:p-6 overflow-y-auto flex-1 custom-scrollbar">
           {children}
         </div>
       </div>

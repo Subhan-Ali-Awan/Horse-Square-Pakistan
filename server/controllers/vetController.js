@@ -1,4 +1,5 @@
 const VetInquiry = require("../models/VetInquiry");
+const { uploadToCloudinary } = require("../utils/cloudinary");
 
 // Same lookup table as the frontend's checkHealth() function, moved server-side
 // so the "AI logic" is no longer fakeable by editing client JS, and every result is logged to DB.
@@ -75,7 +76,10 @@ exports.checkHealth = async (req, res, next) => {
     }
 
     const advice = SYMPTOM_ADVICE[matchedKey];
-    const images = req.files ? req.files.map((file) => `/uploads/${file.filename}`) : [];
+    let images = [];
+    if (req.files && req.files.length > 0) {
+      images = await Promise.all(req.files.map((file) => uploadToCloudinary(file.path, "horsesquare/vet")));
+    }
 
     const inquiry = await VetInquiry.create({
       horseName,

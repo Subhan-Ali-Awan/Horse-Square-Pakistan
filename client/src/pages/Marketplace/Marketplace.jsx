@@ -73,338 +73,8 @@ export const Marketplace = () => {
     { name: 'Peshawar', region: 'KPK' }
   ];
 
-  // Rich sample listing data
-  const sampleHorses = [
-    {
-      _id: 'faiz_miran_1',
-      name: 'Faiz Miran',
-      breed: 'Local / Desi',
-      age: 8,
-      color: 'black',
-      height: '62 inches',
-      location: 'Lahore',
-      price: 1000000,
-      description: 'Pure Desi horse with Ravi bloodline especially for nezabazi and race.',
-      sellerName: 'Ibrahim',
-      sellerPhone: '+923001234567',
-      sellerRating: 4.8,
-      sellerType: 'CNIC Verified',
-      sire: 'Asbha Siraj',
-      dam: 'karmawali',
-      temperament: '8/10',
-      healthStatus: 'Fully Vaccinated',
-      training: 'Basic Trained',
-      imageUrl: '/uploads/media__1785445045636.jpg',
-      images: ['/uploads/media__1785445045636.jpg'],
-      spotlight: true
-    },
-    {
-      _id: '1',
-      name: 'Storm',
-      breed: 'Thoroughbred',
-      age: 4,
-      color: 'Brown',
-      height: '66 inches',
-      location: 'Lahore',
-      price: 2500000,
-      description: 'pure brown Thoroughbred for polo race cattel/ horse show purposes beautiful neck with stronge legs and stamina',
-      sellerName: 'Muzamil Hussain',
-      sellerPhone: '03005606624',
-      phone: '03005606624',
-      sellerRating: 4.9,
-      sellerType: 'Verified Breeder',
-      sire: 'Crown',
-      dam: 'Luminous',
-      temperament: '8/10',
-      healthStatus: 'Fully Vaccinated',
-      training: 'Professional Race Trained',
-      imageUrl: '/uploads/media__1786125771563.jpg',
-      images: [
-        '/uploads/media__1786125771563.jpg',
-        '/uploads/media__1786125774118.jpg'
-      ],
-      spotlight: true
-    },
-    {
-      _id: '2',
-      name: 'Royal Sapphire (Mare)',
-      breed: 'Arabian',
-      age: 3,
-      color: 'Grey / White',
-      height: '61 inches',
-      location: 'Islamabad',
-      price: 1800000,
-      description: 'Purebred Arabian mare with high stamina and elegant posture. Ideal for show rings and breeding.',
-      sellerName: 'Dr. Aisha Khan',
-      sellerPhone: '+923214567890',
-      sellerRating: 4.8,
-      sellerType: 'Veterinarian & Breeder',
-      sire: 'Al-Murtajiz',
-      dam: 'Desert Rose',
-      temperament: '9/10',
-      healthStatus: 'Fully Vaccinated',
-      training: 'Show and Endurance Trained',
-      imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=600',
-      spotlight: false
-    },
-    {
-      _id: '4',
-      name: 'Sufi (Nukra Stallion)',
-      breed: 'Local / Desi',
-      age: 4,
-      color: 'Pure White (Pink Skin)',
-      height: '67 inches',
-      location: 'Sargodha',
-      price: 3500000,
-      description: 'Elite Nukra bloodline with clear pink skin (phulkari). Active dancer and Nezabazi (tent-pegging) champion.',
-      sellerName: 'Chaudhary Nabeel',
-      sellerPhone: '+923017654321',
-      sellerRating: 5.0,
-      sellerType: 'Nukra Breed Specialist',
-      sire: 'Shah-Jahan',
-      dam: 'White Beauty',
-      temperament: '9/10',
-      healthStatus: 'Fully Vaccinated',
-      training: 'Nezabazi & Dancing Certified',
-      imageUrl: 'https://images.unsplash.com/photo-1601758228041-f3b2795255f1?auto=format&fit=crop&q=80&w=600',
-      spotlight: true
-    },
-    {
-      _id: '5',
-      name: 'Rustam (Desi Stallion)',
-      breed: 'Local / Desi',
-      age: 6,
-      color: 'Bay Brown',
-      height: '65 inches',
-      location: 'Multan',
-      price: 1200000,
-      description: 'Strong bones, highly resilient local stock. Highly trained for Nezabazi tournaments with swift acceleration.',
-      sellerName: 'Mehr Farms Multan',
-      sellerPhone: '+923021122334',
-      sellerRating: 4.6,
-      sellerType: 'Breeder',
-      sire: 'Sher-e-Punjab',
-      dam: 'Heer',
-      temperament: '8/10',
-      healthStatus: 'Fully Vaccinated',
-      training: 'Advanced Nezabazi Trained',
-      imageUrl: '/uploads/rustam_desi_stallion.png',
-      images: [
-        '/uploads/rustam_desi_stallion.png'
-      ],
-      spotlight: false
-    },
-    {
-      _id: '7',
-      name: 'Sher-Dil (Stallion)',
-      breed: 'Local / Desi',
-      age: 5,
-      color: 'Brown',
-      height: '63 inches',
-      location: 'Faisalabad',
-      price: 8600000,
-      description: 'pure brown Straight Ejeypctiob Arabian  bloodline horse specially for race cattel/ horse show purposes beautiful neck with stronge legs it is quite Gentle but also aggressive horse',
-      sellerName: 'Haseeb Malik',
-      sellerPhone: '03213456789',
-      phone: '03213456789',
-      sellerRating: 4.8,
-      sellerType: 'Verified Seller',
-      sire: 'shanshah',
-      dam: 'karmawali',
-      temperament: '8/10',
-      healthStatus: 'Fully Vaccinated',
-      training: 'Nezabazi Expert',
-      imageUrl: '/uploads/media__1786131562576.jpg',
-      images: [
-        '/uploads/media__1786131562576.jpg',
-        '/uploads/media__1786131575185.jpg',
-        '/uploads/media__1786131578525.jpg'
-      ],
-      spotlight: true
-    },
-    {
-      _id: '8',
-      name: 'asbe siraj',
-      breed: 'Thoroughbred',
-      age: 5,
-      color: 'brown and white',
-      height: '68 inches',
-      location: 'Lahore',
-      price: 2800000,
-      description: 'pure black ravi bloodline desi horse specially for race and neza bazi purposes beautiful neck with stronge legs it is quite gentle horse',
-      sellerName: 'Muhammad Ali hussnain',
-      sellerPhone: '0314169581',
-      phone: '0314169581',
-      sellerRating: 4.9,
-      sellerType: 'Premium Breeder',
-      sire: 'kariel',
-      dam: 'zahra',
-      temperament: '7/10',
-      healthStatus: 'Fully Vaccinated',
-      training: 'Show Jumping Trained',
-      imageUrl: '/uploads/media__1786127870979.jpg',
-      images: [
-        '/uploads/media__1786127870979.jpg',
-        '/uploads/media__1786127873212.jpg',
-        '/uploads/media__1786127880468.jpg'
-      ],
-      spotlight: true
-    },
-    {
-      _id: 'user_2_listing',
-      name: 'white cloud',
-      breed: 'Arabian',
-      age: 3,
-      color: 'white',
-      height: '62 inches',
-      location: 'Lahore',
-      price: 700001,
-      description: 'Pure iraqi arabian horse with the aggressive attitude also used for neza bazi from last 1.5 years',
-      sellerName: 'User2',
-      sellerPhone: '+923000000000',
-      sellerRating: 4.8,
-      sellerType: 'Verified Seller',
-      sire: 'Amir',
-      dam: 'Salma',
-      temperament: '9/10',
-      healthStatus: 'Fully Vaccinated',
-      training: 'Nezabazi Trained',
-      imageUrl: '/uploads/media__1785359752827.jpg',
-      images: [
-        '/uploads/media__1785359752827.jpg'
-      ],
-      spotlight: false
-    },
-    {
-      _id: '10',
-      name: 'Zarrar (Desert Stallion)',
-      breed: 'Arabian',
-      age: 6,
-      color: 'White',
-      height: '62 inches',
-      location: 'Karachi',
-      price: 4200000,
-      description: 'Stunning desert stallion built for speed and endurance. It is a straight arabian horse bloodline import from Iraq.',
-      sellerName: 'Super Admin',
-      sellerPhone: '+923000000000',
-      sellerRating: 4.8,
-      sellerType: 'Elite Stable',
-      sire: 'Amir',
-      dam: 'salma',
-      temperament: '8/10',
-      healthStatus: 'Fully Vaccinated',
-      training: 'Show & Halter Trained',
-      imageUrl: '/uploads/media__1785359752827.jpg',
-      images: [
-        '/uploads/media__1785359752827.jpg',
-        '/uploads/media__1785359784589.jpg'
-      ],
-      spotlight: true
-    },
-    {
-      _id: '9',
-      name: 'Desert Wind (Mare)',
-      breed: 'Arabian',
-      age: 4,
-      color: 'White',
-      height: '60 inches',
-      location: 'Multan',
-      price: 2100000,
-      description: 'pure white Straight Ejeypctiob Arabian  bloodline horse specially for long race in deserts horse show purposes beautiful neck with stronge legs it is quite Gentle but also aggressive horse with the best stamina from top bred of horses in world',
-      sellerName: 'Ali Ahmad',
-      sellerPhone: '03123456789',
-      phone: '03123456789',
-      sellerRating: 4.7,
-      sellerType: 'Breeder',
-      sire: 'badar',
-      dam: 'salima',
-      temperament: '9/10',
-      healthStatus: 'Fully Vaccinated',
-      training: 'Endurance Trained',
-      imageUrl: '/uploads/media__1786130581577.jpg',
-      images: [
-        '/uploads/media__1786130581577.jpg'
-      ],
-      spotlight: false
-    },
-    {
-      _id: '11',
-      name: 'Atish',
-      breed: 'Local / Desi',
-      age: 4,
-      color: 'Black',
-      height: '66 inches',
-      location: 'Sargodha',
-      price: 3400000,
-      description: 'pure black ravi bloodline desi horse specially for race and neza bazi purposes beautiful neck with stronge legs it is quite gentle horse',
-      sellerName: 'Asad zulfiqar',
-      sellerPhone: '03398860901',
-      phone: '03398860901',
-      sellerRating: 4.9,
-      sellerType: 'Verified Breeder',
-      sire: 'Jabbar',
-      dam: 'Layla',
-      temperament: '9/10',
-      healthStatus: 'Fully Vaccinated',
-      training: 'Nezabazi Trained',
-      imageUrl: '/uploads/media__1786061291706.jpg',
-      images: [
-        '/uploads/media__1786061291706.jpg',
-        'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=800',
-        'https://images.unsplash.com/photo-1598974357801-cbca100e65d3?auto=format&fit=crop&q=80&w=800'
-      ],
-      spotlight: true
-    },
-    {
-      _id: '12',
-      name: 'Desert Flame (Stallion)',
-      breed: 'Arabian',
-      age: 5,
-      color: 'Brown',
-      height: '62 inches',
-      location: 'Karachi',
-      price: 2900000,
-      description: 'pure brown Straight Ejeypctiob Arabian  bloodline horse specially for race cattel/ horse show purposes beautiful neck with stronge legs it is quite Gentle but also aggressive horse',
-      sellerName: 'Usman Cheema',
-      sellerPhone: '03399019970',
-      phone: '03399019970',
-      sellerRating: 4.8,
-      sellerType: 'Elite Stable',
-      sire: 'Badar',
-      dam: 'Amira',
-      temperament: '8/10',
-      healthStatus: 'Fully Vaccinated',
-      training: 'Show & Halter Trained',
-      imageUrl: '/uploads/media__1786061837109.jpg',
-      images: [
-        '/uploads/media__1786061837109.jpg',
-        '/uploads/media__1786061863452.jpg'
-      ],
-      spotlight: true
-    },
-    {
-      _id: '13',
-      name: 'Thunder (Stallion)',
-      breed: 'Thoroughbred',
-      age: 5,
-      color: 'Dark Chestnut',
-      height: '65 inches',
-      location: 'Peshawar',
-      price: 2700000,
-      description: 'High endurance and swift speed record. Perfectly suited for showjumping or eventing.',
-      sellerName: 'Peshawar Stud Farm',
-      sellerPhone: '+923129876543',
-      sellerRating: 4.9,
-      sellerType: 'Verified Seller',
-      sire: 'Lightning Bolt',
-      dam: 'Wind Whisper',
-      temperament: '8/10',
-      healthStatus: 'Fully Vaccinated',
-      training: 'Show Jumping Trained',
-      imageUrl: 'https://images.pexels.com/photos/1996333/pexels-photo-1996333.jpeg?auto=compress&cs=tinysrgb&w=600',
-      spotlight: true
-    }
-  ];
+  // Dynamic Marketplace Horses state initialized from API
+  const sampleHorses = [];
 
   const fetchHorses = async () => {
     setLoading(true);
@@ -412,23 +82,21 @@ export const Marketplace = () => {
       const res = await fetch('/api/horses?limit=1000');
       if (res.ok) {
         const data = await res.json();
-        if (data.success && data.data && data.data.length > 0) {
+        if (data.success && Array.isArray(data.data)) {
           const formatted = data.data.map(h => ({
             ...h,
             price: Number(h.price),
             age: Number(h.age || 4),
-            imageUrl: h.images && h.images.length > 0 ? h.images[0] : 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600'
+            imageUrl: h.images && h.images.length > 0 ? h.images[0] : (h.imageUrl || 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600')
           }));
           setHorses(formatted);
-        } else {
-          setHorses(sampleHorses);
+          return;
         }
-      } else {
-        setHorses(sampleHorses);
       }
+      setHorses([]);
     } catch (err) {
-      console.error("Failed to fetch horses, falling back to mock listings:", err);
-      setHorses(sampleHorses);
+      console.error("Failed to fetch horses from API:", err);
+      setHorses([]);
     } finally {
       setLoading(false);
     }
@@ -526,60 +194,60 @@ export const Marketplace = () => {
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-10 animate-fade-up">
 
       {/* Banner */}
-      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
         <div className="relative z-10 space-y-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
-            <Sparkles className="w-3.5 h-3.5 text-amber-400" /> Premium Horse Trading
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
+            <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" /> Premium Horse Trading
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
             HorseSquare Marketplace Pakistan
           </h1>
-          <p className="text-slate-300 text-sm max-w-2xl font-light">
+          <p className="text-slate-300 text-xs sm:text-sm max-w-2xl font-light">
             Browse verified listings, review complete pedigree bloodlines, connect with breeders, and coordinate shipping across Pakistan.
           </p>
         </div>
       </div>
 
       {/* Market Stats dashboard */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-amber-500/10 rounded-xl text-[#D4AF37]">
-            <Award className="w-6 h-6" />
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 sm:gap-4 min-w-0">
+          <div className="p-2.5 sm:p-3 bg-amber-500/10 rounded-xl text-[#D4AF37] shrink-0">
+            <Award className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <div>
-            <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Active Listings</p>
-            <h4 className="text-lg font-black text-[#0F172A]">{horses.length} Verified</h4>
-          </div>
-        </div>
-
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-emerald-500/10 rounded-xl text-emerald-600">
-            <DollarSign className="w-6 h-6" />
-          </div>
-          <div>
-            <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Avg. Valuation</p>
-            <h4 className="text-base font-black text-[#0F172A]">Rs. {avgPrice.toLocaleString('en-PK')}</h4>
+          <div className="min-w-0 flex-1">
+            <p className="text-[9px] sm:text-[10px] uppercase font-bold text-slate-400 tracking-wider truncate">Active Listings</p>
+            <h4 className="text-sm sm:text-lg font-black text-[#0F172A] truncate">{horses.length} Verified</h4>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-cyan-500/10 rounded-xl text-cyan-600">
-            <Users className="w-6 h-6" />
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 sm:gap-4 min-w-0">
+          <div className="p-2.5 sm:p-3 bg-emerald-500/10 rounded-xl text-emerald-600 shrink-0">
+            <DollarSign className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <div>
-            <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Trades Settled</p>
-            <h4 className="text-lg font-black text-[#0F172A]">2,840+ Deals</h4>
+          <div className="min-w-0 flex-1">
+            <p className="text-[9px] sm:text-[10px] uppercase font-bold text-slate-400 tracking-wider truncate">Avg. Valuation</p>
+            <h4 className="text-xs sm:text-base font-black text-[#0F172A] truncate">Rs. {avgPrice.toLocaleString('en-PK')}</h4>
           </div>
         </div>
 
-        <div className="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-4">
-          <div className="p-3 bg-rose-500/10 rounded-xl text-rose-600">
-            <TrendingUp className="w-6 h-6" />
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 sm:gap-4 min-w-0">
+          <div className="p-2.5 sm:p-3 bg-cyan-500/10 rounded-xl text-cyan-600 shrink-0">
+            <Users className="w-5 h-5 sm:w-6 sm:h-6" />
           </div>
-          <div>
-            <p className="text-[10px] uppercase font-bold text-slate-400 tracking-wider">Top Breed</p>
-            <h4 className="text-lg font-black text-[#0F172A]">Nukra Stallions</h4>
+          <div className="min-w-0 flex-1">
+            <p className="text-[9px] sm:text-[10px] uppercase font-bold text-slate-400 tracking-wider truncate">Trades Settled</p>
+            <h4 className="text-sm sm:text-lg font-black text-[#0F172A] truncate">2,840+ Deals</h4>
+          </div>
+        </div>
+
+        <div className="bg-white p-3.5 sm:p-5 rounded-2xl border border-slate-200 shadow-sm flex items-center gap-3 sm:gap-4 min-w-0">
+          <div className="p-2.5 sm:p-3 bg-rose-500/10 rounded-xl text-rose-600 shrink-0">
+            <TrendingUp className="w-5 h-5 sm:w-6 sm:h-6" />
+          </div>
+          <div className="min-w-0 flex-1">
+            <p className="text-[9px] sm:text-[10px] uppercase font-bold text-slate-400 tracking-wider truncate">Top Breed</p>
+            <h4 className="text-sm sm:text-lg font-black text-[#0F172A] truncate">Nukra Stallions</h4>
           </div>
         </div>
       </div>
@@ -619,7 +287,7 @@ export const Marketplace = () => {
                 <div
                   key={`${horse._id}-${idx}`}
                   onClick={() => setSelectedHorse(horse)}
-                  className="w-[280px] sm:w-[340px] bg-[#0F172A] text-white rounded-3xl overflow-hidden border border-amber-500/30 hover:border-amber-500 shadow-lg relative group cursor-pointer transition-all duration-300 shrink-0"
+                  className="w-[220px] xs:w-[280px] sm:w-[340px] bg-[#0F172A] text-white rounded-3xl overflow-hidden border border-amber-500/30 hover:border-amber-500 shadow-lg relative group cursor-pointer transition-all duration-300 shrink-0"
                 >
                   <div className="relative h-52 sm:h-56 overflow-hidden bg-slate-950 flex items-center justify-center group">
                     <img
@@ -1027,9 +695,22 @@ export const Marketplace = () => {
         maxWidth="max-w-2xl"
       >
         {selectedHorse && (
-          <div className="-m-6 flex flex-col max-h-[85vh]">
+          <div className="-m-3.5 sm:-m-6 flex flex-col h-[90vh] sm:h-[85vh] max-h-[90vh] sm:max-h-[85vh] overflow-hidden">
             {/* Modal Image Header - Multi-Photo Gallery Carousel */}
-            <div className="relative h-64 sm:h-72 md:h-80 bg-slate-950 shrink-0 overflow-hidden flex items-center justify-center group">
+            <div className="relative h-28 xs:h-36 sm:h-72 md:h-80 bg-slate-950 shrink-0 overflow-hidden flex items-center justify-center group">
+              {/* Close Button Top-Right */}
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedHorse(null);
+                  setModalImageIdx(0);
+                }}
+                className="absolute top-2 right-2 sm:top-3 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-950/80 hover:bg-rose-600 text-white flex items-center justify-center z-40 border border-slate-700 shadow-xl cursor-pointer"
+                title="Close Modal"
+              >
+                <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+              </button>
+
               {/* Ambient background blur */}
               <img
                 src={currentImg}
@@ -1056,10 +737,10 @@ export const Marketplace = () => {
                       e.stopPropagation();
                       setModalImageIdx(prev => (prev === 0 ? horseImages.length - 1 : prev - 1));
                     }}
-                    className="absolute left-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-slate-950/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
+                    className="absolute left-1.5 sm:left-2.5 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-slate-950/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
                     title="Previous Photo"
                   >
-                    <ChevronLeft className="w-6 h-6" />
+                    <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
                   </button>
 
                   {/* Right Arrow (Next Photo) */}
@@ -1069,111 +750,95 @@ export const Marketplace = () => {
                       e.stopPropagation();
                       setModalImageIdx(prev => (prev === horseImages.length - 1 ? 0 : prev + 1));
                     }}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 w-10 h-10 rounded-full bg-slate-950/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
+                    className="absolute right-1.5 sm:right-2.5 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-slate-950/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
                     title="Next Photo"
                   >
-                    <ChevronRight className="w-6 h-6" />
+                    <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
                   </button>
 
                   {/* Photo Counter Badge */}
-                  <div className="absolute top-4 right-4 bg-slate-950/90 text-[#D4AF37] text-xs font-black px-3 py-1 rounded-full border border-amber-500/30 z-30 backdrop-blur-md shadow">
-                    📷 {modalImageIdx + 1} / {horseImages.length} Photos
-                  </div>
-
-                  {/* Pagination Dots */}
-                  <div className="absolute top-4 left-1/2 -translate-x-1/2 flex items-center gap-1.5 z-30 bg-slate-950/70 px-3 py-1.5 rounded-full backdrop-blur-md border border-slate-800">
-                    {horseImages.map((_, idx) => (
-                      <button
-                        key={idx}
-                        type="button"
-                        onClick={(e) => {
-                          e.stopPropagation();
-                          setModalImageIdx(idx);
-                        }}
-                        className={`h-2 rounded-full transition-all cursor-pointer ${idx === modalImageIdx ? 'bg-[#D4AF37] w-6' : 'bg-white/40 hover:bg-white/80 w-2'}`}
-                        title={`Go to photo ${idx + 1}`}
-                      />
-                    ))}
+                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-slate-950/90 text-[#D4AF37] text-[9px] sm:text-xs font-black px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-amber-500/30 z-30 shadow">
+                    📷 {modalImageIdx + 1}/{horseImages.length}
                   </div>
                 </>
               )}
 
-              <div className="absolute bottom-6 left-6 right-6 text-white flex justify-between items-end z-30">
+              <div className="absolute bottom-2 sm:bottom-6 left-2 sm:left-6 right-2 sm:right-6 text-white flex justify-between items-end z-30">
                 <div>
-                  <span className="px-2.5 py-1 bg-[#D4AF37] text-slate-900 rounded text-[10px] font-bold uppercase tracking-wider shadow">
+                  <span className="px-1.5 py-0.5 sm:px-2.5 sm:py-1 bg-[#D4AF37] text-slate-900 rounded text-[8px] sm:text-[10px] font-bold uppercase tracking-wider shadow">
                     {selectedHorse.breed}
                   </span>
-                  <h2 className="text-xl sm:text-2xl font-black mt-2 leading-tight drop-shadow-md">
+                  <h2 className="text-sm sm:text-2xl font-black mt-0.5 sm:mt-2 leading-tight drop-shadow-md">
                     {selectedHorse.name}
                   </h2>
                 </div>
-                <span className="bg-[#D4AF37] text-slate-950 font-black text-sm sm:text-base px-4 py-2 rounded-xl shadow-lg border border-amber-500/30">
+                <span className="bg-[#D4AF37] text-slate-950 font-black text-[10px] sm:text-base px-2 py-0.5 sm:px-4 sm:py-2 rounded sm:rounded-xl shadow-lg border border-amber-500/30">
                   Rs. {Number(selectedHorse.price).toLocaleString('en-PK')}
                 </span>
               </div>
             </div>
 
             {/* Modal Info Content - Internal scrolling only */}
-            <div className="p-6 space-y-6 text-sm overflow-y-auto flex-1">
+            <div className="p-2.5 sm:p-6 space-y-3 sm:space-y-6 text-xs sm:text-sm overflow-y-auto flex-1 custom-scrollbar min-h-0 bg-white">
 
               {/* Detailed Specs Grid */}
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4 bg-slate-50 border rounded-2xl">
+              <div className="grid grid-cols-4 gap-1.5 sm:gap-4 p-2 sm:p-4 bg-slate-50 border rounded-lg sm:rounded-2xl text-center sm:text-left">
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">Breed</span>
-                  <p className="font-bold text-slate-800">{selectedHorse.breed}</p>
+                  <span className="text-[8px] sm:text-[10px] text-slate-400 uppercase font-bold block">Breed</span>
+                  <p className="font-bold text-slate-800 text-[10px] sm:text-sm truncate">{selectedHorse.breed}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">Age</span>
-                  <p className="font-bold text-slate-800">{selectedHorse.age} years</p>
+                  <span className="text-[8px] sm:text-[10px] text-slate-400 uppercase font-bold block">Age</span>
+                  <p className="font-bold text-slate-800 text-[10px] sm:text-sm truncate">{selectedHorse.age} yrs</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">Height in inches</span>
-                  <p className="font-bold text-slate-800">{selectedHorse.height}</p>
+                  <span className="text-[8px] sm:text-[10px] text-slate-400 uppercase font-bold block">Height</span>
+                  <p className="font-bold text-slate-800 text-[10px] sm:text-sm truncate">{selectedHorse.height}</p>
                 </div>
                 <div>
-                  <span className="text-[10px] text-slate-400 uppercase font-bold">Color</span>
-                  <p className="font-bold text-slate-800">{selectedHorse.color}</p>
+                  <span className="text-[8px] sm:text-[10px] text-slate-400 uppercase font-bold block">Color</span>
+                  <p className="font-bold text-slate-800 text-[10px] sm:text-sm truncate">{selectedHorse.color}</p>
                 </div>
               </div>
 
               {/* Description */}
-              <div className="space-y-1">
-                <h4 className="text-xs uppercase font-extrabold text-slate-700 tracking-wider">Description</h4>
-                <p className="text-slate-600 font-light leading-relaxed">
+              <div className="space-y-0.5">
+                <h4 className="text-[9px] sm:text-xs uppercase font-extrabold text-slate-700 tracking-wider">Description</h4>
+                <p className="text-slate-600 font-light leading-relaxed text-[11px] sm:text-sm">
                   {selectedHorse.description}
                 </p>
               </div>
 
               {/* Pedigree & Health status grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-6">
 
                 {/* Health & Training */}
-                <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border">
-                  <h4 className="text-xs uppercase font-extrabold text-slate-700 tracking-wider flex items-center gap-1.5">
-                    <ShieldCheck className="w-4 h-4 text-emerald-500" /> Health & Performance
+                <div className="space-y-1.5 sm:space-y-3 p-2.5 sm:p-4 bg-slate-50/50 rounded-lg sm:rounded-2xl border">
+                  <h4 className="text-[9px] sm:text-xs uppercase font-extrabold text-slate-700 tracking-wider flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-500" /> Health & Performance
                   </h4>
-                  <ul className="space-y-2 text-xs">
+                  <ul className="space-y-1 sm:space-y-2 text-[10px] sm:text-xs">
                     <li className="flex justify-between">
-                      <span className="text-slate-400">Temperament Score:</span>
+                      <span className="text-slate-400">Temperament:</span>
                       <span className="font-bold text-slate-700">{selectedHorse.temperament || '8/10'}</span>
                     </li>
                     <li className="flex justify-between">
-                      <span className="text-slate-400">Health / Vaccine logs:</span>
+                      <span className="text-slate-400">Vaccine Logs:</span>
                       <span className="font-bold text-emerald-600">{selectedHorse.healthStatus || 'Verified'}</span>
                     </li>
                     <li className="flex justify-between">
-                      <span className="text-slate-400">Training Certifications:</span>
+                      <span className="text-slate-400">Training:</span>
                       <span className="font-bold text-slate-700">{selectedHorse.training || 'Basic Trained'}</span>
                     </li>
                   </ul>
                 </div>
 
                 {/* Lineage */}
-                <div className="space-y-3 p-4 bg-slate-50/50 rounded-2xl border">
-                  <h4 className="text-xs uppercase font-extrabold text-slate-700 tracking-wider flex items-center gap-1.5">
-                    <Award className="w-4 h-4 text-[#D4AF37]" /> Bloodline / Pedigree
+                <div className="space-y-1.5 sm:space-y-3 p-2.5 sm:p-4 bg-slate-50/50 rounded-lg sm:rounded-2xl border">
+                  <h4 className="text-[9px] sm:text-xs uppercase font-extrabold text-slate-700 tracking-wider flex items-center gap-1">
+                    <Award className="w-3 h-3 sm:w-4 sm:h-4 text-[#D4AF37]" /> Bloodline / Pedigree
                   </h4>
-                  <ul className="space-y-2 text-xs">
+                  <ul className="space-y-1 sm:space-y-2 text-[10px] sm:text-xs">
                     <li className="flex justify-between">
                       <span className="text-slate-400">Sire (Father):</span>
                       <span className="font-bold text-slate-700">{selectedHorse.sire || 'N/A'}</span>
@@ -1183,7 +848,7 @@ export const Marketplace = () => {
                       <span className="font-bold text-slate-700">{selectedHorse.dam || 'N/A'}</span>
                     </li>
                     <li className="flex justify-between">
-                      <span className="text-slate-400">Lineage History:</span>
+                      <span className="text-slate-400">Lineage:</span>
                       <span className="font-bold text-emerald-600">Purebred</span>
                     </li>
                   </ul>
@@ -1194,29 +859,29 @@ export const Marketplace = () => {
             </div>
 
             {/* Sticky contact footer - Fixed at bottom */}
-            <div className="p-4 bg-slate-900 text-white flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 shrink-0 border-t border-slate-800">
-              <div>
-                <span className="text-[10px] text-amber-400 uppercase font-bold tracking-wider">{selectedHorse.sellerType || 'Seller'}</span>
-                <h4 className="font-bold text-base mt-0.5">{selectedHorse.sellerName || 'Verified Breeder'}</h4>
-                <p className="text-[10px] text-slate-400 font-light mt-0.5 leading-none">
-                  Seller rating: <span className="text-amber-400 font-bold">{selectedHorse.sellerRating || '4.8'}★</span> | CNIC Verified
+            <div className="p-2.5 sm:p-4 bg-slate-900 text-white flex flex-row justify-between items-center gap-2 shrink-0 border-t border-slate-800">
+              <div className="min-w-0 flex-1">
+                <span className="text-[8px] sm:text-[10px] text-amber-400 uppercase font-bold tracking-wider truncate block">{selectedHorse.sellerType || 'Seller'}</span>
+                <h4 className="font-bold text-xs sm:text-base leading-tight truncate">{selectedHorse.sellerName || 'Verified Breeder'}</h4>
+                <p className="text-[8px] sm:text-[10px] text-slate-400 font-light mt-0.5 leading-none truncate">
+                  <span className="text-amber-400 font-bold">{selectedHorse.sellerRating || '4.8'}★</span> | Verified
                 </p>
               </div>
 
-              <div className="flex gap-2.5 w-full sm:w-auto">
+              <div className="flex gap-1.5 shrink-0">
                 <a
                   href={`tel:${selectedHorse.sellerPhone}`}
-                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 bg-[#D4AF37] hover:bg-[#C9A227] text-slate-950 font-bold px-4 py-2 rounded-xl text-xs transition shadow"
+                  className="inline-flex items-center justify-center gap-1 bg-[#D4AF37] hover:bg-[#C9A227] text-slate-950 font-bold px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs transition shadow"
                 >
-                  <Phone className="w-3.5 h-3.5" /> Call Seller
+                  <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Call
                 </a>
                 <a
                   href={`https://wa.me/${selectedHorse.sellerPhone?.replace(/[+ -]/g, '')}`}
                   target="_blank"
                   rel="noreferrer"
-                  className="flex-1 sm:flex-none inline-flex items-center justify-center gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-4 py-2 rounded-xl text-xs transition shadow"
+                  className="inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs transition shadow"
                 >
-                  <MessageSquare className="w-3.5 h-3.5" /> WhatsApp
+                  <MessageSquare className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> WhatsApp
                 </a>
               </div>
             </div>

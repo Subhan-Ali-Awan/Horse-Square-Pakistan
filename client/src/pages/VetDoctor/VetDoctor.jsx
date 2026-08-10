@@ -279,37 +279,37 @@ export const VetDoctor = () => {
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8 animate-fade-up">
 
       {/* Banner */}
-      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-3xl p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-xl relative overflow-hidden">
         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
         <div className="relative z-10 space-y-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-xs font-semibold uppercase tracking-wider">
-            <Stethoscope className="w-3.5 h-3.5 text-amber-400" /> AI Equine Vet System
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
+            <Stethoscope className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" /> AI Equine Vet System
           </span>
-          <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight">
+          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
             AI Vet Diagnostics & Equine Care Suite
           </h1>
-          <p className="text-slate-300 text-sm sm:text-base max-w-2xl font-light">
+          <p className="text-slate-300 text-xs sm:text-sm max-w-2xl font-light">
             Obtain instant visual or symptoms-based diagnostic evaluations. Learn standard vital signs, review equine disease procedures, or contact trusted regional clinics.
           </p>
         </div>
       </div>
 
       {/* Main Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
 
         {/* Left Columns - Diagnostic Panel */}
         <div className="lg:col-span-7 space-y-6">
 
           {/* Symptoms Analyzer Box */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
-            <h2 className="text-xl font-black text-[#0F172A] mb-2 flex items-center gap-2">
-              <Bot className="w-6 h-6 text-[#D4AF37]" /> Describe Symptoms
+          <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-md">
+            <h2 className="text-lg sm:text-xl font-black text-[#0F172A] mb-1.5 flex items-center gap-2">
+              <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4AF37]" /> Describe Symptoms
             </h2>
-            <p className="text-xs text-slate-500 mb-6 font-light">
+            <p className="text-xs text-slate-500 mb-5 font-light leading-relaxed">
               Explain current symptoms or upload photos of wounds, skin issues, or body postures to generate triage evaluations.
             </p>
 
-            <form onSubmit={handleConsult} className="space-y-6">
+            <form onSubmit={handleConsult} className="space-y-5 sm:space-y-6">
 
               {/* Quick Select Tags */}
               <div className="space-y-2">
@@ -322,7 +322,7 @@ export const VetDoctor = () => {
                       key={idx}
                       type="button"
                       onClick={() => handleTagClick(symp.label)}
-                      className="px-3 py-1.5 bg-slate-50 border border-slate-200 rounded-lg text-xs font-semibold text-slate-600 hover:border-[#D4AF37] hover:bg-amber-500/5 transition cursor-pointer"
+                      className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:border-[#D4AF37] hover:bg-amber-500/10 active:scale-95 transition cursor-pointer"
                     >
                       + {symp.label}
                     </button>
@@ -336,12 +336,12 @@ export const VetDoctor = () => {
                   Observed Behavior & Symptoms
                 </label>
                 <textarea
-                  rows="6"
+                  rows="5"
                   required
                   placeholder="Describe your horse's symptoms (e.g., horse is pawing the ground, looking at flanks, sweating, breathing rapidly...)"
                   value={symptoms}
                   onChange={(e) => setSymptoms(e.target.value)}
-                  className="w-full p-4 border border-slate-200 rounded-xl text-sm focus:border-[#D4AF37] focus:outline-none bg-slate-50 focus:bg-white transition"
+                  className="w-full p-3.5 sm:p-4 border border-slate-300 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-semibold text-slate-900 focus:border-[#D4AF37] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20 bg-slate-50 focus:bg-white transition"
                 ></textarea>
               </div>
 
@@ -350,15 +350,15 @@ export const VetDoctor = () => {
                 <label className="block text-xs font-extrabold uppercase text-slate-700 tracking-wider">
                   Upload Photo (Optional)
                 </label>
-                <div className="border border-dashed border-slate-300 p-6 rounded-xl text-center bg-slate-50 hover:bg-slate-100/50 hover:border-[#D4AF37] transition cursor-pointer relative">
+                <div className="border border-dashed border-slate-300 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-center bg-slate-50 hover:bg-slate-100/50 hover:border-[#D4AF37] transition cursor-pointer relative">
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => setSymptomFile(e.target.files[0])}
                     className="absolute inset-0 opacity-0 cursor-pointer"
                   />
-                  <Upload className="w-6 h-6 text-amber-500 mx-auto mb-2" />
-                  <span className="text-xs text-slate-600 font-semibold block">
+                  <Upload className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500 mx-auto mb-1.5" />
+                  <span className="text-xs text-slate-700 font-bold block truncate max-w-full px-2">
                     {symptomFile ? symptomFile.name : 'Click to add hoof, skin, or posture image'}
                   </span>
                   <span className="text-[10px] text-slate-400 font-light block mt-1">
@@ -368,11 +368,11 @@ export const VetDoctor = () => {
               </div>
 
               {/* Action Buttons */}
-              <div className="flex gap-4">
+              <div className="flex flex-col sm:flex-row gap-3 pt-1">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="flex-1 py-3.5 bg-gradient-to-r from-[#D4AF37] to-[#C9A227] hover:from-[#C9A227] hover:to-[#B8860B] text-[#0F172A] font-bold rounded-xl text-sm shadow transition cursor-pointer disabled:opacity-50"
+                  className="w-full sm:flex-1 py-3.5 sm:py-4 bg-gradient-to-r from-[#D4AF37] via-[#C9A227] to-[#B8860B] hover:from-[#C9A227] text-slate-950 font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm shadow-md hover:shadow-xl active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
                 >
                   {loading ? 'Analyzing Symptoms...' : 'Run Diagnostics'}
                 </button>
@@ -384,7 +384,7 @@ export const VetDoctor = () => {
                       setSymptomFile(null);
                       setAssessment(null);
                     }}
-                    className="px-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl text-sm transition"
+                    className="w-full sm:w-auto px-6 py-3.5 sm:py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl sm:rounded-2xl text-xs sm:text-sm transition cursor-pointer"
                   >
                     Clear
                   </button>
@@ -394,28 +394,28 @@ export const VetDoctor = () => {
           </div>
 
           {/* Diagnosis Results Card */}
-          <div className="bg-white p-6 sm:p-8 rounded-3xl border border-slate-200 shadow-xl space-y-5">
+          <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-4 sm:space-y-5">
             <div className="flex justify-between items-center border-b pb-3">
-              <h2 className="text-xl font-black text-[#0F172A] flex items-center gap-2">
-                <Bot className="w-6 h-6 text-[#D4AF37]" /> AI Diagnosis Results
+              <h2 className="text-lg sm:text-xl font-black text-[#0F172A] flex items-center gap-2">
+                <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4AF37]" /> AI Diagnosis Results
               </h2>
-              <span className="text-[10px] font-black uppercase tracking-wider px-2.5 py-1 bg-amber-100 text-amber-900 rounded-full border border-amber-300">
+              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2.5 py-1 bg-amber-100 text-amber-900 rounded-full border border-amber-300">
                 English & Roman Urdu
               </span>
             </div>
 
             {assessment ? (
-              <div className="space-y-5 animate-fade-in">
+              <div className="space-y-4 sm:space-y-5 animate-fade-in">
                 {/* Potential Condition */}
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50/50 p-5 rounded-2xl border border-amber-200 shadow-xs space-y-1">
-                  <span className="text-[10px] font-extrabold text-amber-800 uppercase tracking-widest block">
+                <div className="bg-gradient-to-r from-amber-50 to-orange-50/50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-amber-200 shadow-xs space-y-1">
+                  <span className="text-[9px] sm:text-[10px] font-extrabold text-amber-800 uppercase tracking-widest block">
                     Potential Condition / Shubahat-e-Bimari
                   </span>
-                  <h3 className="text-xl font-black text-[#0F172A] leading-snug">
+                  <h3 className="text-lg sm:text-xl font-black text-[#0F172A] leading-snug">
                     {assessment.possibleCondition}
                   </h3>
                   {assessment.romanUrduCondition && (
-                    <p className="text-xs font-bold text-amber-900 pt-1 flex items-center gap-1.5">
+                    <p className="text-xs font-bold text-amber-900 pt-1 flex flex-wrap items-center gap-1.5">
                       <span>🇵🇰 Roman Urdu:</span>
                       <span className="underline decoration-amber-400 font-extrabold">{assessment.romanUrduCondition}</span>
                     </p>
@@ -423,16 +423,16 @@ export const VetDoctor = () => {
                 </div>
 
                 {/* Urgency Badge */}
-                <div className="bg-slate-50 p-5 rounded-2xl border border-slate-200 space-y-4">
+                <div className="bg-slate-50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-slate-200 space-y-4">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/80 pb-3">
-                    <div className="flex items-center gap-2">
-                      <span className="px-3 py-1 bg-rose-500/15 text-rose-700 rounded-lg text-xs font-extrabold uppercase tracking-wider border border-rose-500/30">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="px-2.5 py-1 bg-rose-500/15 text-rose-700 rounded-lg text-[10px] sm:text-xs font-extrabold uppercase tracking-wider border border-rose-500/30">
                         Urgency Level
                       </span>
                       <span className="text-xs font-black text-slate-900">{assessment.urgency}</span>
                     </div>
                     {assessment.romanUrduUrgency && (
-                      <span className="text-xs font-black text-rose-700 bg-rose-50 px-3 py-1 rounded-lg border border-rose-200">
+                      <span className="text-xs font-black text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 self-start sm:self-auto">
                         🇵🇰 {assessment.romanUrduUrgency}
                       </span>
                     )}
@@ -443,9 +443,9 @@ export const VetDoctor = () => {
                     <p className="text-xs font-black text-slate-700 uppercase tracking-wider">
                       Recommended First Aid & Immediate Actions / Fauri Hidayat
                     </p>
-                    <ul className="space-y-3.5">
+                    <ul className="space-y-3 sm:space-y-3.5">
                       {assessment.recommendedActions.map((act, idx) => (
-                        <li key={idx} className="bg-white p-3.5 rounded-xl border border-slate-200/80 shadow-2xs space-y-1">
+                        <li key={idx} className="bg-white p-3 sm:p-3.5 rounded-xl border border-slate-200/80 shadow-2xs space-y-1">
                           <div className="flex items-start gap-2.5">
                             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
                             <span className="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed">{act}</span>
@@ -463,7 +463,7 @@ export const VetDoctor = () => {
 
                   {/* Roman Urdu Executive Summary Card */}
                   {assessment.romanUrduSummary && (
-                    <div className="p-4 bg-amber-500/10 rounded-xl border border-amber-400/30 space-y-1">
+                    <div className="p-3.5 sm:p-4 bg-amber-500/10 rounded-xl border border-amber-400/30 space-y-1">
                       <span className="text-[10px] font-black text-amber-900 uppercase tracking-widest flex items-center gap-1.5">
                         <Globe className="w-3.5 h-3.5 text-amber-600" /> 🇵🇰 Roman Urdu Summary / Khulasa:
                       </span>
@@ -475,12 +475,12 @@ export const VetDoctor = () => {
                 </div>
               </div>
             ) : (
-              <div className="text-center py-16 text-slate-400 text-sm font-light">
-                <Stethoscope className="w-10 h-10 mx-auto text-slate-200 mb-3" />
+              <div className="text-center py-12 sm:py-16 text-slate-400 text-xs sm:text-sm font-light">
+                <Stethoscope className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-slate-200 mb-3" />
                 Fill in details on the form above to generate an instant diagnostic report.
               </div>
             )}
-            <p className="text-[10px] text-slate-400 mt-6 border-t pt-3 italic leading-normal flex items-start gap-1.5">
+            <p className="text-[10px] text-slate-400 mt-4 sm:mt-6 border-t pt-3 italic leading-normal flex items-start gap-1.5">
               <Info className="w-3.5 h-3.5 text-slate-300 shrink-0" />
               Disclaimer: This AI analysis serves as an educational support utility. It does not replace hands-on diagnostic checks by a qualified animal hospital.
             </p>
@@ -491,28 +491,28 @@ export const VetDoctor = () => {
         <div className="lg:col-span-5 space-y-6">
 
           {/* Vitals Dashboard */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
-            <h2 className="text-lg font-bold text-[#0F172A] mb-1 flex items-center gap-2">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-md">
+            <h2 className="text-base sm:text-lg font-extrabold text-[#0F172A] mb-1 flex items-center gap-2">
               <Activity className="w-5 h-5 text-[#D4AF37]" /> Normal Vital Signs
             </h2>
             <p className="text-xs text-slate-500 mb-4 font-light">
               Use these standard baselines to monitor your horse’s active status.
             </p>
-            <div className="grid grid-cols-1 gap-4">
+            <div className="grid grid-cols-1 gap-3.5">
               {vitalSigns.map((sign, idx) => (
                 <div key={idx} className="p-3 bg-slate-50 border border-slate-100 rounded-xl hover:shadow transition">
                   <div className="flex items-center gap-3">
-                    <div className="p-2 bg-white rounded-lg border border-slate-100">
+                    <div className="p-2 bg-white rounded-lg border border-slate-100 shrink-0">
                       {sign.icon}
                     </div>
                     <div>
                       <h4 className="text-xs font-extrabold text-slate-700">{sign.label}</h4>
-                      <p className="text-sm font-bold text-[#0F172A]">
+                      <p className="text-xs sm:text-sm font-black text-[#0F172A]">
                         {sign.range} <span className="text-[10px] text-slate-500 font-light">{sign.metric}</span>
                       </p>
                     </div>
                   </div>
-                  <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed font-light pl-11">
+                  <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed font-normal pl-11">
                     {sign.desc}
                   </p>
                 </div>
@@ -521,39 +521,40 @@ export const VetDoctor = () => {
           </div>
 
           {/* Emergency Regional Vets */}
-          <div className="bg-white p-6 rounded-2xl border border-slate-200 shadow-md">
-            <h2 className="text-lg font-bold text-[#0F172A] mb-1 flex items-center gap-2">
+          <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-md">
+            <h2 className="text-base sm:text-lg font-extrabold text-[#0F172A] mb-1 flex items-center gap-2">
               <Phone className="w-5 h-5 text-[#D4AF37]" /> Emergency Vet Contacts
             </h2>
             <p className="text-xs text-slate-500 mb-4 font-light">
               Contact verified equine veterinarians and specialized animal hospitals in Pakistan.
             </p>
 
-            <div className="space-y-4">
+            <div className="space-y-3.5">
               {localVets.map((vet, idx) => (
-                <div key={idx} className="p-4 bg-slate-50 rounded-xl border border-slate-100 flex flex-col justify-between hover:shadow transition hover:border-amber-200">
-                  <div className="space-y-2">
+                <div key={idx} className="p-3.5 sm:p-4 bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-100 flex flex-col justify-between hover:shadow transition hover:border-amber-200 space-y-3">
+                  <div className="space-y-1.5">
                     <div className="flex justify-between items-start gap-2">
-                      <h4 className="text-xs sm:text-sm font-bold text-[#0F172A]">{vet.name}</h4>
-                      <span className="bg-amber-100 text-amber-900 border border-amber-300 font-black text-[9px] px-2.5 py-0.5 rounded-full uppercase">
+                      <h4 className="text-xs sm:text-sm font-extrabold text-[#0F172A]">{vet.name}</h4>
+                      <span className="bg-amber-100 text-amber-900 border border-amber-300 font-black text-[9px] px-2 py-0.5 rounded-full uppercase shrink-0">
                         {vet.city}
                       </span>
                     </div>
                     {vet.doctor && (
-                      <p className="text-[11px] text-slate-600 font-semibold bg-white px-2 py-1 rounded border border-slate-100 inline-block">
+                      <p className="text-[11px] text-slate-700 font-semibold bg-white px-2 py-1 rounded-lg border border-slate-100 inline-block">
                         👨‍⚕️ {vet.doctor}
                       </p>
                     )}
-                    <p className="text-[10px] text-slate-400 font-light leading-normal">{vet.location}</p>
+                    <p className="text-[10px] text-slate-500 font-normal leading-normal">{vet.location}</p>
                   </div>
-                  <div className="mt-4 pt-3 border-t border-slate-200/60 flex items-center justify-between">
+                  <div className="pt-2.5 border-t border-slate-200/80 flex items-center justify-between gap-2">
                     <a
                       href={`tel:${vet.phone}`}
-                      className="inline-flex items-center gap-1.5 text-xs font-bold text-[#D4AF37] hover:text-[#0F172A] transition"
+                      className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-extrabold rounded-lg text-xs border border-emerald-200 transition"
                     >
-                      <Phone className="w-3.5 h-3.5" /> Call Hospital
+                      <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>Call Hospital</span>
                     </a>
-                    <span className="text-[10px] text-slate-500 font-bold">{vet.phone}</span>
+                    <span className="text-[11px] text-slate-700 font-black">{vet.phone}</span>
                   </div>
                 </div>
               ))}

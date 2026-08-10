@@ -30,74 +30,8 @@ export const Home = () => {
     return '/uploads/' + url;
   };
 
-  const sampleFeaturedHorses = [
-    {
-      _id: '1',
-      name: 'Storm',
-      breed: 'Thoroughbred',
-      age: 4,
-      color: 'Brown',
-      location: 'Lahore',
-      price: 2500000,
-      description: 'pure brown Thoroughbred for polo race cattel/ horse show purposes beautiful neck with stronge legs and stamina',
-      imageUrl: '/uploads/media__1786125771563.jpg'
-    },
-    {
-      _id: '2',
-      name: 'Nukra Royal Prince (NezaBazi)',
-      breed: 'Nukra / Desi',
-      age: 5,
-      color: 'Pure White (Nukra)',
-      location: 'Faisalabad',
-      price: 3800000,
-      description: 'Elite Nukra stallion trained for Tent Pegging (Nezabazi). High speed, flawless posture, and blue eyes.',
-      imageUrl: 'https://images.unsplash.com/photo-1598974357801-cbca10065a71?auto=format&fit=crop&q=80&w=600'
-    },
-    {
-      _id: '3',
-      name: 'Zarrar (Desert Stallion)',
-      breed: 'Arabian',
-      age: 6,
-      color: 'White',
-      location: 'Karachi',
-      price: 4200000,
-      description: 'Stunning desert stallion built for speed and endurance. Imported straight Arabian bloodline lineage.',
-      imageUrl: 'https://images.unsplash.com/photo-1534447677768-be436bb09401?auto=format&fit=crop&q=80&w=600'
-    },
-    {
-      _id: '4',
-      name: 'Sultan (Show Jumper)',
-      breed: 'Thoroughbred',
-      age: 6,
-      color: 'Chestnut',
-      location: 'Islamabad',
-      price: 3100000,
-      description: 'Experienced in 1.20m obstacle clearance. Graceful gait, calm temperament, ideal for competition.',
-      imageUrl: 'https://images.unsplash.com/photo-1598974357832-6a68b030fb3f?auto=format&fit=crop&q=80&w=600'
-    },
-    {
-      _id: '5',
-      name: 'Nabiya (Sindhi Mare)',
-      breed: 'Sindhi',
-      age: 4,
-      color: 'Bay',
-      location: 'Hyderabad',
-      price: 1900000,
-      description: 'High head carriage, elegant gait, extremely resilient to heat. Ideal for breeding or riding.',
-      imageUrl: 'https://images.unsplash.com/photo-1510312305653-8ed496efae75?auto=format&fit=crop&q=80&w=600'
-    },
-    {
-      _id: '6',
-      name: 'Shadow (Friesian Stallion)',
-      breed: 'Friesian',
-      age: 5,
-      color: 'Jet Black',
-      location: 'Rawalpindi',
-      price: 4500000,
-      description: 'Exotic Friesian stallion with heavy manes and feathered legs. Ideal for royal processions and shows.',
-      imageUrl: 'https://images.unsplash.com/photo-1605258277235-8f645a7ec8c9?auto=format&fit=crop&q=80&w=600'
-    }
-  ];
+  // Dynamic Featured Horses state initialized from API
+  const sampleFeaturedHorses = [];
 
   useEffect(() => {
     const fetchHorses = async () => {
@@ -105,21 +39,17 @@ export const Home = () => {
         const res = await fetch('/api/horses?limit=6');
         if (res.ok) {
           const data = await res.json();
-          if (data.success && data.data && data.data.length > 0) {
+          if (data.success && Array.isArray(data.data)) {
             const formatted = data.data.map(h => ({
               ...h,
               price: Number(h.price),
               imageUrl: h.images && h.images.length > 0 ? h.images[0] : (h.imageUrl || 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600')
             }));
             setFeaturedHorses(formatted);
-          } else {
-            setFeaturedHorses(sampleFeaturedHorses);
           }
-        } else {
-          setFeaturedHorses(sampleFeaturedHorses);
         }
       } catch (err) {
-        setFeaturedHorses(sampleFeaturedHorses);
+        console.error("Failed to fetch featured horses from API:", err);
       }
     };
     fetchHorses();
@@ -300,18 +230,18 @@ export const Home = () => {
         <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-amber-500/15 rounded-full blur-[140px] pointer-events-none"></div>
 
         {/* Hero Content */}
-        <div className="relative z-10 text-center px-4 max-w-4xl mx-auto text-white flex flex-col items-center">
-          <h1 className="text-3xl sm:text-5xl md:text-6xl font-extrabold tracking-tight mb-4 leading-tight animate-fade-up">
-            Experience the Legacy of <span className="animate-shimmer">Horse-Square</span>
+        <div className="relative z-10 text-center px-6 sm:px-12 md:px-16 lg:px-20 max-w-4xl mx-auto text-white flex flex-col items-center">
+          <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 leading-tight animate-fade-up">
+            Experience the Legacy of <span className="animate-shimmer whitespace-nowrap">Horse-Square</span>
           </h1>
-          <p className="text-slate-300 text-sm sm:text-lg font-light mb-8 max-w-2xl mx-auto leading-relaxed animate-fade-up delay-150">
+          <p className="text-slate-300 text-xs sm:text-base md:text-lg font-light mb-8 max-w-2xl mx-auto leading-relaxed animate-fade-up delay-150">
             The ultimate digital marketplace for horse trading, live auctions, professional breeding, AI-assisted vet diagnostics, and certified riding school networks.
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center items-center animate-fade-up delay-250">
             <Link
               to="/marketplace"
-              className="w-full sm:w-auto liquid-glass-hero-btn bg-white/20 hover:bg-white/35 text-white font-extrabold py-3.5 px-9 rounded-xl border border-white/60 hover:border-[#D4AF37] backdrop-blur-2xl transition-all duration-300 text-center shadow-[0_8px_32px_rgba(0,0,0,0.37)] hover:shadow-[0_14px_45px_rgba(212,175,55,0.45)] hover:-translate-y-0.5"
+              className="w-full sm:w-auto liquid-glass-hero-btn bg-white/20 hover:bg-white/35 text-white font-extrabold py-3.5 px-9 rounded-xl border border-white/60 hover:border-[#D4AF37] transition-all duration-300 text-center shadow-[0_8px_32px_rgba(0,0,0,0.37)] hover:shadow-[0_14px_45px_rgba(212,175,55,0.45)] hover:-translate-y-0.5"
             >
               Explore Marketplace
             </Link>
@@ -415,11 +345,11 @@ export const Home = () => {
                       alt={horse.name}
                       className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition duration-500"
                     />
-                    <div className="absolute top-3 left-3 bg-[#0B0F19]/80 backdrop-blur-md text-amber-400 text-[10px] font-bold tracking-wider uppercase px-3 py-1 rounded-lg border border-amber-500/30 z-20">
+                    <div className="absolute top-3 left-3 bg-[#0B0F19]/80 text-amber-400 text-[10px] font-bold tracking-wider uppercase px-3 py-1 rounded-lg border border-amber-500/30 z-20">
                       {horse.breed || 'Purebred'}
                     </div>
                     {horse.location && (
-                      <div className="absolute top-3 right-3 bg-black/70 backdrop-blur-md text-slate-200 text-[10px] font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1 z-20">
+                      <div className="absolute top-3 right-3 bg-black/70 text-slate-200 text-[10px] font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1 z-20">
                         <MapPin className="w-3 h-3 text-[#D4AF37]" /> {horse.location}
                       </div>
                     )}
@@ -509,7 +439,7 @@ export const Home = () => {
                 key={idx}
                 className={`liquid-glass-card liquid-glass-sheen rounded-3xl p-7 shadow-xl hover:shadow-2xl transition-all duration-300 flex flex-col justify-between group relative overflow-hidden border border-white/80 animate-fade-up ${delays[idx % delays.length]}`}
               >
-                <div className="absolute top-0 right-0 liquid-glass-dark text-amber-300 text-[11px] font-bold px-4 py-1.5 rounded-bl-2xl border-l border-b border-amber-500/40 shadow-md backdrop-blur-md">
+                <div className="absolute top-0 right-0 liquid-glass-dark text-amber-300 text-[11px] font-bold px-4 py-1.5 rounded-bl-2xl border-l border-b border-amber-500/40 shadow-md">
                   {event.date}
                 </div>
 
