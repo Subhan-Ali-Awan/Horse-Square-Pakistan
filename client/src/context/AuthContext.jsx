@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
+import { getApiUrl } from '../config/api';
 
 const AuthContext = createContext(null);
 
@@ -27,7 +28,7 @@ export const AuthProvider = ({ children }) => {
 
       if (storedToken && storedUser) {
         try {
-          const res = await fetch('/api/auth/me', {
+          const res = await fetch(getApiUrl('/api/auth/me'), {
             headers: {
               Authorization: `Bearer ${storedToken}`
             }

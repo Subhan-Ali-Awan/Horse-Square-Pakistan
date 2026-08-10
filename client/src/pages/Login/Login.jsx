@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { Lock, Mail, AlertCircle, ArrowRight, Eye, EyeOff, CheckCircle2, ShieldCheck, Gavel, Stethoscope, Sparkles } from 'lucide-react';
+import { getApiUrl } from '../../config/api';
 
 export const Login = () => {
   const location = useLocation();
@@ -27,7 +28,7 @@ export const Login = () => {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/auth/login', {
+      const res = await fetch(getApiUrl('/api/auth/login'), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password }),
@@ -45,7 +46,8 @@ export const Login = () => {
         setError(data.message || 'Login failed. Please check your credentials.');
       }
     } catch (err) {
-      setError('Server connection error. Please make sure backend is running.');
+      console.error('Login request error:', err);
+      setError(`Server connection error (${err.message || 'Network error'}). Please make sure backend is running.`);
     } finally {
       setLoading(false);
     }

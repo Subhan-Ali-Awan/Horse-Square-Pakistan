@@ -27,7 +27,7 @@ app.use(
       ) {
         return callback(null, true);
       }
-      return callback(null, true); // Allow all origins in production to prevent login block
+      return callback(null, true); // Allow origins in production to prevent login block
     },
     credentials: true,
   })
@@ -49,6 +49,11 @@ app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/contact", require("./routes/contactRoutes"));
 app.use("/api/location", require("./routes/locationRoutes"));
 app.use("/api/blogs", require("./routes/blogRoutes"));
+
+// Root route for backend health check
+app.get("/", (req, res) => {
+  res.json({ success: true, message: "HorseSquare Pakistan API Server is running 🐎", documentation: "/api" });
+});
 
 app.get("/api", (req, res) => {
   res.json({ success: true, message: "HorseSquare Pakistan API is running 🐎" });
