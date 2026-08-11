@@ -2,10 +2,14 @@ import React, { useState, useEffect } from 'react';
 import { Gavel, Clock, Trophy, ArrowUpRight, ShieldCheck, Sparkles, AlertCircle, TrendingUp, DollarSign, HelpCircle, CheckCircle, CheckCircle2, UserCheck, Flame } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { getApiUrl } from '../../config/api';
 
 export const Auction = () => {
   const { token } = useAuth();
+
+  // Enable scroll reveal animations
+  useScrollReveal('.reveal-on-scroll');
   const [auctions, setAuctions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [bidAmount, setBidAmount] = useState({});
@@ -111,7 +115,7 @@ export const Auction = () => {
       </div>
 
       {/* 2-Column Main Layout Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start reveal-on-scroll">
 
         {/* LEFT COLUMN: SIDEBAR WIDGETS (4 COLS - Order last on mobile so auction cards are top priority) */}
         <div className="lg:col-span-4 space-y-6 order-last lg:order-none">

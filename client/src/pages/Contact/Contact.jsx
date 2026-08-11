@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 import {
   Mail,
   Phone,
@@ -23,6 +24,9 @@ import { getApiUrl } from '../../config/api';
 
 export const Contact = () => {
   const { user } = useAuth();
+
+  // Enable scroll reveal animations
+  useScrollReveal('.reveal-on-scroll');
 
   const [formData, setFormData] = useState({
     name: user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name : '',
@@ -85,8 +89,8 @@ export const Contact = () => {
         </div>
       </div>
 
-      {/* Main Grid: Left Contact Info Widgets + Right Interactive Form */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
+      {/* 2-Column Main Layout Grid */}
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start reveal-on-scroll">
 
         {/* LEFT COLUMN: CONTACT CARDS & SLA (4 COLS) */}
         <div className="lg:col-span-4 space-y-5">

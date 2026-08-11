@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { BookOpen, Search, ArrowLeft, Clock, User, Calendar, Tag, ChevronRight } from 'lucide-react';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { getApiUrl } from '../../config/api';
 
 export const Blog = () => {
+  // Enable scroll reveal animations
+  useScrollReveal('.reveal-on-scroll');
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
@@ -156,7 +159,7 @@ export const Blog = () => {
 
       {/* Articles Grid */}
       {filteredArticles.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6 reveal-on-scroll">
           {filteredArticles.map(article => (
             <div
               key={article.id}

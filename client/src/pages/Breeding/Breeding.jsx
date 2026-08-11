@@ -2,11 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { Award, Dna, Send, CheckCircle, ShieldCheck, Sparkles, Stethoscope, CheckCircle2, Info, ArrowRight, Phone, FileText } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { Modal } from '../../components/Modal';
 import { getApiUrl } from '../../config/api';
 
 export const Breeding = () => {
   const { user } = useAuth();
+
+  // Enable scroll reveal animations
+  useScrollReveal('.reveal-on-scroll');
   const [selectedHorse, setSelectedHorse] = useState(null);
   const [ownerName, setOwnerName] = useState(user ? `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || '' : '');
   const [cnic, setCnic] = useState('');
@@ -209,7 +213,7 @@ export const Breeding = () => {
         </div>
 
         {/* RIGHT COLUMN: STUD STALLIONS GRID (8 COLS) */}
-        <div className="lg:col-span-8 space-y-6">
+        <div className="lg:col-span-8 space-y-6 reveal-on-scroll">
           {loading ? (
             <div className="text-center py-12 text-slate-500 font-bold">Loading breeding stud directory...</div>
           ) : (

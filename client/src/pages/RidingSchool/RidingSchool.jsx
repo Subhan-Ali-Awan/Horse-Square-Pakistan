@@ -3,10 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { Compass, CheckCircle, Award, ShieldCheck, Sparkles, BookOpen, Target, CheckCircle2, ChevronRight, UserCheck, Quote, Flame, Calendar, Clock, MapPin, Send, Check, Globe, Phone } from 'lucide-react';
 import { Modal } from '../../components/Modal';
 import { useAuth } from '../../context/AuthContext';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 
 export const RidingSchool = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
+
+  // Enable scroll reveal animations
+  useScrollReveal('.reveal-on-scroll');
   const [selectedProgram, setSelectedProgram] = useState(null);
   const [formData, setFormData] = useState({
     name: '',

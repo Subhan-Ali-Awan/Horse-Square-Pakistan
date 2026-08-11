@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { getApiUrl } from '../../config/api';
 
 // ... lucide imports ...
@@ -43,6 +44,9 @@ import { QueryChatModal } from '../../components/QueryChatModal';
 export const AdminDashboard = () => {
   const { user, token, logout, initializing } = useAuth();
   const navigate = useNavigate();
+
+  // Enable scroll reveal animations in admin dashboard
+  useScrollReveal('.reveal-on-scroll', { repeat: false });
   const [activeTab, setActiveTab] = useState('overview');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 

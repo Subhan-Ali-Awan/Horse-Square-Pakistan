@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { getApiUrl } from '../../config/api';
 import {
   PlusCircle,
@@ -30,6 +31,9 @@ import {
 export const SellHorse = () => {
   const { user, token } = useAuth();
   const navigate = useNavigate();
+
+  // Enable scroll reveal animations
+  useScrollReveal('.reveal-on-scroll');
 
   const [formData, setFormData] = useState({
     name: '',
@@ -259,7 +263,7 @@ export const SellHorse = () => {
       </div>
 
       {/* 2-Column Main Layout Grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 items-start reveal-on-scroll">
 
         {/* LEFT COLUMN: SIDEBAR WIDGETS & SUGGESTION ASSISTANT (5 COLS - Order last on mobile so main form is top priority) */}
         <div className="lg:col-span-5 space-y-6 order-last lg:order-none">

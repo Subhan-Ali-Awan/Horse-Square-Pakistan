@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 import {
   Gavel,
   Dna,
@@ -22,6 +23,9 @@ import { getApiUrl } from '../../config/api';
 export const Home = () => {
   const { user } = useAuth();
   const [featuredHorses, setFeaturedHorses] = useState([]);
+
+  // Enable automatic scroll reveal animations across sections
+  useScrollReveal('.reveal-on-scroll');
 
   const formatImgUrl = (url) => {
     if (!url) return 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600';
@@ -254,8 +258,8 @@ export const Home = () => {
       <div className="relative z-10 max-w-6xl mx-auto px-4 py-16 space-y-24">
 
         {/* Core Features Showcase Section */}
-        <section className="space-y-10">
-          <div className="text-center max-w-2xl mx-auto space-y-2 animate-fade-up">
+        <section className="space-y-10 reveal-on-scroll">
+          <div className="text-center max-w-2xl mx-auto space-y-2">
             <span className="text-[#D4AF37] text-xs font-bold uppercase tracking-wider">Services</span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">Our Premium Services</h2>
             <p className="text-slate-500 text-sm sm:text-base font-light">
@@ -292,7 +296,7 @@ export const Home = () => {
         </section>
 
         {/* Platform Statistics Section in Dark Liquid Glass */}
-        <section className="liquid-glass-dark text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl animate-fade-up delay-100 border border-amber-500/40">
+        <section className="liquid-glass-dark text-white rounded-3xl p-8 sm:p-12 relative overflow-hidden shadow-2xl reveal-on-scroll reveal-scale-in border border-amber-500/40">
           <div className="absolute top-0 right-0 w-80 h-80 bg-amber-500/15 rounded-full blur-3xl pointer-events-none"></div>
           <div className="relative z-10 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 text-center">
             {stats.map((stat, idx) => (
@@ -311,7 +315,7 @@ export const Home = () => {
         </section>
 
         {/* Featured Marketplace Horse Ads */}
-        <section className="space-y-10">
+        <section className="space-y-10 reveal-on-scroll">
           <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4 animate-fade-up">
             <div>
               <span className="text-[#D4AF37] text-xs font-bold uppercase tracking-wider">Live Marketplace</span>
@@ -388,7 +392,7 @@ export const Home = () => {
         </section>
 
         {/* Equestrian Academies & Riding Schools */}
-        <section className="space-y-10">
+        <section className="space-y-10 reveal-on-scroll">
           <div className="text-center max-w-2xl mx-auto space-y-2 animate-fade-up">
             <span className="text-[#D4AF37] text-xs font-bold uppercase tracking-wider">Equestrian Training</span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">Riding Academies & Clubs</h2>
@@ -425,7 +429,7 @@ export const Home = () => {
         </section>
 
         {/* National Equestrian Events Calendar */}
-        <section className="space-y-10">
+        <section className="space-y-10 reveal-on-scroll">
           <div className="text-center max-w-2xl mx-auto space-y-2 animate-fade-up">
             <span className="text-[#D4AF37] text-xs font-bold uppercase tracking-wider">Stay Updated</span>
             <h2 className="text-2xl sm:text-3xl font-extrabold text-[#0F172A] tracking-tight">Equestrian Events Calendar</h2>

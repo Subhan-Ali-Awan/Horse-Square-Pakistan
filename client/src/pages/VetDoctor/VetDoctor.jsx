@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 import {
   Stethoscope,
   Upload,
@@ -20,6 +21,8 @@ import {
 } from 'lucide-react';
 
 export const VetDoctor = () => {
+  // Enable scroll reveal animations
+  useScrollReveal('.reveal-on-scroll');
   const [symptoms, setSymptoms] = useState('');
   const [symptomFile, setSymptomFile] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -279,7 +282,7 @@ export const VetDoctor = () => {
     <div className="max-w-6xl mx-auto px-4 py-8 space-y-8 animate-fade-up">
 
       {/* Banner */}
-      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-xl relative overflow-hidden">
+      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-xl relative overflow-hidden reveal-on-scroll">
         <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
         <div className="relative z-10 space-y-2">
           <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
@@ -295,7 +298,7 @@ export const VetDoctor = () => {
       </div>
 
       {/* Main Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 reveal-on-scroll">
 
         {/* Left Columns - Diagnostic Panel */}
         <div className="lg:col-span-7 space-y-6">

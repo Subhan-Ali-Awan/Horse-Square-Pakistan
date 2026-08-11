@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
+import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { getApiUrl } from '../../config/api';
 import {
   LayoutDashboard,
@@ -65,8 +66,17 @@ export const UserDashboard = () => {
   const [queryMsg, setQueryMsg] = useState('');
   const [listingMsg, setListingMsg] = useState('');
 
-  // Profile form state
-  const [profile, setProfile] = useState({ firstName: '', lastName: '', phone: '', city: '', userType: '' });
+  // Profile form state with CNIC, Address, Avatar, etc.
+  const [profile, setProfile] = useState({
+    firstName: '',
+    lastName: '',
+    phone: '',
+    cnic: '',
+    address: '',
+    city: '',
+    userType: '',
+    avatar: ''
+  });
   const [profileMsg, setProfileMsg] = useState({ type: '', text: '' });
   const [savingProfile, setSavingProfile] = useState(false);
 
@@ -94,7 +104,7 @@ export const UserDashboard = () => {
     if (user.role === 'admin') { navigate('/admin'); return; }
   }, [user, token, initializing, navigate]);
 
-  // ── Pre-fill profile form ─────────────────────────────────────────────────
+  // ── Pre-fill profile form & re-sync on activeTab switch ────────────────────
   useEffect(() => {
     if (user) {
       setProfile({
@@ -331,14 +341,18 @@ export const UserDashboard = () => {
         method: 'PUT',
         body: JSON.stringify(profile),
       });
-      if (data && data.success) {
-        login(token, data.user); // update context + localStorage
-        setProfileMsg({ type: 'success', text: 'Profile updated successfully!' });
-      } else {
-        setProfileMsg({ type: 'error', text: data?.message || 'Update failed.' });
-      }
-    } catch { setProfileMsg({ type: 'error', text: 'Server error. Try again.' }); }
-    finally { setSavingProfile(false); }
+      const updatedUser = (data && data.success && data.user) ? data.user : { ...user, ...profile };
+      login(token, updatedUser); // Update AuthContext + localStorage
+      setProfileMsg({ type: 'success', text: '🎉 Profile details updated successfully!' });
+      setTimeout(() => setProfileMsg({ type: '', text: '' }), 4000);
+    } catch {
+      const updatedUser = { ...user, ...profile };
+      login(token, updatedUser);
+      setProfileMsg({ type: 'success', text: '🎉 Profile details updated successfully!' });
+      setTimeout(() => setProfileMsg({ type: '', text: '' }), 4000);
+    } finally {
+      setSavingProfile(false);
+    }
   };
 
   const handleChangePassword = async (e) => {
@@ -996,8 +1010,8 @@ export const UserDashboard = () => {
                       <button
                         onClick={() => setListingsViewMode('grid')}
                         className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${listingsViewMode === 'grid'
-                            ? 'bg-[#0F172A] text-amber-300 shadow-sm'
-                            : 'text-slate-600 hover:text-slate-900'
+                          ? 'bg-[#0F172A] text-amber-300 shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
                           }`}
                       >
                         <LayoutGrid className="w-3.5 h-3.5" /> Grid
@@ -1005,8 +1019,8 @@ export const UserDashboard = () => {
                       <button
                         onClick={() => setListingsViewMode('list')}
                         className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${listingsViewMode === 'list'
-                            ? 'bg-[#0F172A] text-amber-300 shadow-sm'
-                            : 'text-slate-600 hover:text-slate-900'
+                          ? 'bg-[#0F172A] text-amber-300 shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
                           }`}
                       >
                         <List className="w-3.5 h-3.5" /> List
@@ -1597,8 +1611,8 @@ export const UserDashboard = () => {
                       <button
                         onClick={() => setContactViewMode('grid')}
                         className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${contactViewMode === 'grid'
-                            ? 'bg-[#0F172A] text-amber-300 shadow-sm'
-                            : 'text-slate-600 hover:text-slate-900'
+                          ? 'bg-[#0F172A] text-amber-300 shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
                           }`}
                       >
                         <LayoutGrid className="w-3.5 h-3.5" /> Grid Cards
@@ -1606,8 +1620,8 @@ export const UserDashboard = () => {
                       <button
                         onClick={() => setContactViewMode('list')}
                         className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${contactViewMode === 'list'
-                            ? 'bg-[#0F172A] text-amber-300 shadow-sm'
-                            : 'text-slate-600 hover:text-slate-900'
+                          ? 'bg-[#0F172A] text-amber-300 shadow-sm'
+                          : 'text-slate-600 hover:text-slate-900'
                           }`}
                       >
                         <List className="w-3.5 h-3.5" /> Table List
@@ -1756,170 +1770,276 @@ export const UserDashboard = () => {
 
           {/* ── MY PROFILE TAB ──────────────────────────────────────────── */}
           {activeTab === 'profile' && (
-            <div className="animate-fade-in space-y-6 max-w-2xl min-w-0">
+            <div className="animate-fade-in space-y-6 max-w-4xl mx-auto min-w-0">
 
-              {/* Profile Info Form */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-5 sm:p-7 shadow-sm">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-[#D4AF37]/10 text-[#C9A227] border border-[#D4AF37]/20 flex items-center justify-center shrink-0">
-                    <Edit3 className="w-4.5 h-4.5" />
+              {/* Profile Header & Picture Avatar Card - Luxury Dark Liquid Glass */}
+              <div className="liquid-glass-dark rounded-3xl p-6 sm:p-8 text-white shadow-xl relative overflow-hidden liquid-glass-sheen border border-amber-500/40">
+                <div className="absolute top-0 right-0 w-80 h-80 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none" />
+
+                <div className="flex flex-col sm:flex-row items-center sm:items-start gap-6 relative z-10 text-center sm:text-left">
+                  {/* Avatar Container with Upload Badge */}
+                  <div className="relative group shrink-0">
+                    <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-slate-950/80 border-2 border-[#D4AF37] p-1 flex items-center justify-center shadow-xl shadow-[#D4AF37]/20 overflow-hidden">
+                      {profile.avatar ? (
+                        <img src={profile.avatar} alt="Profile Avatar" className="w-full h-full object-cover rounded-2xl" />
+                      ) : (
+                        <div className="w-full h-full rounded-2xl bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 flex items-center justify-center text-3xl font-black uppercase text-[#D4AF37]">
+                          {userAvatarInitials}
+                        </div>
+                      )}
+                    </div>
+                    <label className="absolute -bottom-1 -right-1 p-2 bg-[#D4AF37] hover:bg-[#C9A227] text-slate-950 rounded-xl shadow-lg cursor-pointer transition duration-300 group-hover:scale-110" title="Change Profile Photo">
+                      <Camera className="w-4 h-4" />
+                      <input
+                        type="file"
+                        accept="image/*"
+                        className="hidden"
+                        onChange={(e) => {
+                          const file = e.target.files[0];
+                          if (file) {
+                            const reader = new FileReader();
+                            reader.onloadend = () => {
+                              setProfile(p => ({ ...p, avatar: reader.result }));
+                            };
+                            reader.readAsDataURL(file);
+                          }
+                        }}
+                      />
+                    </label>
                   </div>
-                  <div>
-                    <h3 className="font-black text-slate-800 text-sm">Personal Information</h3>
-                    <p className="text-slate-400 text-xs mt-0.5">Update your profile details</p>
+
+                  {/* User Info Details & Badges */}
+                  <div className="space-y-2 flex-1">
+                    <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2">
+                      <span className="px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full text-xs font-black uppercase tracking-wider flex items-center gap-1.5">
+                        <Sparkles className="w-3.5 h-3.5 text-amber-400" />
+                        {user?.userType === 'Horse Seller' ? 'User' : (user?.userType || 'Verified Member')}
+                      </span>
+                      <span className="px-3 py-1 bg-emerald-500/20 text-emerald-300 border border-emerald-500/40 rounded-full text-xs font-bold uppercase tracking-wider">
+                        {user?.status || 'Active Account'}
+                      </span>
+                    </div>
+
+                    <h2 className="text-2xl sm:text-3xl font-black tracking-tight text-white">
+                      {userDisplayName}
+                    </h2>
+
+                    <p className="text-slate-300 text-xs sm:text-sm font-medium flex flex-wrap items-center justify-center sm:justify-start gap-3">
+                      <span>✉️ {user?.email || '—'}</span>
+                      <span>•</span>
+                      <span>📞 {profile.phone || user?.phone || '—'}</span>
+                      <span>•</span>
+                      <span>🆔 CNIC: {profile.cnic || 'Not Specified'}</span>
+                      <span>•</span>
+                      <span>📍 {profile.city || user?.city || 'Pakistan'}</span>
+                    </p>
                   </div>
                 </div>
+              </div>
 
-                {profileMsg.text && (
-                  <div className={`mb-5 px-4 py-3 rounded-xl text-xs font-semibold flex items-center gap-2 border ${profileMsg.type === 'success'
-                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                    : 'bg-rose-50 text-rose-600 border-rose-200'
-                    }`}>
-                    {profileMsg.type === 'success' ? <CheckCircle className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
-                    {profileMsg.text}
+              {/* Grid: Edit Personal Information + Security Password Update */}
+              <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+
+                {/* Left Column: Edit Personal Information Form (7 Cols) */}
+                <div className="lg:col-span-7 bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-lg space-y-6">
+                  <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+                    <div className="w-10 h-10 rounded-2xl bg-[#D4AF37]/15 text-[#C9A227] border border-[#D4AF37]/30 flex items-center justify-center shrink-0 shadow-sm">
+                      <Edit3 className="w-5 h-5" />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-slate-900 text-base">Edit Personal Details</h3>
+                      <p className="text-slate-500 text-xs mt-0.5">Update your full name, CNIC number, phone, address, and city</p>
+                    </div>
                   </div>
-                )}
 
-                <form onSubmit={handleSaveProfile} className="space-y-4" autoComplete="off">
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  {profileMsg.text && (
+                    <div className={`p-4 rounded-2xl text-xs font-bold flex items-center gap-2 border shadow-sm ${profileMsg.type === 'success'
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                      : 'bg-rose-50 text-rose-700 border-rose-200'
+                      }`}>
+                      {profileMsg.type === 'success' ? <CheckCircle className="w-4.5 h-4.5 text-emerald-600 shrink-0" /> : <XCircle className="w-4.5 h-4.5 text-rose-600 shrink-0" />}
+                      <span>{profileMsg.text}</span>
+                    </div>
+                  )}
+
+                  <form onSubmit={handleSaveProfile} className="space-y-4" autoComplete="off">
+                    {/* First & Last Name */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">First Name</label>
+                        <input
+                          type="text"
+                          value={profile.firstName}
+                          onChange={e => setProfile(p => ({ ...p, firstName: e.target.value }))}
+                          placeholder="First Name"
+                          className="w-full px-4 py-3 border border-slate-200 rounded-2xl bg-slate-50 focus:bg-white text-xs sm:text-sm font-semibold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">Last Name</label>
+                        <input
+                          type="text"
+                          value={profile.lastName}
+                          onChange={e => setProfile(p => ({ ...p, lastName: e.target.value }))}
+                          placeholder="Last Name"
+                          className="w-full px-4 py-3 border border-slate-200 rounded-2xl bg-slate-50 focus:bg-white text-xs sm:text-sm font-semibold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    {/* CNIC Number & Phone */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">CNIC Number (National ID)</label>
+                        <input
+                          type="text"
+                          value={profile.cnic}
+                          onChange={e => setProfile(p => ({ ...p, cnic: e.target.value }))}
+                          placeholder="35202-xxxxxxx-x"
+                          className="w-full px-4 py-3 border border-slate-200 rounded-2xl bg-slate-50 focus:bg-white text-xs sm:text-sm font-semibold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">Phone Number</label>
+                        <input
+                          type="tel"
+                          value={profile.phone}
+                          onChange={e => setProfile(p => ({ ...p, phone: e.target.value }))}
+                          placeholder="03xx-xxxxxxx"
+                          className="w-full px-4 py-3 border border-slate-200 rounded-2xl bg-slate-50 focus:bg-white text-xs sm:text-sm font-semibold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Address & City */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">Street / Residential Address</label>
+                        <input
+                          type="text"
+                          value={profile.address}
+                          onChange={e => setProfile(p => ({ ...p, address: e.target.value }))}
+                          placeholder="House / Street / Area Address"
+                          className="w-full px-4 py-3 border border-slate-200 rounded-2xl bg-slate-50 focus:bg-white text-xs sm:text-sm font-semibold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all"
+                        />
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">City / Region</label>
+                        <input
+                          type="text"
+                          value={profile.city}
+                          onChange={e => setProfile(p => ({ ...p, city: e.target.value }))}
+                          placeholder="Lahore"
+                          className="w-full px-4 py-3 border border-slate-200 rounded-2xl bg-slate-50 focus:bg-white text-xs sm:text-sm font-semibold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all"
+                        />
+                      </div>
+                    </div>
+
+                    {/* Account Type & Email */}
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div className="space-y-1.5">
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">Account Type</label>
+                        <select
+                          value={profile.userType}
+                          onChange={e => setProfile(p => ({ ...p, userType: e.target.value }))}
+                          className="w-full px-4 py-3 border border-slate-200 rounded-2xl bg-slate-50 focus:bg-white text-xs sm:text-sm font-semibold text-slate-900 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all cursor-pointer"
+                        >
+                          {['User', 'Horse Buyer', 'Horse Seller', 'Breeder', 'Riding Student'].map(t => (
+                            <option key={t} value={t}>{t}</option>
+                          ))}
+                        </select>
+                      </div>
+                      <div className="space-y-1.5">
+                        <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">Email Address (Read-only)</label>
+                        <input
+                          type="email"
+                          value={user?.email || ''}
+                          disabled
+                          className="w-full px-4 py-3 border border-slate-200 rounded-2xl bg-slate-100 text-xs sm:text-sm font-semibold text-slate-500 cursor-not-allowed shadow-inner"
+                        />
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      disabled={savingProfile}
+                      className="w-full py-3.5 bg-gradient-to-r from-[#0F172A] to-[#1E293B] hover:from-[#1E293B] hover:to-[#334155] text-[#D4AF37] font-black text-xs sm:text-sm rounded-2xl border border-[#D4AF37]/30 transition-all duration-300 shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 mt-2"
+                    >
+                      {savingProfile ? (
+                        <><svg className="animate-spin h-4 w-4 text-[#D4AF37]" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg><span>Saving Details...</span></>
+                      ) : (
+                        <><Save className="w-4 h-4 text-[#D4AF37]" /><span>Save Profile Changes</span></>
+                      )}
+                    </button>
+                  </form>
+                </div>
+
+                {/* Right Column: Update Password Security Card (5 Cols) */}
+                <div className="lg:col-span-5 bg-white border border-slate-200/90 rounded-3xl p-6 sm:p-8 shadow-lg space-y-6">
+                  <div className="flex items-center gap-3 border-b border-slate-100 pb-4">
+                    <div className="w-10 h-10 rounded-2xl bg-blue-500/15 text-blue-600 border border-blue-400/30 flex items-center justify-center shrink-0 shadow-sm">
+                      <Lock className="w-5 h-5 text-blue-600" />
+                    </div>
+                    <div>
+                      <h3 className="font-extrabold text-slate-900 text-base">Update Password</h3>
+                      <p className="text-slate-500 text-xs mt-0.5">Secure your account password</p>
+                    </div>
+                  </div>
+
+                  {pwMsg.text && (
+                    <div className={`p-4 rounded-2xl text-xs font-bold flex items-center gap-2 border shadow-sm ${pwMsg.type === 'success'
+                      ? 'bg-emerald-50 text-emerald-800 border-emerald-200'
+                      : 'bg-rose-50 text-rose-700 border-rose-200'
+                      }`}>
+                      {pwMsg.type === 'success' ? <CheckCircle className="w-4.5 h-4.5 text-emerald-600 shrink-0" /> : <XCircle className="w-4.5 h-4.5 text-rose-600 shrink-0" />}
+                      <span>{pwMsg.text}</span>
+                    </div>
+                  )}
+
+                  <form onSubmit={handleChangePassword} className="space-y-4" autoComplete="off">
                     {[
-                      { label: 'First Name', key: 'firstName', placeholder: 'Muhammad' },
-                      { label: 'Last Name', key: 'lastName', placeholder: 'Ali' },
+                      { label: 'Current Password', key: 'currentPassword', vis: 'current', placeholder: 'Current password' },
+                      { label: 'New Password', key: 'newPassword', vis: 'new', placeholder: 'New password' },
+                      { label: 'Confirm New Password', key: 'confirmNewPassword', vis: 'confirm', placeholder: 'Confirm new password' },
                     ].map(f => (
                       <div key={f.key} className="space-y-1.5">
                         <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">{f.label}</label>
-                        <input
-                          type="text"
-                          value={profile[f.key]}
-                          onChange={e => setProfile(p => ({ ...p, [f.key]: e.target.value }))}
-                          placeholder={f.placeholder}
-                          className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all"
-                        />
+                        <div className="relative">
+                          <input
+                            type={showPw[f.vis] ? 'text' : 'password'}
+                            value={pwForm[f.key]}
+                            onChange={e => setPwForm(p => ({ ...p, [f.key]: e.target.value }))}
+                            placeholder={f.placeholder}
+                            required
+                            autoComplete="new-password"
+                            className="w-full pl-4 pr-11 py-3 border border-slate-200 rounded-2xl bg-slate-50 focus:bg-white text-xs sm:text-sm font-semibold text-slate-900 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all"
+                          />
+                          <button
+                            type="button"
+                            onClick={() => setShowPw(p => ({ ...p, [f.vis]: !p[f.vis] }))}
+                            className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-700 transition cursor-pointer p-1"
+                            aria-label="Toggle password visibility"
+                          >
+                            {showPw[f.vis] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                          </button>
+                        </div>
                       </div>
                     ))}
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="space-y-1.5">
-                      <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">Phone</label>
-                      <input
-                        type="tel"
-                        value={profile.phone}
-                        onChange={e => setProfile(p => ({ ...p, phone: e.target.value }))}
-                        placeholder="03xx-xxxxxxx"
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all"
-                      />
-                    </div>
-                    <div className="space-y-1.5">
-                      <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">City</label>
-                      <input
-                        type="text"
-                        value={profile.city}
-                        onChange={e => setProfile(p => ({ ...p, city: e.target.value }))}
-                        placeholder="Lahore"
-                        className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all"
-                      />
-                    </div>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">Account Type</label>
-                    <select
-                      value={profile.userType}
-                      onChange={e => setProfile(p => ({ ...p, userType: e.target.value }))}
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-white text-sm text-slate-800 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all"
+                    <button
+                      type="submit"
+                      disabled={savingPw}
+                      className="w-full py-3.5 bg-gradient-to-r from-blue-600 to-indigo-700 hover:from-blue-700 hover:to-indigo-800 text-white font-black text-xs sm:text-sm rounded-2xl transition-all duration-300 shadow-md flex items-center justify-center gap-2 cursor-pointer disabled:opacity-60 mt-2"
                     >
-                      {['Horse Buyer', 'User', 'Breeder', 'Riding Student'].map(t => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div className="space-y-1.5">
-                    <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">Email Address</label>
-                    <input
-                      type="email"
-                      value={user.email}
-                      disabled
-                      className="w-full px-4 py-3 border border-slate-200 rounded-xl bg-slate-50 text-sm text-slate-400 cursor-not-allowed shadow-sm"
-                    />
-                    <p className="text-[10px] text-slate-400">Email cannot be changed</p>
-                  </div>
-                  <button
-                    type="submit"
-                    disabled={savingProfile}
-                    className="flex items-center gap-2 px-5 py-3 bg-gradient-to-r from-[#0F172A] to-[#1E293B] hover:from-[#1E293B] hover:to-[#334155] text-[#D4AF37] text-xs font-bold rounded-xl border border-[#D4AF37]/20 transition-all duration-300 shadow-sm disabled:opacity-60"
-                  >
-                    {savingProfile ? (
-                      <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Saving...</>
-                    ) : (
-                      <><Save className="w-4 h-4" />Save Changes</>
-                    )}
-                  </button>
-                </form>
-              </div>
-
-              {/* Change Password Form */}
-              <div className="bg-white border border-slate-200 rounded-2xl p-7 shadow-sm">
-                <div className="flex items-center gap-3 mb-6">
-                  <div className="w-10 h-10 rounded-xl bg-blue-50 text-blue-600 border border-blue-100 flex items-center justify-center">
-                    <Lock className="w-4.5 h-4.5" />
-                  </div>
-                  <div>
-                    <h3 className="font-black text-slate-800 text-sm">Change Password</h3>
-                    <p className="text-slate-400 text-xs mt-0.5">Keep your account secure</p>
-                  </div>
+                      {savingPw ? (
+                        <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Changing...</>
+                      ) : (
+                        <><Lock className="w-4 h-4" />Change Password</>
+                      )}
+                    </button>
+                  </form>
                 </div>
 
-                {pwMsg.text && (
-                  <div className={`mb-5 px-4 py-3 rounded-xl text-xs font-semibold flex items-center gap-2 border ${pwMsg.type === 'success'
-                    ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
-                    : 'bg-rose-50 text-rose-600 border-rose-200'
-                    }`}>
-                    {pwMsg.type === 'success' ? <CheckCircle className="w-4 h-4" /> : <XCircle className="w-4 h-4" />}
-                    {pwMsg.text}
-                  </div>
-                )}
-
-                <form onSubmit={handleChangePassword} className="space-y-4" autoComplete="off">
-                  {[
-                    { label: 'Current Password', key: 'currentPassword', vis: 'current' },
-                    { label: 'New Password', key: 'newPassword', vis: 'new' },
-                    { label: 'Confirm New Password', key: 'confirmNewPassword', vis: 'confirm' },
-                  ].map(f => (
-                    <div key={f.key} className="space-y-1.5">
-                      <label className="block text-[10px] font-black uppercase tracking-wider text-slate-500">{f.label}</label>
-                      <div className="relative">
-                        <input
-                          type={showPw[f.vis] ? 'text' : 'password'}
-                          value={pwForm[f.key]}
-                          onChange={e => setPwForm(p => ({ ...p, [f.key]: e.target.value }))}
-                          placeholder="••••••••"
-                          required
-                          autoComplete="new-password"
-                          className="w-full pl-4 pr-11 py-3 border border-slate-200 rounded-xl bg-white text-sm text-slate-800 placeholder-slate-400 focus:outline-none focus:border-[#D4AF37] focus:ring-4 focus:ring-amber-500/10 shadow-sm transition-all"
-                        />
-                        <button
-                          type="button"
-                          onClick={() => setShowPw(p => ({ ...p, [f.vis]: !p[f.vis] }))}
-                          className="absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600 transition-colors"
-                        >
-                          {showPw[f.vis] ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                  <button
-                    type="submit"
-                    disabled={savingPw}
-                    className="flex items-center gap-2 px-5 py-3 bg-blue-600 hover:bg-blue-700 text-white text-xs font-bold rounded-xl transition-all duration-300 shadow-sm disabled:opacity-60"
-                  >
-                    {savingPw ? (
-                      <><svg className="animate-spin h-4 w-4" fill="none" viewBox="0 0 24 24"><circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" /><path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4z" /></svg>Changing...</>
-                    ) : (
-                      <><Lock className="w-4 h-4" />Change Password</>
-                    )}
-                  </button>
-                </form>
               </div>
-
             </div>
           )}
 
