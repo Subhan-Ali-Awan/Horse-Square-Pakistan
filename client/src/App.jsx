@@ -18,6 +18,49 @@ import { Blog } from './pages/Blog/Blog';
 import { AdminDashboard } from './pages/Admin/AdminDashboard';
 import { UserDashboard } from './pages/Dashboard/UserDashboard';
 
+class ErrorBoundary extends React.Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false, error: null };
+  }
+
+  static getDerivedStateFromError(error) {
+    return { hasError: true, error };
+  }
+
+  componentDidCatch(error, errorInfo) {
+    console.error('Unhandled UI Error:', error, errorInfo);
+  }
+
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen w-full flex items-center justify-center bg-[#F8FAFC] p-4 text-center">
+          <div className="bg-white border border-slate-200/90 rounded-3xl p-8 max-w-md w-full shadow-2xl space-y-4 animate-fade-in">
+            <div className="w-14 h-14 rounded-2xl bg-amber-500/15 border border-amber-500/30 text-[#C9A227] flex items-center justify-center mx-auto shadow-sm">
+              <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+              </svg>
+            </div>
+            <h2 className="text-xl font-black text-slate-900 tracking-tight">Dashboard Session Update</h2>
+            <p className="text-xs text-slate-500 font-medium">A temporary display update occurred. Click below to refresh your session dashboard.</p>
+            <button
+              onClick={() => {
+                this.setState({ hasError: false });
+                window.location.reload();
+              }}
+              className="w-full py-3.5 bg-gradient-to-r from-[#0F172A] to-[#1E293B] hover:from-[#1E293B] hover:to-[#334155] text-[#D4AF37] font-black text-xs rounded-2xl border border-[#D4AF37]/30 shadow-md transition-all cursor-pointer"
+            >
+              Reload Dashboard
+            </button>
+          </div>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 function AppContent() {
   const location = useLocation();
   const hideHeaderFooter = ['/login', '/register', '/forgot-password', '/admin', '/dashboard'].includes(location.pathname);
@@ -61,11 +104,13 @@ function AppContent() {
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
-        <AppContent />
-      </Router>
-    </AuthProvider>
+    <ErrorBoundary>
+      <AuthProvider>
+        <Router>
+          <AppContent />
+        </Router>
+      </AuthProvider>
+    </ErrorBoundary>
   );
 }
 

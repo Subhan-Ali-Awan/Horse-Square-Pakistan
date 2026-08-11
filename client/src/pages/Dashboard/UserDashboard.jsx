@@ -439,12 +439,12 @@ export const UserDashboard = () => {
     );
   }
 
-  const cleanFn = (user.firstName || '').replace(/\baccount\b/gi, '').trim();
-  const cleanLn = (user.lastName || '').replace(/\baccount\b/gi, '').trim();
+  const cleanFn = (user?.firstName || user?.name || '').replace(/\baccount\b/gi, '').trim();
+  const cleanLn = (user?.lastName || '').replace(/\baccount\b/gi, '').trim();
   const userDisplayName = `${cleanFn} ${cleanLn}`.trim() || cleanFn || 'User';
-  const userAvatarInitials = cleanLn
+  const userAvatarInitials = cleanLn && cleanFn
     ? `${cleanFn[0] || ''}${cleanLn[0] || ''}`.toUpperCase()
-    : (cleanFn.substring(0, 2).toUpperCase() || 'U');
+    : (cleanFn ? cleanFn.substring(0, 2).toUpperCase() : 'U');
 
   // ─────────────────────────────────────────────────────────────────────────
   return (
@@ -580,7 +580,7 @@ export const UserDashboard = () => {
             </div>
             <div className="overflow-hidden">
               <span className="text-xs font-bold text-slate-200 block truncate">{userDisplayName}</span>
-              <span className="text-[10px] text-amber-200/80 font-bold block truncate">{user.userType === 'Horse Seller' ? 'User' : (user.userType || 'Verified Member')}</span>
+              <span className="text-[10px] text-amber-200/80 font-bold block truncate">{user?.userType === 'Horse Seller' ? 'User' : (user?.userType || 'Verified Member')}</span>
             </div>
           </div>
           <button onClick={handleLogout} className="p-2 text-rose-400 hover:text-rose-300 hover:bg-rose-500/15 rounded-xl transition duration-300 shrink-0" title="Logout">
@@ -653,7 +653,7 @@ export const UserDashboard = () => {
                   <p className="text-[#D4AF37] text-xs font-bold tracking-widest uppercase mb-1">Welcome back</p>
                   <h2 className="text-white text-2xl font-black tracking-tight">{userDisplayName}</h2>
                   <p className="text-slate-300 text-xs mt-1 font-medium">
-                    <span className="text-amber-200 capitalize font-bold">{user.userType === 'Horse Seller' ? 'User' : (user.userType || 'Verified Member')}</span>
+                    <span className="text-amber-200 capitalize font-bold">{user?.userType === 'Horse Seller' ? 'User' : (user?.userType || 'Verified Member')}</span>
                   </p>
                 </div>
               </div>
