@@ -44,8 +44,18 @@ export const AuthProvider = ({ children }) => {
             } else {
               logout();
             }
-          } else {
+          } else if (res.status === 401 || res.status === 403) {
             logout();
+          } else {
+            // Temporary server cold start or gateway error -> maintain cached user session
+            try {
+              const parsed = JSON.parse(storedUser);
+              const cleaned = sanitizeUser(parsed);
+              setToken(storedToken);
+              setUser(cleaned);
+            } catch (err) {
+              logout();
+            }
           }
         } catch (e) {
           console.error('Error verifying stored auth:', e);

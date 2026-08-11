@@ -145,7 +145,7 @@ export const UserDashboard = () => {
     };
 
     loadData();
-  }, [activeTab, user, token]);
+  }, [user, token]);
 
   const fetchBreedingData = async () => {
     try {
