@@ -464,7 +464,7 @@ export const AdminDashboard = () => {
         </div>
 
         {/* Nav Items */}
-        <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto relative z-10">
+        <nav className="flex-1 px-3 py-4 space-y-1.5 overflow-y-auto relative z-10 no-scrollbar">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -532,7 +532,7 @@ export const AdminDashboard = () => {
         </div>
 
         {/* Nav Items */}
-        <nav className="flex-1 px-3.5 py-6 space-y-2 overflow-y-auto relative z-10">
+        <nav className="flex-1 px-3.5 py-6 space-y-2 overflow-y-auto relative z-10 no-scrollbar">
           {navItems.map((item) => {
             const isActive = activeTab === item.id;
             return (
@@ -1047,21 +1047,19 @@ export const AdminDashboard = () => {
                   <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200 shrink-0">
                     <button
                       onClick={() => setHorseViewMode('grid')}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${
-                        horseViewMode === 'grid'
+                      className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${horseViewMode === 'grid'
                           ? 'bg-[#0F172A] text-amber-300 shadow-sm'
                           : 'text-slate-600 hover:text-slate-900'
-                      }`}
+                        }`}
                     >
                       <LayoutGrid className="w-3.5 h-3.5" /> Grid
                     </button>
                     <button
                       onClick={() => setHorseViewMode('list')}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${
-                        horseViewMode === 'list'
+                      className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${horseViewMode === 'list'
                           ? 'bg-[#0F172A] text-amber-300 shadow-sm'
                           : 'text-slate-600 hover:text-slate-900'
-                      }`}
+                        }`}
                     >
                       <List className="w-3.5 h-3.5" /> List
                     </button>
@@ -1474,21 +1472,19 @@ export const AdminDashboard = () => {
                 <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200 shrink-0 self-end sm:self-auto">
                   <button
                     onClick={() => setContactViewMode('grid')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${
-                      contactViewMode === 'grid'
+                    className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${contactViewMode === 'grid'
                         ? 'bg-[#0F172A] text-amber-300 shadow-sm'
                         : 'text-slate-600 hover:text-slate-900'
-                    }`}
+                      }`}
                   >
                     <LayoutGrid className="w-3.5 h-3.5" /> Grid Cards
                   </button>
                   <button
                     onClick={() => setContactViewMode('list')}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${
-                      contactViewMode === 'list'
+                    className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${contactViewMode === 'list'
                         ? 'bg-[#0F172A] text-amber-300 shadow-sm'
                         : 'text-slate-600 hover:text-slate-900'
-                    }`}
+                      }`}
                   >
                     <List className="w-3.5 h-3.5" /> Table List
                   </button>
@@ -1755,21 +1751,19 @@ export const AdminDashboard = () => {
                   <div className="flex items-center bg-slate-100 p-1 rounded-2xl border border-slate-200 shrink-0">
                     <button
                       onClick={() => setBlogViewMode('grid')}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${
-                        blogViewMode === 'grid'
+                      className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${blogViewMode === 'grid'
                           ? 'bg-[#0F172A] text-amber-300 shadow-sm'
                           : 'text-slate-600 hover:text-slate-900'
-                      }`}
+                        }`}
                     >
                       <LayoutGrid className="w-3.5 h-3.5" /> Grid
                     </button>
                     <button
                       onClick={() => setBlogViewMode('list')}
-                      className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${
-                        blogViewMode === 'list'
+                      className={`px-3 py-1.5 rounded-xl text-xs font-extrabold flex items-center gap-1.5 transition cursor-pointer ${blogViewMode === 'list'
                           ? 'bg-[#0F172A] text-amber-300 shadow-sm'
                           : 'text-slate-600 hover:text-slate-900'
-                      }`}
+                        }`}
                     >
                       <List className="w-3.5 h-3.5" /> List
                     </button>
