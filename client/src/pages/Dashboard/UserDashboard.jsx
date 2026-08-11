@@ -37,7 +37,10 @@ import {
   Menu,
   X,
   LayoutGrid,
-  List
+  List,
+  Camera,
+  Eye,
+  EyeOff
 } from 'lucide-react';
 import { Modal } from '../../components/Modal';
 import { QueryChatModal } from '../../components/QueryChatModal';
