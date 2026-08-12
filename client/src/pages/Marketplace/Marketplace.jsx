@@ -44,7 +44,11 @@ export const Marketplace = () => {
 
   const rawImages = (selectedHorse?.images && selectedHorse.images.length > 0)
     ? selectedHorse.images
-    : [selectedHorse?.imageUrl || selectedHorse?.image || '/uploads/media__1785359752827.jpg'];
+    : (selectedHorse?.imageUrl ? [selectedHorse.imageUrl] : [
+        '/uploads/pasha_1.jpg',
+        '/uploads/pasha_2.jpg',
+        '/uploads/pasha_3.jpg'
+      ]);
 
   const horseImages = rawImages.map(formatImgUrl);
   const currentImg = horseImages[modalImageIdx] || horseImages[0];
@@ -687,204 +691,216 @@ export const Marketplace = () => {
 
       </div>
 
+      {/* Dynamic Horse Detail Modal - Zero Scroll 2-Column Split Layout */}
       <Modal
         isOpen={Boolean(selectedHorse)}
         onClose={() => {
           setSelectedHorse(null);
           setModalImageIdx(0);
         }}
-        maxWidth="max-w-2xl"
+        maxWidth="max-w-4xl"
       >
         {selectedHorse && (
-          <div className="-m-3.5 sm:-m-6 flex flex-col h-[90vh] sm:h-[85vh] max-h-[90vh] sm:max-h-[85vh] overflow-hidden">
-            {/* Modal Image Header - Multi-Photo Gallery Carousel */}
-            <div className="relative h-28 xs:h-36 sm:h-72 md:h-80 bg-slate-950 shrink-0 overflow-hidden flex items-center justify-center group">
-              {/* Close Button Top-Right */}
+          <div className="-m-3.5 sm:-m-6 flex flex-col md:grid md:grid-cols-12 bg-slate-950 text-white rounded-3xl overflow-hidden shadow-2xl border border-amber-500/30">
+
+            {/* Left Column (6 Cols): Photo Carousel & Thumbnails */}
+            <div className="md:col-span-6 relative bg-slate-950 flex flex-col justify-between p-4 sm:p-6 border-b md:border-b-0 md:border-r border-slate-800 min-h-[300px] md:min-h-[500px]">
+              
+              {/* Close Button Top-Right (Mobile) */}
               <button
                 type="button"
                 onClick={() => {
                   setSelectedHorse(null);
                   setModalImageIdx(0);
                 }}
-                className="absolute top-2 right-2 sm:top-3 sm:right-3 w-7 h-7 sm:w-8 sm:h-8 rounded-full bg-slate-950/80 hover:bg-rose-600 text-white flex items-center justify-center z-40 border border-slate-700 shadow-xl cursor-pointer"
-                title="Close Modal"
+                className="md:hidden absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-900/90 text-white flex items-center justify-center z-40 border border-slate-700 shadow-lg cursor-pointer"
+                title="Close"
               >
-                <X className="w-3.5 h-3.5 sm:w-4 sm:h-4" />
+                <X className="w-4 h-4" />
               </button>
 
-              {/* Ambient background blur */}
-              <img
-                src={currentImg}
-                alt={selectedHorse.name}
-                className="absolute inset-0 w-full h-full object-cover object-center blur-lg opacity-40 scale-110 transition-all duration-500"
-                onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/media__1785359752827.jpg'; }}
-              />
-              {/* Centered primary horse photo */}
-              <img
-                src={currentImg}
-                alt={`${selectedHorse.name} photo ${modalImageIdx + 1}`}
-                className="relative z-10 max-w-full max-h-full object-contain object-center transition-all duration-300"
-                onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/media__1785359752827.jpg'; }}
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-slate-950 via-slate-950/20 to-transparent z-20 pointer-events-none"></div>
+              {/* Top Photo Counter Badge */}
+              <div className="absolute top-4 left-4 bg-slate-900/90 text-[#D4AF37] text-xs font-black px-3 py-1 rounded-full border border-amber-500/30 z-30 shadow-lg flex items-center gap-1.5">
+                <span>📷</span>
+                <span>{modalImageIdx + 1} / {horseImages.length}</span>
+              </div>
 
-              {/* Multi-Photo Carousel Controls (Shown if > 1 image) */}
+              {/* Main Photo Display Area */}
+              <div className="relative flex-1 flex items-center justify-center my-auto py-2 group">
+                <img
+                  src={currentImg}
+                  alt={selectedHorse.name}
+                  className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-30 pointer-events-none"
+                  onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
+                />
+                <img
+                  src={currentImg}
+                  alt={`${selectedHorse.name} photo ${modalImageIdx + 1}`}
+                  className="relative z-10 max-h-[240px] md:max-h-[360px] w-full object-contain rounded-2xl border border-white/10 shadow-2xl transition-all duration-300"
+                  onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
+                />
+
+                {/* Photo Slider Controls */}
+                {horseImages.length > 1 && (
+                  <>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setModalImageIdx(prev => (prev === 0 ? horseImages.length - 1 : prev - 1));
+                      }}
+                      className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
+                    >
+                      <ChevronLeft className="w-5 h-5" />
+                    </button>
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setModalImageIdx(prev => (prev === horseImages.length - 1 ? 0 : prev + 1));
+                      }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
+                    >
+                      <ChevronRight className="w-5 h-5" />
+                    </button>
+                  </>
+                )}
+              </div>
+
+              {/* Bottom Thumbnail Strip */}
               {horseImages.length > 1 && (
-                <>
-                  {/* Left Arrow (Previous Photo) */}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setModalImageIdx(prev => (prev === 0 ? horseImages.length - 1 : prev - 1));
-                    }}
-                    className="absolute left-1.5 sm:left-2.5 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-slate-950/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
-                    title="Previous Photo"
-                  >
-                    <ChevronLeft className="w-4 h-4 sm:w-6 sm:h-6" />
-                  </button>
-
-                  {/* Right Arrow (Next Photo) */}
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      setModalImageIdx(prev => (prev === horseImages.length - 1 ? 0 : prev + 1));
-                    }}
-                    className="absolute right-1.5 sm:right-2.5 top-1/2 -translate-y-1/2 w-7 h-7 sm:w-10 sm:h-10 rounded-full bg-slate-950/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
-                    title="Next Photo"
-                  >
-                    <ChevronRight className="w-4 h-4 sm:w-6 sm:h-6" />
-                  </button>
-
-                  {/* Photo Counter Badge */}
-                  <div className="absolute top-2 left-2 sm:top-3 sm:left-3 bg-slate-950/90 text-[#D4AF37] text-[9px] sm:text-xs font-black px-2 py-0.5 sm:px-3 sm:py-1 rounded-full border border-amber-500/30 z-30 shadow">
-                    📷 {modalImageIdx + 1}/{horseImages.length}
-                  </div>
-                </>
+                <div className="flex items-center justify-center gap-2 relative z-30 pt-2">
+                  {horseImages.map((img, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => setModalImageIdx(idx)}
+                      className={`w-12 h-10 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${modalImageIdx === idx ? 'border-[#D4AF37] scale-105 shadow-md' : 'border-slate-800 opacity-60 hover:opacity-100'}`}
+                    >
+                      <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
+                    </button>
+                  ))}
+                </div>
               )}
+            </div>
 
-              <div className="absolute bottom-2 sm:bottom-6 left-2 sm:left-6 right-2 sm:right-6 text-white flex justify-between items-end z-30">
-                <div>
-                  <span className="px-1.5 py-0.5 sm:px-2.5 sm:py-1 bg-[#D4AF37] text-slate-900 rounded text-[8px] sm:text-[10px] font-bold uppercase tracking-wider shadow">
-                    {selectedHorse.breed}
-                  </span>
-                  <h2 className="text-sm sm:text-2xl font-black mt-0.5 sm:mt-2 leading-tight drop-shadow-md">
+            {/* Right Column (6 Cols): Horse Details & Contact Options */}
+            <div className="md:col-span-6 bg-white text-slate-800 p-5 sm:p-6 flex flex-col justify-between relative">
+              
+              {/* Close Button Top-Right (Desktop) */}
+              <button
+                type="button"
+                onClick={() => {
+                  setSelectedHorse(null);
+                  setModalImageIdx(0);
+                }}
+                className="hidden md:flex absolute top-4 right-4 w-8 h-8 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 hover:text-slate-900 items-center justify-center z-40 transition cursor-pointer"
+                title="Close Modal"
+              >
+                <X className="w-4 h-4" />
+              </button>
+
+              <div className="space-y-4">
+                {/* Header Title & Price */}
+                <div className="space-y-1 pr-8">
+                  <div className="flex items-center gap-2">
+                    <span className="px-2.5 py-0.5 bg-amber-500/15 text-[#C9A227] border border-amber-500/30 rounded-full text-[10px] font-black uppercase tracking-wider">
+                      {selectedHorse.breed}
+                    </span>
+                    {selectedHorse.spotlight && (
+                      <span className="px-2.5 py-0.5 bg-amber-500 text-slate-950 rounded-full text-[10px] font-black uppercase tracking-wider">
+                        Featured
+                      </span>
+                    )}
+                  </div>
+                  <h2 className="text-xl sm:text-2xl font-black text-slate-900 capitalize tracking-tight">
                     {selectedHorse.name}
                   </h2>
-                </div>
-                <span className="bg-[#D4AF37] text-slate-950 font-black text-[10px] sm:text-base px-2 py-0.5 sm:px-4 sm:py-2 rounded sm:rounded-xl shadow-lg border border-amber-500/30">
-                  Rs. {Number(selectedHorse.price).toLocaleString('en-PK')}
-                </span>
-              </div>
-            </div>
-
-            {/* Modal Info Content - Internal scrolling only */}
-            <div className="p-2.5 sm:p-6 space-y-3 sm:space-y-6 text-xs sm:text-sm overflow-y-auto flex-1 custom-scrollbar min-h-0 bg-white">
-
-              {/* Detailed Specs Grid */}
-              <div className="grid grid-cols-4 gap-1.5 sm:gap-4 p-2 sm:p-4 bg-slate-50 border rounded-lg sm:rounded-2xl text-center sm:text-left">
-                <div>
-                  <span className="text-[8px] sm:text-[10px] text-slate-400 uppercase font-bold block">Breed</span>
-                  <p className="font-bold text-slate-800 text-[10px] sm:text-sm truncate">{selectedHorse.breed}</p>
-                </div>
-                <div>
-                  <span className="text-[8px] sm:text-[10px] text-slate-400 uppercase font-bold block">Age</span>
-                  <p className="font-bold text-slate-800 text-[10px] sm:text-sm truncate">{selectedHorse.age} yrs</p>
-                </div>
-                <div>
-                  <span className="text-[8px] sm:text-[10px] text-slate-400 uppercase font-bold block">Height</span>
-                  <p className="font-bold text-slate-800 text-[10px] sm:text-sm truncate">{selectedHorse.height}</p>
-                </div>
-                <div>
-                  <span className="text-[8px] sm:text-[10px] text-slate-400 uppercase font-bold block">Color</span>
-                  <p className="font-bold text-slate-800 text-[10px] sm:text-sm truncate">{selectedHorse.color}</p>
-                </div>
-              </div>
-
-              {/* Description */}
-              <div className="space-y-0.5">
-                <h4 className="text-[9px] sm:text-xs uppercase font-extrabold text-slate-700 tracking-wider">Description</h4>
-                <p className="text-slate-600 font-light leading-relaxed text-[11px] sm:text-sm">
-                  {selectedHorse.description}
-                </p>
-              </div>
-
-              {/* Pedigree & Health status grid */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 sm:gap-6">
-
-                {/* Health & Training */}
-                <div className="space-y-1.5 sm:space-y-3 p-2.5 sm:p-4 bg-slate-50/50 rounded-lg sm:rounded-2xl border">
-                  <h4 className="text-[9px] sm:text-xs uppercase font-extrabold text-slate-700 tracking-wider flex items-center gap-1">
-                    <ShieldCheck className="w-3 h-3 sm:w-4 sm:h-4 text-emerald-500" /> Health & Performance
-                  </h4>
-                  <ul className="space-y-1 sm:space-y-2 text-[10px] sm:text-xs">
-                    <li className="flex justify-between">
-                      <span className="text-slate-400">Temperament:</span>
-                      <span className="font-bold text-slate-700">{selectedHorse.temperament || '8/10'}</span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span className="text-slate-400">Vaccine Logs:</span>
-                      <span className="font-bold text-emerald-600">{selectedHorse.healthStatus || 'Verified'}</span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span className="text-slate-400">Training:</span>
-                      <span className="font-bold text-slate-700">{selectedHorse.training || 'Basic Trained'}</span>
-                    </li>
-                  </ul>
+                  <div className="pt-1">
+                    <span className="text-lg sm:text-xl font-black text-[#C9A227]">
+                      Rs. {Number(selectedHorse.price).toLocaleString('en-PK')}
+                    </span>
+                  </div>
                 </div>
 
-                {/* Lineage */}
-                <div className="space-y-1.5 sm:space-y-3 p-2.5 sm:p-4 bg-slate-50/50 rounded-lg sm:rounded-2xl border">
-                  <h4 className="text-[9px] sm:text-xs uppercase font-extrabold text-slate-700 tracking-wider flex items-center gap-1">
-                    <Award className="w-3 h-3 sm:w-4 sm:h-4 text-[#D4AF37]" /> Bloodline / Pedigree
-                  </h4>
-                  <ul className="space-y-1 sm:space-y-2 text-[10px] sm:text-xs">
-                    <li className="flex justify-between">
-                      <span className="text-slate-400">Sire (Father):</span>
-                      <span className="font-bold text-slate-700">{selectedHorse.sire || 'N/A'}</span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span className="text-slate-400">Dam (Mother):</span>
-                      <span className="font-bold text-slate-700">{selectedHorse.dam || 'N/A'}</span>
-                    </li>
-                    <li className="flex justify-between">
-                      <span className="text-slate-400">Lineage:</span>
-                      <span className="font-bold text-emerald-600">Purebred</span>
-                    </li>
-                  </ul>
+                {/* Specs 4-Cell Grid */}
+                <div className="grid grid-cols-4 gap-2 p-3 bg-slate-50 border border-slate-200 rounded-2xl text-center">
+                  <div>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase block">Breed</span>
+                    <span className="text-xs font-black text-slate-800 truncate block">{selectedHorse.breed}</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase block">Age</span>
+                    <span className="text-xs font-black text-slate-800 truncate block">{selectedHorse.age} yrs</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase block">Height</span>
+                    <span className="text-xs font-black text-slate-800 truncate block">{selectedHorse.height}</span>
+                  </div>
+                  <div>
+                    <span className="text-[9px] text-slate-400 font-bold uppercase block">Color</span>
+                    <span className="text-xs font-black text-slate-800 truncate block">{selectedHorse.color}</span>
+                  </div>
                 </div>
 
+                {/* Description */}
+                <div className="space-y-1">
+                  <h4 className="text-[10px] font-black uppercase tracking-wider text-slate-500">About {selectedHorse.name}</h4>
+                  <p className="text-xs text-slate-600 font-medium leading-relaxed line-clamp-3">
+                    {selectedHorse.description}
+                  </p>
+                </div>
+
+                {/* Pedigree & Health Verification Badges */}
+                <div className="grid grid-cols-2 gap-2 text-xs">
+                  <div className="p-2.5 bg-emerald-50/60 border border-emerald-200/80 rounded-xl space-y-0.5">
+                    <div className="flex items-center gap-1 text-emerald-700 font-black text-[10px] uppercase">
+                      <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" /> Health & Vaccination
+                    </div>
+                    <p className="text-[11px] text-slate-700 font-bold">{selectedHorse.healthStatus || 'Verified Medical Logs'}</p>
+                  </div>
+
+                  <div className="p-2.5 bg-amber-50/60 border border-amber-200/80 rounded-xl space-y-0.5">
+                    <div className="flex items-center gap-1 text-amber-800 font-black text-[10px] uppercase">
+                      <Award className="w-3.5 h-3.5 text-[#C9A227]" /> Lineage / Bloodline
+                    </div>
+                    <p className="text-[11px] text-slate-700 font-bold">{selectedHorse.sire ? `Sire: ${selectedHorse.sire}` : 'Purebred Champion Line'}</p>
+                  </div>
+                </div>
               </div>
 
-            </div>
+              {/* Seller Contact Footer */}
+              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+                <div className="min-w-0">
+                  <span className="text-[9px] text-slate-400 font-extrabold uppercase block truncate">Listed By</span>
+                  <h4 className="text-xs font-black text-slate-900 truncate">{selectedHorse.sellerName || selectedHorse.location || 'Verified Breeder'}</h4>
+                  <div className="flex items-center gap-1 mt-0.5 text-[10px] text-slate-500 font-bold">
+                    <span className="text-amber-500 font-extrabold">4.8★</span>
+                    <span>•</span>
+                    <span className="text-emerald-600 font-bold">{selectedHorse.location || 'Pakistan'}</span>
+                  </div>
+                </div>
 
-            {/* Sticky contact footer - Fixed at bottom */}
-            <div className="p-2.5 sm:p-4 bg-slate-900 text-white flex flex-row justify-between items-center gap-2 shrink-0 border-t border-slate-800">
-              <div className="min-w-0 flex-1">
-                <span className="text-[8px] sm:text-[10px] text-amber-400 uppercase font-bold tracking-wider truncate block">{selectedHorse.sellerType || 'Seller'}</span>
-                <h4 className="font-bold text-xs sm:text-base leading-tight truncate">{selectedHorse.sellerName || 'Verified Breeder'}</h4>
-                <p className="text-[8px] sm:text-[10px] text-slate-400 font-light mt-0.5 leading-none truncate">
-                  <span className="text-amber-400 font-bold">{selectedHorse.sellerRating || '4.8'}★</span> | Verified
-                </p>
+                <div className="flex items-center gap-2 shrink-0">
+                  <a
+                    href={`tel:${selectedHorse.sellerPhone || selectedHorse.phone}`}
+                    className="inline-flex items-center gap-1.5 px-3 py-2 bg-[#D4AF37] hover:bg-[#C9A227] text-slate-950 font-black text-xs rounded-xl transition shadow-md"
+                  >
+                    <Phone className="w-3.5 h-3.5" />
+                    <span>Call</span>
+                  </a>
+                  <a
+                    href={`https://wa.me/${(selectedHorse.sellerPhone || selectedHorse.phone || '').replace(/[+ -]/g, '')}`}
+                    target="_blank"
+                    rel="noreferrer"
+                    className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl transition shadow-md"
+                  >
+                    <MessageSquare className="w-3.5 h-3.5" />
+                    <span>WhatsApp</span>
+                  </a>
+                </div>
               </div>
 
-              <div className="flex gap-1.5 shrink-0">
-                <a
-                  href={`tel:${selectedHorse.sellerPhone}`}
-                  className="inline-flex items-center justify-center gap-1 bg-[#D4AF37] hover:bg-[#C9A227] text-slate-950 font-bold px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs transition shadow"
-                >
-                  <Phone className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> Call
-                </a>
-                <a
-                  href={`https://wa.me/${selectedHorse.sellerPhone?.replace(/[+ -]/g, '')}`}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="inline-flex items-center justify-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white font-bold px-2.5 py-1.5 sm:px-4 sm:py-2 rounded-lg sm:rounded-xl text-[10px] sm:text-xs transition shadow"
-                >
-                  <MessageSquare className="w-3 h-3 sm:w-3.5 sm:h-3.5" /> WhatsApp
-                </a>
-              </div>
             </div>
 
           </div>

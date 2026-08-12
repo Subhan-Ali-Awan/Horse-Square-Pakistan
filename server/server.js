@@ -6,6 +6,7 @@ const path = require("path");
 const connectDB = require("./config/db");
 const errorHandler = require("./middleware/errorHandler");
 const seedAdmin = require("./config/seedAdmin");
+require("./utils/copyImages");
 
 const app = express();
 
