@@ -71,8 +71,17 @@ app.use(errorHandler);
 // ---------- Start server ----------
 const PORT = process.env.PORT || 5000;
 
+const updateWhiteCloud = require("./utils/updateWhiteCloud");
+const updateStella = require("./utils/updateStella");
+const updateRoyalSapphire = require("./utils/updateRoyalSapphire");
+const updateGhulamMurtijz = require("./utils/updateGhulamMurtijz");
+
 connectDB().then(async () => {
   await seedAdmin(); // creates the default admin account on first run
+  await updateWhiteCloud(); // updates White Cloud horse ad details
+  await updateStella(); // updates Stella horse ad photos
+  await updateRoyalSapphire(); // updates Royal Sapphire horse ad details
+  await updateGhulamMurtijz(); // updates Ghulam E Murtijz horse ad photo
 
   const server = app.listen(PORT, () => {
     console.log(`🚀 HorseSquare Backend API running on http://localhost:${PORT}/api`);

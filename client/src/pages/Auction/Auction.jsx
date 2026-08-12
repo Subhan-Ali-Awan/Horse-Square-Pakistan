@@ -220,6 +220,7 @@ export const Auction = () => {
                           src={mainImg}
                           alt={auc.horseName}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
                         />
                         <div className="absolute top-3 left-3 bg-slate-950 text-amber-400 text-[10px] font-black uppercase px-2.5 py-1 sm:px-3 sm:py-1.5 rounded-lg sm:rounded-xl border border-amber-500/30 flex items-center gap-1.5 shadow">
                           <Clock className="w-3.5 h-3.5 text-amber-400" /> Live Auction

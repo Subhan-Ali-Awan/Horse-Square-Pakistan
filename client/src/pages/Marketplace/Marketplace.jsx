@@ -862,9 +862,12 @@ export const Marketplace = () => {
 
                   <div className="p-2.5 bg-amber-50/60 border border-amber-200/80 rounded-xl space-y-0.5">
                     <div className="flex items-center gap-1 text-amber-800 font-black text-[10px] uppercase">
-                      <Award className="w-3.5 h-3.5 text-[#C9A227]" /> Lineage / Bloodline
+                      <Award className="w-3.5 h-3.5 text-[#C9A227]" /> Lineage / Pedigree
                     </div>
-                    <p className="text-[11px] text-slate-700 font-bold">{selectedHorse.sire ? `Sire: ${selectedHorse.sire}` : 'Purebred Champion Line'}</p>
+                    <div className="text-[10px] sm:text-[11px] text-slate-700 font-medium space-y-0.5">
+                      <div><span className="text-slate-400">Father:</span> <strong className="text-slate-900 font-black">{selectedHorse.sire || 'Malik'}</strong></div>
+                      <div><span className="text-slate-400">Mother:</span> <strong className="text-slate-900 font-black">{selectedHorse.dam || 'Mona'}</strong></div>
+                    </div>
                   </div>
                 </div>
               </div>

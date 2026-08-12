@@ -232,6 +232,7 @@ export const Breeding = () => {
                           src={mainImg}
                           alt={horse.name}
                           className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
                         />
                         <span className="absolute top-3 left-3 bg-[#D4AF37] text-slate-950 font-black text-[10px] uppercase px-2.5 py-1 rounded-lg sm:rounded-xl shadow">
                           {horse.breed || 'Verified Breed'}

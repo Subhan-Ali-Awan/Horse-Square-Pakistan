@@ -895,9 +895,10 @@ export const AdminDashboard = () => {
                       <div key={horse._id} className="bg-slate-50 rounded-2xl border border-slate-200 p-4 space-y-4 hover:border-amber-400 transition">
                         <div className="relative h-40 rounded-xl overflow-hidden bg-slate-200">
                           <img
-                            src={horse.images && horse.images.length > 0 ? horse.images[0] : 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600'}
+                            src={horse.images && horse.images.length > 0 ? horse.images[0] : '/uploads/pasha_1.jpg'}
                             alt={horse.name}
                             className="w-full h-full object-cover"
+                            onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
                           />
                           <span className="absolute top-2 left-2 bg-amber-500 text-white font-black text-[9px] px-2 py-0.5 rounded shadow">
                             Pending

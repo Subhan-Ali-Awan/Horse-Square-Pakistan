@@ -1066,9 +1066,10 @@ export const UserDashboard = () => {
                             <div>
                               <div className="relative h-48 overflow-hidden bg-slate-900">
                                 <img
-                                  src={h.images && h.images.length > 0 ? h.images[0] : 'https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=600'}
+                                  src={h.images && h.images.length > 0 ? h.images[0] : '/uploads/pasha_1.jpg'}
                                   alt={h.name}
                                   className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                                  onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
                                 />
                                 <span className="absolute top-3 left-3 shrink-0">
                                   <span className={getStatusBadge(h.status)}>
