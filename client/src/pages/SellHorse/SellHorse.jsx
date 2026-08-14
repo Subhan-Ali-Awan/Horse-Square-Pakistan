@@ -76,17 +76,7 @@ export const SellHorse = () => {
 
   // Real-time Policy Validation Indicators
   const numPrice = Number(formData.price);
-  const getBreedFeeRange = (breed) => {
-    const b = (breed || '').toLowerCase();
-    if (b.includes('desi') || b.includes('local')) return { min: 50000, max: 250000, label: 'Desi Stud Fee: Rs. 50,000 – 250,000' };
-    if (b.includes('arabian')) return { min: 180000, max: 500000, label: 'Arabian Stud Fee: Rs. 180,000 – 500,000' };
-    if (b.includes('thoroughbred')) return { min: 150000, max: 400000, label: 'Thoroughbred Stud Fee: Rs. 150,000 – 400,000' };
-    return { min: 50000, max: 500000, label: 'Stud Fee: Rs. 50,000 – 500,000' };
-  };
-  const breedRange = getBreedFeeRange(formData.breed);
-  const minPriceLimit = listingType === 'breeding' ? breedRange.min : 700000;
-  const maxPriceLimit = listingType === 'breeding' ? breedRange.max : 17500000;
-  const isPriceValid = !isNaN(numPrice) && numPrice >= minPriceLimit && numPrice <= maxPriceLimit;
+  const isPriceValid = !isNaN(numPrice) && numPrice > 0;
 
   let heightInches = 0;
   const hMatch = String(formData.height).match(/\d+/);
@@ -104,8 +94,7 @@ export const SellHorse = () => {
 
   // Quick Description Suggestions
   const descriptionSuggestions = [
-    { label: '🏆 Nezabazi Champion', text: 'Active champion in Nezabazi (tent-pegging) tournaments across Punjab.' },
-    { label: '💃 Professional Dancer', text: 'Trained dance horse for traditional equestrian celebrations and events.' },
+    { label: '🏆 Professional Neza Bazi Horse', text: 'Active professional Neza Bazi horse in tent-pegging tournaments across Pakistan.' },
     { label: '🧬 Pure Nukra Pink Skin', text: 'Elite Nukra bloodline with clear pink skin (phulkari) and elegant posture.' },
     { label: '💉 Fully Vaccinated', text: 'Fully vaccinated, medically certified by AI Vet, and in prime athletic condition.' },
     { label: '🛡️ Calm Temperament', text: 'Extremely calm temperament, safe for riders, and easy to manage.' }
@@ -312,7 +301,7 @@ export const SellHorse = () => {
                   }`}>
                   {isPhoneValid ? <Check className="w-3.5 h-3.5 stroke-[3]" /> : <X className="w-3.5 h-3.5" />}
                 </div>
-                <span>Seller Phone: 11-Digit Pak Mobile (03XXXXXXXXX)</span>
+                <span>Seller Phone Number</span>
               </div>
 
               <div className={`flex items-center gap-3 p-3 rounded-2xl border transition duration-200 ${hasPhoto ? 'bg-emerald-950/40 border-emerald-800/80 text-emerald-300' : 'bg-slate-900/60 border-slate-800 text-slate-400'
@@ -543,18 +532,17 @@ export const SellHorse = () => {
                   <div>
                     <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2">
                       {listingType === 'breeding'
-                        ? `Stud Booking Fee (${breedRange.label})`
+                        ? 'Stud Booking Fee (PKR)'
                         : listingType === 'auction'
-                          ? 'Starting Bid (PKR 700,000 - 17,500,000)'
-                          : 'Price (PKR 700,000 - 17,500,000)'}
+                          ? 'Starting Bid (PKR)'
+                          : 'Price (PKR)'}
                     </label>
                     <input
                       type="number"
                       name="price"
                       required
-                      min={listingType === 'breeding' ? breedRange.min : 700000}
-                      max={listingType === 'breeding' ? breedRange.max : 17500000}
-                      placeholder={listingType === 'breeding' ? `e.g. ${breedRange.min} (Max: ${breedRange.max.toLocaleString()})` : "e.g. 1500000"}
+                      min="1"
+                      placeholder={listingType === 'breeding' ? "e.g. 160000" : "e.g. 1500000"}
                       value={formData.price}
                       onChange={handleChange}
                       className={`w-full p-3.5 border rounded-xl text-sm font-bold transition focus:bg-white focus:outline-none ${formData.price && !isPriceValid
@@ -616,8 +604,8 @@ export const SellHorse = () => {
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                   <div>
-                    <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2">
-                      Height (58 - 66 inches)
+                    <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2 truncate">
+                      Height (58 - 66 Inches)
                     </label>
                     <select
                       name="height"
@@ -640,7 +628,9 @@ export const SellHorse = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2">Seller Full Name</label>
+                    <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2 truncate">
+                      Seller Full Name
+                    </label>
                     <input
                       type="text"
                       name="sellerName"
@@ -653,8 +643,8 @@ export const SellHorse = () => {
                   </div>
 
                   <div>
-                    <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2">
-                      Seller Phone (11-Digit Pak)
+                    <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2 truncate">
+                      Seller Phone
                     </label>
                     <input
                       type="text"

@@ -45,23 +45,8 @@ exports.createBreedingHorse = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Please fill in all required fields (Name, Breed, Location, Fee/Price)" });
     }
 
-    if (fee < 50000 || fee > 500000) {
-      return res.status(400).json({ success: false, message: "Stud booking fee must be between PKR 50,000 and PKR 500,000" });
-    }
-
-    const bName = (breed || "").toLowerCase();
-    if (bName.includes("desi") || bName.includes("local")) {
-      if (fee < 50000 || fee > 250000) {
-        return res.status(400).json({ success: false, message: "Desi horse stud booking fee must be between PKR 50,000 and PKR 250,000" });
-      }
-    } else if (bName.includes("arabian")) {
-      if (fee < 180000 || fee > 500000) {
-        return res.status(400).json({ success: false, message: "Arabian horse stud booking fee must be between PKR 180,000 and PKR 500,000" });
-      }
-    } else if (bName.includes("thoroughbred")) {
-      if (fee < 150000 || fee > 400000) {
-        return res.status(400).json({ success: false, message: "Thoroughbred horse stud booking fee must be between PKR 150,000 and PKR 400,000" });
-      }
+    if (fee <= 0) {
+      return res.status(400).json({ success: false, message: "Please enter a valid positive stud booking fee" });
     }
 
     let imagesArr = [];

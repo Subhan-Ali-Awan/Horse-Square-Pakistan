@@ -374,7 +374,7 @@ export const Breeding = () => {
                 {/* Your Phone Number */}
                 <div>
                   <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-1.5">
-                    Your Phone Number (11-Digit Pak)
+                    Your Phone Number
                   </label>
                   <input
                     type="text"
