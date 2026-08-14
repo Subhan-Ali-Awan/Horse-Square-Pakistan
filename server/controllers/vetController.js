@@ -1,8 +1,6 @@
 const VetInquiry = require("../models/VetInquiry");
 const { uploadToCloudinary } = require("../utils/cloudinary");
 
-// Same lookup table as the frontend's checkHealth() function, moved server-side
-// so the "AI logic" is no longer fakeable by editing client JS, and every result is logged to DB.
 const SYMPTOM_ADVICE = {
   anuria: {
     result:
@@ -208,4 +206,3 @@ exports.deleteInquiry = async (req, res, next) => {
     next(error);
   }
 };
-

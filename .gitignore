@@ -31,3 +31,5 @@ npm-debug.log*
 # Temp/test files
 test_pdf_libs.py
 server/update_faiz_miran.js
+server/scratch_test.js
+

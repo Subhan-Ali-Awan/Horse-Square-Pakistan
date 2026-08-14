@@ -11,9 +11,7 @@ const updateGhulamMurtijz = async () => {
         }
       }
     );
-    if (updated.modifiedCount > 0) {
-      console.log(`✅ Updated ${updated.modifiedCount} Ghulam E Murtijz horse ad(s) in MongoDB database.`);
-    }
+
   } catch (err) {
     console.error("Error updating Ghulam E Murtijz horse ad:", err.message);
   }

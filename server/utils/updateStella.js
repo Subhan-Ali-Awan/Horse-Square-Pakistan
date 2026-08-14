@@ -11,9 +11,7 @@ const updateStella = async () => {
         }
       }
     );
-    if (updated.modifiedCount > 0) {
-      console.log(`✅ Updated ${updated.modifiedCount} Stella horse ad(s) with 2 Nukra photos in MongoDB database.`);
-    }
+
   } catch (err) {
     console.error("Error updating Stella horse ad:", err.message);
   }

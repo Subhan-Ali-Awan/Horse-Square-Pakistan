@@ -31,7 +31,7 @@ try {
       fs.copyFileSync(srcPath, path.join(clientUploads, dest));
       fs.copyFileSync(srcPath, path.join(serverUploads, dest));
       fs.copyFileSync(srcPath, path.join(serverRootUploads, dest));
-      console.log(`✅ Copied image ${dest} successfully.`);
+
     }
   });
 } catch (err) {

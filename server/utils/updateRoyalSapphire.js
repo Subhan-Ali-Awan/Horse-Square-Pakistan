@@ -14,9 +14,7 @@ const updateRoyalSapphire = async () => {
         }
       }
     );
-    if (updated.modifiedCount > 0) {
-      console.log(`✅ Updated ${updated.modifiedCount} Royal Sapphire (Mare) horse ad(s) in MongoDB database.`);
-    }
+
   } catch (err) {
     console.error("Error updating Royal Sapphire horse ad:", err.message);
   }

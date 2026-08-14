@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
+import { getApiUrl } from '../../config/api';
 import {
   Stethoscope,
   Upload,
@@ -198,7 +199,7 @@ export const VetDoctor = () => {
         'Fauri taur par Banamine ya Phenylbutazone dawaiyan band karen jo gurday kharab karti hain.',
         'Methane (bladder) ki sujan check karen aur ghode ke zoor lagane ya dard par nazar rakhen.',
         'Saaf pani samne rakhen, lekin agar peshab ki nali me rukawat ho to zabardasti pani mat pilayen.',
-        'Fauri emergency vet doctor ko bulayen taakay nali (catheter) lagayen aur blood test (BUN/Creatinine) karwayen.'
+        'Fauri emergency vet doctor ko bulayen taakay nali (catheter) lagwayen aur blood test (BUN/Creatinine) karwayen.'
       ];
       romanUrduSummary = 'Ghode ko peshab na aana renal failure ya nali me rukawat ki waja se ho sakta hai. Painkiller dawaen band karen aur fauri doctor se catheter lagwayen.';
     } else if (lower.includes('sweat') && lower.includes('fever')) {
@@ -219,164 +220,144 @@ export const VetDoctor = () => {
         'Ghode ki kamzori door karne ke liye glucose drip aur taqat ki khurak den.'
       ];
       romanUrduSummary = 'Surra makkhi ke katne se hota hai. Ghode ko alag rakhen aur Quinapyramine injection ke liye doctor se rabta karen.';
-    } else if (lower.includes('paw') || lower.includes('roll') || lower.includes('flank') || lower.includes('belly') || lower.includes('feed') || lower.includes('refus')) {
+    } else if (lower.includes('colic') || lower.includes('feed') || lower.includes('refus') || lower.includes('paw') || lower.includes('roll')) {
       possibleCondition = 'Potential Colic (Gastrointestinal Distress)';
       romanUrduCondition = 'Colic (Pet Ka Dard / Aant Ki Rukawat)';
       urgency = 'HIGH - Veterinary Attention Recommended';
-      romanUrduUrgency = 'SANJEEDA - Doctor Ko Fauri Bulayen';
+      romanUrduUrgency = 'SANJEEDA - Doctor Ki Dawai Zaroori Hai';
       recommendedActions = [
-        'Immediately restrict access to all feeds, grains, and hay.',
-        'Walk the horse gently on soft ground to prevent violent rolling, which can twist intestines.',
-        'Keep a close record of heart rate and respiration rate.',
-        'Call an emergency veterinarian immediately if the horse is sweating heavily or thrashing.'
+        'Immediately restrict all feed and grain.',
+        'Walk the horse gently for 15-20 minutes to prevent violent rolling, which can cause intestinal volvulus.',
+        'Check TPR vitals (Temperature, Pulse, Respiration) and listen for gut sounds.',
+        'Contact an equine vet urgently for rectal exam and diagnostic workup.'
       ];
       romanUrduActions = [
         'Fauri taur par dana, patte aur ghaas khana bilkul band kar den.',
-        'Ghode ko narm zameen par ahista paidal chalayen taakay woh zameen par aante na maroray.',
-        'Ghode ki saans aur dil ki dhadkan par barabar nazar rakhen.',
-        'Agar ghode ko shadeed paseena aaye ya dard se tadpe to fauri emergency vet ko phone karen.'
+        'Ghode ko ahista chalayen taakay aant nali mude nahi.',
+        'Pet ki aawaz (gut sounds) aur saans check karen.',
+        'Fauri doctor se rabta karen.'
       ];
       romanUrduSummary = 'Pet dard me ghode ka khana peena roken aur narm zameen par chalayen. Zameen par letne aur rolling se bachayen.';
-    } else if (lower.includes('limp') || lower.includes('lame') || lower.includes('hoof') || lower.includes('hooves') || lower.includes('swell') || lower.includes('swelling')) {
-      possibleCondition = 'Laminitis (Founder) or Sole Bruise';
-      romanUrduCondition = 'Laminitis (Sum Ka Dard / Khur Ki Sujan)';
-      urgency = 'HIGH - Limit movement immediately';
-      romanUrduUrgency = 'SANJEEDA - Harakat Fauri Roken';
-      recommendedActions = [
-        'Move the horse to dry, deep, soft bedding (sand or shavings) and limit all movement.',
-        'Apply cold water or ice to the hooves to control acute inflammation.',
-        'Avoid feeding any grains, concentrates, or fresh pasture grass.',
-        'Schedule an emergency visit with your vet and farrier.'
-      ];
-      romanUrduActions = [
-        'Ghode ko narm reti ya bhoose par khada karen aur bilkul mat chalayen.',
-        'Sumon (khuron) par thanda pani ya baraf lagayen taakay sujan kam ho.',
-        'Dana, gur aur taza haray patte bilkul mat den.',
-        'Fauri vet doctor aur naal-band (farrier) ko checkup ke liye bulayen.'
-      ];
-      romanUrduSummary = 'Khuron ki sujan me ghode ko narm zameen par rakhen aur baraf se sek den. Dana peena roken.';
-    } else if (lower.includes('discharge') || lower.includes('cough') || lower.includes('fever') || lower.includes('throat') || lower.includes('sweat')) {
-      possibleCondition = 'Equine Respiratory Infection (Strangles / Influenza)';
-      romanUrduCondition = 'Saans Ki Bimari / Khansi (Strangles Ya Nazla)';
-      urgency = 'MODERATE - Isolate the horse';
-      romanUrduUrgency = 'MADHYAM - Ghode Ko Alag Karen';
-      recommendedActions = [
-        'Quarantine the horse in a well-ventilated stable to prevent spreading infection to other animals.',
-        'Provide dust-free forage (soak hay if necessary) and moisten feed to ease swallowing.',
-        'Monitor body temperature twice daily.',
-        'Call a veterinarian to perform nasal swabs and determine if antibiotics or anti-inflammatories are needed.'
-      ];
-      romanUrduActions = [
-        'Bimar ghode ko doosre ghodon se alag hawadar kamre me rakhen.',
-        'Gardi se paak narm ghaas den, khana bhigo kar den taakay nigalne me aasani ho.',
-        'Din me do baar bukhar zaroor napen.',
-        'Doctor se checkup karwayen taakay zaroori antibiotic shuru ki ja sakain.'
-      ];
-      romanUrduSummary = 'Khansi aur nazla me ghode ko alag rakhen, gard-o-ghubar se bachayen aur doctor se mashwara karen.';
     }
 
-    setAssessment({ possibleCondition, romanUrduCondition, urgency, romanUrduUrgency, recommendedActions, romanUrduActions, romanUrduSummary });
+    setAssessment({
+      possibleCondition,
+      romanUrduCondition,
+      urgency,
+      romanUrduUrgency,
+      recommendedActions,
+      romanUrduActions,
+      romanUrduSummary
+    });
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-8 animate-fade-up">
-
-      {/* Banner */}
-      <div className="bg-gradient-to-r from-[#0F172A] to-[#1E293B] rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-white shadow-xl relative overflow-hidden reveal-on-scroll">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-amber-500/10 rounded-full blur-3xl"></div>
-        <div className="relative z-10 space-y-2">
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/10 text-amber-300 border border-amber-500/30 rounded-full text-[10px] sm:text-xs font-semibold uppercase tracking-wider">
-            <Stethoscope className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" /> AI Equine Vet System
-          </span>
-          <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-            AI Vet Diagnostics & Equine Care Suite
-          </h1>
-          <p className="text-slate-300 text-xs sm:text-sm max-w-2xl font-light">
-            Obtain instant visual or symptoms-based diagnostic evaluations. Learn standard vital signs, review equine disease procedures, or contact trusted regional clinics.
-          </p>
-        </div>
-      </div>
-
-      {/* Main Grid Layout */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 sm:gap-8 reveal-on-scroll">
-
-        {/* Left Columns - Diagnostic Panel */}
-        <div className="lg:col-span-7 space-y-6">
-
-          {/* Symptoms Analyzer Box */}
-          <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-md">
-            <h2 className="text-lg sm:text-xl font-black text-[#0F172A] mb-1.5 flex items-center gap-2">
-              <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4AF37]" /> Describe Symptoms
-            </h2>
-            <p className="text-xs text-slate-500 mb-5 font-light leading-relaxed">
-              Explain current symptoms or upload photos of wounds, skin issues, or body postures to generate triage evaluations.
-            </p>
-
-            <form onSubmit={handleConsult} className="space-y-5 sm:space-y-6">
-
-              {/* Quick Select Tags */}
-              <div className="space-y-2">
-                <label className="block text-xs font-extrabold uppercase text-slate-700 tracking-wider">
-                  Quick Select Symptoms
-                </label>
-                <div className="flex flex-wrap gap-2">
-                  {quickSymptoms.map((symp, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => handleTagClick(symp.label)}
-                      className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold text-slate-700 hover:border-[#D4AF37] hover:bg-amber-500/10 active:scale-95 transition cursor-pointer"
-                    >
-                      + {symp.label}
-                    </button>
-                  ))}
-                </div>
+    <div className="min-h-screen bg-[#F8FAFC] py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
+      <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12">
+        {/* Header Section */}
+        <div className="liquid-glass-dark rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-2xl reveal-on-scroll relative overflow-hidden liquid-glass-sheen">
+          <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
+            <div className="space-y-3 sm:space-y-4">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 text-[#D4AF37] border border-amber-500/30 text-xs sm:text-sm font-bold">
+                <Stethoscope className="w-4 h-4 sm:w-5 sm:h-5 text-[#D4AF37]" />
+                <span>AI Equine Diagnostics 2.0</span>
               </div>
+              <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
+                AI Vet Doctor & Emergency Triage
+              </h1>
+              <p className="text-slate-300 max-w-2xl text-xs sm:text-base leading-relaxed">
+                Enter your horse's symptoms or upload photos for instant AI preliminary medical assessment, vital signs monitoring, and emergency local vet contacts across Pakistan.
+              </p>
+            </div>
+            <div className="bg-white/10 backdrop-blur-md p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 text-center shrink-0 self-start md:self-auto">
+              <span className="text-[10px] sm:text-xs font-black text-[#D4AF37] uppercase tracking-wider block mb-1">Emergency Helpline</span>
+              <a href="tel:+924299211374" className="text-lg sm:text-2xl font-black text-white hover:text-[#D4AF37] transition flex items-center justify-center gap-2">
+                <Phone className="w-5 h-5 text-[#D4AF37]" />
+                <span>+92 42 99211374</span>
+              </a>
+            </div>
+          </div>
+        </div>
 
-              {/* Text Input */}
-              <div className="space-y-2">
-                <label className="block text-xs font-extrabold uppercase text-slate-700 tracking-wider">
-                  Observed Behavior & Symptoms
+        {/* Quick Symptom Tags */}
+        <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-3 sm:space-y-4">
+          <div className="flex items-center justify-between">
+            <h2 className="text-xs sm:text-sm font-black text-[#0F172A] uppercase tracking-wider flex items-center gap-2">
+              <Sparkles className="w-4 h-4 text-[#D4AF37]" /> Common Symptoms Quick Select
+            </h2>
+            <span className="text-[10px] sm:text-xs text-slate-400 font-medium">Click to add to description</span>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {quickSymptoms.map((symptom, idx) => (
+              <button
+                key={idx}
+                type="button"
+                onClick={() => handleTagClick(symptom.label)}
+                className="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-50 hover:bg-[#0F172A] text-slate-700 hover:text-[#D4AF37] rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold border border-slate-200 hover:border-[#D4AF37] transition cursor-pointer flex items-center gap-1.5"
+              >
+                <span>+</span>
+                <span>{symptom.label}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Main Content Grid: Consultation Form & Results */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
+          {/* Symptom Input Form */}
+          <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-5 sm:space-y-6">
+            <div className="border-b pb-4">
+              <h2 className="text-lg sm:text-xl font-black text-[#0F172A] flex items-center gap-2">
+                <Stethoscope className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4AF37]" /> Describe Horse Symptoms
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+                Provide detailed observations (e.g. fever temp, sweating, colic signs, swelling, feed refusal).
+              </p>
+            </div>
+
+            <form onSubmit={handleConsult} className="space-y-4 sm:space-y-5">
+              <div className="space-y-1.5 sm:space-y-2">
+                <label className="text-xs font-black uppercase text-slate-700 tracking-wider">
+                  Symptom Description / Alamat
                 </label>
                 <textarea
                   rows="5"
-                  required
-                  placeholder="Describe your horse's symptoms (e.g., horse is pawing the ground, looking at flanks, sweating, breathing rapidly...)"
                   value={symptoms}
                   onChange={(e) => setSymptoms(e.target.value)}
-                  className="w-full p-3.5 sm:p-4 border border-slate-300 rounded-xl sm:rounded-2xl text-xs sm:text-sm font-semibold text-slate-900 focus:border-[#D4AF37] focus:outline-none focus:ring-2 focus:ring-[#D4AF37]/20 bg-slate-50 focus:bg-white transition"
-                ></textarea>
+                  placeholder="Example: My horse Pasha has high fever 39.8°C, heavy sweating, and hasn't urinated since morning..."
+                  className="w-full p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none text-xs sm:text-sm font-medium transition"
+                  required
+                />
               </div>
 
-              {/* Image Upload */}
-              <div className="space-y-2">
-                <label className="block text-xs font-extrabold uppercase text-slate-700 tracking-wider">
+              <div className="space-y-1.5 sm:space-y-2">
+                <label className="text-xs font-black uppercase text-slate-700 tracking-wider">
                   Upload Photo (Optional)
                 </label>
-                <div className="border border-dashed border-slate-300 p-4 sm:p-6 rounded-xl sm:rounded-2xl text-center bg-slate-50 hover:bg-slate-100/50 hover:border-[#D4AF37] transition cursor-pointer relative">
+                <div className="border-2 border-dashed border-slate-200 rounded-xl sm:rounded-2xl p-4 text-center hover:border-[#D4AF37] transition relative bg-slate-50/50">
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => setSymptomFile(e.target.files[0])}
-                    className="absolute inset-0 opacity-0 cursor-pointer"
+                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                   />
-                  <Upload className="w-5 h-5 sm:w-6 sm:h-6 text-amber-500 mx-auto mb-1.5" />
-                  <span className="text-xs text-slate-700 font-bold block truncate max-w-full px-2">
-                    {symptomFile ? symptomFile.name : 'Click to add hoof, skin, or posture image'}
-                  </span>
-                  <span className="text-[10px] text-slate-400 font-light block mt-1">
-                    Supports JPG, PNG formats up to 5MB
-                  </span>
+                  <div className="space-y-1">
+                    <Upload className="w-6 h-6 text-slate-400 mx-auto" />
+                    <p className="text-xs font-bold text-slate-700">
+                      {symptomFile ? symptomFile.name : 'Click or drag photo of wound / leg swelling / discharge'}
+                    </p>
+                    <p className="text-[10px] text-slate-400">JPG, PNG up to 10MB</p>
+                  </div>
                 </div>
               </div>
 
-              {/* Action Buttons */}
-              <div className="flex flex-col sm:flex-row gap-3 pt-1">
+              <div className="flex items-center gap-3 pt-2">
                 <button
                   type="submit"
                   disabled={loading}
-                  className="w-full sm:flex-1 py-3.5 sm:py-4 bg-gradient-to-r from-[#D4AF37] via-[#C9A227] to-[#B8860B] hover:from-[#C9A227] text-slate-950 font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm shadow-md hover:shadow-xl active:scale-[0.98] transition-all cursor-pointer disabled:opacity-50"
+                  className="flex-1 py-3.5 sm:py-4 bg-[#0F172A] hover:bg-[#1E293B] text-[#D4AF37] font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm shadow-xl transition cursor-pointer flex items-center justify-center gap-2"
                 >
+                  <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-[#D4AF37]" />
                   {loading ? 'Analyzing Symptoms...' : 'Run Diagnostics'}
                 </button>
                 {symptoms && (
@@ -448,14 +429,14 @@ export const VetDoctor = () => {
                     </p>
                     <ul className="space-y-3 sm:space-y-3.5">
                       {assessment.recommendedActions.map((act, idx) => (
-                        <li key={idx} className="bg-white p-3 sm:p-3.5 rounded-xl border border-slate-200/80 shadow-2xs space-y-1">
-                          <div className="flex items-start gap-2.5">
+                        <li key={idx} className="p-3 bg-white rounded-xl border border-slate-200/80 shadow-xs space-y-1">
+                          <div className="flex items-start gap-2 text-xs sm:text-sm font-extrabold text-slate-800">
                             <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                            <span className="text-xs sm:text-sm font-semibold text-slate-800 leading-relaxed">{act}</span>
+                            <span>{act}</span>
                           </div>
                           {assessment.romanUrduActions && assessment.romanUrduActions[idx] && (
-                            <p className="text-[11px] font-medium text-emerald-800 bg-emerald-50/80 p-2 rounded-lg border border-emerald-100/80 ml-6 flex items-start gap-1">
-                              <span className="font-extrabold shrink-0">🇵🇰 Roman Urdu:</span>
+                            <p className="text-xs font-semibold text-amber-900 pl-6 flex items-center gap-1.5">
+                              <span>🇵🇰</span>
                               <span>{assessment.romanUrduActions[idx]}</span>
                             </p>
                           )}
@@ -464,108 +445,105 @@ export const VetDoctor = () => {
                     </ul>
                   </div>
 
-                  {/* Roman Urdu Executive Summary Card */}
+                  {/* Roman Urdu Summary Card */}
                   {assessment.romanUrduSummary && (
-                    <div className="p-3.5 sm:p-4 bg-amber-500/10 rounded-xl border border-amber-400/30 space-y-1">
-                      <span className="text-[10px] font-black text-amber-900 uppercase tracking-widest flex items-center gap-1.5">
-                        <Globe className="w-3.5 h-3.5 text-amber-600" /> 🇵🇰 Roman Urdu Summary / Khulasa:
+                    <div className="p-3.5 sm:p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl sm:rounded-2xl text-xs sm:text-sm space-y-1">
+                      <span className="text-[10px] font-black text-amber-900 uppercase tracking-wider block">
+                        🇵🇰 Roman Urdu Summary (Khulasa):
                       </span>
-                      <p className="text-xs font-bold text-slate-900 leading-relaxed">
+                      <p className="font-extrabold text-amber-950 leading-relaxed">
                         {assessment.romanUrduSummary}
                       </p>
                     </div>
                   )}
                 </div>
+
+                <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-800 text-[11px] font-medium flex items-start gap-2">
+                  <Info className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
+                  <span>
+                    This AI diagnosis is preliminary guidance. Always consult a licensed equine practitioner for physical examination and official prescription.
+                  </span>
+                </div>
               </div>
             ) : (
-              <div className="text-center py-12 sm:py-16 text-slate-400 text-xs sm:text-sm font-light">
-                <Stethoscope className="w-8 h-8 sm:w-10 sm:h-10 mx-auto text-slate-200 mb-3" />
-                Fill in details on the form above to generate an instant diagnostic report.
+              <div className="py-12 text-center text-slate-400 space-y-3">
+                <Bot className="w-12 h-12 text-slate-300 mx-auto" />
+                <p className="text-xs sm:text-sm font-medium">
+                  Select symptoms or type observations above, then click <strong>Run Diagnostics</strong> to see AI preliminary assessment.
+                </p>
               </div>
             )}
-            <p className="text-[10px] text-slate-400 mt-4 sm:mt-6 border-t pt-3 italic leading-normal flex items-start gap-1.5">
-              <Info className="w-3.5 h-3.5 text-slate-300 shrink-0" />
-              Disclaimer: This AI analysis serves as an educational support utility. It does not replace hands-on diagnostic checks by a qualified animal hospital.
-            </p>
           </div>
         </div>
 
-        {/* Right Columns - Medical Knowledge base & Contacts */}
-        <div className="lg:col-span-5 space-y-6">
-
-          {/* Vitals Dashboard */}
-          <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-md">
-            <h2 className="text-base sm:text-lg font-extrabold text-[#0F172A] mb-1 flex items-center gap-2">
-              <Activity className="w-5 h-5 text-[#D4AF37]" /> Normal Vital Signs
+        {/* Vital Signs Reference Grid */}
+        <div className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-6">
+          <div className="border-b pb-4">
+            <h2 className="text-lg sm:text-xl font-black text-[#0F172A] flex items-center gap-2">
+              <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4AF37]" /> Normal Equine Vital Signs (TPR Reference)
             </h2>
-            <p className="text-xs text-slate-500 mb-4 font-light">
-              Use these standard baselines to monitor your horse’s active status.
+            <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+              Compare your horse's current vital signs against healthy adult equine standards before calling a vet.
             </p>
-            <div className="grid grid-cols-1 gap-3.5">
-              {vitalSigns.map((sign, idx) => (
-                <div key={idx} className="p-3 bg-slate-50 border border-slate-100 rounded-xl hover:shadow transition">
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-white rounded-lg border border-slate-100 shrink-0">
-                      {sign.icon}
-                    </div>
-                    <div>
-                      <h4 className="text-xs font-extrabold text-slate-700">{sign.label}</h4>
-                      <p className="text-xs sm:text-sm font-black text-[#0F172A]">
-                        {sign.range} <span className="text-[10px] text-slate-500 font-light">{sign.metric}</span>
-                      </p>
-                    </div>
-                  </div>
-                  <p className="text-[10px] text-slate-500 mt-1.5 leading-relaxed font-normal pl-11">
-                    {sign.desc}
-                  </p>
-                </div>
-              ))}
-            </div>
           </div>
 
-          {/* Emergency Regional Vets */}
-          <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-md">
-            <h2 className="text-base sm:text-lg font-extrabold text-[#0F172A] mb-1 flex items-center gap-2">
-              <Phone className="w-5 h-5 text-[#D4AF37]" /> Emergency Vet Contacts
-            </h2>
-            <p className="text-xs text-slate-500 mb-4 font-light">
-              Contact verified equine veterinarians and specialized animal hospitals in Pakistan.
-            </p>
-
-            <div className="space-y-3.5">
-              {localVets.map((vet, idx) => (
-                <div key={idx} className="p-3.5 sm:p-4 bg-slate-50 rounded-xl sm:rounded-2xl border border-slate-100 flex flex-col justify-between hover:shadow transition hover:border-amber-200 space-y-3">
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between items-start gap-2">
-                      <h4 className="text-xs sm:text-sm font-extrabold text-[#0F172A]">{vet.name}</h4>
-                      <span className="bg-amber-100 text-amber-900 border border-amber-300 font-black text-[9px] px-2 py-0.5 rounded-full uppercase shrink-0">
-                        {vet.city}
-                      </span>
-                    </div>
-                    {vet.doctor && (
-                      <p className="text-[11px] text-slate-700 font-semibold bg-white px-2 py-1 rounded-lg border border-slate-100 inline-block">
-                        👨‍⚕️ {vet.doctor}
-                      </p>
-                    )}
-                    <p className="text-[10px] text-slate-500 font-normal leading-normal">{vet.location}</p>
-                  </div>
-                  <div className="pt-2.5 border-t border-slate-200/80 flex items-center justify-between gap-2">
-                    <a
-                      href={`tel:${vet.phone}`}
-                      className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-emerald-50 hover:bg-emerald-100 text-emerald-800 font-extrabold rounded-lg text-xs border border-emerald-200 transition"
-                    >
-                      <Phone className="w-3.5 h-3.5 text-emerald-600" />
-                      <span>Call Hospital</span>
-                    </a>
-                    <span className="text-[11px] text-slate-700 font-black">{vet.phone}</span>
-                  </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
+            {vitalSigns.map((vital, idx) => (
+              <div key={idx} className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
+                <div className="flex items-center justify-between">
+                  <span className="text-xs font-black text-slate-700 uppercase">{vital.label}</span>
+                  {vital.icon}
                 </div>
-              ))}
-            </div>
+                <div className="space-y-0.5">
+                  <div className="text-lg sm:text-xl font-black text-[#0F172A]">{vital.range}</div>
+                  <div className="text-[10px] font-bold text-slate-400">{vital.metric}</div>
+                </div>
+                <p className="text-xs text-slate-500 font-medium pt-1 border-t border-slate-200">{vital.desc}</p>
+              </div>
+            ))}
           </div>
-
         </div>
 
+        {/* Emergency Vet Hospitals Directory */}
+        <div className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-6">
+          <div className="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h2 className="text-lg sm:text-xl font-black text-[#0F172A] flex items-center gap-2">
+                <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4AF37]" /> Emergency Equine Hospitals in Pakistan
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
+                Verified equine surgery centers and veterinary teaching clinics across major cities.
+              </p>
+            </div>
+            <span className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold border border-emerald-200 self-start sm:self-auto">
+              24/7 Helpline Contacts
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
+            {localVets.map((vet, idx) => (
+              <div key={idx} className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between hover:border-[#D4AF37] transition">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-slate-200 text-slate-700 rounded-md">
+                      {vet.city}
+                    </span>
+                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
+                  </div>
+                  <h3 className="text-sm font-black text-[#0F172A] leading-snug">{vet.name}</h3>
+                  <p className="text-xs font-bold text-slate-600">{vet.doctor}</p>
+                  <p className="text-[11px] text-slate-400 font-medium line-clamp-2">{vet.location}</p>
+                </div>
+                <a
+                  href={`tel:${vet.phone}`}
+                  className="w-full py-2.5 bg-[#0F172A] hover:bg-[#1E293B] text-[#D4AF37] font-black rounded-xl text-xs transition flex items-center justify-center gap-2 shadow"
+                >
+                  <Phone className="w-3.5 h-3.5 text-[#D4AF37]" /> Call Emergency
+                </a>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </div>
   );

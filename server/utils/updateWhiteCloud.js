@@ -19,9 +19,7 @@ const updateWhiteCloud = async () => {
         }
       }
     );
-    if (updated.modifiedCount > 0) {
-      console.log(`✅ Updated ${updated.modifiedCount} White Cloud horse ad(s) in MongoDB database.`);
-    }
+
   } catch (err) {
     console.error("Error updating White Cloud horse ad:", err.message);
   }
