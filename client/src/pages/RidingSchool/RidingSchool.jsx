@@ -95,6 +95,7 @@ export const RidingSchool = () => {
       venue: 'Madrota, Punjab',
       category: 'Tent Pegging Championship',
       badge: 'EFP Authorized',
+      date: '12th – 15th October 2026',
       desc: 'High-profile national Nezabazi championship hosted by Essa Farms featuring elite tent pegging riders and stud horses from across Pakistan.'
     },
     {
@@ -104,6 +105,7 @@ export const RidingSchool = () => {
       venue: 'Race Course Polo Ground, Lahore',
       category: 'Grand Festival Championship',
       badge: 'EFP Authorized',
+      date: '4th – 8th November 2026',
       desc: 'Electrifying provincial tent pegging and equestrian carnival hosted at the historic Race Course Polo Ground by PHA Lahore.'
     },
     {
@@ -113,6 +115,7 @@ export const RidingSchool = () => {
       venue: 'Fortress Stadium, Lahore',
       category: 'State Championship',
       badge: 'EFP Authorized',
+      date: '20th – 24th November 2026',
       desc: 'Official state tent pegging championship presented by the Punjab Government with traditional cavalry displays and honors.'
     },
     {
@@ -122,6 +125,7 @@ export const RidingSchool = () => {
       venue: 'Peshawar Grounds, KP',
       category: 'Cattle & Horse Exhibition',
       badge: 'EFP Authorized',
+      date: '10th – 14th December 2026',
       desc: 'Regional horse exhibition and Nezabazi trials organized by the Peshawar Government promoting Khyber Pakhtunkhwa equestrian sports.'
     },
     {
@@ -131,6 +135,7 @@ export const RidingSchool = () => {
       venue: 'Fortress Stadium, Lahore',
       category: 'National Cattle & Horse Show',
       badge: 'EFP Authorized',
+      date: '15th – 20th January 2027',
       desc: 'Pakistan’s premier annual national cattle show and tent pegging tournament organized by the Punjab Government in Fortress Stadium.'
     },
     {
@@ -140,6 +145,7 @@ export const RidingSchool = () => {
       venue: 'Khushab, Punjab',
       category: 'International Cup',
       badge: 'EFP Authorized',
+      date: '5th – 9th February 2027',
       desc: 'World-renowned international Nezabazi tournament hosted in Khushab by Team Sultan, featuring top international and national champions.'
     },
     {
@@ -149,6 +155,7 @@ export const RidingSchool = () => {
       venue: 'F-9 Park, Islamabad',
       category: 'Capital Championship',
       badge: 'EFP Authorized',
+      date: '18th – 22nd February 2027',
       desc: 'Capital territory tent pegging competition organized by Meharia Town in F-9 Park Islamabad under official EFP permission.'
     },
     {
@@ -158,6 +165,7 @@ export const RidingSchool = () => {
       venue: 'Kot Fateh Khan, Attock',
       category: 'Legend Memorial Cup',
       badge: 'EFP Authorized',
+      date: '3rd – 7th March 2027',
       desc: 'Historical memorial tent pegging cup honoring the legacy of late Nawab Malik Ata Muhammad Khan, hosted by Nawab Malik Arslan Khan in Attock.'
     },
     {
@@ -167,6 +175,7 @@ export const RidingSchool = () => {
       venue: 'Chakwal, Punjab',
       category: 'Regional Championship',
       badge: 'EFP Authorized',
+      date: '20th – 24th March 2027',
       desc: 'Vibrant regional tent pegging tournament in Chakwal organized by Haral Brothers, celebrating traditional horsemanship and speed.'
     }
   ];
@@ -577,11 +586,14 @@ export const RidingSchool = () => {
 
               {/* Card Footer Note */}
               <div className="pt-3 border-t border-slate-100 space-y-2">
-                <div className="flex items-center justify-between gap-2 text-[10px] font-extrabold text-amber-800 bg-amber-50/80 px-2.5 py-1.5 rounded-xl border border-amber-200/70">
-                  <span className="flex items-center gap-1">
-                    <Sparkles className="w-3 h-3 text-amber-600" /> EFP Sanctioned Event
+                <div className="flex items-center justify-between gap-2 text-xs font-bold text-slate-800">
+                  <span className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-amber-50 text-amber-900 border border-amber-200/80 rounded-xl text-xs font-black shadow-sm">
+                    <Calendar className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                    <span>{event.date}</span>
                   </span>
-                  <span className="text-[9px] bg-amber-200/60 text-amber-950 px-1.5 py-0.5 rounded font-black">Official</span>
+                  <span className="text-[10px] font-black uppercase text-emerald-800 bg-emerald-50 px-2.5 py-1 rounded-lg border border-emerald-200/80">
+                    EFP Authorized
+                  </span>
                 </div>
               </div>
             </div>
