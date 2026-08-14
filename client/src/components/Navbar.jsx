@@ -249,8 +249,12 @@ export const Navbar = () => {
                   onClick={() => setIsProfileOpen(!isProfileOpen)}
                   className="flex items-center gap-2.5 bg-slate-900/90 hover:bg-slate-800 border border-slate-700/80 hover:border-[#D4AF37]/60 px-3 py-1.5 rounded-full transition-all duration-200 cursor-pointer shadow-sm group"
                 >
-                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F59E0B] text-slate-950 font-black text-xs flex items-center justify-center shadow-inner ring-2 ring-amber-500/20 group-hover:scale-105 transition duration-200">
-                    {getAvatarInitial()}
+                  <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F59E0B] text-slate-950 font-black text-xs flex items-center justify-center shadow-inner ring-2 ring-amber-500/20 group-hover:scale-105 transition duration-200 overflow-hidden">
+                    {user?.avatar ? (
+                      <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      getAvatarInitial()
+                    )}
                   </div>
                   <span className="text-xs font-extrabold text-slate-200 group-hover:text-amber-300 transition max-w-[110px] truncate">
                     {getDisplayFirstName()}
@@ -267,8 +271,12 @@ export const Navbar = () => {
                 >
                   {/* User Profile Summary Header */}
                   <div className="p-4 bg-gradient-to-r from-slate-900 to-[#1E293B] border-b border-slate-800 flex items-center gap-3">
-                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F59E0B] text-slate-950 font-black text-sm flex items-center justify-center shrink-0 shadow">
-                      {getAvatarInitial()}
+                    <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F59E0B] text-slate-950 font-black text-sm flex items-center justify-center shrink-0 shadow overflow-hidden">
+                      {user?.avatar ? (
+                        <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                      ) : (
+                        getAvatarInitial()
+                      )}
                     </div>
                     <div className="overflow-hidden">
                       <h4 className="text-xs font-black text-white truncate">
@@ -426,8 +434,12 @@ export const Navbar = () => {
             {user ? (
               <div className="space-y-3 px-3">
                 <div className="flex items-center gap-3 p-3 rounded-2xl bg-slate-900 border border-slate-800">
-                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F59E0B] text-slate-950 font-black text-sm flex items-center justify-center shrink-0 shadow">
-                    {getAvatarInitial()}
+                  <div className="w-10 h-10 rounded-full bg-gradient-to-tr from-[#D4AF37] to-[#F59E0B] text-slate-950 font-black text-sm flex items-center justify-center shrink-0 shadow overflow-hidden">
+                    {user?.avatar ? (
+                      <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+                    ) : (
+                      getAvatarInitial()
+                    )}
                   </div>
                   <div className="overflow-hidden">
                     <div className="text-xs font-bold text-white truncate">

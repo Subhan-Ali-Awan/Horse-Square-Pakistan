@@ -18,6 +18,9 @@ const buildUserResponse = (user) => ({
   email: user.email,
   phone: user.phone,
   city: user.city,
+  cnic: user.cnic || "",
+  address: user.address || "",
+  avatar: user.avatar || "",
   userType: user.userType,
   role: user.role,
   status: user.status,
@@ -237,18 +240,21 @@ exports.getMe = async (req, res, next) => {
 // ===================================================
 exports.updateProfile = async (req, res, next) => {
   try {
-    const { firstName, lastName, phone, city, userType } = req.body || {};
-    const user = await require("../models/User").findById(req.user._id);
+    const { firstName, lastName, phone, cnic, address, city, userType, avatar } = req.body || {};
+    const user = await User.findById(req.user._id);
 
     if (!user) {
       return res.status(404).json({ success: false, message: "User not found" });
     }
 
-    if (firstName) user.firstName = firstName.trim();
-    if (lastName) user.lastName = lastName.trim();
-    if (phone) user.phone = phone.trim();
-    if (city) user.city = city.trim();
-    if (userType) user.userType = userType;
+    if (firstName !== undefined) user.firstName = firstName.trim();
+    if (lastName !== undefined) user.lastName = lastName.trim();
+    if (phone !== undefined) user.phone = phone.trim();
+    if (cnic !== undefined) user.cnic = cnic.trim();
+    if (address !== undefined) user.address = address.trim();
+    if (city !== undefined) user.city = city.trim();
+    if (userType !== undefined) user.userType = userType;
+    if (avatar !== undefined) user.avatar = avatar;
 
     await user.save();
 

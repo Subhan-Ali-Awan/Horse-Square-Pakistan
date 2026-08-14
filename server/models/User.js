@@ -14,6 +14,9 @@ const userSchema = new mongoose.Schema(
     },
     phone: { type: String, required: true, trim: true },
     city: { type: String, required: true },
+    cnic: { type: String, trim: true, default: "" },
+    address: { type: String, trim: true, default: "" },
+    avatar: { type: String, default: "" },
     password: { type: String, required: true, minlength: 6, select: false },
     userType: {
       type: String,

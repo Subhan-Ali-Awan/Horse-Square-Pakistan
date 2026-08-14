@@ -114,8 +114,11 @@ export const UserDashboard = () => {
         firstName: user.firstName || '',
         lastName: user.lastName || '',
         phone: user.phone || '',
+        cnic: user.cnic || '',
+        address: user.address || '',
         city: user.city || '',
         userType: (user.userType === 'Horse Seller' ? 'User' : user.userType) || '',
+        avatar: user.avatar || ''
       });
     }
   }, [user]);
@@ -520,8 +523,12 @@ export const UserDashboard = () => {
         {/* User footer */}
         <div className="p-4 liquid-glass-sidebar-footer flex items-center justify-between gap-2.5 relative z-10">
           <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 flex items-center justify-center shrink-0 border border-[#D4AF37]/40 text-xs font-extrabold uppercase text-[#D4AF37] shadow">
-              {userAvatarInitials}
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 flex items-center justify-center shrink-0 border border-[#D4AF37]/40 text-xs font-extrabold uppercase text-[#D4AF37] shadow overflow-hidden">
+              {user?.avatar ? (
+                <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                userAvatarInitials
+              )}
             </div>
             <div className="overflow-hidden">
               <span className="text-xs font-bold text-slate-200 block truncate">{userDisplayName}</span>
@@ -578,8 +585,12 @@ export const UserDashboard = () => {
         {/* User footer */}
         <div className="p-4.5 liquid-glass-sidebar-footer flex items-center justify-between gap-2.5 relative z-10">
           <div className="flex items-center gap-2.5 overflow-hidden">
-            <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 flex items-center justify-center shrink-0 border border-[#D4AF37]/40 text-xs font-extrabold uppercase text-[#D4AF37] shadow">
-              {userAvatarInitials}
+            <div className="w-9 h-9 rounded-2xl bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 flex items-center justify-center shrink-0 border border-[#D4AF37]/40 text-xs font-extrabold uppercase text-[#D4AF37] shadow overflow-hidden">
+              {user?.avatar ? (
+                <img src={user.avatar} alt="Avatar" className="w-full h-full object-cover" />
+              ) : (
+                userAvatarInitials
+              )}
             </div>
             <div className="overflow-hidden">
               <span className="text-xs font-bold text-slate-200 block truncate">{userDisplayName}</span>
@@ -1784,8 +1795,8 @@ export const UserDashboard = () => {
                   {/* Avatar Container with Upload Badge */}
                   <div className="relative group shrink-0">
                     <div className="w-24 h-24 sm:w-28 sm:h-28 rounded-3xl bg-slate-950/80 border-2 border-[#D4AF37] p-1 flex items-center justify-center shadow-xl shadow-[#D4AF37]/20 overflow-hidden">
-                      {profile.avatar ? (
-                        <img src={profile.avatar} alt="Profile Avatar" className="w-full h-full object-cover rounded-2xl" />
+                      {profile.avatar || user?.avatar ? (
+                        <img src={profile.avatar || user?.avatar} alt="Profile Avatar" className="w-full h-full object-cover rounded-2xl" />
                       ) : (
                         <div className="w-full h-full rounded-2xl bg-gradient-to-br from-[#D4AF37]/30 to-[#D4AF37]/10 flex items-center justify-center text-3xl font-black uppercase text-[#D4AF37]">
                           {userAvatarInitials}
@@ -1833,7 +1844,7 @@ export const UserDashboard = () => {
                       <span>•</span>
                       <span>📞 {profile.phone || user?.phone || '—'}</span>
                       <span>•</span>
-                      <span>🆔 CNIC: {profile.cnic || 'Not Specified'}</span>
+                      <span>🆔 CNIC: {profile.cnic || user?.cnic || 'Not Specified'}</span>
                       <span>•</span>
                       <span>📍 {profile.city || user?.city || 'Pakistan'}</span>
                     </p>
