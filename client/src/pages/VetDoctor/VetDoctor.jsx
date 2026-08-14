@@ -1,492 +1,370 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { getApiUrl } from '../../config/api';
 import {
-  Stethoscope,
-  Upload,
-  Bot,
-  CheckCircle2,
-  Activity,
-  Heart,
-  Thermometer,
-  Wind,
-  AlertTriangle,
-  Phone,
-  Info,
-  ChevronDown,
-  ChevronUp,
-  MapPin,
-  Building2,
-  Sparkles,
-  Globe
+  Stethoscope, Activity, Heart, Thermometer, Wind,
+  Phone, MapPin, Building2, Send, Trash2, ChevronDown,
+  ChevronUp, AlertTriangle, CheckCircle2, User, Bot
 } from 'lucide-react';
 
+// ─────────────────────────────────────────────────────────────────────────────
+// Disease Context Map — injected into API calls when chips are selected
+// ─────────────────────────────────────────────────────────────────────────────
+const DISEASE_CONTEXTS = {
+  anuria:      "The user has selected ANURIA (No Urine). This is a life-threatening emergency. Kidney failure, severe dehydration, urinary obstruction (stones), or toxins (acorns, red maple) are likely causes. [Source: Merck Veterinary Manual, Equine Urinary Disorders]",
+  sweating:    "The user has selected HEAVY SWEATING. Possible causes: heat stress, pain, shock, Cushing's disease (PPID), electrolyte imbalance, Trypanosomiasis (Surra — common in Pakistan), or anxiety. [Source: Equine Internal Medicine, Reed, Bayly, Sellon]",
+  coughing:    "The user has selected COUGHING. Differential: dust irritation (RAO/heaves), viral infection (EHV, influenza, strangles), allergies, bacterial pneumonia, aspiration, or choke-related aspiration. [Source: Merck Veterinary Manual, Equine Respiratory]",
+  fever:       "The user has selected HIGH FEVER. Normal equine temperature: 99–101.5°F (37.2–38.6°C). Causes: viral respiratory (EHV, influenza), bacterial infection (pneumonia, wound sepsis), tick-borne disease (Lyme, Anaplasma), or Surra. [Source: Merck Veterinary Manual, Equine Fever]",
+  refusing:    "The user has selected REFUSING FEED. Causes: dental pain (sharp points, hooks, wolf teeth), gastric ulcers (90% of performance horses), colic, fever, choke, metabolic crisis, or environmental stress. [Source: AAEP Guidelines, Equine Gastric Ulcer Syndrome]",
+  footswelling:"The user has selected FOOT SWELLING. Localized: abscess, bruise, puncture wound. Generalized bilateral: cellulitis, lymphangitis, vasculitis. Hot hoof + strong digital pulse = LAMINITIS (emergency). [Source: Adams and Stashak's Lameness in Horses, 7th Ed]",
+  thrush:      "The user has selected THRUSH. Bacterial (Fusobacterium necrophorum) infection of the frog and central/lateral sulci. Presents as black, tar-like discharge with fetid odor. Common in wet/dirty environments with poor hoof care. [Source: Merck Veterinary Manual, Equine Hoof Disorders]",
+  epm:         "The user has selected EPM (Equine Protozoal Myeloencephalitis). Caused by Sarcocystis neurona via opossum fecal contamination of feed/water. Progressive neurological disease attacking brain and spinal cord. Fatal if untreated. [Source: Equine Internal Medicine, Reed, Bayly, Sellon, Ch. 12]",
+  uveitis:     "The user has selected EYE INFECTION / UVEITIS. Equine Recurrent Uveitis (ERU) is the #1 cause of blindness in horses. Signs: blepharospasm, epiphora, corneal cloudiness/edema, miosis, photophobia. Requires urgent ophthalmic evaluation. [Source: Veterinary Clinics of North America: Equine Practice, Equine Ophthalmology]",
+  choke:       "The user has selected CHOKE. Esophageal obstruction — food (grain/hay pellets) impacted in esophagus (NOT trachea). Horse cannot swallow, extends neck, feed/saliva discharges from nostrils. Aspiration pneumonia is a severe secondary risk. Requires immediate veterinary intervention. [Source: Merck Veterinary Manual, Equine Esophageal Obstruction]",
+};
+
+const DISEASE_CHIPS = [
+  { key: 'anuria',       label: 'Anuria (No Urine)',        icon: '🚫', emergency: true  },
+  { key: 'choke',        label: 'Choke',                    icon: '😵', emergency: true  },
+  { key: 'uveitis',      label: 'Eye Infection / Uveitis',  icon: '👁️', emergency: false },
+  { key: 'footswelling', label: 'Foot Swelling',            icon: '🦶', emergency: false },
+  { key: 'fever',        label: 'High Fever',               icon: '🌡️', emergency: false },
+  { key: 'sweating',     label: 'Heavy Sweating',           icon: '💦', emergency: false },
+  { key: 'coughing',     label: 'Coughing',                 icon: '😤', emergency: false },
+  { key: 'refusing',     label: 'Refusing Feed',            icon: '🥕', emergency: false },
+  { key: 'thrush',       label: 'Thrush',                   icon: '🦠', emergency: false },
+  { key: 'epm',          label: 'EPM',                      icon: '🧠', emergency: false },
+];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Markdown renderer — bold, lists, confidence badges
+// ─────────────────────────────────────────────────────────────────────────────
+function renderMarkdown(text) {
+  // Detect emergency
+  const isEmergency = /stop\.\s*this is an emergency/i.test(text);
+
+  // Parse [Confidence: X] and [Recommended Next Step: X]
+  const confidenceMatch = text.match(/\[Confidence:\s*(HIGH|MODERATE|LOW)\]/i);
+  const nextStepMatch   = text.match(/\[Recommended Next Step:\s*([^\]]+)\]/i);
+
+  // Strip badges from body text
+  let body = text
+    .replace(/\[Confidence:\s*(HIGH|MODERATE|LOW)\]/gi, '')
+    .replace(/\[Recommended Next Step:\s*([^\]]+)\]/gi, '')
+    .trim();
+
+  // Convert **bold** → <strong>
+  body = body.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+
+  // Convert numbered list lines
+  body = body.replace(/^(\d+)\.\s+(.+)$/gm, '<li class="ml-4 mb-1"><span class="font-bold text-amber-600 mr-1">$1.</span>$2</li>');
+
+  // Convert paragraphs (double newlines)
+  const paragraphs = body.split(/\n\n+/);
+  const htmlParts = paragraphs.map((para) => {
+    if (para.includes('<li')) return `<ul class="space-y-1 my-2">${para}</ul>`;
+    const withLineBreaks = para.replace(/\n/g, '<br/>');
+    return `<p class="mb-3 leading-relaxed">${withLineBreaks}</p>`;
+  });
+
+  return { html: htmlParts.join(''), isEmergency, confidenceMatch, nextStepMatch };
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Single message bubble
+// ─────────────────────────────────────────────────────────────────────────────
+function MessageBubble({ msg }) {
+  const isUser = msg.role === 'user';
+
+  if (isUser) {
+    return (
+      <div className="flex justify-end mb-4 animate-fade-up">
+        <div className="max-w-[80%] sm:max-w-[70%]">
+          <div className="bg-gradient-to-br from-[#0f172a] to-[#1e293b] text-white rounded-2xl rounded-tr-sm px-4 py-3 shadow-lg">
+            <p className="text-sm leading-relaxed whitespace-pre-wrap">{msg.content}</p>
+          </div>
+          <p className="text-[10px] text-slate-400 font-medium mt-1 text-right pr-1">You</p>
+        </div>
+        <div className="w-7 h-7 rounded-full bg-[#0f172a] border-2 border-amber-400/40 flex items-center justify-center ml-2 shrink-0 mt-1">
+          <User className="w-3.5 h-3.5 text-amber-400" />
+        </div>
+      </div>
+    );
+  }
+
+  const { html, isEmergency, confidenceMatch, nextStepMatch } = renderMarkdown(msg.content);
+
+  const confidenceLevel = confidenceMatch?.[1]?.toUpperCase();
+  const confidenceColor = {
+    HIGH:     'bg-emerald-100 text-emerald-800 border-emerald-300',
+    MODERATE: 'bg-amber-100 text-amber-800 border-amber-300',
+    LOW:      'bg-red-100 text-red-800 border-red-300',
+  }[confidenceLevel] || 'bg-slate-100 text-slate-700 border-slate-200';
+
+  if (isEmergency) {
+    return (
+      <div className="flex mb-5 animate-fade-up">
+        <div className="w-8 h-8 rounded-full bg-red-600 flex items-center justify-center mr-3 shrink-0 mt-1 shadow-lg">
+          <AlertTriangle className="w-4 h-4 text-white" />
+        </div>
+        <div className="flex-1">
+          <div className="bg-gradient-to-r from-red-600 to-red-700 text-white rounded-2xl rounded-tl-sm px-5 py-4 shadow-xl border border-red-500">
+            <div className="flex items-center gap-2 mb-3">
+              <AlertTriangle className="w-4 h-4 text-red-200 shrink-0" />
+              <span className="text-xs font-black text-red-200 uppercase tracking-widest">Emergency Alert</span>
+            </div>
+            <div
+              className="text-sm leading-relaxed prose-emergency"
+              dangerouslySetInnerHTML={{ __html: html }}
+            />
+          </div>
+          <p className="text-[10px] text-slate-400 font-medium mt-1 pl-1">Dr. Max Hartwell</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex mb-5 animate-fade-up">
+      <div className="w-8 h-8 rounded-full bg-[#0f172a] border-2 border-amber-400/50 flex items-center justify-center mr-3 shrink-0 mt-1 shadow-md">
+        <span className="text-sm">🩺</span>
+      </div>
+      <div className="flex-1 max-w-[85%] sm:max-w-[80%]">
+        <div className="bg-white rounded-2xl rounded-tl-sm px-5 py-4 shadow-md border border-slate-200">
+          <div
+            className="text-sm text-slate-800 leading-relaxed"
+            dangerouslySetInnerHTML={{ __html: html }}
+          />
+          {/* Confidence + Next Step Badges */}
+          {(confidenceLevel || nextStepMatch) && (
+            <div className="flex flex-wrap gap-2 mt-4 pt-3 border-t border-slate-100">
+              {confidenceLevel && (
+                <span className={`inline-flex items-center gap-1 text-[10px] font-black uppercase tracking-wider px-2.5 py-1 rounded-full border ${confidenceColor}`}>
+                  <CheckCircle2 className="w-3 h-3" />
+                  Confidence: {confidenceLevel}
+                </span>
+              )}
+              {nextStepMatch && (
+                <span className="inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-1 rounded-full bg-slate-100 text-slate-700 border border-slate-200">
+                  <Activity className="w-3 h-3 text-slate-500" />
+                  {nextStepMatch[1].trim()}
+                </span>
+              )}
+            </div>
+          )}
+        </div>
+        <p className="text-[10px] text-slate-400 font-medium mt-1 pl-1">Dr. Max Hartwell, B.V.Sc.</p>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Typing indicator
+// ─────────────────────────────────────────────────────────────────────────────
+function TypingIndicator() {
+  return (
+    <div className="flex mb-4 animate-fade-up">
+      <div className="w-8 h-8 rounded-full bg-[#0f172a] border-2 border-amber-400/50 flex items-center justify-center mr-3 shrink-0 shadow-md">
+        <span className="text-sm">🩺</span>
+      </div>
+      <div className="bg-white rounded-2xl rounded-tl-sm px-5 py-4 shadow-md border border-slate-200">
+        <div className="flex items-center gap-1.5">
+          <span className="text-xs text-slate-400 font-medium mr-1">Dr. Max is reviewing</span>
+          <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+          <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+          <span className="w-2 h-2 bg-amber-400 rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Main VetDoctor Page
+// ─────────────────────────────────────────────────────────────────────────────
 export const VetDoctor = () => {
-  // Enable scroll reveal animations
   useScrollReveal('.reveal-on-scroll');
-  const [symptoms, setSymptoms] = useState('');
-  const [symptomFile, setSymptomFile] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [assessment, setAssessment] = useState(null);
 
-  const quickSymptoms = [
-    { label: 'Anuria (No Urine)', category: 'Urinary' },
-    { label: 'Heavy Sweating', category: 'General' },
-    { label: 'Coughing', category: 'Respiratory' },
-    { label: 'High Fever', category: 'General' },
-    { label: 'Refusing Feed', category: 'Digestive' },
-    { label: 'Foot Swelling', category: 'Physical' }
-  ];
+  // ── Chat State ────────────────────────────────────────────────────
+  const [messages,         setMessages]         = useState([]);
+  const [horseInfo,        setHorseInfo]        = useState({ name: '', breed: '', age: '', sex: '' });
+  const [selectedDiseases, setSelectedDiseases] = useState([]);
+  const [isTyping,         setIsTyping]         = useState(false);
+  const [inputText,        setInputText]        = useState('');
+  const [showDisclaimer,   setShowDisclaimer]   = useState(true);
+  const [showHorseInfo,    setShowHorseInfo]    = useState(false);
 
-  const vitalSigns = [
-    {
-      label: 'Body Temperature',
-      range: '99°F - 101.5°F',
-      metric: '(37.2°C - 38.6°C)',
-      icon: <Thermometer className="w-5 h-5 text-red-500" />,
-      desc: 'Use rectal thermometer. Higher indicates fever/infection.'
-    },
-    {
-      label: 'Heart Rate (Pulse)',
-      range: '28 - 44 bpm',
-      metric: 'beats per minute',
-      icon: <Heart className="w-5 h-5 text-rose-500 animate-pulse" />,
-      desc: 'Measure at lower jaw or behind left elbow. High pulse indicates pain.'
-    },
-    {
-      label: 'Respiration Rate',
-      range: '8 - 16 breaths/min',
-      metric: 'breaths per minute',
-      icon: <Wind className="w-5 h-5 text-cyan-500" />,
-      desc: 'Watch flank movements. Elevated rate suggests heat stress or respiratory illness.'
+  // ── Refs ──────────────────────────────────────────────────────────
+  const messagesEndRef = useRef(null);
+  const textareaRef    = useRef(null);
+
+  // ── Local Storage persistence ─────────────────────────────────────
+  useEffect(() => {
+    try {
+      const saved = localStorage.getItem('drMaxChat_v2');
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        setMessages(parsed.messages || []);
+        setShowDisclaimer(parsed.showDisclaimer !== false);
+      }
+    } catch { /* ignore parse errors */ }
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem('drMaxChat_v2', JSON.stringify({ messages, showDisclaimer }));
+    } catch { /* ignore storage errors */ }
+  }, [messages, showDisclaimer]);
+
+  // ── Auto-scroll ───────────────────────────────────────────────────
+  useEffect(() => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  }, [messages, isTyping]);
+
+  // ── Auto-resize textarea ──────────────────────────────────────────
+  useEffect(() => {
+    if (textareaRef.current) {
+      textareaRef.current.style.height = 'auto';
+      textareaRef.current.style.height = Math.min(textareaRef.current.scrollHeight, 120) + 'px';
     }
+  }, [inputText]);
+
+  // ── Disease chip toggle ───────────────────────────────────────────
+  const toggleDisease = (key) => {
+    setSelectedDiseases((prev) =>
+      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
+    );
+  };
+
+  // ── Clear chat ────────────────────────────────────────────────────
+  const clearChat = () => {
+    setMessages([]);
+    setSelectedDiseases([]);
+    setInputText('');
+    setShowDisclaimer(true);
+    localStorage.removeItem('drMaxChat_v2');
+  };
+
+  // ── Send message ──────────────────────────────────────────────────
+  const sendMessage = useCallback(async (text) => {
+    const trimmed = text.trim();
+    if (!trimmed && selectedDiseases.length === 0) return;
+    if (isTyping) return;
+
+    const diseaseContext = selectedDiseases.length > 0
+      ? selectedDiseases.map((k) => DISEASE_CONTEXTS[k]).join('\n\n')
+      : '';
+
+    const userMessage = { role: 'user', content: trimmed || `Selected symptoms: ${selectedDiseases.join(', ')}` };
+    const newMessages = [...messages, userMessage];
+
+    setMessages(newMessages);
+    setInputText('');
+    setSelectedDiseases([]);
+    setIsTyping(true);
+
+    try {
+      const res = await fetch(getApiUrl('/api/vet/chat'), {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          messages: newMessages,
+          horseInfo,
+          diseaseContext,
+        }),
+      });
+
+      const data = await res.json();
+
+      if (data.success) {
+        setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }]);
+      } else {
+        throw new Error(data.error || 'Unknown error');
+      }
+    } catch (err) {
+      console.error('[DrMax] Chat error:', err);
+      setMessages((prev) => [
+        ...prev,
+        {
+          role: 'assistant',
+          content:
+            'I apologize — I am temporarily unable to connect to my clinical knowledge base. For any urgent equine concern, please contact your local veterinarian immediately. I will be available again momentarily.',
+        },
+      ]);
+    } finally {
+      setIsTyping(false);
+    }
+  }, [messages, selectedDiseases, horseInfo, isTyping]);
+
+  // ── Keyboard handler ──────────────────────────────────────────────
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      sendMessage(inputText);
+    }
+  };
+
+  // ── Vital signs data ──────────────────────────────────────────────
+  const vitalSigns = [
+    { label: 'Body Temperature', range: '99°F – 101.5°F', metric: '(37.2°C – 38.6°C)', icon: <Thermometer className="w-5 h-5 text-red-500" />, desc: 'Use rectal thermometer. Higher than 102°F indicates fever.' },
+    { label: 'Heart Rate (Pulse)', range: '28 – 44 bpm', metric: 'beats per minute', icon: <Heart className="w-5 h-5 text-rose-500 animate-pulse" />, desc: 'Measure at lower jaw or behind left elbow. High pulse indicates pain.' },
+    { label: 'Respiration Rate', range: '8 – 16 breaths/min', metric: 'breaths per minute', icon: <Wind className="w-5 h-5 text-cyan-500" />, desc: 'Watch flank movements. Elevated rate suggests heat stress or respiratory illness.' },
   ];
 
   const localVets = [
-    {
-      name: 'UVAS Equine Clinic & Surgery Center',
-      doctor: 'Dr. Aneela Zameer Durrani (Equine Specialist)',
-      city: 'Lahore',
-      phone: '+924299211374',
-      location: 'Outfall Road, Near District Courts, Lahore'
-    },
-    {
-      name: 'Lahore Race Club Equine Hospital',
-      doctor: 'Dr. Muhammad Asim (Racehorse Practitioner)',
-      city: 'Lahore',
-      phone: '+923008456789',
-      location: 'Kot Lakhpat, Lahore'
-    },
-    {
-      name: 'Richmond Equine Clinic & Surgery',
-      doctor: 'Dr. Farhan Ali (Equine Surgeon)',
-      city: 'Karachi',
-      phone: '+923001234567',
-      location: 'Malir Cantt, Karachi'
-    },
-    {
-      name: 'Karachi Race Club Veterinary Hospital',
-      doctor: 'Dr. Syed Muhammad Naeem (Orthopedics)',
-      city: 'Karachi',
-      phone: '+923332345678',
-      location: 'Dehih, Karachi'
-    },
-    {
-      name: 'RVFC Army Equine Hospital',
-      doctor: 'Col. Dr. Tariq Mahmood (Internal Medicine)',
-      city: 'Rawalpindi',
-      phone: '+92515561234',
-      location: 'Westridge, Rawalpindi Cantonment'
-    },
-    {
-      name: 'NARC Equine & Livestock Hospital',
-      doctor: 'Dr. Khalid Naeem (Large Animal Medicine)',
-      city: 'Islamabad',
-      phone: '+92519255012',
-      location: 'Park Road, Islamabad'
-    },
-    {
-      name: 'UAF Veterinary Teaching Hospital',
-      doctor: 'Dr. Muhammad Tariq (Equine Medicine)',
-      city: 'Faisalabad',
-      phone: '+92419200161',
-      location: 'Jail Road, Faisalabad'
-    },
-    {
-      name: 'Army Stud Farm Veterinary Center (Mona Depot)',
-      doctor: 'Maj. Dr. Shaukat Ali (Breeding & Care)',
-      city: 'Sargodha',
-      phone: '+92483211234',
-      location: 'Mona Depot, Sargodha'
-    }
+    { name: 'UVAS Equine Clinic & Surgery Center', doctor: 'Dr. Aneela Zameer Durrani', city: 'Lahore', phone: '+924299211374', location: 'Outfall Road, Lahore' },
+    { name: 'Lahore Race Club Equine Hospital', doctor: 'Dr. Muhammad Asim', city: 'Lahore', phone: '+923008456789', location: 'Kot Lakhpat, Lahore' },
+    { name: 'Richmond Equine Clinic & Surgery', doctor: 'Dr. Farhan Ali', city: 'Karachi', phone: '+923001234567', location: 'Malir Cantt, Karachi' },
+    { name: 'RVFC Army Equine Hospital', doctor: 'Col. Dr. Tariq Mahmood', city: 'Rawalpindi', phone: '+92515561234', location: 'Westridge, Rawalpindi' },
+    { name: 'NARC Equine & Livestock Hospital', doctor: 'Dr. Khalid Naeem', city: 'Islamabad', phone: '+92519255012', location: 'Park Road, Islamabad' },
+    { name: 'UAF Veterinary Teaching Hospital', doctor: 'Dr. Muhammad Tariq', city: 'Faisalabad', phone: '+92419200161', location: 'Jail Road, Faisalabad' },
+    { name: 'Karachi Race Club Veterinary Hospital', doctor: 'Dr. Syed Muhammad Naeem', city: 'Karachi', phone: '+923332345678', location: 'Dehih, Karachi' },
+    { name: 'Army Stud Farm Vet Center (Mona)', doctor: 'Maj. Dr. Shaukat Ali', city: 'Sargodha', phone: '+92483211234', location: 'Mona Depot, Sargodha' },
   ];
 
-  const handleTagClick = (tagLabel) => {
-    setSymptoms((prev) => {
-      const trimmed = prev.trim();
-      if (trimmed === '') return tagLabel;
-      // Prevent duplicates
-      const tagsList = trimmed.split(',').map(t => t.trim());
-      if (tagsList.includes(tagLabel)) return prev;
-      return `${trimmed}, ${tagLabel}`;
-    });
-  };
-
-  const handleConsult = async (e) => {
-    e.preventDefault();
-    setLoading(true);
-    setAssessment(null);
-
-    try {
-      const formData = new FormData();
-      formData.append('symptoms', symptoms);
-      if (symptomFile) formData.append('images', symptomFile);
-
-      const res = await fetch(getApiUrl('/api/vet/check'), {
-        method: 'POST',
-        body: formData
-      });
-
-      if (res.ok) {
-        const data = await res.json();
-        if (data.success) {
-          setAssessment(data.assessment);
-        } else {
-          fallbackAI();
-        }
-      } else {
-        fallbackAI();
-      }
-    } catch (err) {
-      fallbackAI();
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const fallbackAI = () => {
-    const lower = symptoms.toLowerCase();
-    let possibleCondition = 'Mild Colic / Digestive Upset or Muscle Strain';
-    let romanUrduCondition = 'Halki Maida Kharabi Ya Kangan Kharabi';
-    let urgency = 'Moderate - Monitor closely';
-    let romanUrduUrgency = 'AAM - Dehyan Rakhen';
-    let recommendedActions = [
-      'Ensure fresh clean water is available at all times.',
-      'Walk gently for 15-20 minutes to encourage bowel motility.',
-      'Do not feed grain or heavy food until evaluated by a certified local vet.',
-      'Check vital signs: normal horse pulse is 28-44 bpm, respiration 8-16 breaths/min.'
-    ];
-    let romanUrduActions = [
-      'Saaf aur taza pani har waqt samne rakhen.',
-      'Ghode ko 15-20 minute ahista paidal chalayen.',
-      'Bhaari khurak tab tak mat den jab tak doctor check na kar le.',
-      'Saans aur dil ki dhadkan par nazar rakhen.'
-    ];
-    let romanUrduSummary = 'Ghode ko ahista chalayen, saaf pani den aur khana roken jab tak doctor na aayen.';
-
-    if (lower.includes('anuria') || lower.includes('no urine') || lower.includes('urinate') || lower.includes('urine')) {
-      possibleCondition = 'Equine Anuria (Acute Renal Failure / Urethral Obstruction / Ruptured Bladder)';
-      romanUrduCondition = 'Ghode Ko Peshab Na Aana (Gurday Ka Masla Ya Urinary Pathri)';
-      urgency = 'CRITICAL EMERGENCY - Immediate Vet Catheterization Required';
-      romanUrduUrgency = 'SHDEED EMERGENCY - Fauri Doctor Se Catheter Lagwayen';
-      recommendedActions = [
-        'Stop all non-essential medications immediately (especially NSAIDs like Banamine or Phenylbutazone which exacerbate renal failure).',
-        'Check for bladder distension and monitor closely for straining, colic signs, or painful posture.',
-        'Provide access to fresh water, but DO NOT force fluids if complete urethral blockage is suspected.',
-        'Contact an emergency equine veterinarian immediately for urinary catheterization, blood work (BUN & Creatinine), and IV fluid therapy.'
-      ];
-      romanUrduActions = [
-        'Fauri taur par Banamine ya Phenylbutazone dawaiyan band karen jo gurday kharab karti hain.',
-        'Methane (bladder) ki sujan check karen aur ghode ke zoor lagane ya dard par nazar rakhen.',
-        'Saaf pani samne rakhen, lekin agar peshab ki nali me rukawat ho to zabardasti pani mat pilayen.',
-        'Fauri emergency vet doctor ko bulayen taakay nali (catheter) lagwayen aur blood test (BUN/Creatinine) karwayen.'
-      ];
-      romanUrduSummary = 'Ghode ko peshab na aana renal failure ya nali me rukawat ki waja se ho sakta hai. Painkiller dawaen band karen aur fauri doctor se catheter lagwayen.';
-    } else if (lower.includes('sweat') && lower.includes('fever')) {
-      possibleCondition = 'Trypanosomiasis (Surra) - Parasitic Fever';
-      romanUrduCondition = 'Surra Bimari (Peti / Parasite Bukhār)';
-      urgency = 'HIGH - Veterinary Treatment Required';
-      romanUrduUrgency = 'SANJEEDA - Doctor Ki Dawai Zaroori Hai';
-      recommendedActions = [
-        'Isolate the infected horse from biting flies (vector control).',
-        'Record temperature regularly. Surra causes intermittent spikes.',
-        'Consult a veterinarian immediately for antiprotozoal drug treatment (e.g. Quinapyramine).',
-        'Provide supportive care, fluids, and anti-inflammatory therapy to manage weakness.'
-      ];
-      romanUrduActions = [
-        'Bimar ghode ko makkhiyon aur machharon se door alag astabal me rakhen.',
-        'Har 4 ghanatay baad bukhar check karen, Surra me bukhar chhadta utarta hai.',
-        'Fauri vet doctor se Quinapyramine injection ka mashwara karen.',
-        'Ghode ki kamzori door karne ke liye glucose drip aur taqat ki khurak den.'
-      ];
-      romanUrduSummary = 'Surra makkhi ke katne se hota hai. Ghode ko alag rakhen aur Quinapyramine injection ke liye doctor se rabta karen.';
-    } else if (lower.includes('colic') || lower.includes('feed') || lower.includes('refus') || lower.includes('paw') || lower.includes('roll')) {
-      possibleCondition = 'Potential Colic (Gastrointestinal Distress)';
-      romanUrduCondition = 'Colic (Pet Ka Dard / Aant Ki Rukawat)';
-      urgency = 'HIGH - Veterinary Attention Recommended';
-      romanUrduUrgency = 'SANJEEDA - Doctor Ki Dawai Zaroori Hai';
-      recommendedActions = [
-        'Immediately restrict all feed and grain.',
-        'Walk the horse gently for 15-20 minutes to prevent violent rolling, which can cause intestinal volvulus.',
-        'Check TPR vitals (Temperature, Pulse, Respiration) and listen for gut sounds.',
-        'Contact an equine vet urgently for rectal exam and diagnostic workup.'
-      ];
-      romanUrduActions = [
-        'Fauri taur par dana, patte aur ghaas khana bilkul band kar den.',
-        'Ghode ko ahista chalayen taakay aant nali mude nahi.',
-        'Pet ki aawaz (gut sounds) aur saans check karen.',
-        'Fauri doctor se rabta karen.'
-      ];
-      romanUrduSummary = 'Pet dard me ghode ka khana peena roken aur narm zameen par chalayen. Zameen par letne aur rolling se bachayen.';
-    }
-
-    setAssessment({
-      possibleCondition,
-      romanUrduCondition,
-      urgency,
-      romanUrduUrgency,
-      recommendedActions,
-      romanUrduActions,
-      romanUrduSummary
-    });
-  };
-
+  // ─────────────────────────────────────────────────────────────────
   return (
-    <div className="min-h-screen bg-[#F8FAFC] py-8 sm:py-12 px-4 sm:px-6 lg:px-8">
-      <div className="max-w-7xl mx-auto space-y-8 sm:space-y-12">
-        {/* Header Section */}
+    <div className="min-h-screen bg-[#f8fafc] py-8 px-4 sm:px-6 lg:px-8" style={{ fontFamily: "'Inter', sans-serif" }}>
+      <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet" />
+
+      <div className="max-w-7xl mx-auto space-y-8">
+
+        {/* ── Page Header ── */}
         <div className="liquid-glass-dark rounded-3xl sm:rounded-[2.5rem] p-6 sm:p-10 text-white shadow-2xl reveal-on-scroll relative overflow-hidden liquid-glass-sheen">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
-            <div className="space-y-3 sm:space-y-4">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 text-[#D4AF37] border border-amber-500/30 text-xs sm:text-sm font-bold">
-                <Stethoscope className="w-4 h-4 sm:w-5 sm:h-5 text-[#D4AF37]" />
-                <span>AI Equine Diagnostics 2.0</span>
+            <div className="space-y-3">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold">
+                <Stethoscope className="w-4 h-4" />
+                <span>AI Equine Telemedicine — Dr. Max Hartwell</span>
               </div>
               <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
-                AI Vet Doctor & Emergency Triage
+                Vet Doctor & Emergency Triage
               </h1>
-              <p className="text-slate-300 max-w-2xl text-xs sm:text-base leading-relaxed">
-                Enter your horse's symptoms or upload photos for instant AI preliminary medical assessment, vital signs monitoring, and emergency local vet contacts across Pakistan.
+              <p className="text-slate-300 max-w-2xl text-xs sm:text-sm leading-relaxed">
+                Consult Dr. Max — a board-certified equine clinician with 50 years of experience. Describe your horse's symptoms in English or Roman Urdu for an expert assessment with clinical citations.
               </p>
             </div>
-            <div className="bg-white/10 backdrop-blur-md p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-white/20 text-center shrink-0 self-start md:self-auto">
-              <span className="text-[10px] sm:text-xs font-black text-[#D4AF37] uppercase tracking-wider block mb-1">Emergency Helpline</span>
-              <a href="tel:+924299211374" className="text-lg sm:text-2xl font-black text-white hover:text-[#D4AF37] transition flex items-center justify-center gap-2">
-                <Phone className="w-5 h-5 text-[#D4AF37]" />
+            <div className="bg-white/10 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/20 text-center shrink-0">
+              <span className="text-[10px] font-black text-amber-300 uppercase tracking-wider block mb-1">Emergency Helpline</span>
+              <a href="tel:+924299211374" className="text-lg sm:text-2xl font-black text-white hover:text-amber-300 transition flex items-center justify-center gap-2">
+                <Phone className="w-5 h-5 text-amber-400" />
                 <span>+92 42 99211374</span>
               </a>
             </div>
           </div>
         </div>
 
-        {/* Quick Symptom Tags */}
-        <div className="bg-white p-4 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-3 sm:space-y-4">
-          <div className="flex items-center justify-between">
-            <h2 className="text-xs sm:text-sm font-black text-[#0F172A] uppercase tracking-wider flex items-center gap-2">
-              <Sparkles className="w-4 h-4 text-[#D4AF37]" /> Common Symptoms Quick Select
-            </h2>
-            <span className="text-[10px] sm:text-xs text-slate-400 font-medium">Click to add to description</span>
-          </div>
-          <div className="flex flex-wrap gap-2">
-            {quickSymptoms.map((symptom, idx) => (
-              <button
-                key={idx}
-                type="button"
-                onClick={() => handleTagClick(symptom.label)}
-                className="px-3 py-1.5 sm:px-4 sm:py-2 bg-slate-50 hover:bg-[#0F172A] text-slate-700 hover:text-[#D4AF37] rounded-xl sm:rounded-2xl text-xs sm:text-sm font-bold border border-slate-200 hover:border-[#D4AF37] transition cursor-pointer flex items-center gap-1.5"
-              >
-                <span>+</span>
-                <span>{symptom.label}</span>
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Main Content Grid: Consultation Form & Results */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 sm:gap-8">
-          {/* Symptom Input Form */}
-          <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-5 sm:space-y-6">
-            <div className="border-b pb-4">
-              <h2 className="text-lg sm:text-xl font-black text-[#0F172A] flex items-center gap-2">
-                <Stethoscope className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4AF37]" /> Describe Horse Symptoms
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
-                Provide detailed observations (e.g. fever temp, sweating, colic signs, swelling, feed refusal).
-              </p>
-            </div>
-
-            <form onSubmit={handleConsult} className="space-y-4 sm:space-y-5">
-              <div className="space-y-1.5 sm:space-y-2">
-                <label className="text-xs font-black uppercase text-slate-700 tracking-wider">
-                  Symptom Description / Alamat
-                </label>
-                <textarea
-                  rows="5"
-                  value={symptoms}
-                  onChange={(e) => setSymptoms(e.target.value)}
-                  placeholder="Example: My horse Pasha has high fever 39.8°C, heavy sweating, and hasn't urinated since morning..."
-                  className="w-full p-3.5 sm:p-4 rounded-xl sm:rounded-2xl border border-slate-200 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 outline-none text-xs sm:text-sm font-medium transition"
-                  required
-                />
-              </div>
-
-              <div className="space-y-1.5 sm:space-y-2">
-                <label className="text-xs font-black uppercase text-slate-700 tracking-wider">
-                  Upload Photo (Optional)
-                </label>
-                <div className="border-2 border-dashed border-slate-200 rounded-xl sm:rounded-2xl p-4 text-center hover:border-[#D4AF37] transition relative bg-slate-50/50">
-                  <input
-                    type="file"
-                    accept="image/*"
-                    onChange={(e) => setSymptomFile(e.target.files[0])}
-                    className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
-                  />
-                  <div className="space-y-1">
-                    <Upload className="w-6 h-6 text-slate-400 mx-auto" />
-                    <p className="text-xs font-bold text-slate-700">
-                      {symptomFile ? symptomFile.name : 'Click or drag photo of wound / leg swelling / discharge'}
-                    </p>
-                    <p className="text-[10px] text-slate-400">JPG, PNG up to 10MB</p>
-                  </div>
-                </div>
-              </div>
-
-              <div className="flex items-center gap-3 pt-2">
-                <button
-                  type="submit"
-                  disabled={loading}
-                  className="flex-1 py-3.5 sm:py-4 bg-[#0F172A] hover:bg-[#1E293B] text-[#D4AF37] font-black rounded-xl sm:rounded-2xl text-xs sm:text-sm shadow-xl transition cursor-pointer flex items-center justify-center gap-2"
-                >
-                  <Bot className="w-4 h-4 sm:w-5 sm:h-5 text-[#D4AF37]" />
-                  {loading ? 'Analyzing Symptoms...' : 'Run Diagnostics'}
-                </button>
-                {symptoms && (
-                  <button
-                    type="button"
-                    onClick={() => {
-                      setSymptoms('');
-                      setSymptomFile(null);
-                      setAssessment(null);
-                    }}
-                    className="w-full sm:w-auto px-6 py-3.5 sm:py-4 bg-slate-100 hover:bg-slate-200 text-slate-700 font-bold rounded-xl sm:rounded-2xl text-xs sm:text-sm transition cursor-pointer"
-                  >
-                    Clear
-                  </button>
-                )}
-              </div>
-            </form>
-          </div>
-
-          {/* Diagnosis Results Card */}
-          <div className="bg-white p-5 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-4 sm:space-y-5">
-            <div className="flex justify-between items-center border-b pb-3">
-              <h2 className="text-lg sm:text-xl font-black text-[#0F172A] flex items-center gap-2">
-                <Bot className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4AF37]" /> AI Diagnosis Results
-              </h2>
-              <span className="text-[9px] sm:text-[10px] font-black uppercase tracking-wider px-2.5 py-1 bg-amber-100 text-amber-900 rounded-full border border-amber-300">
-                English & Roman Urdu
-              </span>
-            </div>
-
-            {assessment ? (
-              <div className="space-y-4 sm:space-y-5 animate-fade-in">
-                {/* Potential Condition */}
-                <div className="bg-gradient-to-r from-amber-50 to-orange-50/50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-amber-200 shadow-xs space-y-1">
-                  <span className="text-[9px] sm:text-[10px] font-extrabold text-amber-800 uppercase tracking-widest block">
-                    Potential Condition / Shubahat-e-Bimari
-                  </span>
-                  <h3 className="text-lg sm:text-xl font-black text-[#0F172A] leading-snug">
-                    {assessment.possibleCondition}
-                  </h3>
-                  {assessment.romanUrduCondition && (
-                    <p className="text-xs font-bold text-amber-900 pt-1 flex flex-wrap items-center gap-1.5">
-                      <span>🇵🇰 Roman Urdu:</span>
-                      <span className="underline decoration-amber-400 font-extrabold">{assessment.romanUrduCondition}</span>
-                    </p>
-                  )}
-                </div>
-
-                {/* Urgency Badge */}
-                <div className="bg-slate-50 p-4 sm:p-5 rounded-xl sm:rounded-2xl border border-slate-200 space-y-4">
-                  <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-200/80 pb-3">
-                    <div className="flex flex-wrap items-center gap-2">
-                      <span className="px-2.5 py-1 bg-rose-500/15 text-rose-700 rounded-lg text-[10px] sm:text-xs font-extrabold uppercase tracking-wider border border-rose-500/30">
-                        Urgency Level
-                      </span>
-                      <span className="text-xs font-black text-slate-900">{assessment.urgency}</span>
-                    </div>
-                    {assessment.romanUrduUrgency && (
-                      <span className="text-xs font-black text-rose-700 bg-rose-50 px-2.5 py-1 rounded-lg border border-rose-200 self-start sm:self-auto">
-                        🇵🇰 {assessment.romanUrduUrgency}
-                      </span>
-                    )}
-                  </div>
-
-                  {/* Recommended First Aid with Roman Urdu */}
-                  <div className="space-y-3">
-                    <p className="text-xs font-black text-slate-700 uppercase tracking-wider">
-                      Recommended First Aid & Immediate Actions / Fauri Hidayat
-                    </p>
-                    <ul className="space-y-3 sm:space-y-3.5">
-                      {assessment.recommendedActions.map((act, idx) => (
-                        <li key={idx} className="p-3 bg-white rounded-xl border border-slate-200/80 shadow-xs space-y-1">
-                          <div className="flex items-start gap-2 text-xs sm:text-sm font-extrabold text-slate-800">
-                            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0 mt-0.5" />
-                            <span>{act}</span>
-                          </div>
-                          {assessment.romanUrduActions && assessment.romanUrduActions[idx] && (
-                            <p className="text-xs font-semibold text-amber-900 pl-6 flex items-center gap-1.5">
-                              <span>🇵🇰</span>
-                              <span>{assessment.romanUrduActions[idx]}</span>
-                            </p>
-                          )}
-                        </li>
-                      ))}
-                    </ul>
-                  </div>
-
-                  {/* Roman Urdu Summary Card */}
-                  {assessment.romanUrduSummary && (
-                    <div className="p-3.5 sm:p-4 bg-amber-500/10 border border-amber-500/30 rounded-xl sm:rounded-2xl text-xs sm:text-sm space-y-1">
-                      <span className="text-[10px] font-black text-amber-900 uppercase tracking-wider block">
-                        🇵🇰 Roman Urdu Summary (Khulasa):
-                      </span>
-                      <p className="font-extrabold text-amber-950 leading-relaxed">
-                        {assessment.romanUrduSummary}
-                      </p>
-                    </div>
-                  )}
-                </div>
-
-                <div className="p-3 bg-amber-50 rounded-xl border border-amber-200 text-amber-800 text-[11px] font-medium flex items-start gap-2">
-                  <Info className="w-4 h-4 shrink-0 text-amber-600 mt-0.5" />
-                  <span>
-                    This AI diagnosis is preliminary guidance. Always consult a licensed equine practitioner for physical examination and official prescription.
-                  </span>
-                </div>
-              </div>
-            ) : (
-              <div className="py-12 text-center text-slate-400 space-y-3">
-                <Bot className="w-12 h-12 text-slate-300 mx-auto" />
-                <p className="text-xs sm:text-sm font-medium">
-                  Select symptoms or type observations above, then click <strong>Run Diagnostics</strong> to see AI preliminary assessment.
-                </p>
-              </div>
-            )}
-          </div>
-        </div>
-
-        {/* Vital Signs Reference Grid */}
-        <div className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-6">
+        {/* ── Vital Signs Reference ── */}
+        <div className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-6 reveal-on-scroll">
           <div className="border-b pb-4">
             <h2 className="text-lg sm:text-xl font-black text-[#0F172A] flex items-center gap-2">
               <Activity className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4AF37]" /> Normal Equine Vital Signs (TPR Reference)
             </h2>
             <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
-              Compare your horse's current vital signs against healthy adult equine standards before calling a vet.
+              Compare your horse's current readings against healthy adult equine standards before contacting a vet.
             </p>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
             {vitalSigns.map((vital, idx) => (
               <div key={idx} className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-2">
@@ -504,30 +382,232 @@ export const VetDoctor = () => {
           </div>
         </div>
 
-        {/* Emergency Vet Hospitals Directory */}
-        <div className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-6">
+        {/* ── Dr. Max Chat Interface ── */}
+        <div className="bg-white rounded-3xl border border-slate-200 shadow-xl overflow-hidden" style={{ boxShadow: '0 4px 40px rgba(0,0,0,0.07)' }}>
+
+          {/* Chat Header */}
+          <div className="bg-gradient-to-r from-[#0f172a] to-[#1e293b] px-5 sm:px-7 py-4 sm:py-5 flex items-center justify-between border-b border-white/10">
+            <div className="flex items-center gap-3.5">
+              <div className="relative">
+                <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-amber-400/20 border-2 border-amber-400/60 flex items-center justify-center text-xl shadow-lg">
+                  🩺
+                </div>
+                <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-[#1e293b] animate-pulse"></span>
+              </div>
+              <div>
+                <h2 className="text-white font-black text-sm sm:text-base leading-tight">Dr. Max Hartwell</h2>
+                <p className="text-amber-400/80 text-[10px] sm:text-xs font-semibold">Board-Certified Equine Veterinarian • 50 Years Experience</p>
+                <p className="text-emerald-400 text-[10px] font-bold flex items-center gap-1 mt-0.5">
+                  <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
+                  Available Now
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {messages.length > 0 && (
+                <button
+                  onClick={clearChat}
+                  title="Clear conversation"
+                  className="p-2 rounded-xl bg-white/5 hover:bg-white/10 text-slate-400 hover:text-red-400 transition cursor-pointer border border-white/10"
+                >
+                  <Trash2 className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Horse Info Bar */}
+          <div className="bg-slate-50 border-b border-slate-200 px-5 sm:px-7 py-3">
+            <button
+              onClick={() => setShowHorseInfo(!showHorseInfo)}
+              className="flex items-center gap-2 text-xs font-bold text-slate-600 hover:text-amber-600 transition cursor-pointer"
+            >
+              {showHorseInfo ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+              Horse Details (Optional — helps Dr. Max personalize advice)
+              {(horseInfo.name || horseInfo.breed || horseInfo.age || horseInfo.sex) && (
+                <span className="px-2 py-0.5 bg-amber-100 text-amber-800 rounded-full text-[10px] font-black border border-amber-200">Filled</span>
+              )}
+            </button>
+            {showHorseInfo && (
+              <div className="mt-3 grid grid-cols-2 sm:grid-cols-4 gap-2 animate-fade-up">
+                <input
+                  type="text"
+                  placeholder="Horse Name"
+                  value={horseInfo.name}
+                  onChange={(e) => setHorseInfo((p) => ({ ...p, name: e.target.value }))}
+                  className="px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none bg-white transition"
+                />
+                <input
+                  type="text"
+                  placeholder="Breed (e.g. Arabian)"
+                  value={horseInfo.breed}
+                  onChange={(e) => setHorseInfo((p) => ({ ...p, breed: e.target.value }))}
+                  className="px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none bg-white transition"
+                />
+                <input
+                  type="text"
+                  placeholder="Age (e.g. 8 years)"
+                  value={horseInfo.age}
+                  onChange={(e) => setHorseInfo((p) => ({ ...p, age: e.target.value }))}
+                  className="px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none bg-white transition"
+                />
+                <select
+                  value={horseInfo.sex}
+                  onChange={(e) => setHorseInfo((p) => ({ ...p, sex: e.target.value }))}
+                  className="px-3 py-2 text-xs font-medium rounded-xl border border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none bg-white transition text-slate-600"
+                >
+                  <option value="">Sex</option>
+                  <option value="Stallion">Stallion</option>
+                  <option value="Mare">Mare</option>
+                  <option value="Gelding">Gelding</option>
+                  <option value="Filly">Filly</option>
+                  <option value="Colt">Colt</option>
+                  <option value="Foal">Foal</option>
+                </select>
+              </div>
+            )}
+          </div>
+
+          {/* Disease Quick-Select Chips */}
+          <div className="bg-slate-50/80 border-b border-slate-200 px-5 sm:px-7 py-3">
+            <p className="text-[10px] font-black text-slate-500 uppercase tracking-wider mb-2">Quick Symptom Select — click to add clinical context</p>
+            <div className="flex flex-wrap gap-1.5">
+              {DISEASE_CHIPS.map((chip) => {
+                const isSelected = selectedDiseases.includes(chip.key);
+                return (
+                  <button
+                    key={chip.key}
+                    onClick={() => toggleDisease(chip.key)}
+                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition cursor-pointer select-none
+                      ${isSelected
+                        ? chip.emergency
+                          ? 'bg-red-600 text-white border-red-600 shadow-md'
+                          : 'bg-amber-400 text-slate-900 border-amber-400 shadow-md'
+                        : chip.emergency
+                          ? 'bg-red-50 text-red-700 border-red-200 hover:bg-red-100'
+                          : 'bg-white text-slate-700 border-slate-200 hover:border-amber-300 hover:text-amber-700'
+                      }`}
+                  >
+                    <span>{chip.icon}</span>
+                    <span>{chip.label}</span>
+                  </button>
+                );
+              })}
+            </div>
+            {selectedDiseases.length > 0 && (
+              <p className="text-[10px] text-amber-700 font-semibold mt-2">
+                {selectedDiseases.length} condition{selectedDiseases.length > 1 ? 's' : ''} selected — context will be sent with your next message
+              </p>
+            )}
+          </div>
+
+          {/* Messages Area */}
+          <div className="h-[420px] sm:h-[500px] overflow-y-auto px-5 sm:px-7 py-5 bg-[#f8fafc] scroll-smooth" id="drmax-chat-messages">
+
+            {/* Disclaimer */}
+            {showDisclaimer && (
+              <div className="mb-6 bg-amber-50 border border-amber-200 rounded-2xl p-5 shadow-sm animate-fade-up">
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 rounded-full bg-amber-100 border border-amber-300 flex items-center justify-center shrink-0">
+                    <Stethoscope className="w-4 h-4 text-amber-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-sm font-black text-amber-900 mb-1">Clinical Consultation Notice</h3>
+                    <p className="text-xs text-amber-800 leading-relaxed font-medium">
+                      Dr. Max provides educational guidance and triage support based on 50 years of equine clinical experience. He does not replace an in-person examination by a licensed veterinarian. Always consult your veterinarian before starting, stopping, or changing any treatment. In emergencies, contact your vet immediately.
+                    </p>
+                    <button
+                      onClick={() => setShowDisclaimer(false)}
+                      className="mt-3 px-5 py-2 bg-[#0f172a] hover:bg-[#1e293b] text-amber-400 text-xs font-black rounded-xl transition cursor-pointer border border-amber-400/30 shadow"
+                    >
+                      I Understand — Begin Consultation
+                    </button>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Empty state */}
+            {!showDisclaimer && messages.length === 0 && (
+              <div className="flex flex-col items-center justify-center h-48 text-center space-y-3 animate-fade-up">
+                <div className="w-16 h-16 rounded-full bg-[#0f172a]/5 border-2 border-slate-200 flex items-center justify-center text-3xl">
+                  🩺
+                </div>
+                <div>
+                  <p className="text-sm font-bold text-slate-700">Good day. I'm Dr. Max Hartwell.</p>
+                  <p className="text-xs text-slate-400 font-medium mt-1 max-w-xs">Describe your horse's symptoms — in English or Roman Urdu. I'm here to help.</p>
+                </div>
+                <div className="flex flex-wrap gap-2 justify-center">
+                  {['My horse is limping on his left front.', 'Mere ghore ko tez bukhar hai.', 'My horse hasn\'t eaten since morning.'].map((q) => (
+                    <button
+                      key={q}
+                      onClick={() => sendMessage(q)}
+                      className="px-3 py-1.5 bg-white border border-slate-200 hover:border-amber-400 rounded-xl text-xs font-medium text-slate-600 hover:text-amber-700 transition cursor-pointer shadow-sm"
+                    >
+                      "{q}"
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Message thread */}
+            {messages.map((msg, idx) => (
+              <MessageBubble key={idx} msg={msg} />
+            ))}
+
+            {/* Typing indicator */}
+            {isTyping && <TypingIndicator />}
+
+            <div ref={messagesEndRef} />
+          </div>
+
+          {/* Input Area */}
+          <div className="border-t border-slate-200 bg-white px-5 sm:px-7 py-4">
+            <div className="flex items-end gap-3">
+              <textarea
+                ref={textareaRef}
+                rows={1}
+                placeholder={showDisclaimer ? 'Please read the notice above before consulting...' : 'Describe symptoms in English or Roman Urdu... (Enter to send, Shift+Enter for new line)'}
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                onKeyDown={handleKeyDown}
+                disabled={isTyping || showDisclaimer}
+                className="flex-1 resize-none px-4 py-3 text-sm font-medium rounded-2xl border border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none bg-slate-50 focus:bg-white transition text-slate-800 placeholder-slate-400 disabled:opacity-50 disabled:cursor-not-allowed"
+                style={{ minHeight: '48px', maxHeight: '120px', overflowY: 'auto' }}
+              />
+              <button
+                onClick={() => sendMessage(inputText)}
+                disabled={isTyping || showDisclaimer || (!inputText.trim() && selectedDiseases.length === 0)}
+                className="w-12 h-12 sm:w-13 sm:h-13 rounded-2xl bg-gradient-to-br from-amber-400 to-amber-500 hover:from-amber-500 hover:to-amber-600 disabled:opacity-40 disabled:cursor-not-allowed text-slate-900 flex items-center justify-center shadow-lg transition cursor-pointer shrink-0 active:scale-95"
+                title="Send message"
+              >
+                <Send className="w-5 h-5" />
+              </button>
+            </div>
+            <p className="text-[10px] text-slate-400 font-medium mt-2 text-center">
+              Dr. Max does not prescribe medication. Always consult a licensed equine vet for treatment decisions.
+            </p>
+          </div>
+        </div>
+
+        {/* ── Emergency Vet Directory ── */}
+        <div className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-6 reveal-on-scroll">
           <div className="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
               <h2 className="text-lg sm:text-xl font-black text-[#0F172A] flex items-center gap-2">
                 <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4AF37]" /> Emergency Equine Hospitals in Pakistan
               </h2>
-              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">
-                Verified equine surgery centers and veterinary teaching clinics across major cities.
-              </p>
+              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">Verified equine surgery centers and veterinary teaching clinics across major cities.</p>
             </div>
-            <span className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold border border-emerald-200 self-start sm:self-auto">
-              24/7 Helpline Contacts
-            </span>
+            <span className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold border border-emerald-200 self-start sm:self-auto">24/7 Contacts</span>
           </div>
-
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
             {localVets.map((vet, idx) => (
               <div key={idx} className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between hover:border-[#D4AF37] transition">
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-slate-200 text-slate-700 rounded-md">
-                      {vet.city}
-                    </span>
+                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-slate-200 text-slate-700 rounded-md">{vet.city}</span>
                     <MapPin className="w-3.5 h-3.5 text-slate-400" />
                   </div>
                   <h3 className="text-sm font-black text-[#0F172A] leading-snug">{vet.name}</h3>
@@ -538,12 +618,13 @@ export const VetDoctor = () => {
                   href={`tel:${vet.phone}`}
                   className="w-full py-2.5 bg-[#0F172A] hover:bg-[#1E293B] text-[#D4AF37] font-black rounded-xl text-xs transition flex items-center justify-center gap-2 shadow"
                 >
-                  <Phone className="w-3.5 h-3.5 text-[#D4AF37]" /> Call Emergency
+                  <Phone className="w-3.5 h-3.5" /> Call Emergency
                 </a>
               </div>
             ))}
           </div>
         </div>
+
       </div>
     </div>
   );

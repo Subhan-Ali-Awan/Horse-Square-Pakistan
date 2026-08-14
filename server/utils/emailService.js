@@ -41,7 +41,7 @@ const createTransporter = () => {
  */
 const sendEmail = async ({ to, subject, text, html }) => {
   const senderEmail = '"Horse-Square Pakistan" <horsesquarepakistan@gmail.com>';
-  
+
   try {
     const transporter = createTransporter();
     const mailOptions = {
@@ -145,7 +145,7 @@ const sendRidingTrialEmail = async (trial, locationInfo, courseInfo) => {
  */
 const sendNewsletterConfirmationEmail = async (subscriberEmail) => {
   const subject = "🎉 Welcome to Horse-Square Pakistan Newsletter! Official Subscription Confirmation";
-  
+
   const html = `
     <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
       <div style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); padding: 32px 24px; text-align: center; border-bottom: 3px solid #D4AF37;">

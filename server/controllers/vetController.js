@@ -1,5 +1,83 @@
 const VetInquiry = require("../models/VetInquiry");
 const { uploadToCloudinary } = require("../utils/cloudinary");
+const { DR_MAX_SYSTEM_PROMPT } = require("../prompts/drMaxPrompt");
+const axios = require("axios");
+
+// ===================================================
+// POST /api/vet/chat  -> Dr. Max AI Chat (Groq API)
+// ===================================================
+exports.drMaxChat = async (req, res) => {
+  try {
+    const { messages, horseInfo, diseaseContext } = req.body;
+
+    if (!messages || !Array.isArray(messages)) {
+      return res.status(400).json({ success: false, error: "Messages array is required." });
+    }
+
+    // Build the dynamic system prompt with injected context
+    let systemPrompt = DR_MAX_SYSTEM_PROMPT;
+
+    // Inject horse signalment
+    if (horseInfo?.name) systemPrompt += `\n\nThe horse's name is ${horseInfo.name}.`;
+    if (horseInfo?.breed) systemPrompt += ` Breed: ${horseInfo.breed}.`;
+    if (horseInfo?.age)   systemPrompt += ` Age: ${horseInfo.age}.`;
+    if (horseInfo?.sex)   systemPrompt += ` Sex: ${horseInfo.sex}.`;
+
+    // Inject disease context
+    systemPrompt = systemPrompt.replace(
+      "{DISEASE_CONTEXT}",
+      diseaseContext || "No specific disease context selected by the user."
+    );
+
+    // Inject conversation history
+    const historyText = messages.map((m) => `${m.role}: ${m.content}`).join("\n");
+    systemPrompt = systemPrompt.replace("{CONVERSATION_HISTORY}", historyText || "This is the beginning of the consultation.");
+
+    // Inject last user message
+    const lastUserMessage = messages.filter((m) => m.role === "user").pop()?.content || "";
+    systemPrompt = systemPrompt.replace("{USER_MESSAGE}", lastUserMessage);
+
+    // Call Groq API
+    const groqResponse = await axios.post(
+      process.env.GROQ_API_URL,
+      {
+        model: process.env.GROQ_MODEL,
+        messages: [
+          { role: "system", content: systemPrompt },
+          ...messages,
+        ],
+        temperature: 0.3,
+        max_tokens: 2048,
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        timeout: 30000,
+      }
+    );
+
+    const reply = groqResponse.data.choices[0].message.content;
+    console.log(`[DR MAX] Response delivered. Tokens used: ${groqResponse.data.usage?.total_tokens || "N/A"}`);
+
+    return res.json({ success: true, reply });
+
+  } catch (error) {
+    const errMsg = error.response?.data?.error?.message || error.message;
+    console.error("[DR MAX] Groq API Error:", errMsg);
+
+    // Graceful fallback — never crash the user experience
+    return res.json({
+      success: true,
+      reply:
+        "I apologize — I am temporarily unable to reach my clinical knowledge base. This is most likely a brief connectivity issue. For any urgent equine concern, please contact your local veterinarian immediately. I will be available again momentarily.",
+      fallback: true,
+    });
+  }
+};
+
+
 
 const SYMPTOM_ADVICE = {
   anuria: {

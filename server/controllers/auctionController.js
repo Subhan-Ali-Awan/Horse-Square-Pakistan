@@ -121,7 +121,7 @@ exports.createAuction = async (req, res, next) => {
 exports.placeBid = async (req, res, next) => {
   try {
     const { amount } = req.body;
-    
+
     // Resolve bidderName from logged-in user since route is protected
     const bidderName = req.user ? `${req.user.firstName} ${req.user.lastName}`.trim() : req.body.bidderName || "Anonymous";
 
