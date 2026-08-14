@@ -658,8 +658,8 @@ export const UserDashboard = () => {
                 <div className="absolute top-0 right-0 w-80 h-80 bg-[#D4AF37]/10 rounded-full -translate-y-1/2 translate-x-1/4 blur-3xl pointer-events-none" />
                 <div className="w-14 h-14 rounded-2xl bg-slate-950/80 border border-[#D4AF37]/60 p-1 flex items-center justify-center shrink-0 shadow-lg shadow-[#D4AF37]/20 relative group overflow-hidden">
                   <img
-                    src="/login and registeration .png"
-                    alt="HorseSquare Logo"
+                    src={user?.avatar || profile.avatar || "/login and registeration .png"}
+                    alt="Profile Avatar"
                     className="w-full h-full object-cover rounded-xl group-hover:scale-110 transition duration-300"
                   />
                 </div>
