@@ -87,6 +87,90 @@ export const RidingSchool = () => {
     }
   ];
 
+  const upcomingEvents = [
+    {
+      id: 'ev-1',
+      title: 'Madrota Championship',
+      organizer: 'Essa Farms',
+      venue: 'Madrota, Punjab',
+      category: 'Tent Pegging Championship',
+      badge: 'EFP Authorized',
+      desc: 'High-profile national Nezabazi championship hosted by Essa Farms featuring elite tent pegging riders and stud horses from across Pakistan.'
+    },
+    {
+      id: 'ev-2',
+      title: 'Jashn-e-Punjab Championship',
+      organizer: 'Parks & Horticulture Authority (PHA)',
+      venue: 'Race Course Polo Ground, Lahore',
+      category: 'Grand Festival Championship',
+      badge: 'EFP Authorized',
+      desc: 'Electrifying provincial tent pegging and equestrian carnival hosted at the historic Race Course Polo Ground by PHA Lahore.'
+    },
+    {
+      id: 'ev-3',
+      title: 'Punjab Championship',
+      organizer: 'Government of Punjab',
+      venue: 'Fortress Stadium, Lahore',
+      category: 'State Championship',
+      badge: 'EFP Authorized',
+      desc: 'Official state tent pegging championship presented by the Punjab Government with traditional cavalry displays and honors.'
+    },
+    {
+      id: 'ev-4',
+      title: 'Peshawar Cattle & Equestrian Show',
+      organizer: 'Peshawar Government',
+      venue: 'Peshawar Grounds, KP',
+      category: 'Cattle & Horse Exhibition',
+      badge: 'EFP Authorized',
+      desc: 'Regional horse exhibition and Nezabazi trials organized by the Peshawar Government promoting Khyber Pakhtunkhwa equestrian sports.'
+    },
+    {
+      id: 'ev-5',
+      title: 'Lahore Cattle & Equestrian Show',
+      organizer: 'Punjab Government',
+      venue: 'Fortress Stadium, Lahore',
+      category: 'National Cattle & Horse Show',
+      badge: 'EFP Authorized',
+      desc: 'Pakistan’s premier annual national cattle show and tent pegging tournament organized by the Punjab Government in Fortress Stadium.'
+    },
+    {
+      id: 'ev-6',
+      title: 'Sultan International Tent Pegging',
+      organizer: 'Team Sultan',
+      venue: 'Khushab, Punjab',
+      category: 'International Cup',
+      badge: 'EFP Authorized',
+      desc: 'World-renowned international Nezabazi tournament hosted in Khushab by Team Sultan, featuring top international and national champions.'
+    },
+    {
+      id: 'ev-7',
+      title: 'Islamabad Championship',
+      organizer: 'Meharia Town',
+      venue: 'F-9 Park, Islamabad',
+      category: 'Capital Championship',
+      badge: 'EFP Authorized',
+      desc: 'Capital territory tent pegging competition organized by Meharia Town in F-9 Park Islamabad under official EFP permission.'
+    },
+    {
+      id: 'ev-8',
+      title: 'One Man & His Horse (In Memory of Nawab Malik Ata Muhammad Khan)',
+      organizer: 'Nawab Malik Arslan Khan',
+      venue: 'Kot Fateh Khan, Attock',
+      category: 'Legend Memorial Cup',
+      badge: 'EFP Authorized',
+      desc: 'Historical memorial tent pegging cup honoring the legacy of late Nawab Malik Ata Muhammad Khan, hosted by Nawab Malik Arslan Khan in Attock.'
+    },
+    {
+      id: 'ev-9',
+      title: 'Jashn-e-Mona Championship',
+      organizer: 'Haral Brothers',
+      venue: 'Chakwal, Punjab',
+      category: 'Regional Championship',
+      badge: 'EFP Authorized',
+      desc: 'Vibrant regional tent pegging tournament in Chakwal organized by Haral Brothers, celebrating traditional horsemanship and speed.'
+    }
+  ];
+
   const [selectedCityFilter, setSelectedCityFilter] = useState('All');
 
   const externalSchools = [
@@ -424,6 +508,81 @@ export const RidingSchool = () => {
               <div className="pt-3 border-t border-slate-100 flex items-start gap-2 text-xs font-semibold text-amber-900 bg-amber-50/60 p-3 rounded-xl sm:rounded-2xl">
                 <Quote className="w-4 h-4 text-amber-600 shrink-0 mt-0.5" />
                 <span className="italic">{mentor.quote}</span>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+
+      {/* UPCOMING TENT PEGGING & EQUESTRIAN EVENTS SECTION */}
+      <div className="border-t border-slate-200 pt-10 sm:pt-12 space-y-6 sm:space-y-8">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 bg-gradient-to-r from-[#0F172A] to-[#1E293B] p-6 sm:p-8 rounded-3xl border border-amber-500/30 text-white shadow-xl relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-80 h-80 bg-[#D4AF37]/10 rounded-full blur-3xl pointer-events-none" />
+          <div className="space-y-1.5 relative z-10">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-amber-500/20 text-amber-300 border border-amber-500/40 rounded-full text-[10px] sm:text-xs font-black uppercase tracking-wider">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-400" /> Permitted by Equestrian Federation of Pakistan (EFP)
+            </span>
+            <h2 className="text-xl sm:text-3xl font-black tracking-tight text-white">
+              Upcoming Tent Pegging & Equestrian Events
+            </h2>
+            <p className="text-xs sm:text-sm text-slate-300 font-medium max-w-2xl">
+              All official Nezabazi championships and grand cattle shows across Pakistan are organized with the permission and governance of the <strong>Equestrian Federation of Pakistan (EFP)</strong>.
+            </p>
+          </div>
+          <div className="relative z-10 flex items-center gap-2 bg-slate-900/90 border border-[#D4AF37]/50 px-4 py-2.5 rounded-2xl shadow-md shrink-0">
+            <Award className="w-5 h-5 text-[#D4AF37]" />
+            <div>
+              <span className="text-[10px] uppercase font-bold text-amber-200 block leading-tight">Official Federation</span>
+              <span className="text-xs font-black text-white">EFP Sanctioned</span>
+            </div>
+          </div>
+        </div>
+
+        {/* 9 Event Cards Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {upcomingEvents.map((event) => (
+            <div
+              key={event.id}
+              className="bg-white rounded-3xl p-6 border border-slate-200/90 shadow-md hover:shadow-2xl hover:border-[#D4AF37] transition duration-300 flex flex-col justify-between space-y-4 group relative overflow-hidden"
+            >
+              <div className="space-y-3">
+                {/* Header Badges */}
+                <div className="flex justify-between items-start gap-2">
+                  <span className="text-[10px] font-black uppercase tracking-wider text-amber-900 bg-amber-100 px-2.5 py-1 rounded-full border border-amber-300 flex items-center gap-1">
+                    <ShieldCheck className="w-3 h-3 text-amber-600" /> {event.badge}
+                  </span>
+                  <span className="text-[10px] font-extrabold text-slate-700 bg-slate-100 px-2.5 py-1 rounded-lg border border-slate-200">
+                    {event.category}
+                  </span>
+                </div>
+
+                <h3 className="font-black text-slate-900 text-base leading-snug group-hover:text-[#B8860B] transition-colors">
+                  {event.title}
+                </h3>
+
+                <div className="space-y-2 text-xs text-slate-600">
+                  <p className="flex items-center gap-1.5 font-semibold text-slate-800">
+                    <UserCheck className="w-3.5 h-3.5 text-[#D4AF37] shrink-0" />
+                    <span>Hosted By: <strong className="text-slate-900">{event.organizer}</strong></span>
+                  </p>
+                  <p className="flex items-start gap-1.5 font-medium">
+                    <MapPin className="w-3.5 h-3.5 text-amber-500 shrink-0 mt-0.5" />
+                    <span className="text-slate-700 font-semibold">{event.venue}</span>
+                  </p>
+                  <p className="text-[11px] text-slate-600 leading-relaxed bg-slate-50 p-3 rounded-xl border border-slate-100 font-medium">
+                    {event.desc}
+                  </p>
+                </div>
+              </div>
+
+              {/* Card Footer Note */}
+              <div className="pt-3 border-t border-slate-100 space-y-2">
+                <div className="flex items-center justify-between gap-2 text-[10px] font-extrabold text-amber-800 bg-amber-50/80 px-2.5 py-1.5 rounded-xl border border-amber-200/70">
+                  <span className="flex items-center gap-1">
+                    <Sparkles className="w-3 h-3 text-amber-600" /> EFP Sanctioned Event
+                  </span>
+                  <span className="text-[9px] bg-amber-200/60 text-amber-950 px-1.5 py-0.5 rounded font-black">Official</span>
+                </div>
               </div>
             </div>
           ))}
