@@ -45,7 +45,7 @@ exports.createBreedingHorse = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Please fill in all required fields (Name, Breed, Location, Fee/Price)" });
     }
 
-    if (fee <= 0) {
+    if (fee <= 0 || isNaN(fee)) {
       return res.status(400).json({ success: false, message: "Please enter a valid positive stud booking fee" });
     }
 

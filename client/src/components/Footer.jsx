@@ -360,7 +360,7 @@ export const Footer = () => {
 
         {/* 3. REALISTIC FLOATING FACEBOOK BUTTON */}
         <a
-          href="https://www.facebook.com/share/1B8xAf3oUi/"
+          href="https://facebook.com/horsesquare.pk"
           target="_blank"
           rel="noopener noreferrer"
           title="Follow on Facebook"

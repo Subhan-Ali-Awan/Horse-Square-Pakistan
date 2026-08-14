@@ -75,37 +75,7 @@ export const Marketplace = () => {
     { name: 'Rawalpindi', region: 'Punjab' },
     { name: 'Islamabad', region: 'Capital' },
     { name: 'Karachi', region: 'Sindh' },
-    { name: 'Peshawar', region: 'KPK' },
-    { name: 'Sahiwal', region: 'Punjab' },
-    { name: 'Gujranwala', region: 'Punjab' },
-    { name: 'Sialkot', region: 'Punjab' },
-    { name: 'Bahawalpur', region: 'Punjab' },
-    { name: 'Sheikhupura', region: 'Punjab' },
-    { name: 'Rahim Yar Khan', region: 'Punjab' },
-    { name: 'Jhang', region: 'Punjab' },
-    { name: 'Gujrat', region: 'Punjab' },
-    { name: 'Attock', region: 'Punjab' },
-    { name: 'Chakwal', region: 'Punjab' },
-    { name: 'Okara', region: 'Punjab' },
-    { name: 'Kasur', region: 'Punjab' },
-    { name: 'Dera Ghazi Khan', region: 'Punjab' },
-    { name: 'Hyderabad', region: 'Sindh' },
-    { name: 'Sukkur', region: 'Sindh' },
-    { name: 'Larkana', region: 'Sindh' },
-    { name: 'Nawabshah', region: 'Sindh' },
-    { name: 'Mirpur Khas', region: 'Sindh' },
-    { name: 'Mardan', region: 'KPK' },
-    { name: 'Abbottabad', region: 'KPK' },
-    { name: 'Swat (Mingora)', region: 'KPK' },
-    { name: 'Dera Ismail Khan', region: 'KPK' },
-    { name: 'Quetta', region: 'Balochistan' },
-    { name: 'Gwadar', region: 'Balochistan' },
-    { name: 'Khuzdar', region: 'Balochistan' },
-    { name: 'Turbat', region: 'Balochistan' },
-    { name: 'Muzaffarabad', region: 'Azad Kashmir' },
-    { name: 'Mirpur (AJK)', region: 'Azad Kashmir' },
-    { name: 'Gilgit', region: 'Gilgit-Baltistan' },
-    { name: 'Skardu', region: 'Gilgit-Baltistan' }
+    { name: 'Peshawar', region: 'KPK' }
   ];
 
   // Dynamic Marketplace Horses state initialized from API
@@ -146,49 +116,27 @@ export const Marketplace = () => {
     fetchHorses();
   };
 
-  // Distance/Rate matrix calculation for Transport Estimator
+  // Distance/Rate matrix calculation for Transport Estimator (Doubled rates)
   const calculateTransport = (e) => {
     e.preventDefault();
     if (!transportFrom || !transportTo) return;
 
     if (transportFrom === transportTo) {
-      setTransportCost(12000); // Local delivery
+      setTransportCost(12000); // Local delivery doubled from 6000
       return;
     }
 
-    // Distance pricing approximation in PKR
+    // Distance pricing approximation in PKR (Doubled)
     const rates = {
-      Lahore: { Hafizabad: 18000, Karachi: 96000, Islamabad: 36000, Rawalpindi: 36000, Multan: 32000, Sargodha: 20000, Faisalabad: 16000, Peshawar: 44000, Sahiwal: 22000, Gujranwala: 14000, Sialkot: 18000, Bahawalpur: 42000, Quetta: 98000, Hyderabad: 88000 },
-      Hafizabad: { Lahore: 18000, Sargodha: 16000, Faisalabad: 17000, Islamabad: 32000, Rawalpindi: 32000, Multan: 34000, Karachi: 92000, Peshawar: 42000, Gujranwala: 12000, Sialkot: 18000 },
-      Sargodha: { Hafizabad: 16000, Karachi: 90000, Islamabad: 30000, Rawalpindi: 30000, Multan: 28000, Lahore: 20000, Faisalabad: 14000, Peshawar: 38000, Chakwal: 18000, Attock: 26000 },
-      Multan: { Hafizabad: 34000, Karachi: 76000, Islamabad: 48000, Rawalpindi: 48000, Sargodha: 28000, Lahore: 32000, Faisalabad: 24000, Peshawar: 56000, Sahiwal: 20000, Bahawalpur: 18000, Dera Ghazi Khan: 16000 },
-      Karachi: { Hafizabad: 92000, Lahore: 96000, Islamabad: 116000, Rawalpindi: 116000, Multan: 76000, Sargodha: 90000, Faisalabad: 84000, Peshawar: 128000, Hyderabad: 24000, Sukkur: 48000, Larkana: 54000, Quetta: 72000, Gwadar: 68000 }
+      Lahore: { Hafizabad: 18000, Karachi: 96000, Islamabad: 36000, Rawalpindi: 36000, Multan: 32000, Sargodha: 20000, Faisalabad: 16000, Peshawar: 44000 },
+      Hafizabad: { Lahore: 18000, Sargodha: 16000, Faisalabad: 17000, Islamabad: 32000, Rawalpindi: 32000, Multan: 34000, Karachi: 92000, Peshawar: 42000 },
+      Sargodha: { Hafizabad: 16000, Karachi: 90000, Islamabad: 30000, Rawalpindi: 30000, Multan: 28000, Lahore: 20000, Faisalabad: 14000, Peshawar: 38000 },
+      Multan: { Hafizabad: 34000, Karachi: 76000, Islamabad: 48000, Rawalpindi: 48000, Sargodha: 28000, Lahore: 32000, Faisalabad: 24000, Peshawar: 56000 },
+      Karachi: { Hafizabad: 92000, Lahore: 96000, Islamabad: 116000, Rawalpindi: 116000, Multan: 76000, Sargodha: 90000, Faisalabad: 84000, Peshawar: 128000 }
     };
 
-    const directCost = rates[transportFrom]?.[transportTo] || rates[transportTo]?.[transportFrom];
-    if (directCost) {
-      setTransportCost(directCost);
-    } else {
-      const fromObj = majorCities.find(c => c.name === transportFrom);
-      const toObj = majorCities.find(c => c.name === transportTo);
-      let est = 45000;
-      if (fromObj?.region === toObj?.region) {
-        est = 24000; // Same province
-      } else if (
-        (fromObj?.region === 'Punjab' && toObj?.region === 'Capital') ||
-        (fromObj?.region === 'Capital' && toObj?.region === 'Punjab')
-      ) {
-        est = 32000;
-      } else if (
-        (fromObj?.region === 'Sindh' && toObj?.region === 'Balochistan') ||
-        (fromObj?.region === 'KPK' && toObj?.region === 'Punjab')
-      ) {
-        est = 58000;
-      } else {
-        est = 88000;
-      }
-      setTransportCost(est);
-    }
+    const cost = rates[transportFrom]?.[transportTo] || rates[transportTo]?.[transportFrom] || 50000;
+    setTransportCost(cost);
   };
 
   // Sort and filter client side
@@ -460,7 +408,16 @@ export const Marketplace = () => {
                 />
               </div>
 
-
+              <div className="space-y-1">
+                <label className="text-xs font-black text-slate-900 uppercase">Keyword Search</label>
+                <input
+                  type="text"
+                  placeholder="Search name, description..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="w-full p-2.5 border border-slate-300 rounded-xl bg-white text-sm font-semibold text-slate-900 placeholder:text-slate-500 focus:outline-none focus:border-[#D4AF37] shadow-sm"
+                />
+              </div>
 
               <button
                 type="submit"
