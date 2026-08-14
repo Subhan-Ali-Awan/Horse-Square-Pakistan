@@ -97,3 +97,7 @@ git commit -m "Add root README and finalize frontend-backend MERN integrations"
 # 3. Push to your repository
 git push origin main
 ```
+
+---
+*Last updated & verified: August 2026*
+
