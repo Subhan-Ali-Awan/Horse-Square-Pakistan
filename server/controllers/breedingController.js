@@ -37,7 +37,7 @@ exports.createBreedingHorse = async (req, res, next) => {
     const { Horse } = require("../models/Horse");
     const { name, breed, age, location, ownerName, ownerPhone, phone, breedingFee, price, tag, description, sire, dam } = req.body;
 
-    const fee = breedingFee || price;
+    const fee = Number(breedingFee || price);
     const finalOwnerName = ownerName || (req.user ? `${req.user.firstName || ''} ${req.user.lastName || ''}`.trim() || req.user.name : 'Verified Breeder');
     const finalPhone = ownerPhone || phone || (req.user ? req.user.phone : '03001234567');
 
@@ -45,8 +45,23 @@ exports.createBreedingHorse = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Please fill in all required fields (Name, Breed, Location, Fee/Price)" });
     }
 
-    if (Number(fee) < 50000) {
-      return res.status(400).json({ success: false, message: "Stud booking fee must be starting from at least PKR 50,000" });
+    if (fee < 50000 || fee > 500000) {
+      return res.status(400).json({ success: false, message: "Stud booking fee must be between PKR 50,000 and PKR 500,000" });
+    }
+
+    const bName = (breed || "").toLowerCase();
+    if (bName.includes("desi") || bName.includes("local")) {
+      if (fee < 50000 || fee > 250000) {
+        return res.status(400).json({ success: false, message: "Desi horse stud booking fee must be between PKR 50,000 and PKR 250,000" });
+      }
+    } else if (bName.includes("arabian")) {
+      if (fee < 180000 || fee > 500000) {
+        return res.status(400).json({ success: false, message: "Arabian horse stud booking fee must be between PKR 180,000 and PKR 500,000" });
+      }
+    } else if (bName.includes("thoroughbred")) {
+      if (fee < 150000 || fee > 400000) {
+        return res.status(400).json({ success: false, message: "Thoroughbred horse stud booking fee must be between PKR 150,000 and PKR 400,000" });
+      }
     }
 
     let imagesArr = [];

@@ -75,6 +75,7 @@ const updateWhiteCloud = require("./utils/updateWhiteCloud");
 const updateStella = require("./utils/updateStella");
 const updateRoyalSapphire = require("./utils/updateRoyalSapphire");
 const updateGhulamMurtijz = require("./utils/updateGhulamMurtijz");
+const updateBreedingHorses = require("./utils/updateBreedingHorses");
 
 connectDB().then(async () => {
   await seedAdmin(); // creates the default admin account on first run
@@ -82,6 +83,7 @@ connectDB().then(async () => {
   await updateStella(); // updates Stella horse ad photos
   await updateRoyalSapphire(); // updates Royal Sapphire horse ad details
   await updateGhulamMurtijz(); // updates Ghulam E Murtijz horse ad photo
+  await updateBreedingHorses(); // updates breeding stud stallions photos and fee ranges
 
   const server = app.listen(PORT, () => {
     console.log(`🚀 HorseSquare Backend API running on http://localhost:${PORT}/api`);

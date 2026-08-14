@@ -147,6 +147,27 @@ export const Breeding = () => {
             </p>
           </div>
 
+          {/* WIDGET: Verified Stud Fee Range Guidelines */}
+          <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-md space-y-3">
+            <h3 className="font-black text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
+              <FileText className="w-4 h-4 text-[#D4AF37]" /> Official Stud Fee Guidelines
+            </h3>
+            <div className="space-y-2 text-xs">
+              <div className="flex justify-between items-center p-2.5 rounded-xl bg-amber-50/80 border border-amber-200/70">
+                <span className="font-bold text-amber-900">Local / Desi Stud Fee</span>
+                <span className="font-black text-amber-950">Rs. 50k – 250k</span>
+              </div>
+              <div className="flex justify-between items-center p-2.5 rounded-xl bg-purple-50/80 border border-purple-200/70">
+                <span className="font-bold text-purple-900">Arabian Stud Fee</span>
+                <span className="font-black text-purple-950">Rs. 180k – 500k</span>
+              </div>
+              <div className="flex justify-between items-center p-2.5 rounded-xl bg-blue-50/80 border border-blue-200/70">
+                <span className="font-bold text-blue-900">Thoroughbred Stud Fee</span>
+                <span className="font-black text-blue-950">Rs. 150k – 400k</span>
+              </div>
+            </div>
+          </div>
+
           {/* WIDGET 2: Breeding Season Insights */}
           <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-md space-y-4">
             <h3 className="font-black text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">

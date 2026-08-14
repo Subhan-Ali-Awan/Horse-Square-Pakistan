@@ -76,8 +76,17 @@ export const SellHorse = () => {
 
   // Real-time Policy Validation Indicators
   const numPrice = Number(formData.price);
-  const minPriceLimit = listingType === 'breeding' ? 50000 : 700000;
-  const isPriceValid = !isNaN(numPrice) && numPrice >= minPriceLimit;
+  const getBreedFeeRange = (breed) => {
+    const b = (breed || '').toLowerCase();
+    if (b.includes('desi') || b.includes('local')) return { min: 50000, max: 250000, label: 'Desi Stud Fee: Rs. 50,000 – 250,000' };
+    if (b.includes('arabian')) return { min: 180000, max: 500000, label: 'Arabian Stud Fee: Rs. 180,000 – 500,000' };
+    if (b.includes('thoroughbred')) return { min: 150000, max: 400000, label: 'Thoroughbred Stud Fee: Rs. 150,000 – 400,000' };
+    return { min: 50000, max: 500000, label: 'Stud Fee: Rs. 50,000 – 500,000' };
+  };
+  const breedRange = getBreedFeeRange(formData.breed);
+  const minPriceLimit = listingType === 'breeding' ? breedRange.min : 700000;
+  const maxPriceLimit = listingType === 'breeding' ? breedRange.max : 17500000;
+  const isPriceValid = !isNaN(numPrice) && numPrice >= minPriceLimit && numPrice <= maxPriceLimit;
 
   let heightInches = 0;
   const hMatch = String(formData.height).match(/\d+/);
@@ -534,7 +543,7 @@ export const SellHorse = () => {
                   <div>
                     <label className="block text-xs font-black uppercase tracking-wider text-slate-700 mb-2">
                       {listingType === 'breeding'
-                        ? 'Stud Booking Fee (PKR 50,000 - 2,000,000)'
+                        ? `Stud Booking Fee (${breedRange.label})`
                         : listingType === 'auction'
                           ? 'Starting Bid (PKR 700,000 - 17,500,000)'
                           : 'Price (PKR 700,000 - 17,500,000)'}
@@ -543,9 +552,9 @@ export const SellHorse = () => {
                       type="number"
                       name="price"
                       required
-                      min={listingType === 'breeding' ? "50000" : "700000"}
-                      max={listingType === 'breeding' ? "2000000" : "17500000"}
-                      placeholder={listingType === 'breeding' ? "e.g. 160000 (Min: 50,000)" : "e.g. 1500000"}
+                      min={listingType === 'breeding' ? breedRange.min : 700000}
+                      max={listingType === 'breeding' ? breedRange.max : 17500000}
+                      placeholder={listingType === 'breeding' ? `e.g. ${breedRange.min} (Max: ${breedRange.max.toLocaleString()})` : "e.g. 1500000"}
                       value={formData.price}
                       onChange={handleChange}
                       className={`w-full p-3.5 border rounded-xl text-sm font-bold transition focus:bg-white focus:outline-none ${formData.price && !isPriceValid
