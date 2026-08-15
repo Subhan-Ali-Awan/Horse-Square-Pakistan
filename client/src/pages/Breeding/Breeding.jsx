@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Award, Dna, Send, CheckCircle, ShieldCheck, Sparkles, Stethoscope, CheckCircle2, Info, ArrowRight, Phone, FileText } from 'lucide-react';
+import { Award, Dna, Send, CheckCircle, ShieldCheck, Sparkles, Stethoscope, CheckCircle2, Info, ArrowRight, Phone, FileText, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
@@ -21,6 +21,7 @@ export const Breeding = () => {
   const [marePedigree, setMarePedigree] = useState('');
   const [mareDetails, setMareDetails] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [lastWhatsAppUrl, setLastWhatsAppUrl] = useState('');
   const [breedingHorses, setBreedingHorses] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -49,7 +50,8 @@ export const Breeding = () => {
             imageUrl: formatImgUrl(h.image),
             achievements: h.tag || 'Available for Stud service',
             sire: h.sire || 'Verified Sire',
-            dam: h.dam || 'Verified Dam'
+            dam: h.dam || 'Verified Dam',
+            ownerPhone: h.ownerPhone || '03001234567'
           }));
           setBreedingHorses(formatted);
           return;
@@ -86,19 +88,31 @@ export const Breeding = () => {
       });
       const data = await res.json();
       if (data.success) {
+        // Construct detailed WhatsApp message for stallion owner
+        const rawOwnerPhone = selectedHorse?.ownerPhone || '03001234567';
+        const cleanOwnerPhone = rawOwnerPhone.replace(/\D/g, '').replace(/^0/, '92');
+
+        const whatsappMessage = `🐎 *HorseSquare Pakistan - Breeding Service Inquiry*\n\n` +
+          `Hello *${selectedHorse?.ownerName || 'Breeder'}*,\n` +
+          `I would like to book a stud breeding service for my mare with your stud stallion *${selectedHorse?.name}* listed on HorseSquare Pakistan Breeding Directory.\n\n` +
+          `📋 *Booking Request Details:*\n` +
+          `• *Requester Name:* ${ownerName}\n` +
+          `• *Requester Contact:* ${ownerPhone}\n` +
+          (cnic ? `• *CNIC:* ${cnic}\n` : '') +
+          `• *Target Stud Stallion:* ${selectedHorse?.name} (${selectedHorse?.breed})\n` +
+          `• *Mare Name:* ${mareName}\n` +
+          `• *Mare Breed:* ${mareBreed || 'Local / Desi'}\n` +
+          `• *Mare Age:* ${mareAge} Years\n` +
+          (marePedigree ? `• *Mare Pedigree:* ${marePedigree}\n` : '') +
+          (mareDetails ? `• *Health & Notes:* ${mareDetails}\n` : '') +
+          `\nPlease let me know your availability and stud mating schedule. Looking forward to your response. Thank you!`;
+
+        const waUrl = `https://wa.me/${cleanOwnerPhone}?text=${encodeURIComponent(whatsappMessage)}`;
+        setLastWhatsAppUrl(waUrl);
         setSubmitted(true);
-        setTimeout(() => {
-          setSubmitted(false);
-          setSelectedHorse(null);
-          setOwnerName('');
-          setCnic('');
-          setOwnerPhone('');
-          setMareName('');
-          setMareBreed('');
-          setMareAge('');
-          setMarePedigree('');
-          setMareDetails('');
-        }, 3000);
+
+        // Auto-open WhatsApp in a new tab
+        window.open(waUrl, '_blank');
       } else {
         alert(data.message || 'Failed to submit breeding request.');
       }
@@ -331,10 +345,50 @@ export const Breeding = () => {
             <p className="text-xs text-slate-500 mb-6 font-medium">Enter your mare details below to submit your stud service request.</p>
 
             {submitted ? (
-              <div className="bg-emerald-50 text-emerald-900 p-6 rounded-2xl text-center border border-emerald-200 space-y-2">
-                <CheckCircle className="w-12 h-12 text-emerald-500 mx-auto" />
-                <h3 className="font-extrabold text-lg">Request Sent Successfully!</h3>
-                <p className="text-xs text-emerald-700 font-medium">The stud farm owner will contact you shortly.</p>
+              <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/60 text-emerald-950 p-6 sm:p-7 rounded-3xl text-center border border-emerald-300/80 space-y-4 shadow-md">
+                <div className="w-14 h-14 bg-emerald-500 text-white rounded-2xl flex items-center justify-center mx-auto shadow-md">
+                  <CheckCircle className="w-8 h-8 stroke-[2.5]" />
+                </div>
+                <div className="space-y-1.5">
+                  <h3 className="font-extrabold text-lg sm:text-xl text-emerald-900">Request Sent & WhatsApp Ready!</h3>
+                  <p className="text-xs text-emerald-800 font-medium max-w-sm mx-auto leading-relaxed">
+                    Your breeding inquiry has been securely registered in the system. WhatsApp has been opened with the customized booking notification for <strong>{selectedHorse?.ownerName}</strong>.
+                  </p>
+                </div>
+
+                {lastWhatsAppUrl && (
+                  <div className="pt-2">
+                    <a
+                      href={lastWhatsAppUrl}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="w-full py-3.5 sm:py-4 px-5 bg-gradient-to-r from-emerald-600 to-emerald-700 hover:from-emerald-500 hover:to-emerald-600 text-white font-black rounded-2xl text-xs sm:text-sm shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      <MessageCircle className="w-5 h-5 fill-white/20 stroke-[2.5]" />
+                      <span>Open WhatsApp Chat with Owner</span>
+                    </a>
+                  </div>
+                )}
+
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSubmitted(false);
+                    setSelectedHorse(null);
+                    setOwnerName('');
+                    setCnic('');
+                    setOwnerPhone('');
+                    setMareName('');
+                    setMareBreed('');
+                    setMareAge('');
+                    setMarePedigree('');
+                    setMareDetails('');
+                    setLastWhatsAppUrl('');
+                  }}
+                  className="w-full py-2.5 bg-white/80 hover:bg-white text-slate-700 font-bold rounded-xl text-xs border border-emerald-200 transition cursor-pointer"
+                >
+                  Close & Done
+                </button>
               </div>
             ) : (
               <form onSubmit={handleRequest} className="space-y-4">

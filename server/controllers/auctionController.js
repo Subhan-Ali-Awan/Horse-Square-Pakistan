@@ -1,4 +1,5 @@
 const Auction = require("../models/Auction");
+const { uploadToCloudinary } = require("../utils/cloudinary");
 
 // Helper: auto-close any auction whose endTime has passed
 async function autoCloseIfExpired(auction) {
@@ -93,6 +94,20 @@ exports.createAuction = async (req, res, next) => {
       image = await uploadToCloudinary(req.file.path, "horsesquare/auctions");
     } else if (req.files && req.files.length > 0) {
       image = await uploadToCloudinary(req.files[0].path, "horsesquare/auctions");
+    } else if (req.body.image) {
+      image = req.body.image;
+    }
+
+    let createdBy = req.user ? req.user._id : undefined;
+    if (!createdBy && req.headers.authorization && req.headers.authorization.startsWith("Bearer")) {
+      try {
+        const token = req.headers.authorization.split(" ")[1];
+        const jwt = require("jsonwebtoken");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        createdBy = decoded.id;
+      } catch (err) {
+        console.error("Token verification failed in createAuction:", err);
+      }
     }
 
     const auction = await Auction.create({
@@ -104,7 +119,7 @@ exports.createAuction = async (req, res, next) => {
       startingBid: Number(startingBid),
       currentBid: Number(startingBid),
       endTime,
-      createdBy: req.user ? req.user._id : undefined,
+      createdBy,
     });
 
     res.status(201).json({ success: true, message: "Auction created", data: auction });

@@ -69,7 +69,11 @@ const updateBreedingHorses = async () => {
       );
     }
 
-    console.log("🐎 All 4 breeding stud stallions updated with full-body fitted photos and valid fee ranges.");
+    // Set Sher Dill breeding fee to 230,000
+    await BreedingHorse.updateMany(
+      { name: { $regex: /sher/i } },
+      { $set: { breedingFee: 230000 } }
+    );
   } catch (err) {
     console.error("Error updating breeding horses:", err.message);
   }

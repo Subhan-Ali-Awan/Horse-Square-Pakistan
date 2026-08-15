@@ -412,23 +412,6 @@ async function seedMockData(adminId) {
     if (existingAuctions.length === 0) {
       await Auction.create([
         {
-          horseName: "Striker",
-          breed: "Thoroughbred",
-          location: "Lahore",
-          sellerName: "Malik Arsalan",
-          image: "/uploads/media__1786121064346.jpg",
-          startingBid: 2000000,
-          currentBid: 3500000,
-          highestBidder: "Malik Usman",
-          endTime: new Date(Date.now() + 24 * 60 * 60 * 1000), // 24 hours from now
-          status: "live",
-          bids: [
-            { bidderName: "Chaudhry Bilal", amount: 3200000 },
-            { bidderName: "Malik Usman", amount: 3500000 }
-          ],
-          createdBy: adminId,
-        },
-        {
           horseName: "Zarrar (Desert Stallion)",
           breed: "Arabian",
           location: "Karachi",
@@ -441,23 +424,6 @@ async function seedMockData(adminId) {
           status: "live",
           bids: [
             { bidderName: "Rana Hammad", amount: 4200000 }
-          ],
-          createdBy: adminId,
-        },
-        {
-          horseName: "Sher-Dil (Stallion)",
-          breed: "Local / Desi",
-          location: "Faisalabad",
-          sellerName: "Haseeb Malik",
-          image: "/uploads/media__1786131562576.jpg",
-          startingBid: 5000000,
-          currentBid: 8600000,
-          highestBidder: "Chaudhry Hammad",
-          endTime: new Date(Date.now() + 72 * 60 * 60 * 1000),
-          status: "live",
-          bids: [
-            { bidderName: "Rana Usman", amount: 7500000 },
-            { bidderName: "Chaudhry Hammad", amount: 8600000 }
           ],
           createdBy: adminId,
         }

@@ -97,7 +97,8 @@ export const SellHorse = () => {
     { label: '🏇 Professional Neza Bazi Horse', text: 'Professional Neza Bazi horse active in tent-pegging tournaments across Pakistan.' },
     { label: '🧬 Pure Nukra Pink Skin', text: 'Elite Nukra bloodline with clear pink skin (phulkari) and elegant posture.' },
     { label: '💉 Fully Vaccinated', text: 'Fully vaccinated, medically certified by AI Vet, and in prime athletic condition.' },
-    { label: '🛡️ Calm Temperament', text: 'Extremely calm temperament, safe for riders, and easy to manage.' }
+    { label: '🛡️ Calm Temperament', text: 'Extremely calm temperament, safe for riders, and easy to manage.' },
+    { label: '🔥 Aggressive Temperament', text: 'High-spirited, energetic, and aggressive temperament, best suited for experienced equestrians.' }
   ];
 
   const handleAddSuggestion = (text) => {
@@ -179,7 +180,6 @@ export const SellHorse = () => {
 
         imageFiles.forEach((file) => {
           data.append('images', file);
-          data.append('image', file);
         });
 
         const res = await fetch(getApiUrl('/api/breeding/horses'), {
@@ -315,39 +315,7 @@ export const SellHorse = () => {
             </div>
           </div>
 
-          {/* WIDGET 2: Description Smart Suggestions Box */}
-          <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-md space-y-4">
-            <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
-              <h3 className="font-black text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2">
-                <Lightbulb className="w-4.5 h-4.5 text-[#D4AF37]" /> Description Assistant
-              </h3>
-              <span className="text-[10px] text-amber-700 bg-amber-50 px-2.5 py-0.5 rounded-full font-bold border border-amber-200">
-                Click to Insert
-              </span>
-            </div>
-
-            <p className="text-xs text-slate-500 font-normal leading-relaxed">
-              Tap any performance chip below to append directly into your horse description:
-            </p>
-
-            <div className="space-y-2 pt-1">
-              {descriptionSuggestions.map((sug, idx) => (
-                <button
-                  key={idx}
-                  type="button"
-                  onClick={() => handleAddSuggestion(sug.text)}
-                  className="w-full text-left p-3 bg-slate-50 hover:bg-amber-50/90 text-slate-800 hover:text-amber-950 border border-slate-200/80 hover:border-[#D4AF37] rounded-2xl text-xs font-semibold transition duration-200 cursor-pointer flex items-center justify-between group shadow-sm"
-                >
-                  <div className="flex items-center gap-2">
-                    <span className="font-bold text-slate-800 group-hover:text-amber-950">{sug.label}</span>
-                  </div>
-                  <PlusCircle className="w-4 h-4 text-[#D4AF37] group-hover:scale-110 transition shrink-0" />
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* WIDGET 3: Seller Best Practices & Guidelines */}
+          {/* WIDGET 2: Seller Best Practices & Guidelines */}
           <div className="bg-white p-6 rounded-3xl border border-slate-200/90 shadow-md space-y-4">
             <h3 className="font-black text-xs uppercase tracking-wider text-slate-900 flex items-center gap-2 pb-3 border-b border-slate-100">
               <Award className="w-4.5 h-4.5 text-[#D4AF37]" /> Tips to Sell 3x Faster
@@ -708,6 +676,36 @@ export const SellHorse = () => {
                     <Sparkles className="w-4 h-4 text-[#D4AF37]" /> Insert Parents Name into Description
                   </button>
                 )}
+              </div>
+
+              {/* DESCRIPTION ASSISTANT (Smart Suggestions Box) */}
+              <div className="bg-white p-5 sm:p-6 rounded-2xl sm:rounded-3xl border border-slate-200/90 shadow-sm space-y-4">
+                <div className="pb-3 border-b border-slate-100 flex items-center justify-between">
+                  <h3 className="font-black text-xs sm:text-sm uppercase tracking-wider text-slate-900 flex items-center gap-2">
+                    <Lightbulb className="w-4.5 h-4.5 text-[#D4AF37]" /> DESCRIPTION ASSISTANT
+                  </h3>
+                  <span className="text-[10px] sm:text-xs text-amber-700 bg-amber-50/90 px-3 py-1 rounded-full font-bold border border-amber-200 shadow-xs">
+                    Click to Insert
+                  </span>
+                </div>
+
+                <p className="text-xs sm:text-sm text-slate-500 font-normal leading-relaxed">
+                  Tap any performance chip below to append directly into your horse description:
+                </p>
+
+                <div className="space-y-2.5 pt-1">
+                  {descriptionSuggestions.map((sug, idx) => (
+                    <button
+                      key={idx}
+                      type="button"
+                      onClick={() => handleAddSuggestion(sug.text)}
+                      className="w-full text-left p-3.5 sm:p-4 bg-slate-50 hover:bg-amber-50/90 text-slate-800 hover:text-amber-950 border border-slate-200/80 hover:border-[#D4AF37] rounded-2xl text-xs sm:text-sm font-semibold transition duration-200 cursor-pointer flex items-center justify-between group shadow-xs"
+                    >
+                      <span className="font-bold text-slate-800 group-hover:text-amber-950">{sug.label}</span>
+                      <PlusCircle className="w-4.5 h-4.5 text-[#D4AF37] group-hover:scale-110 transition shrink-0" />
+                    </button>
+                  ))}
+                </div>
               </div>
 
               {/* Section 4: Full Description */}
