@@ -246,9 +246,11 @@ export const Home = () => {
           <div className="flex flex-col sm:flex-row gap-4 w-full justify-center items-center animate-fade-up delay-250">
             <Link
               to="/marketplace"
-              className="w-full sm:w-auto liquid-glass-hero-btn bg-white/20 hover:bg-white/35 text-white font-extrabold py-3.5 px-9 rounded-xl border border-white/60 hover:border-[#D4AF37] transition-all duration-300 text-center shadow-[0_8px_32px_rgba(0,0,0,0.37)] hover:shadow-[0_14px_45px_rgba(212,175,55,0.45)] hover:-translate-y-0.5"
+              className="w-full sm:w-auto liquid-glass-explore-btn py-4 px-10 rounded-2xl text-center flex items-center justify-center gap-2.5 text-base sm:text-lg group"
             >
-              Explore Marketplace
+              <ShoppingBag className="w-5 h-5 text-amber-300 group-hover:scale-110 transition-transform" />
+              <span>Explore Marketplace</span>
+              <ArrowRight className="w-5 h-5 text-amber-300 group-hover:translate-x-1.5 transition-transform" />
             </Link>
           </div>
         </div>
