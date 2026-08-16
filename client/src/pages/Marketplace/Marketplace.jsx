@@ -553,11 +553,13 @@ export const Marketplace = () => {
                     <img
                       src={formatImgUrl(horse.imageUrl || horse.images?.[0])}
                       alt={horse.name}
+                      onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
                       className="absolute inset-0 w-full h-full object-cover object-center blur-md opacity-40 scale-110"
                     />
                     <img
                       src={formatImgUrl(horse.imageUrl || horse.images?.[0])}
                       alt={horse.name}
+                      onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
                       className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition duration-500"
                     />
                     {Number(horse.price) >= 3000000 && (
@@ -609,11 +611,13 @@ export const Marketplace = () => {
                     <img
                       src={formatImgUrl(horse.imageUrl || horse.images?.[0])}
                       alt={horse.name}
+                      onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
                       className="absolute inset-0 w-full h-full object-cover object-center blur-md opacity-40 scale-110"
                     />
                     <img
                       src={formatImgUrl(horse.imageUrl || horse.images?.[0])}
                       alt={horse.name}
+                      onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
                       className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition duration-500"
                     />
                   </div>
