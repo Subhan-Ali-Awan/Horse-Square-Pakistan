@@ -1,6 +1,7 @@
 const mongoose = require("mongoose");
 const { BreedingHorse, BreedingRequest } = require("../models/Breeding");
 const { uploadToCloudinary } = require("../utils/cloudinary");
+const { broadcastNewListingEmail } = require("../utils/emailService");
 
 // ===================================================
 // GET /api/breeding/horses -> "Available Breeding Horses" cards
@@ -101,6 +102,20 @@ exports.createBreedingHorse = async (req, res, next) => {
     } catch (e) {
       console.error("Error creating persistent Horse copy for breeding:", e);
     }
+
+    // Broadcast email notification to all registered users from horsesquarepakistan@gmail.com
+    broadcastNewListingEmail({
+      type: "Breeding Stallion",
+      title: horse.name,
+      breed: horse.breed,
+      price: `Booking Fee PKR ${Number(fee).toLocaleString()}`,
+      location: horse.location,
+      details: `${horse.tag || 'Available for Stud Service'} | Sire: ${horse.sire} • Dam: ${horse.dam}`,
+      imageUrl: horse.image || (horse.images && horse.images[0]) || "",
+      link: "http://localhost:5173/breeding",
+    }).catch((err) => {
+      console.error("[BROADCAST EMAIL ERROR in createBreedingHorse]:", err.message);
+    });
 
     res.status(201).json({
       success: true,

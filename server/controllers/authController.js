@@ -67,12 +67,27 @@ exports.registerUser = async (req, res, next) => {
       city,
       password,
       userType,
+      welcomeEmailSent: false,
     });
 
     // Automatically send official Welcome Email from horsesquarepakistan@gmail.com
-    sendWelcomeEmail(user).catch((err) => {
-      console.error("[WELCOME EMAIL DISPATCH ERROR]:", err.message);
-    });
+    const welcomeUserData = {
+      _id: user._id,
+      firstName: user.firstName,
+      lastName: user.lastName,
+      email: user.email,
+      name: `${user.firstName} ${user.lastName}`.trim(),
+    };
+
+    sendWelcomeEmail(welcomeUserData)
+      .then(async (result) => {
+        if (result && result.success) {
+          await User.findByIdAndUpdate(user._id, { welcomeEmailSent: true });
+        }
+      })
+      .catch((err) => {
+        console.error("[WELCOME EMAIL DISPATCH ERROR]:", err.message);
+      });
 
     const token = signToken(user._id);
 
@@ -110,6 +125,20 @@ exports.loginUser = async (req, res, next) => {
     }
 
     user.lastLogin = new Date();
+
+    // If user has not received welcome email yet, send it on login
+    if (!user.welcomeEmailSent) {
+      sendWelcomeEmail(user)
+        .then(async (result) => {
+          if (result && result.success) {
+            await User.findByIdAndUpdate(user._id, { welcomeEmailSent: true });
+          }
+        })
+        .catch((err) => {
+          console.error("[WELCOME EMAIL DISPATCH ON LOGIN ERROR]:", err.message);
+        });
+    }
+
     await user.save();
 
     const token = signToken(user._id);
@@ -119,6 +148,35 @@ exports.loginUser = async (req, res, next) => {
       message: "Login successful",
       token,
       user: buildUserResponse(user),
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ===================================================
+// POST /api/auth/test-welcome-email -> Test sending welcome email directly
+// ===================================================
+exports.testWelcomeEmail = async (req, res, next) => {
+  try {
+    const { email, name } = req.body || {};
+    const targetEmail = email || "horsesquarepakistan@gmail.com";
+    const targetName = name || "Valued Member";
+
+    const dummyUser = {
+      email: targetEmail,
+      firstName: targetName.split(" ")[0] || "Valued",
+      lastName: targetName.split(" ").slice(1).join(" ") || "Member",
+      name: targetName,
+    };
+
+    const result = await sendWelcomeEmail(dummyUser);
+    res.status(200).json({
+      success: result.success,
+      message: result.success
+        ? `Official welcome email successfully dispatched to ${targetEmail}`
+        : `Failed to dispatch email: ${result.error}`,
+      details: result,
     });
   } catch (error) {
     next(error);

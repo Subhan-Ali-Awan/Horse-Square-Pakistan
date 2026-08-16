@@ -39,6 +39,7 @@ const userSchema = new mongoose.Schema(
     resetCode: { type: String, select: false },
     resetCodeExpires: { type: Date, select: false },
 
+    welcomeEmailSent: { type: Boolean, default: false },
     lastLogin: { type: Date },
   },
   { timestamps: true }

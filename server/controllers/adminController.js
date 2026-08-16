@@ -4,6 +4,7 @@ const Auction = require("../models/Auction");
 const { BreedingRequest } = require("../models/Breeding");
 const VetInquiry = require("../models/VetInquiry");
 const { ContactMessage } = require("../models/Misc");
+const { broadcastNewListingEmail } = require("../utils/emailService");
 
 // ===================================================
 // GET /api/admin/stats -> dashboard overview cards
@@ -126,6 +127,21 @@ exports.approveHorse = async (req, res, next) => {
   try {
     const horse = await Horse.findByIdAndUpdate(req.params.id, { status: "approved" }, { new: true });
     if (!horse) return res.status(404).json({ success: false, message: "Listing not found" });
+
+    // Broadcast email notification to all registered users from horsesquarepakistan@gmail.com
+    broadcastNewListingEmail({
+      type: "Marketplace Listing",
+      title: horse.name,
+      breed: horse.breed,
+      price: horse.price,
+      location: horse.location,
+      details: horse.description,
+      imageUrl: (horse.images && horse.images[0]) || "",
+      link: "http://localhost:5173/marketplace",
+    }).catch((err) => {
+      console.error("[BROADCAST EMAIL ERROR in approveHorse]:", err.message);
+    });
+
     res.status(200).json({ success: true, message: "Listing approved", data: horse });
   } catch (error) {
     next(error);

@@ -1,5 +1,6 @@
 const Auction = require("../models/Auction");
 const { uploadToCloudinary } = require("../utils/cloudinary");
+const { broadcastNewListingEmail } = require("../utils/emailService");
 
 // Helper: auto-close any auction whose endTime has passed
 async function autoCloseIfExpired(auction) {
@@ -120,6 +121,20 @@ exports.createAuction = async (req, res, next) => {
       currentBid: Number(startingBid),
       endTime,
       createdBy,
+    });
+
+    // Broadcast email notification to all registered users from horsesquarepakistan@gmail.com
+    broadcastNewListingEmail({
+      type: "Live Auction",
+      title: auction.horseName,
+      breed: auction.breed,
+      price: `Starting PKR ${Number(startingBid).toLocaleString()}`,
+      location: auction.location,
+      details: `Live auction started by ${sellerName}. Place your bid before time runs out!`,
+      imageUrl: auction.image || "",
+      link: "http://localhost:5173/live-auctions",
+    }).catch((err) => {
+      console.error("[BROADCAST EMAIL ERROR in createAuction]:", err.message);
     });
 
     res.status(201).json({ success: true, message: "Auction created", data: auction });

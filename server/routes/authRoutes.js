@@ -9,6 +9,7 @@ const {
   getMe,
   updateProfile,
   changePassword,
+  testWelcomeEmail,
 } = require("../controllers/authController");
 const upload = require("../middleware/upload");
 const { protect } = require("../middleware/auth");
@@ -23,6 +24,7 @@ const handleBodyParse = (req, res, next) => {
 
 router.post("/register", handleBodyParse, registerUser); // P-8 Create Account button
 router.post("/login", handleBodyParse, loginUser); // P-7 Login Account button
+router.post("/test-welcome-email", handleBodyParse, testWelcomeEmail); // Test welcome email endpoint
 router.post("/forgot-password", handleBodyParse, forgotPassword); // P-9 Send Reset Code button
 router.post("/verify-reset-code", verifyResetCode);
 router.post("/reset-password", resetPassword);

@@ -1,5 +1,6 @@
 const Horse = require("../models/Horse");
 const { uploadToCloudinary } = require("../utils/cloudinary");
+const { broadcastNewListingEmail } = require("../utils/emailService");
 
 // ===================================================
 // GET /api/horses   -> Home page listings + "Search Horses" filters
@@ -164,6 +165,20 @@ exports.createHorse = async (req, res, next) => {
     });
 
     if (isApproved) {
+      // Broadcast email notification to all registered users from horsesquarepakistan@gmail.com
+      broadcastNewListingEmail({
+        type: "Marketplace Listing",
+        title: horse.name,
+        breed: horse.breed,
+        price: horse.price,
+        location: horse.location,
+        details: horse.description,
+        imageUrl: (horse.images && horse.images[0]) || "",
+        link: "http://localhost:5173/marketplace",
+      }).catch((err) => {
+        console.error("[BROADCAST EMAIL ERROR in createHorse]:", err.message);
+      });
+
       return res.status(201).json({
         success: true,
         autoApproved: true,
