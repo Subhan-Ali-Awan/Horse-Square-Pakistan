@@ -76,11 +76,11 @@ export const Auction = () => {
       });
       const data = await res.json();
       if (data.success) {
-        alert('🎉 Bid placed successfully! The 24-hour countdown timer is now active.');
+        alert(data.message || '🎉 Bid placed successfully!');
         if (data.data) {
           setAuctions(auctions.map(a => a._id === auctionId ? data.data : a));
         } else {
-          setAuctions(auctions.map(a => a._id === auctionId ? { ...a, currentBid: amount, hasStarted: true, endTime: new Date(Date.now() + 24 * 3600 * 1000) } : a));
+          setAuctions(auctions.map(a => a._id === auctionId ? { ...a, currentBid: amount, hasStarted: true, endTime: a.endTime || new Date(Date.now() + 24 * 3600 * 1000) } : a));
         }
         setBidAmount({ ...bidAmount, [auctionId]: '' });
       } else {

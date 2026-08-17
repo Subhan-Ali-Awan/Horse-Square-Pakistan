@@ -5,7 +5,8 @@ const { broadcastNewListingEmail, sendAuctionWinnerEmail } = require("../utils/e
 
 // Helper: auto-close any auction whose endTime has passed (once started)
 async function autoCloseIfExpired(auction) {
-  if (auction.status === "live" && auction.hasStarted && auction.endTime && auction.endTime <= new Date()) {
+  const isStarted = auction.hasStarted || (auction.bids && auction.bids.length > 0);
+  if (auction.status === "live" && isStarted && auction.endTime && auction.endTime <= new Date()) {
     auction.status = "ended";
 
     // Identify winning bidder
@@ -222,11 +223,23 @@ exports.placeBid = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Your bid must be higher than the current bid." });
     }
 
-    // If first bid, start the 24-hour timer from NOW
-    if (!auction.hasStarted || !auction.bids || auction.bids.length === 0) {
+    // Check if this is the very first bid placed on this auction
+    const hasPriorBids = (auction.bids && auction.bids.length > 0) || Boolean(auction.firstBidAt);
+
+    if (!hasPriorBids) {
+      // First bid: Activate auction and start the fixed 24-hour countdown timer
       auction.hasStarted = true;
       auction.firstBidAt = new Date();
-      auction.endTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // exactly 24 hours
+      auction.endTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // exactly 24 hours from first bid
+    } else {
+      // Subsequent bids: Ensure hasStarted remains true and PRESERVE original timer
+      auction.hasStarted = true;
+      if (!auction.firstBidAt && auction.bids && auction.bids.length > 0) {
+        auction.firstBidAt = auction.bids[0].createdAt || auction.createdAt || new Date();
+      }
+      if (!auction.endTime) {
+        auction.endTime = new Date(new Date(auction.firstBidAt).getTime() + 24 * 60 * 60 * 1000);
+      }
     }
 
     auction.currentBid = bidAmount;
@@ -246,7 +259,9 @@ exports.placeBid = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: "Bid placed successfully! 24-hour timer is running.",
+      message: !hasPriorBids
+        ? "Bid placed successfully! The 24-hour countdown timer is now running."
+        : "Bid placed successfully! You are now the highest bidder.",
       data: updatedAuction,
     });
   } catch (error) {

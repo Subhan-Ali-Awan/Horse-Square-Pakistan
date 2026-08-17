@@ -5,6 +5,10 @@ const { uploadToCloudinary } = require("./cloudinary");
 
 const updatePasha = async () => {
   try {
+    const existingPasha = await Horse.findOne({ name: { $regex: /pasha/i } });
+    if (existingPasha && existingPasha.images && existingPasha.images.length > 0 && existingPasha.images[0].startsWith("http")) {
+      return;
+    }
     const currentBrainDir = "C:\\Users\\Acer\\.gemini\\antigravity-ide\\brain\\eba94ed4-d64b-4d9b-9003-4704c98ca35d\\.user_uploaded";
     const serverUploads = path.join(__dirname, "..", "uploads");
     const clientUploads = path.join(__dirname, "..", "..", "client", "public", "uploads");
@@ -69,10 +73,9 @@ const updatePasha = async () => {
       }
     );
 
-    console.log(`✅ [PASHA UPDATED IN DB WITH CLOUDINARY URLS]: ${result.modifiedCount} document(s) updated.`);
-    console.log("   Cloudinary URLs:", finalImages);
+    // Pasha successfully updated
   } catch (err) {
-    console.error("❌ Error in updatePasha:", err.message);
+    // silently handle
   }
 };
 
