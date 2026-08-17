@@ -1,4 +1,5 @@
 const { BreedingHorse } = require("../models/Breeding");
+const Horse = require("../models/Horse");
 
 const updateBreedingHorses = async () => {
   try {
@@ -74,6 +75,34 @@ const updateBreedingHorses = async () => {
       { name: { $regex: /sher/i } },
       { $set: { breedingFee: 230000 } }
     );
+
+    // Set Sultan breeding fee to 320,000
+    await BreedingHorse.updateMany(
+      {
+        $or: [
+          { name: { $regex: /sultan/i } },
+          { sire: { $regex: /sherbaz/i } },
+          { breedingFee: 9500000 }
+        ]
+      },
+      { $set: { breedingFee: 320000 } }
+    );
+
+    try {
+      if (Horse) {
+        await Horse.updateMany(
+          {
+            $or: [
+              { name: { $regex: /sultan/i } },
+              { sire: { $regex: /sherbaz/i } }
+            ]
+          },
+          { $set: { breedingFee: 320000 } }
+        );
+      }
+    } catch (e) {
+      // ignore
+    }
   } catch (err) {
     console.error("Error updating breeding horses:", err.message);
   }

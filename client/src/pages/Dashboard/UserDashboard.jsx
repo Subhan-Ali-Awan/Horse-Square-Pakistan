@@ -1335,11 +1335,11 @@ export const UserDashboard = () => {
                     {breedingHorses.map((horse) => (
                       <div key={horse._id || horse.id} className="bg-white rounded-3xl border border-slate-200 shadow-sm overflow-hidden flex flex-col justify-between hover:shadow-md transition duration-300">
                         <div>
-                          <div className="relative h-48 overflow-hidden bg-slate-900">
+                          <div className="relative h-48 overflow-hidden bg-slate-900 flex items-center justify-center">
                             <img
                               src={horse.image || horse.imageUrl || 'https://images.pexels.com/photos/29632852/pexels-photo-29632852.jpeg'}
                               alt={horse.name}
-                              className="w-full h-full object-cover"
+                              className="w-full h-full object-contain"
                             />
                             <span className="absolute top-3 left-3 bg-[#0F172A] text-[#D4AF37] border border-amber-500/30 text-[10px] font-black tracking-widest uppercase px-3 py-1 rounded-full shadow">
                               {horse.breed}

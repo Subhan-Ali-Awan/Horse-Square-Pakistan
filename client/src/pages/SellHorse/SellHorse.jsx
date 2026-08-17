@@ -94,11 +94,11 @@ export const SellHorse = () => {
 
   // Quick Description Suggestions
   const descriptionSuggestions = [
-    { label: '🏇 Professional Neza Bazi Horse', text: 'Professional Neza Bazi horse active in tent-pegging tournaments across Pakistan.' },
-    { label: '🧬 Pure Nukra Pink Skin', text: 'Elite Nukra bloodline with clear pink skin (phulkari) and elegant posture.' },
-    { label: '💉 Fully Vaccinated', text: 'Fully vaccinated, medically certified by AI Vet, and in prime athletic condition.' },
-    { label: '🛡️ Calm Temperament', text: 'Extremely calm temperament, safe for riders, and easy to manage.' },
-    { label: '🔥 Aggressive Temperament', text: 'High-spirited, energetic, and aggressive temperament, best suited for experienced equestrians.' }
+    { label: 'Professional Neza Bazi Horse', text: 'Professional Neza Bazi horse active in tent-pegging tournaments across Pakistan.' },
+    { label: 'Pure Nukra Pink Skin', text: 'Elite Nukra bloodline with clear pink skin (phulkari) and elegant posture.' },
+    { label: 'Fully Vaccinated', text: 'Fully vaccinated, medically certified by AI Vet, and in prime athletic condition.' },
+    { label: 'Calm Temperament', text: 'Extremely calm temperament, safe for riders, and easy to manage.' },
+    { label: 'Aggressive Temperament', text: 'High-spirited, energetic, and aggressive temperament, best suited for experienced equestrians.' }
   ];
 
   const handleAddSuggestion = (text) => {
