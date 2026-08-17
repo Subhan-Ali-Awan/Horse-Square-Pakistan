@@ -196,8 +196,8 @@ export const VetDoctor = () => {
   const [showHorseInfo,    setShowHorseInfo]    = useState(false);
 
   // ── Refs ──────────────────────────────────────────────────────────
-  const messagesEndRef = useRef(null);
-  const textareaRef    = useRef(null);
+  const chatContainerRef = useRef(null);
+  const textareaRef      = useRef(null);
 
   // ── Local Storage persistence ─────────────────────────────────────
   useEffect(() => {
@@ -217,9 +217,14 @@ export const VetDoctor = () => {
     } catch { /* ignore storage errors */ }
   }, [messages, showDisclaimer]);
 
-  // ── Auto-scroll ───────────────────────────────────────────────────
+  // ── Auto-scroll strictly within the chat container (prevents whole-page scrolling) ──
   useEffect(() => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+    if (chatContainerRef.current) {
+      chatContainerRef.current.scrollTo({
+        top: chatContainerRef.current.scrollHeight,
+        behavior: 'smooth',
+      });
+    }
   }, [messages, isTyping]);
 
   // ── Auto-resize textarea ──────────────────────────────────────────
@@ -502,7 +507,11 @@ export const VetDoctor = () => {
           </div>
 
           {/* Messages Area */}
-          <div className="h-[420px] sm:h-[500px] overflow-y-auto px-5 sm:px-7 py-5 bg-[#f8fafc] scroll-smooth" id="drmax-chat-messages">
+          <div
+            ref={chatContainerRef}
+            className="h-[420px] sm:h-[500px] overflow-y-auto px-5 sm:px-7 py-5 bg-[#f8fafc] scroll-smooth"
+            id="drmax-chat-messages"
+          >
 
             {/* Disclaimer */}
             {showDisclaimer && (
@@ -558,8 +567,6 @@ export const VetDoctor = () => {
 
             {/* Typing indicator */}
             {isTyping && <TypingIndicator />}
-
-            <div ref={messagesEndRef} />
           </div>
 
           {/* Input Area */}

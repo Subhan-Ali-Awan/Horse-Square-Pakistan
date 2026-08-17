@@ -41,7 +41,7 @@ exports.drMaxChat = async (req, res) => {
     const groqResponse = await axios.post(
       process.env.GROQ_API_URL,
       {
-        model: process.env.GROQ_MODEL,
+        model: process.env.GROQ_MODEL || "openai/gpt-oss-120b",
         messages: [
           { role: "system", content: systemPrompt },
           ...messages,
