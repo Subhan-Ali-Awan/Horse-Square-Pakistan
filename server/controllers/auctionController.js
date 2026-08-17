@@ -1,22 +1,63 @@
 const Auction = require("../models/Auction");
+const User = require("../models/User");
 const { uploadToCloudinary } = require("../utils/cloudinary");
-const { broadcastNewListingEmail } = require("../utils/emailService");
+const { broadcastNewListingEmail, sendAuctionWinnerEmail } = require("../utils/emailService");
 
-// Helper: auto-close any auction whose endTime has passed
+// Helper: auto-close any auction whose endTime has passed (once started)
 async function autoCloseIfExpired(auction) {
-  if (auction.status === "live" && auction.endTime <= new Date()) {
+  if (auction.status === "live" && auction.hasStarted && auction.endTime && auction.endTime <= new Date()) {
     auction.status = "ended";
 
-    // Transfer ownership to the winning bidder
+    // Identify winning bidder
     if (auction.bids && auction.bids.length > 0) {
       const sortedBids = [...auction.bids].sort((a, b) => b.amount - a.amount);
       const winningBid = sortedBids[0];
+      
       if (winningBid && winningBid.bidder) {
-        const Horse = require("../models/Horse");
-        const horse = await Horse.findOne({ name: auction.horseName });
-        if (horse) {
-          horse.postedBy = winningBid.bidder;
-          await horse.save();
+        auction.winningBidder = winningBid.bidder;
+
+        // Transfer horse ownership if exists
+        try {
+          const Horse = require("../models/Horse");
+          const horse = await Horse.findOne({ name: auction.horseName });
+          if (horse) {
+            horse.postedBy = winningBid.bidder;
+            await horse.save();
+          }
+        } catch (hErr) {
+          console.error("[AUCTION HORSE OWNERSHIP TRANSFER ERROR]:", hErr.message);
+        }
+
+        // Send Winner Congratulations Email & WhatsApp Notification once
+        if (!auction.winnerEmailSent) {
+          try {
+            const winnerUser = await User.findById(winningBid.bidder);
+            let sellerUser = null;
+            if (auction.createdBy) {
+              sellerUser = await User.findById(auction.createdBy);
+            }
+
+            if (winnerUser && winnerUser.email) {
+              console.log(`🏆 [AUCTION WINNER NOTIFICATION] Dispatching congratulation email to winner: ${winnerUser.email} for horse: ${auction.horseName}`);
+              sendAuctionWinnerEmail({
+                winner: winnerUser,
+                auction,
+                seller: sellerUser,
+              }).catch((e) => console.error("[WINNER EMAIL ERROR]:", e.message));
+
+              auction.winnerEmailSent = true;
+            }
+
+            // WhatsApp Notification log & state
+            if (winnerUser && winnerUser.phone) {
+              const cleanPhone = winnerUser.phone.replace(/[^0-9]/g, "");
+              const waMsg = `🏆 *CONGRATULATIONS FROM HORSE SQUARE PAKISTAN!* 🐎%0A%0ADear ${winnerUser.firstName} ${winnerUser.lastName}, you have WON the Live Auction for *${auction.horseName}* with the highest bid of *PKR ${Number(auction.currentBid).toLocaleString()}*!%0A%0AOur support team and seller have been notified. For questions or transfer assistance, reply to this message or email horsesquarepakistan@gmail.com.`;
+              console.log(`📱 [AUCTION WINNER WHATSAPP] Prepared message for ${cleanPhone}: https://wa.me/${cleanPhone}?text=${waMsg}`);
+              auction.winnerWhatsAppSent = true;
+            }
+          } catch (notifErr) {
+            console.error("[WINNER NOTIFICATION DISPATCH ERROR]:", notifErr.message);
+          }
         }
       }
     }
@@ -34,14 +75,18 @@ exports.getAuctions = async (req, res, next) => {
     const filter = {};
     if (req.query.status) filter.status = req.query.status;
 
-    const auctions = await Auction.find(filter).sort({ createdAt: -1 });
+    const auctions = await Auction.find(filter)
+      .populate("winningBidder", "firstName lastName email phone")
+      .sort({ createdAt: -1 });
 
     const formattedAuctions = [];
     for (const auction of auctions) {
       const closedAuction = await autoCloseIfExpired(auction);
       const auctionObj = closedAuction.toObject();
       // sort bids highest first
-      auctionObj.bids.sort((a, b) => b.amount - a.amount);
+      if (auctionObj.bids) {
+        auctionObj.bids.sort((a, b) => b.amount - a.amount);
+      }
       formattedAuctions.push(auctionObj);
     }
 
@@ -56,7 +101,7 @@ exports.getAuctions = async (req, res, next) => {
 // ===================================================
 exports.getAuctionById = async (req, res, next) => {
   try {
-    let auction = await Auction.findById(req.params.id);
+    let auction = await Auction.findById(req.params.id).populate("winningBidder", "firstName lastName email phone");
     if (!auction) {
       return res.status(404).json({ success: false, message: "Auction not found" });
     }
@@ -69,7 +114,7 @@ exports.getAuctionById = async (req, res, next) => {
     res.status(200).json({
       success: true,
       data: { ...auction.toObject(), bids: sortedBids },
-      secondsRemaining: Math.max(0, Math.floor((auction.endTime - new Date()) / 1000)),
+      secondsRemaining: auction.hasStarted ? Math.max(0, Math.floor((auction.endTime - new Date()) / 1000)) : 86400,
     });
   } catch (error) {
     next(error);
@@ -87,7 +132,7 @@ exports.createAuction = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Please fill in all required fields" });
     }
 
-    const hours = Number(durationHours) || 24; // matches frontend default 24-hour timer
+    const hours = Number(durationHours) || 24; // 24-hour default timer
     const endTime = new Date(Date.now() + hours * 60 * 60 * 1000);
 
     let image;
@@ -120,6 +165,7 @@ exports.createAuction = async (req, res, next) => {
       startingBid: Number(startingBid),
       currentBid: Number(startingBid),
       endTime,
+      hasStarted: false,
       createdBy,
     });
 
@@ -130,7 +176,7 @@ exports.createAuction = async (req, res, next) => {
       breed: auction.breed,
       price: `Starting PKR ${Number(startingBid).toLocaleString()}`,
       location: auction.location,
-      details: `Live auction started by ${sellerName}. Place your bid before time runs out!`,
+      details: `Live auction posted by ${sellerName}. Place your first bid to start the 24-hour countdown!`,
       imageUrl: auction.image || "",
       link: "http://localhost:5173/live-auctions",
     }).catch((err) => {
@@ -146,7 +192,7 @@ exports.createAuction = async (req, res, next) => {
 // ===================================================
 // POST /api/auctions/:id/bid  -> "Place Bid" button
 // Body: { bidderName, amount }
-// Mirrors frontend validation: must be logged-in-name + numeric amount > currentBid, and auction must still be live
+// First bid starts the 24-hour countdown timer
 // ===================================================
 exports.placeBid = async (req, res, next) => {
   try {
@@ -176,8 +222,16 @@ exports.placeBid = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Your bid must be higher than the current bid." });
     }
 
+    // If first bid, start the 24-hour timer from NOW
+    if (!auction.hasStarted || !auction.bids || auction.bids.length === 0) {
+      auction.hasStarted = true;
+      auction.firstBidAt = new Date();
+      auction.endTime = new Date(Date.now() + 24 * 60 * 60 * 1000); // exactly 24 hours
+    }
+
     auction.currentBid = bidAmount;
     auction.highestBidder = bidderName;
+    auction.winningBidder = req.user ? req.user._id : undefined;
     auction.bids.push({
       bidderName,
       amount: bidAmount,
@@ -192,7 +246,7 @@ exports.placeBid = async (req, res, next) => {
 
     res.status(200).json({
       success: true,
-      message: "Bid placed successfully!",
+      message: "Bid placed successfully! 24-hour timer is running.",
       data: updatedAuction,
     });
   } catch (error) {

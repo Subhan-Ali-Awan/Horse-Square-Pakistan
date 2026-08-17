@@ -454,10 +454,110 @@ const sendNewsletterConfirmationEmail = async (subscriberEmail) => {
   return userResult;
 };
 
+/**
+ * Send Automated Auction Winner Congratulations Email from horsesquarepakistan@gmail.com
+ */
+const sendAuctionWinnerEmail = async ({ winner, auction, seller }) => {
+  const winnerName = `${winner.firstName || ''} ${winner.lastName || ''}`.trim() || winner.name || "Winning Bidder";
+  const winnerEmail = winner.email;
+  const horseName = auction.horseName || "Championship Horse";
+  const finalBid = Number(auction.currentBid || 0).toLocaleString('en-PK');
+  const breed = auction.breed || "Verified Breed";
+  const location = auction.location || "Pakistan";
+  const sellerName = auction.sellerName || (seller ? `${seller.firstName} ${seller.lastName}` : "Verified Seller");
+  const sellerPhone = (seller && (seller.phone || seller.phoneNumber)) || "0305-9901997";
+
+  const subject = `🏆 CONGRATULATIONS! You Won the Auction for ${horseName} (PKR ${finalBid}) - Horse Square Pakistan`;
+
+  const plainText = `Dear ${winnerName},
+
+CONGRATULATIONS! 🏆
+
+You have officially WON the Live Equine Auction for ${horseName} on Horse Square Pakistan!
+
+Winning Summary:
+- Horse Name: ${horseName}
+- Breed: ${breed}
+- Winning Bid: PKR ${finalBid}
+- Location: ${location}
+- Seller / Stud: ${sellerName}
+- Seller Contact: ${sellerPhone}
+
+Our platform support team and seller have been notified. Please complete your escrow verification or get in touch with the seller.
+
+Official Support:
+📧 horsesquarepakistan@gmail.com
+📱 WhatsApp Support: +92 305 9901997
+
+Kind regards,
+Horse Square Pakistan
+Connecting Pakistan’s Equestrian Community`;
+
+  const html = `
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 620px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
+      
+      <!-- Header Banner -->
+      <div style="background: linear-gradient(135deg, #0F172A 0%, #1E293B 100%); padding: 36px 24px; text-align: center; border-bottom: 4px solid #D4AF37;">
+        <div style="font-size: 40px; margin-bottom: 8px;">🏆</div>
+        <h1 style="color: #D4AF37; margin: 0; font-size: 24px; font-weight: 900; letter-spacing: 0.5px;">AUCTION WINNER CONFIRMED</h1>
+        <p style="color: #94A3B8; margin: 6px 0 0 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Official Bidding Victory Certificate</p>
+      </div>
+
+      <!-- Content Body -->
+      <div style="padding: 32px 28px; color: #334155; line-height: 1.7; font-size: 15px;">
+        <p style="color: #0F172A; font-weight: 800; font-size: 18px; margin-top: 0;">Dear <strong>${winnerName}</strong>,</p>
+        
+        <p style="font-size: 15px; color: #047857; font-weight: 700; background-color: #ecfdf5; border: 1px solid #a7f3d0; padding: 12px 16px; border-radius: 10px; margin-bottom: 16px;">
+          🎉 Congratulations! The 24-hour bidding timer has completed, and you are officially declared the <strong>WINNER</strong> of the Live Equine Auction!
+        </p>
+
+        <!-- Horse Winning Card -->
+        <div style="background-color: #F8FAFC; border: 1px solid #CBD5E1; border-radius: 14px; padding: 22px; margin: 24px 0;">
+          <h2 style="color: #0F172A; margin: 0 0 14px 0; font-size: 22px; font-weight: 900;">🐎 ${horseName}</h2>
+          
+          <table style="width: 100%; border-collapse: collapse; font-size: 14px; color: #334155;">
+            <tr style="border-bottom: 1px solid #E2E8F0;"><td style="padding: 8px 0; font-weight: bold; color: #64748B;">Winning Bid Amount:</td><td style="text-align: right; color: #D4AF37; font-weight: 900; font-size: 18px;">PKR ${finalBid}</td></tr>
+            <tr style="border-bottom: 1px solid #E2E8F0;"><td style="padding: 8px 0; font-weight: bold; color: #64748B;">Breed Category:</td><td style="text-align: right; color: #0F172A; font-weight: bold;">${breed}</td></tr>
+            <tr style="border-bottom: 1px solid #E2E8F0;"><td style="padding: 8px 0; font-weight: bold; color: #64748B;">Origin / Location:</td><td style="text-align: right; color: #0F172A; font-weight: bold;">📍 ${location}</td></tr>
+            <tr style="border-bottom: 1px solid #E2E8F0;"><td style="padding: 8px 0; font-weight: bold; color: #64748B;">Seller / Stud Owner:</td><td style="text-align: right; color: #0F172A; font-weight: bold;">${sellerName}</td></tr>
+            <tr><td style="padding: 8px 0; font-weight: bold; color: #64748B;">Seller Contact:</td><td style="text-align: right; color: #2563EB; font-weight: bold;">${sellerPhone}</td></tr>
+          </table>
+        </div>
+
+        <!-- Next Steps -->
+        <div style="background-color: #FEF9C3; border-left: 4px solid #D4AF37; border-radius: 0 12px 12px 0; padding: 16px 20px; margin: 20px 0;">
+          <h4 style="margin: 0 0 6px 0; color: #854D0E; font-size: 14px; font-weight: 800; text-transform: uppercase;">Next Steps for Delivery & Escrow:</h4>
+          <p style="margin: 0; font-size: 13px; color: #713F12;">
+            Our official representatives will also reach out to you via WhatsApp at <strong>${winner.phone || 'your registered number'}</strong> to coordinate transfer paperwork, pedigree inspection, and transport arrangements.
+          </p>
+        </div>
+
+        <!-- Contact Support -->
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #E2E8F0; font-size: 13px; color: #64748B;">
+          <p style="margin: 0; font-weight: 700; color: #0F172A;">Kind regards,</p>
+          <p style="margin: 2px 0 0 0; font-weight: 800; color: #D4AF37; font-size: 15px;">Horse Square Pakistan</p>
+          <p style="margin: 4px 0 0 0;">📧 <a href="mailto:horsesquarepakistan@gmail.com" style="color: #2563eb; text-decoration: none;">horsesquarepakistan@gmail.com</a></p>
+          <p style="margin: 2px 0 0 0;">Connecting Pakistan’s Equestrian Community</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="background-color: #0F172A; padding: 18px; text-align: center; color: #94A3B8; font-size: 11px;">
+        <p style="margin: 0;">Dispatched automatically by Horse Square Pakistan Live Auction Services</p>
+        <p style="margin: 4px 0 0 0; color: #64748B;">© ${new Date().getFullYear()} Horse Square Pakistan • All Rights Reserved</p>
+      </div>
+
+    </div>
+  `;
+
+  return await sendEmail({ to: winnerEmail, subject, text: plainText, html });
+};
+
 module.exports = {
   sendEmail,
   sendRidingTrialEmail,
   sendNewsletterConfirmationEmail,
   sendWelcomeEmail,
   broadcastNewListingEmail,
+  sendAuctionWinnerEmail,
 };

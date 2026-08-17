@@ -27,12 +27,18 @@ const auctionSchema = new mongoose.Schema(
 
     startTime: { type: Date, default: Date.now },
     endTime: { type: Date, required: true }, // e.g. now + 24 hours
+    hasStarted: { type: Boolean, default: false }, // true once first bid is placed
+    firstBidAt: { type: Date, default: null },
 
     status: {
       type: String,
       enum: ["live", "ended"],
       default: "live",
     },
+
+    winningBidder: { type: mongoose.Schema.Types.ObjectId, ref: "User", default: null },
+    winnerEmailSent: { type: Boolean, default: false },
+    winnerWhatsAppSent: { type: Boolean, default: false },
 
     bids: [bidSchema], // bid history, newest first when displayed
 
