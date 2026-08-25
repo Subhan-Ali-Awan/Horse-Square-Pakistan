@@ -237,7 +237,7 @@ export const Home = () => {
         {/* Hero Content */}
         <div className="relative z-10 text-center px-6 sm:px-12 md:px-16 lg:px-20 max-w-4xl mx-auto text-white flex flex-col items-center">
           <h1 className="text-2xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight mb-4 leading-tight animate-fade-up">
-            Experience the Legacy of <span className="animate-shimmer whitespace-nowrap">Horse-Square</span>
+            Experience the Legacy of <span className="animate-shimmer whitespace-nowrap">Horse-Square-Pakistan</span>
           </h1>
           <p className="text-slate-300 text-xs sm:text-base md:text-lg font-light mb-8 max-w-2xl mx-auto leading-relaxed animate-fade-up delay-150">
             The ultimate digital marketplace for horse trading, live auctions, professional breeding, AI-assisted vet diagnostics, and certified riding school networks.

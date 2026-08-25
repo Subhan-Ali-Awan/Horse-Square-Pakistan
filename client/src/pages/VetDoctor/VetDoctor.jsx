@@ -24,16 +24,16 @@ const DISEASE_CONTEXTS = {
 };
 
 const DISEASE_CHIPS = [
-  { key: 'anuria',       label: 'Anuria (No Urine)',        icon: '🚫', emergency: true  },
-  { key: 'choke',        label: 'Choke',                    icon: '😵', emergency: true  },
-  { key: 'uveitis',      label: 'Eye Infection / Uveitis',  icon: '👁️', emergency: false },
-  { key: 'footswelling', label: 'Foot Swelling',            icon: '🦶', emergency: false },
-  { key: 'fever',        label: 'High Fever',               icon: '🌡️', emergency: false },
-  { key: 'sweating',     label: 'Heavy Sweating',           icon: '💦', emergency: false },
-  { key: 'coughing',     label: 'Coughing',                 icon: '😤', emergency: false },
-  { key: 'refusing',     label: 'Refusing Feed',            icon: '🥕', emergency: false },
-  { key: 'thrush',       label: 'Thrush',                   icon: '🦠', emergency: false },
-  { key: 'epm',          label: 'EPM',                      icon: '🧠', emergency: false },
+  { key: 'anuria',       label: 'Anuria (No Urine) / پیشاب نہ آنا',                  emergency: true  },
+  { key: 'choke',        label: 'Choke / گلے میں خوراک پھنس جانا',                     emergency: true  },
+  { key: 'uveitis',      label: 'Eye Infection / Uveitis / آنکھ کا انفیکشن / یووائٹس', emergency: false },
+  { key: 'footswelling', label: 'Foot Swelling / پاؤں میں سوجن',                       emergency: false },
+  { key: 'fever',        label: 'High Fever / تیز بخار',                              emergency: false },
+  { key: 'sweating',     label: 'Heavy Sweating / زیادہ پسینہ آنا',                   emergency: false },
+  { key: 'coughing',     label: 'Coughing / کھانسی',                                  emergency: false },
+  { key: 'refusing',     label: 'Refusing Feed / خوراک نہ کھانا',                     emergency: false },
+  { key: 'thrush',       label: 'Thrush / کھُر کی سڑن / تھرش',                        emergency: false },
+  { key: 'epm',          label: 'EPM / ای پی ایم (اعصابی بیماری)',                    emergency: false },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -483,7 +483,7 @@ export const VetDoctor = () => {
                   <button
                     key={chip.key}
                     onClick={() => toggleDisease(chip.key)}
-                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-bold border transition cursor-pointer select-none
+                    className={`inline-flex items-center px-3 py-1.5 rounded-full text-xs font-bold border transition cursor-pointer select-none
                       ${isSelected
                         ? chip.emergency
                           ? 'bg-red-600 text-white border-red-600 shadow-md'
@@ -493,7 +493,6 @@ export const VetDoctor = () => {
                           : 'bg-white text-slate-700 border-slate-200 hover:border-amber-300 hover:text-amber-700'
                       }`}
                   >
-                    <span>{chip.icon}</span>
                     <span>{chip.label}</span>
                   </button>
                 );
