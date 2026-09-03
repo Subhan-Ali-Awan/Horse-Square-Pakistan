@@ -22,10 +22,11 @@ const initialArticles = [
     title: "The Legendary Anmol Breed: Pakistan's Ancient Horse Heritage",
     category: "Breeds",
     author: "Dr. Tariq Mahmood",
-    readTime: "6 min read",
-    summary: "Tracing the roots of the ancient Anmol breed, once favored by emperors and local rulers across the historic Indus Valley.",
+    readTime: "7 min read",
+    summary: "Tracing the roots of the ancient Anmol breed, and exploring the deep connection of horses with human history and the rich culture of Punjab and Pakistan.",
     image: "https://images.unsplash.com/photo-1598974357801-cbca100e65d3?auto=format&fit=crop&q=80&w=800",
     content: [
+      "The connection of the horse with humans is deeply rooted in the history and vibrant culture of Punjab and Pakistan. For centuries, these magnificent creatures have been more than just a mode of transport; they have been faithful companions to warriors, symbols of prestige for nobles, and central figures in rural festivities like Nezabazi (tent pegging). This historic bond reflects a shared legacy of survival, honor, and deep mutual respect that continues to thrive in modern Pakistani society.",
       "The 'Anmol' (meaning priceless in Urdu) is an ancient equine lineage of the Indian subcontinent and Pakistan. Legend traces the Anmol breed back over 2,000 years to Alexander the Great's campaign along the Jhelum River, where local horses were crossed with Arabian and Persian stock.",
       "Anmol horses are famed for their sleek bay or chestnut coats, powerful quarters, and exceptionally high stamina under harsh weather conditions. Unlike modern sports horses, the Anmol horse is compact, robust, and capable of covering vast distances with minimal sustenance.",
       "Today, dedicated breeders in Punjab and Khyber Pakhtunkhwa are working tirelessly to preserve and revive true Anmol bloodlines. Conservation efforts aim to protect this historic treasure from extinction and highlight its historic role in Pakistani folklore."
@@ -50,12 +51,12 @@ const initialArticles = [
 router.get("/", async (req, res) => {
   try {
     let blogs = await Blog.find().sort({ createdAt: -1 });
-    
+
     // Seed initial blogs if DB is empty
     if (blogs.length === 0) {
       blogs = await Blog.insertMany(initialArticles);
     }
-    
+
     res.json({ success: true, count: blogs.length, data: blogs });
   } catch (err) {
     res.status(500).json({ success: false, message: "Error fetching blog posts", error: err.message });

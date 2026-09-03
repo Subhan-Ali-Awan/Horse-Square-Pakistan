@@ -45,10 +45,10 @@ export const Marketplace = () => {
   const rawImages = (selectedHorse?.images && selectedHorse.images.length > 0)
     ? selectedHorse.images
     : (selectedHorse?.imageUrl ? [selectedHorse.imageUrl] : [
-        '/uploads/pasha_1.jpg',
-        '/uploads/pasha_2.jpg',
-        '/uploads/pasha_3.jpg'
-      ]);
+      '/uploads/pasha_1.jpg',
+      '/uploads/pasha_2.jpg',
+      '/uploads/pasha_3.jpg'
+    ]);
 
   const horseImages = rawImages.map(formatImgUrl);
   const currentImg = horseImages[modalImageIdx] || horseImages[0];
@@ -206,7 +206,7 @@ export const Marketplace = () => {
             <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" /> Premium Horse Trading
           </span>
           <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-            HorseSquare Marketplace Pakistan
+            Marketplace Horse-Square-Pakistan
           </h1>
           <p className="text-slate-300 text-xs sm:text-sm max-w-2xl font-light">
             Browse verified listings, review complete pedigree bloodlines, connect with breeders, and coordinate shipping across Pakistan.
@@ -709,7 +709,7 @@ export const Marketplace = () => {
 
             {/* Left Column (6 Cols): Photo Carousel & Thumbnails */}
             <div className="md:col-span-6 relative bg-slate-950 flex flex-col justify-between p-4 sm:p-6 border-b md:border-b-0 md:border-r border-slate-800 min-h-[300px] md:min-h-[500px]">
-              
+
               {/* Close Button Top-Right (Mobile) */}
               <button
                 type="button"
@@ -790,7 +790,7 @@ export const Marketplace = () => {
 
             {/* Right Column (6 Cols): Horse Details & Contact Options */}
             <div className="md:col-span-6 bg-white text-slate-800 p-5 sm:p-6 flex flex-col justify-between relative">
-              
+
               {/* Close Button Top-Right (Desktop) */}
               <button
                 type="button"

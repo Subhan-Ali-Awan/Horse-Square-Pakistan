@@ -64,7 +64,7 @@ export const Blog = () => {
             <img
               src={activeArticle.image}
               alt={activeArticle.title}
-              className="w-full h-full object-cover object-center opacity-90"
+              className="w-full h-full object-contain object-center opacity-90"
               onError={(e) => {
                 e.target.onerror = null;
                 e.target.src = "https://images.unsplash.com/photo-1598974357801-cbca100e65d3?auto=format&fit=crop&q=80&w=800";
@@ -167,11 +167,11 @@ export const Blog = () => {
               className="bg-white rounded-2xl sm:rounded-3xl overflow-hidden border border-slate-200 shadow-md hover:shadow-xl hover:border-[#D4AF37]/50 transition-all duration-300 flex flex-col group cursor-pointer"
             >
               {/* Card Image */}
-              <div className="relative h-48 sm:h-56 w-full overflow-hidden bg-slate-100">
+              <div className="relative h-48 sm:h-56 w-full overflow-hidden bg-slate-900">
                 <img
                   src={article.image}
                   alt={article.title}
-                  className="w-full h-full object-cover object-center group-hover:scale-105 transition duration-500"
+                  className="w-full h-full object-contain object-center group-hover:scale-105 transition duration-500"
                   loading="lazy"
                   onError={(e) => {
                     e.target.onerror = null;

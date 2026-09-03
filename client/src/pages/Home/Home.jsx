@@ -334,62 +334,85 @@ export const Home = () => {
             </Link>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {featuredHorses.slice(0, 6).map((horse, idx) => (
-              <div
-                key={horse._id || idx}
-                className={`liquid-glass-card liquid-glass-sheen rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 flex flex-col justify-between group border border-white/80 animate-fade-up ${delays[idx % delays.length]}`}
-              >
-                <div>
-                  <div className="relative h-56 sm:h-60 bg-slate-950 overflow-hidden flex items-center justify-center group">
-                    <img
-                      src={formatImgUrl(horse.imageUrl || horse.images?.[0] || horse.image)}
-                      alt={horse.name}
-                      className="absolute inset-0 w-full h-full object-cover object-center blur-md opacity-40 scale-110"
-                    />
-                    <img
-                      src={formatImgUrl(horse.imageUrl || horse.images?.[0] || horse.image)}
-                      alt={horse.name}
-                      className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition duration-500"
-                    />
-                    <div className="absolute top-3 left-3 bg-[#0B0F19]/80 text-amber-400 text-[10px] font-bold tracking-wider uppercase px-3 py-1 rounded-lg border border-amber-500/30 z-20">
-                      {horse.breed || 'Purebred'}
-                    </div>
-                    {horse.location && (
-                      <div className="absolute top-3 right-3 bg-black/70 text-slate-200 text-[10px] font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1 z-20">
-                        <MapPin className="w-3 h-3 text-[#D4AF37]" /> {horse.location}
+          <style>{`
+            @keyframes marquee {
+              0% { transform: translateX(0); }
+              100% { transform: translateX(-50%); }
+            }
+            .animate-marquee-container {
+              display: flex;
+              gap: 24px;
+              width: max-content;
+              animation: marquee 60s linear infinite;
+            }
+            .animate-marquee-container:hover {
+              animation-play-state: paused;
+            }
+          `}</style>
+
+          <div className="w-full overflow-hidden pb-4 pt-1">
+            <div className="animate-marquee-container">
+              {(featuredHorses.length > 0
+                ? (featuredHorses.length < 5
+                  ? [...featuredHorses.slice(0, 6), ...featuredHorses.slice(0, 6), ...featuredHorses.slice(0, 6), ...featuredHorses.slice(0, 6)]
+                  : [...featuredHorses.slice(0, 6), ...featuredHorses.slice(0, 6)])
+                : []
+              ).map((horse, idx) => (
+                <div
+                  key={`${horse._id || 'horse'}-${idx}`}
+                  className="w-[280px] sm:w-[340px] lg:w-[380px] shrink-0 liquid-glass-card liquid-glass-sheen rounded-3xl overflow-hidden shadow-xl hover:shadow-2xl transition-all duration-500 flex flex-col justify-between group border border-white/80"
+                >
+                  <div>
+                    <div className="relative h-56 sm:h-60 bg-slate-950 overflow-hidden flex items-center justify-center group">
+                      <img
+                        src={formatImgUrl(horse.imageUrl || horse.images?.[0] || horse.image)}
+                        alt={horse.name}
+                        className="absolute inset-0 w-full h-full object-cover object-center blur-md opacity-40 scale-110"
+                      />
+                      <img
+                        src={formatImgUrl(horse.imageUrl || horse.images?.[0] || horse.image)}
+                        alt={horse.name}
+                        className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition duration-500"
+                      />
+                      <div className="absolute top-3 left-3 bg-[#0B0F19]/80 text-amber-400 text-[10px] font-bold tracking-wider uppercase px-3 py-1 rounded-lg border border-amber-500/30 z-20">
+                        {horse.breed || 'Purebred'}
                       </div>
-                    )}
-                  </div>
-
-                  <div className="p-6 space-y-3">
-                    <div className="flex items-center justify-between">
-                      <span className="text-xs font-semibold text-slate-500">{horse.age ? `${horse.age} Yrs` : 'Adult'} • {horse.color || 'Solid'}</span>
-                      <span className="text-lg font-black text-[#D4AF37]">
-                        Rs. {Number(horse.price || 0).toLocaleString()}
-                      </span>
+                      {horse.location && (
+                        <div className="absolute top-3 right-3 bg-black/70 text-slate-200 text-[10px] font-semibold px-2.5 py-1 rounded-lg flex items-center gap-1 z-20">
+                          <MapPin className="w-3 h-3 text-[#D4AF37]" /> {horse.location}
+                        </div>
+                      )}
                     </div>
 
-                    <h3 className="text-lg font-bold text-[#0F172A] group-hover:text-[#D4AF37] transition-colors line-clamp-1">
-                      {horse.name}
-                    </h3>
+                    <div className="p-6 space-y-3">
+                      <div className="flex items-center justify-between">
+                        <span className="text-xs font-semibold text-slate-500">{horse.age ? `${horse.age} Yrs` : 'Adult'} • {horse.color || 'Solid'}</span>
+                        <span className="text-lg font-black text-[#D4AF37]">
+                          Rs. {Number(horse.price || 0).toLocaleString()}
+                        </span>
+                      </div>
 
-                    <p className="text-slate-600 text-xs line-clamp-2 leading-relaxed font-normal">
-                      {horse.description}
-                    </p>
+                      <h3 className="text-lg font-bold text-[#0F172A] group-hover:text-[#D4AF37] transition-colors line-clamp-1">
+                        {horse.name}
+                      </h3>
+
+                      <p className="text-slate-600 text-xs line-clamp-2 leading-relaxed font-normal">
+                        {horse.description}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="p-6 pt-0">
+                    <Link
+                      to="/marketplace"
+                      className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#D4AF37] text-white hover:text-[#0F172A] font-bold text-xs py-3 px-4 rounded-xl transition-all duration-300 shadow-md"
+                    >
+                      View Listing Details <ArrowRight className="w-3.5 h-3.5" />
+                    </Link>
                   </div>
                 </div>
-
-                <div className="p-6 pt-0">
-                  <Link
-                    to="/marketplace"
-                    className="w-full inline-flex items-center justify-center gap-2 bg-[#0F172A] hover:bg-[#D4AF37] text-white hover:text-[#0F172A] font-bold text-xs py-3 px-4 rounded-xl transition-all duration-300 shadow-md"
-                  >
-                    View Listing Details <ArrowRight className="w-3.5 h-3.5" />
-                  </Link>
-                </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
         </section>
 

@@ -415,7 +415,7 @@ export const RidingSchool = () => {
             <Sparkles className="w-3 h-3 sm:w-3.5 sm:h-3.5 text-amber-400" /> Professional Riding Academy
           </span>
           <h1 className="text-2xl sm:text-4xl font-extrabold tracking-tight">
-            Master Equestrian Skills & Horsemanship
+            Riding School Horse-Square-Pakistan
           </h1>
           <p className="text-slate-300 text-xs sm:text-sm max-w-2xl font-light">
             Book a trial riding session with Pakistan's top certified equestrian instructors. Learn balance, canter control, and traditional Nezabazi (Tent Pegging) mastery.
@@ -622,8 +622,8 @@ export const RidingSchool = () => {
                 type="button"
                 onClick={() => setSelectedCityFilter(c)}
                 className={`px-3 py-1.5 rounded-xl text-xs font-extrabold transition cursor-pointer shrink-0 ${selectedCityFilter === c
-                    ? 'bg-[#0F172A] text-amber-400 shadow-sm'
-                    : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
+                  ? 'bg-[#0F172A] text-amber-400 shadow-sm'
+                  : 'text-slate-600 hover:text-slate-900 hover:bg-slate-200/60'
                   }`}
               >
                 {c}
