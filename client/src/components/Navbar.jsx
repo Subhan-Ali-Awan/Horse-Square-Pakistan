@@ -104,8 +104,8 @@ export const Navbar = () => {
               <img src="/login and registeration .png" alt="HorseSquare Logo" className="w-full h-full object-cover rounded-full" />
             </div>
             <span className="text-base sm:text-lg lg:text-xl xl:text-2xl font-black tracking-tight bg-gradient-to-r from-white via-amber-100 to-[#D4AF37] bg-clip-text text-transparent group-hover:opacity-90 transition whitespace-nowrap">
-              <span className="hidden xl:inline">Horse-Square-Pakistan</span>
-              <span className="xl:hidden">Horse-Square</span>
+              <span className="hidden xl:inline">Horse Square Pakistan</span>
+              <span className="xl:hidden">Horse Square Pakistan</span>
             </span>
           </Link>
 
