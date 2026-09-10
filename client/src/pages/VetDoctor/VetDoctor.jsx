@@ -118,7 +118,7 @@ function MessageBubble({ msg }) {
               dangerouslySetInnerHTML={{ __html: html }}
             />
           </div>
-          <p className="text-[10px] text-slate-400 font-medium mt-1 pl-1">Dr. Max Hartwell</p>
+          <p className="text-[10px] text-slate-400 font-medium mt-1 pl-1">Dr. Max (AI Equine Assistant)</p>
         </div>
       </div>
     );
@@ -153,7 +153,7 @@ function MessageBubble({ msg }) {
             </div>
           )}
         </div>
-        <p className="text-[10px] text-slate-400 font-medium mt-1 pl-1">Dr. Max Hartwell, B.V.Sc.</p>
+        <p className="text-[10px] text-slate-400 font-medium mt-1 pl-1">Dr. Max (AI Equine Assistant)</p>
       </div>
     </div>
   );
@@ -202,7 +202,7 @@ export const VetDoctor = () => {
   // ── Local Storage persistence ─────────────────────────────────────
   useEffect(() => {
     try {
-      const saved = localStorage.getItem('drMaxChat_v2');
+      const saved = localStorage.getItem('drMaxChat_v3');
       if (saved) {
         const parsed = JSON.parse(saved);
         setMessages(parsed.messages || []);
@@ -213,7 +213,7 @@ export const VetDoctor = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem('drMaxChat_v2', JSON.stringify({ messages, showDisclaimer }));
+      localStorage.setItem('drMaxChat_v3', JSON.stringify({ messages, showDisclaimer }));
     } catch { /* ignore storage errors */ }
   }, [messages, showDisclaimer]);
 
@@ -237,9 +237,18 @@ export const VetDoctor = () => {
 
   // ── Disease chip toggle ───────────────────────────────────────────
   const toggleDisease = (key) => {
-    setSelectedDiseases((prev) =>
-      prev.includes(key) ? prev.filter((k) => k !== key) : [...prev, key]
-    );
+    const chip = DISEASE_CHIPS.find((c) => c.key === key);
+    setSelectedDiseases((prev) => {
+      const isAlreadySelected = prev.includes(key);
+      const next = isAlreadySelected ? prev.filter((k) => k !== key) : [...prev, key];
+      return next;
+    });
+
+    // If input is empty, auto-fill a clear starter question for the user
+    if (chip && !inputText.trim()) {
+      const cleanName = chip.label.split('/')[0].trim();
+      setInputText(`My horse is showing symptoms of ${cleanName}. What should I do?`);
+    }
   };
 
   // ── Clear chat ────────────────────────────────────────────────────
@@ -248,6 +257,7 @@ export const VetDoctor = () => {
     setSelectedDiseases([]);
     setInputText('');
     setShowDisclaimer(true);
+    localStorage.removeItem('drMaxChat_v3');
     localStorage.removeItem('drMaxChat_v2');
   };
 
@@ -293,8 +303,7 @@ export const VetDoctor = () => {
         ...prev,
         {
           role: 'assistant',
-          content:
-            'I apologize — I am temporarily unable to connect to my clinical knowledge base. For any urgent equine concern, please contact your local veterinarian immediately. I will be available again momentarily.',
+          content: 'Sorry, I couldn\'t process your message right now. Please check your connection and try again.',
         },
       ]);
     } finally {
@@ -341,13 +350,13 @@ export const VetDoctor = () => {
             <div className="space-y-3">
               <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-amber-500/20 text-amber-300 border border-amber-500/30 text-xs font-bold">
                 <Stethoscope className="w-4 h-4" />
-                <span>AI Equine Telemedicine — Dr. Max Hartwell</span>
+                <span>Dr. Max — AI Equine Veterinary Assistant</span>
               </div>
               <h1 className="text-2xl sm:text-4xl lg:text-5xl font-black text-white tracking-tight leading-tight">
-                Vet Doctor & Emergency Triage
+                Vet Doctor & Equine Care AI
               </h1>
               <p className="text-slate-300 max-w-2xl text-xs sm:text-sm leading-relaxed">
-                Consult Dr. Max — a board-certified equine clinician with 50 years of experience. Describe your horse's symptoms in English or Roman Urdu for an expert assessment with clinical citations.
+                Chat with Dr. Max, your AI-powered Equine Veterinary Assistant for Horse Square Pakistan. Ask anything about horse health, symptoms, nutrition, breeding, training, or emergency care in English, Roman English, or Roman Urdu.
               </p>
             </div>
             <div className="bg-white/10 backdrop-blur-md p-4 sm:p-5 rounded-2xl border border-white/20 text-center shrink-0">
@@ -400,8 +409,8 @@ export const VetDoctor = () => {
                 <span className="absolute -bottom-0.5 -right-0.5 w-3.5 h-3.5 bg-emerald-400 rounded-full border-2 border-[#1e293b] animate-pulse"></span>
               </div>
               <div>
-                <h2 className="text-white font-black text-sm sm:text-base leading-tight">Dr. Max Hartwell</h2>
-                <p className="text-amber-400/80 text-[10px] sm:text-xs font-semibold">Board-Certified Equine Veterinarian • 50 Years Experience</p>
+                <h2 className="text-white font-black text-sm sm:text-base leading-tight">Dr. Max</h2>
+                <p className="text-amber-400/80 text-[10px] sm:text-xs font-semibold">AI Equine Veterinary Assistant • Horse Square Pakistan</p>
                 <p className="text-emerald-400 text-[10px] font-bold flex items-center gap-1 mt-0.5">
                   <span className="w-1.5 h-1.5 bg-emerald-400 rounded-full"></span>
                   Available Now
@@ -542,8 +551,8 @@ export const VetDoctor = () => {
                   🩺
                 </div>
                 <div>
-                  <p className="text-sm font-bold text-slate-700">Good day. I'm Dr. Max Hartwell.</p>
-                  <p className="text-xs text-slate-400 font-medium mt-1 max-w-xs">Describe your horse's symptoms — in English or Roman Urdu. I'm here to help.</p>
+                  <p className="text-sm font-bold text-slate-700">Good day! I'm Dr. Max, your AI Equine Veterinary Assistant.</p>
+                  <p className="text-xs text-slate-400 font-medium mt-1 max-w-sm">Ask me anything about horses, symptoms, nutrition, breeding, or care — in English, Roman English, or Roman Urdu.</p>
                 </div>
                 <div className="flex flex-wrap gap-2 justify-center">
                   {['My horse is limping on his left front.', 'Mere ghore ko tez bukhar hai.', 'My horse hasn\'t eaten since morning.'].map((q) => (
@@ -570,6 +579,47 @@ export const VetDoctor = () => {
 
           {/* Input Area */}
           <div className="border-t border-slate-200 bg-white px-5 sm:px-7 py-4">
+            {/* Active Selected Disease Chips in Input Area */}
+            {selectedDiseases.length > 0 && (
+              <div className="flex flex-wrap items-center gap-2 mb-3 pb-2.5 border-b border-slate-100">
+                <span className="text-[10px] font-black text-slate-400 uppercase tracking-wider">Active Selected:</span>
+                {selectedDiseases.map((key) => {
+                  const chip = DISEASE_CHIPS.find((c) => c.key === key);
+                  if (!chip) return null;
+                  return (
+                    <span
+                      key={key}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-sm ${
+                        chip.emergency
+                          ? 'bg-red-600 text-white'
+                          : 'bg-amber-400 text-slate-900'
+                      }`}
+                    >
+                      <span>{chip.label.split('/')[0].trim()}</span>
+                      <button
+                        type="button"
+                        onClick={() => toggleDisease(key)}
+                        className="hover:opacity-75 cursor-pointer ml-1 text-xs font-bold leading-none"
+                        title="Remove symptom"
+                      >
+                        ✕
+                      </button>
+                    </span>
+                  );
+                })}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSelectedDiseases([]);
+                    setInputText('');
+                  }}
+                  className="text-[11px] font-bold text-slate-400 hover:text-red-500 underline ml-auto cursor-pointer"
+                >
+                  Clear all
+                </button>
+              </div>
+            )}
+
             <div className="flex items-end gap-3">
               <textarea
                 ref={textareaRef}
