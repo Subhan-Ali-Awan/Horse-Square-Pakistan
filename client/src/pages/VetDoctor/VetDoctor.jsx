@@ -318,17 +318,13 @@ export const VetDoctor = () => {
           },
         ]);
       } else {
-<<<<<<< HEAD
         setMessages((prev) => [
           ...prev,
           {
             role: 'assistant',
-            content: 'Dr. Max is currently processing high consultation volume. Please check your connection and try sending your query again.',
+            content: data?.error || 'Dr. Max is temporarily unavailable. Please try again in a moment.',
           },
         ]);
-=======
-        throw new Error(data?.error || 'Dr. Max is temporarily unavailable. Please try again in a moment.');
->>>>>>> c04560e (fix(port): resolve port collision with other local projects by using port 5001 and safeguard non-JSON error handling)
       }
     } catch (err) {
       console.error('[DrMax] Chat error:', err);
