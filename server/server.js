@@ -70,7 +70,7 @@ app.use("/api", (req, res) => {
 app.use(errorHandler);
 
 // ---------- Start server ----------
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 5001;
 
 const updateWhiteCloud = require("./utils/updateWhiteCloud");
 const updateStella = require("./utils/updateStella");

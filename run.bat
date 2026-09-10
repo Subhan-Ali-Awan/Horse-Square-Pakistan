@@ -14,7 +14,7 @@ start "HorseSquare Frontend Client" cmd /k "cd /d \"%~dp0client\" && npm run dev
 
 echo ---------------------------------------------------
 echo ✅ Both servers have been launched in separate windows!
-echo 🛠️  Backend URL:  http://localhost:5000
+echo 🛠️  Backend URL:  http://localhost:5001
 echo 🎨 Frontend URL: http://localhost:5173
 echo ===================================================
 pause

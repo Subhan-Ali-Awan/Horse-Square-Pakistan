@@ -1,6 +1,6 @@
 const axios = require('axios');
 
-const BASE_URL = process.env.TEST_API_URL || 'http://localhost:5000';
+const BASE_URL = process.env.TEST_API_URL || 'http://localhost:5001';
 
 async function runDrMaxTests() {
   console.log("==================================================");
