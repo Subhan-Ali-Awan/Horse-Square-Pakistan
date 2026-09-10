@@ -46,6 +46,7 @@ app.use("/api/horses", require("./routes/horseRoutes"));
 app.use("/api/auctions", require("./routes/auctionRoutes"));
 app.use("/api/breeding", require("./routes/breedingRoutes"));
 app.use("/api/vet", require("./routes/vetRoutes"));
+app.post("/api/chat", require("./middleware/rateLimit"), require("./controllers/vetController").drMaxChat);
 app.use("/api/admin", require("./routes/adminRoutes"));
 app.use("/api/contact", require("./routes/contactRoutes"));
 app.use("/api/location", require("./routes/locationRoutes"));
@@ -104,3 +105,5 @@ connectDB().then(async () => {
     }
   });
 });
+
+module.exports = app;

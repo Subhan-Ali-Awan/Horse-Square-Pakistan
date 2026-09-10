@@ -10,7 +10,10 @@ client/dist/
 server/.env
 client/.env
 client/.env.local
+client/.env.*.local
 .env
+.env.local
+.env.*.local
 
 # Uploads (images are stored on Cloudinary, not local disk in production)
 server/uploads/*

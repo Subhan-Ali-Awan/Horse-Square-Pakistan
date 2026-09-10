@@ -284,6 +284,7 @@ export const VetDoctor = () => {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
+          message: userMessage.content,
           messages: newMessages,
           horseInfo,
           diseaseContext,
@@ -292,10 +293,10 @@ export const VetDoctor = () => {
 
       const data = await res.json();
 
-      if (data.success) {
+      if (data.success && data.reply) {
         setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }]);
       } else {
-        throw new Error(data.error || 'Unknown error');
+        throw new Error(data.error || 'Dr. Max is temporarily unavailable. Please try again in a moment.');
       }
     } catch (err) {
       console.error('[DrMax] Chat error:', err);
@@ -303,7 +304,7 @@ export const VetDoctor = () => {
         ...prev,
         {
           role: 'assistant',
-          content: 'Sorry, I couldn\'t process your message right now. Please check your connection and try again.',
+          content: err.message || 'Dr. Max is temporarily unavailable. Please try again in a moment.',
         },
       ]);
     } finally {
