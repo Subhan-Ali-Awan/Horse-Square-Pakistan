@@ -12,6 +12,9 @@ const DIRECT_ATLAS_SEEDLIST =
   "mongodb://sink3n6v_db_user:X2RxZL4wVDFjJ643@ac-bcqzbyv-shard-00-00.nrgs0ro.mongodb.net:27017,ac-bcqzbyv-shard-00-01.nrgs0ro.mongodb.net:27017,ac-bcqzbyv-shard-00-02.nrgs0ro.mongodb.net:27017/horsesquare?ssl=true&replicaSet=atlas-bcqzbyv-shard-0&authSource=admin&retryWrites=true&w=majority";
 
 const connectDB = async () => {
+  if (mongoose.connection.readyState >= 1) {
+    return mongoose.connection;
+  }
   const uri = process.env.MONGO_URI || "mongodb://127.0.0.1:27017/horsesquare";
   const fastConnectOptions = {
     serverSelectionTimeoutMS: 15000, // 15s timeout to give Atlas SSL/TLS handshake & latency enough time
