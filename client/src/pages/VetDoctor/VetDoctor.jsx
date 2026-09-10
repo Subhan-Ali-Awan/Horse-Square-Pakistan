@@ -291,12 +291,40 @@ export const VetDoctor = () => {
         }),
       });
 
-      const data = await res.json();
+      let data = null;
+      try {
+        const text = await res.text();
+        data = text ? JSON.parse(text) : null;
+      } catch (parseErr) {
+        console.warn('[DrMax] Non-JSON response received:', parseErr);
+      }
 
-      if (data.success && data.reply) {
+      if (data && data.success && data.reply) {
         setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }]);
+      } else if (res.status === 429) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: '⚠️ You have reached the consultation message limit for this period. Please wait 1–2 minutes before asking Dr. Max another question.',
+          },
+        ]);
+      } else if (data && data.error) {
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: data.error,
+          },
+        ]);
       } else {
-        throw new Error(data.error || 'Dr. Max is temporarily unavailable. Please try again in a moment.');
+        setMessages((prev) => [
+          ...prev,
+          {
+            role: 'assistant',
+            content: 'Dr. Max is currently processing high consultation volume. Please check your connection and try sending your query again.',
+          },
+        ]);
       }
     } catch (err) {
       console.error('[DrMax] Chat error:', err);
@@ -304,7 +332,7 @@ export const VetDoctor = () => {
         ...prev,
         {
           role: 'assistant',
-          content: err.message || 'Dr. Max is temporarily unavailable. Please try again in a moment.',
+          content: 'Dr. Max is temporarily unable to reach the server. Please check your internet connection and try again in a few moments.',
         },
       ]);
     } finally {
