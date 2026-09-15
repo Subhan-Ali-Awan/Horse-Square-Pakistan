@@ -2,6 +2,8 @@ const express = require("express");
 const router = express.Router();
 const {
   registerUser,
+  verifyEmailOtp,
+  resendEmailOtp,
   loginUser,
   forgotPassword,
   verifyResetCode,
@@ -23,6 +25,8 @@ const handleBodyParse = (req, res, next) => {
 };
 
 router.post("/register", handleBodyParse, registerUser); // P-8 Create Account button
+router.post("/verify-email-otp", handleBodyParse, verifyEmailOtp); // 6-digit email OTP verification
+router.post("/resend-email-otp", handleBodyParse, resendEmailOtp); // Resend email OTP
 router.post("/login", handleBodyParse, loginUser); // P-7 Login Account button
 router.post("/test-welcome-email", handleBodyParse, testWelcomeEmail); // Test welcome email endpoint
 router.post("/forgot-password", handleBodyParse, forgotPassword); // P-9 Send Reset Code button

@@ -11,29 +11,29 @@ import {
 // Disease Context Map — injected into API calls when chips are selected
 // ─────────────────────────────────────────────────────────────────────────────
 const DISEASE_CONTEXTS = {
-  anuria:      "The user has selected ANURIA (No Urine). This is a life-threatening emergency. Kidney failure, severe dehydration, urinary obstruction (stones), or toxins (acorns, red maple) are likely causes. [Source: Merck Veterinary Manual, Equine Urinary Disorders]",
-  sweating:    "The user has selected HEAVY SWEATING. Possible causes: heat stress, pain, shock, Cushing's disease (PPID), electrolyte imbalance, Trypanosomiasis (Surra — common in Pakistan), or anxiety. [Source: Equine Internal Medicine, Reed, Bayly, Sellon]",
-  coughing:    "The user has selected COUGHING. Differential: dust irritation (RAO/heaves), viral infection (EHV, influenza, strangles), allergies, bacterial pneumonia, aspiration, or choke-related aspiration. [Source: Merck Veterinary Manual, Equine Respiratory]",
-  fever:       "The user has selected HIGH FEVER. Normal equine temperature: 99–101.5°F (37.2–38.6°C). Causes: viral respiratory (EHV, influenza), bacterial infection (pneumonia, wound sepsis), tick-borne disease (Lyme, Anaplasma), or Surra. [Source: Merck Veterinary Manual, Equine Fever]",
-  refusing:    "The user has selected REFUSING FEED. Causes: dental pain (sharp points, hooks, wolf teeth), gastric ulcers (90% of performance horses), colic, fever, choke, metabolic crisis, or environmental stress. [Source: AAEP Guidelines, Equine Gastric Ulcer Syndrome]",
-  footswelling:"The user has selected FOOT SWELLING. Localized: abscess, bruise, puncture wound. Generalized bilateral: cellulitis, lymphangitis, vasculitis. Hot hoof + strong digital pulse = LAMINITIS (emergency). [Source: Adams and Stashak's Lameness in Horses, 7th Ed]",
-  thrush:      "The user has selected THRUSH. Bacterial (Fusobacterium necrophorum) infection of the frog and central/lateral sulci. Presents as black, tar-like discharge with fetid odor. Common in wet/dirty environments with poor hoof care. [Source: Merck Veterinary Manual, Equine Hoof Disorders]",
-  epm:         "The user has selected EPM (Equine Protozoal Myeloencephalitis). Caused by Sarcocystis neurona via opossum fecal contamination of feed/water. Progressive neurological disease attacking brain and spinal cord. Fatal if untreated. [Source: Equine Internal Medicine, Reed, Bayly, Sellon, Ch. 12]",
-  uveitis:     "The user has selected EYE INFECTION / UVEITIS. Equine Recurrent Uveitis (ERU) is the #1 cause of blindness in horses. Signs: blepharospasm, epiphora, corneal cloudiness/edema, miosis, photophobia. Requires urgent ophthalmic evaluation. [Source: Veterinary Clinics of North America: Equine Practice, Equine Ophthalmology]",
-  choke:       "The user has selected CHOKE. Esophageal obstruction — food (grain/hay pellets) impacted in esophagus (NOT trachea). Horse cannot swallow, extends neck, feed/saliva discharges from nostrils. Aspiration pneumonia is a severe secondary risk. Requires immediate veterinary intervention. [Source: Merck Veterinary Manual, Equine Esophageal Obstruction]",
+  anuria: "The user has selected ANURIA (No Urine). This is a life-threatening emergency. Kidney failure, severe dehydration, urinary obstruction (stones), or toxins (acorns, red maple) are likely causes. [Source: Merck Veterinary Manual, Equine Urinary Disorders]",
+  sweating: "The user has selected HEAVY SWEATING. Possible causes: heat stress, pain, shock, Cushing's disease (PPID), electrolyte imbalance, Trypanosomiasis (Surra — common in Pakistan), or anxiety. [Source: Equine Internal Medicine, Reed, Bayly, Sellon]",
+  coughing: "The user has selected COUGHING. Differential: dust irritation (RAO/heaves), viral infection (EHV, influenza, strangles), allergies, bacterial pneumonia, aspiration, or choke-related aspiration. [Source: Merck Veterinary Manual, Equine Respiratory]",
+  fever: "The user has selected HIGH FEVER. Normal equine temperature: 99–101.5°F (37.2–38.6°C). Causes: viral respiratory (EHV, influenza), bacterial infection (pneumonia, wound sepsis), tick-borne disease (Lyme, Anaplasma), or Surra. [Source: Merck Veterinary Manual, Equine Fever]",
+  refusing: "The user has selected REFUSING FEED. Causes: dental pain (sharp points, hooks, wolf teeth), gastric ulcers (90% of performance horses), colic, fever, choke, metabolic crisis, or environmental stress. [Source: AAEP Guidelines, Equine Gastric Ulcer Syndrome]",
+  footswelling: "The user has selected FOOT SWELLING. Localized: abscess, bruise, puncture wound. Generalized bilateral: cellulitis, lymphangitis, vasculitis. Hot hoof + strong digital pulse = LAMINITIS (emergency). [Source: Adams and Stashak's Lameness in Horses, 7th Ed]",
+  thrush: "The user has selected THRUSH. Bacterial (Fusobacterium necrophorum) infection of the frog and central/lateral sulci. Presents as black, tar-like discharge with fetid odor. Common in wet/dirty environments with poor hoof care. [Source: Merck Veterinary Manual, Equine Hoof Disorders]",
+  epm: "The user has selected EPM (Equine Protozoal Myeloencephalitis). Caused by Sarcocystis neurona via opossum fecal contamination of feed/water. Progressive neurological disease attacking brain and spinal cord. Fatal if untreated. [Source: Equine Internal Medicine, Reed, Bayly, Sellon, Ch. 12]",
+  uveitis: "The user has selected EYE INFECTION / UVEITIS. Equine Recurrent Uveitis (ERU) is the #1 cause of blindness in horses. Signs: blepharospasm, epiphora, corneal cloudiness/edema, miosis, photophobia. Requires urgent ophthalmic evaluation. [Source: Veterinary Clinics of North America: Equine Practice, Equine Ophthalmology]",
+  choke: "The user has selected CHOKE. Esophageal obstruction — food (grain/hay pellets) impacted in esophagus (NOT trachea). Horse cannot swallow, extends neck, feed/saliva discharges from nostrils. Aspiration pneumonia is a severe secondary risk. Requires immediate veterinary intervention. [Source: Merck Veterinary Manual, Equine Esophageal Obstruction]",
 };
 
 const DISEASE_CHIPS = [
-  { key: 'anuria',       label: 'Anuria (No Urine) / پیشاب نہ آنا',                  emergency: true  },
-  { key: 'choke',        label: 'Choke / گلے میں خوراک پھنس جانا',                     emergency: true  },
-  { key: 'uveitis',      label: 'Eye Infection / Uveitis / آنکھ کا انفیکشن / یووائٹس', emergency: false },
-  { key: 'footswelling', label: 'Foot Swelling / پاؤں میں سوجن',                       emergency: false },
-  { key: 'fever',        label: 'High Fever / تیز بخار',                              emergency: false },
-  { key: 'sweating',     label: 'Heavy Sweating / زیادہ پسینہ آنا',                   emergency: false },
-  { key: 'coughing',     label: 'Coughing / کھانسی',                                  emergency: false },
-  { key: 'refusing',     label: 'Refusing Feed / خوراک نہ کھانا',                     emergency: false },
-  { key: 'thrush',       label: 'Thrush / کھُر کی سڑن / تھرش',                        emergency: false },
-  { key: 'epm',          label: 'EPM / ای پی ایم (اعصابی بیماری)',                    emergency: false },
+  { key: 'anuria', label: 'Anuria (No Urine) / پیشاب نہ آنا', emergency: true },
+  { key: 'choke', label: 'Choke / گلے میں خوراک پھنس جانا', emergency: true },
+  { key: 'uveitis', label: 'Eye Infection / Uveitis / آنکھ کا انفیکشن / یووائٹس', emergency: false },
+  { key: 'footswelling', label: 'Foot Swelling / پاؤں میں سوجن', emergency: false },
+  { key: 'fever', label: 'High Fever / تیز بخار', emergency: false },
+  { key: 'sweating', label: 'Heavy Sweating / زیادہ پسینہ آنا', emergency: false },
+  { key: 'coughing', label: 'Coughing / کھانسی', emergency: false },
+  { key: 'refusing', label: 'Refusing Feed / خوراک نہ کھانا', emergency: false },
+  { key: 'thrush', label: 'Thrush / کھُر کی سڑن / تھرش', emergency: false },
+  { key: 'epm', label: 'EPM / ای پی ایم (اعصابی بیماری)', emergency: false },
 ];
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -45,7 +45,7 @@ function renderMarkdown(text) {
 
   // Parse [Confidence: X] and [Recommended Next Step: X]
   const confidenceMatch = text.match(/\[Confidence:\s*(HIGH|MODERATE|LOW)\]/i);
-  const nextStepMatch   = text.match(/\[Recommended Next Step:\s*([^\]]+)\]/i);
+  const nextStepMatch = text.match(/\[Recommended Next Step:\s*([^\]]+)\]/i);
 
   // Strip badges from body text
   let body = text
@@ -96,9 +96,9 @@ function MessageBubble({ msg }) {
 
   const confidenceLevel = confidenceMatch?.[1]?.toUpperCase();
   const confidenceColor = {
-    HIGH:     'bg-emerald-100 text-emerald-800 border-emerald-300',
+    HIGH: 'bg-emerald-100 text-emerald-800 border-emerald-300',
     MODERATE: 'bg-amber-100 text-amber-800 border-amber-300',
-    LOW:      'bg-red-100 text-red-800 border-red-300',
+    LOW: 'bg-red-100 text-red-800 border-red-300',
   }[confidenceLevel] || 'bg-slate-100 text-slate-700 border-slate-200';
 
   if (isEmergency) {
@@ -187,17 +187,17 @@ export const VetDoctor = () => {
   useScrollReveal('.reveal-on-scroll');
 
   // ── Chat State ────────────────────────────────────────────────────
-  const [messages,         setMessages]         = useState([]);
-  const [horseInfo,        setHorseInfo]        = useState({ name: '', breed: '', age: '', sex: '' });
+  const [messages, setMessages] = useState([]);
+  const [horseInfo, setHorseInfo] = useState({ name: '', breed: '', age: '', sex: '' });
   const [selectedDiseases, setSelectedDiseases] = useState([]);
-  const [isTyping,         setIsTyping]         = useState(false);
-  const [inputText,        setInputText]        = useState('');
-  const [showDisclaimer,   setShowDisclaimer]   = useState(true);
-  const [showHorseInfo,    setShowHorseInfo]    = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
+  const [inputText, setInputText] = useState('');
+  const [showDisclaimer, setShowDisclaimer] = useState(true);
+  const [showHorseInfo, setShowHorseInfo] = useState(false);
 
   // ── Refs ──────────────────────────────────────────────────────────
   const chatContainerRef = useRef(null);
-  const textareaRef      = useRef(null);
+  const textareaRef = useRef(null);
 
   // ── Local Storage persistence ─────────────────────────────────────
   useEffect(() => {
@@ -291,33 +291,12 @@ export const VetDoctor = () => {
         }),
       });
 
-      let data = null;
-      try {
-        const text = await res.text();
-        data = text ? JSON.parse(text) : null;
-      } catch (parseErr) {
-        console.warn('[DrMax] Non-JSON response received:', parseErr);
-      }
+      const data = await res.json();
 
-      if (data && data.success && data.reply) {
+      if (data.success && data.reply) {
         setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }]);
-      } else if (res.status === 429) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: 'assistant',
-            content: '⚠️ You have reached the consultation message limit for this period. Please wait 1–2 minutes before asking Dr. Max another question.',
-          },
-        ]);
-      } else if (data && data.error) {
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: 'assistant',
-            content: data.error,
-          },
-        ]);
       } else {
+<<<<<<< HEAD
         setMessages((prev) => [
           ...prev,
           {
@@ -325,6 +304,9 @@ export const VetDoctor = () => {
             content: data?.error || 'Dr. Max is temporarily unavailable. Please try again in a moment.',
           },
         ]);
+=======
+        throw new Error(data.error || 'Dr. Max is temporarily unavailable. Please try again in a moment.');
+>>>>>>> 8e774aa (Otp send to inbox)
       }
     } catch (err) {
       console.error('[DrMax] Chat error:', err);
@@ -332,7 +314,7 @@ export const VetDoctor = () => {
         ...prev,
         {
           role: 'assistant',
-          content: 'Dr. Max is temporarily unable to reach the server. Please check your internet connection and try again in a few moments.',
+          content: err.message || 'Dr. Max is temporarily unavailable. Please try again in a moment.',
         },
       ]);
     } finally {
@@ -618,11 +600,10 @@ export const VetDoctor = () => {
                   return (
                     <span
                       key={key}
-                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-sm ${
-                        chip.emergency
-                          ? 'bg-red-600 text-white'
-                          : 'bg-amber-400 text-slate-900'
-                      }`}
+                      className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-sm ${chip.emergency
+                        ? 'bg-red-600 text-white'
+                        : 'bg-amber-400 text-slate-900'
+                        }`}
                     >
                       <span>{chip.label.split('/')[0].trim()}</span>
                       <button

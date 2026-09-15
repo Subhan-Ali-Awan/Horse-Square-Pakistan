@@ -18,12 +18,17 @@ function cleanAIOutput(text) {
 }
 
 // ===================================================
+<<<<<<< HEAD
 // MAIN CHAT HANDLER — Dr. Max Conversational AI
 // Prioritizes OpenAI Official API with Groq Fallback
+=======
+// MAIN CHAT HANDLER — Exclusively Groq Real AI
+>>>>>>> 8e774aa (Otp send to inbox)
 // ===================================================
 
 exports.drMaxChat = async (req, res) => {
   try {
+<<<<<<< HEAD
     const { horseInfo, diseaseContext } = req.body;
 
     // 1. Extract and validate user message and conversation history
@@ -46,6 +51,12 @@ exports.drMaxChat = async (req, res) => {
         success: false,
         error: "Message cannot be empty."
       });
+=======
+    const { messages, horseInfo, diseaseContext } = req.body;
+
+    if (!messages || !Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ success: false, error: "Messages array is required." });
+>>>>>>> 8e774aa (Otp send to inbox)
     }
 
     // Safe server logging (NEVER log keys or private credentials)
@@ -62,10 +73,27 @@ exports.drMaxChat = async (req, res) => {
     if (signalment) systemPrompt += `\n\n[Active Patient Details]:${signalment}`;
     if (diseaseContext) systemPrompt += `\n[Context/Symptom Flag]: ${diseaseContext}`;
 
+<<<<<<< HEAD
     // 3. Format and sanitize conversation history (keep last 12 turns for optimal context)
     const sanitizedHistory = rawHistory
+=======
+    const lastUserMessage = messages.filter((m) => m.role === "user").pop()?.content || "";
+    console.log(`\n[VetChat] >>> Message received: "${lastUserMessage}" (History: ${messages.length} messages)`);
+
+    const groqKey = (process.env.GROQ_API_KEY || "").trim();
+
+    if (!groqKey) {
+      return res.status(500).json({
+        success: false,
+        error: "GROQ_API_KEY is not configured on the server."
+      });
+    }
+
+    // Format and sanitize conversation history for Groq chat completions
+    const sanitizedHistory = messages
+>>>>>>> 8e774aa (Otp send to inbox)
       .filter((m) => m && typeof m.content === "string" && m.content.trim().length > 0)
-      .slice(-12)
+      .slice(-12) // Keep last 12 messages for optimal context
       .map((m) => ({
         role: m.role === "assistant" ? "assistant" : "user",
         content: m.content.trim()
@@ -82,6 +110,7 @@ exports.drMaxChat = async (req, res) => {
       ...sanitizedHistory
     ];
 
+<<<<<<< HEAD
     const openaiKey = (process.env.OPENAI_API_KEY || "").trim();
     const groqKey = (process.env.GROQ_API_KEY || "").trim();
 
@@ -126,12 +155,55 @@ exports.drMaxChat = async (req, res) => {
         } catch (err) {
           lastError = err.response?.data?.error?.message || err.message;
           console.warn(`[AI CHAT] OpenAI request failed (${modelName}):`, lastError);
+=======
+    const modelsToTry = [
+      "openai/gpt-oss-20b",
+      "llama-3.3-70b-versatile"
+    ];
+
+    let lastError = "";
+
+    for (const modelName of modelsToTry) {
+      try {
+        console.log(`[VetChat - Groq] Calling model: ${modelName}...`);
+        const gRes = await axios.post(
+          "https://api.groq.com/openai/v1/chat/completions",
+          {
+            model: modelName,
+            messages: chatMessages,
+            temperature: 0.7,
+            max_tokens: 1500
+          },
+          {
+            headers: {
+              "Authorization": `Bearer ${groqKey}`,
+              "Content-Type": "application/json"
+            },
+            timeout: 25000
+          }
+        );
+
+        const rawText = gRes.data?.choices?.[0]?.message?.content;
+        const cleaned = cleanAIOutput(rawText);
+        if (cleaned && cleaned.length > 0) {
+          console.log(`[VetChat - Groq] ✅ SUCCESS: Real AI generated response using Groq (${modelName})`);
+          return res.json({
+            success: true,
+            reply: cleaned,
+            provider: "Groq",
+            model: modelName
+          });
+>>>>>>> 8e774aa (Otp send to inbox)
         }
+      } catch (err) {
+        lastError = err.response?.data?.error?.message || err.message;
+        console.error(`[VetChat - Groq] ❌ Error with ${modelName}:`, lastError);
       }
     } else {
       lastError = "OPENAI_API_KEY is not configured on the server.";
     }
 
+<<<<<<< HEAD
     // ─────────────────────────────────────────────────────────
     // TIER 2: Groq Cloud AI (High-Speed Backup Engine)
     // Uses active supported models on Groq
@@ -191,6 +263,67 @@ exports.drMaxChat = async (req, res) => {
       success: false,
       error: "Dr. Max AI service is temporarily unavailable. Please verify API key credits or try again in a moment.",
       details: lastError
+=======
+    // High-performance dynamic Cloud AI fallback if Groq encounters rate limit/issues
+    try {
+      console.log("[VetChat] Attempting Cloud AI model fallback...");
+      const convoSummary = chatMessages.map(m => `${m.role === 'user' ? 'User' : 'Assistant'}: ${m.content}`).join('\n');
+      const promptText = `Instructions:\n${systemPrompt}\n\nConversation:\n${convoSummary}\n\nDr. Max:`;
+
+      const resp = await axios.get(
+        `https://text.pollinations.ai/${encodeURIComponent(promptText)}?model=openai`,
+        {
+          headers: {
+            "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) Chrome/120.0.0.0",
+            "Accept": "text/plain, */*"
+          },
+          timeout: 15000
+        }
+      );
+
+      const raw = typeof resp.data === "string" ? resp.data : (resp.data?.choices?.[0]?.message?.content || resp.data?.text);
+      const cleaned = cleanAIOutput(raw);
+      if (cleaned && cleaned.length > 5) {
+        console.log("[VetChat] ✅ SUCCESS: Dynamic response generated via Cloud AI");
+        return res.json({ success: true, reply: cleaned, provider: "CloudAI", model: "openai" });
+      }
+    } catch (cErr) {
+      console.warn("[VetChat] Cloud AI attempt note:", cErr.message);
+    }
+
+    // If Groq has temporary issue, try Gemini as backup
+    const geminiKey = (process.env.GEMINI_API_KEY || "").trim();
+    if (geminiKey && geminiKey.startsWith("AIzaSy")) {
+      try {
+        const geminiContents = messages.map((m) => ({
+          role: m.role === "assistant" ? "model" : "user",
+          parts: [{ text: m.content }]
+        }));
+
+        const gResp = await axios.post(
+          `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${geminiKey}`,
+          {
+            systemInstruction: { parts: [{ text: systemPrompt }] },
+            contents: geminiContents
+          },
+          { headers: { "Content-Type": "application/json" }, timeout: 20000 }
+        );
+
+        const rawText = gResp.data?.candidates?.[0]?.content?.parts?.[0]?.text;
+        const cleaned = cleanAIOutput(rawText);
+        if (cleaned) {
+          return res.json({ success: true, reply: cleaned, provider: "GoogleGemini", model: "gemini-2.0-flash" });
+        }
+      } catch (gemErr) {
+        console.error("[VetChat - Gemini Backup] Error:", gemErr.message);
+      }
+    }
+
+    // Return detailed error if all fail
+    return res.status(503).json({
+      success: false,
+      error: `AI Error: ${lastError}`
+>>>>>>> 8e774aa (Otp send to inbox)
     });
 
   } catch (error) {

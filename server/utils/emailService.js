@@ -1,10 +1,17 @@
 const nodemailer = require("nodemailer");
+const dotenv = require("dotenv");
 
 /**
  * Create Nodemailer Transporter
  * Sender account: horsesquarepakistan@gmail.com
  */
 const createTransporter = () => {
+  try {
+    dotenv.config({ override: true });
+  } catch (e) {
+    // Ignore dotenv error in prod
+  }
+
   const emailUser = (process.env.EMAIL_USER || "horsesquarepakistan@gmail.com").trim();
   const rawPass = process.env.EMAIL_PASS || process.env.GMAIL_APP_PASSWORD || "";
   const emailPass = rawPass.trim().replace(/^['"]|['"]$/g, "").replace(/\s+/g, "");
@@ -22,8 +29,7 @@ const createTransporter = () => {
     });
   }
 
-  console.log("ℹ️ [EMAIL NOTICE] EMAIL_PASS not set in server/.env. Logging emails locally to console. Set EMAIL_PASS in server/.env to send real inbox emails.");
-  // Fallback json transport for development logging if Gmail App Password is not yet set
+  console.log("ℹ️ [EMAIL NOTICE] Set a 16-character Google App Password under EMAIL_PASS in server/.env to send real inbox emails.");
   return nodemailer.createTransport({
     jsonTransport: true,
   });
@@ -553,11 +559,137 @@ Connecting Pakistan’s Equestrian Community`;
   return await sendEmail({ to: winnerEmail, subject, text: plainText, html });
 };
 
+/**
+ * Send 6-Digit Email Verification Code (OTP) from horsesquarepakistan@gmail.com
+ */
+const sendEmailVerificationOtp = async ({ email, name, otp }) => {
+  const userName = name || "Valued Member";
+  const cleanEmail = String(email || "").trim().toLowerCase();
+  const subject = `🔐 [${otp}] Your Horse Square Pakistan Email Verification Code`;
+
+  console.log(`📧 Dispatching 6-Digit OTP Email to: ${cleanEmail}`);
+
+  const plainText = `Dear ${userName},
+
+Thank you for registering with Horse Square Pakistan!
+
+Your 6-Digit Email Verification Code is:
+${otp}
+
+This code will expire in 10 minutes. Please enter this code on the verification screen to activate your account.
+
+If you did not request this verification, please ignore this email.
+
+Kind regards,
+Horse Square Pakistan
+📧 horsesquarepakistan@gmail.com
+Connecting Pakistan’s Equestrian Community`;
+
+  const html = `
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 600px; margin: 0 auto; background-color: #ffffff; border-radius: 16px; overflow: hidden; border: 1px solid #E2E8F0; box-shadow: 0 10px 25px rgba(0,0,0,0.08);">
+      
+      <!-- Header Banner -->
+      <div style="background: linear-gradient(135deg, #020B21 0%, #0F172A 50%, #1E293B 100%); padding: 32px 24px; text-align: center; border-bottom: 3px solid #D4AF37;">
+        <h1 style="color: #D4AF37; margin: 0; font-size: 24px; font-weight: 800; letter-spacing: 0.5px;">HORSE SQUARE PAKISTAN 🐎</h1>
+        <p style="color: #94A3B8; margin: 6px 0 0 0; font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 2px;">Official Email Verification</p>
+      </div>
+
+      <!-- Content Body -->
+      <div style="padding: 32px 28px; color: #334155; line-height: 1.7; font-size: 15px;">
+        <p style="color: #0F172A; font-weight: 700; font-size: 17px; margin-top: 0;">Dear <strong>${userName}</strong>,</p>
+        
+        <p style="color: #334155; margin-bottom: 18px;">
+          Thank you for signing up with <strong>Horse Square Pakistan</strong>. To protect the integrity of our equestrian marketplace and activate your account, please verify your email address using the one-time verification code below:
+        </p>
+        
+        <!-- Large OTP Box -->
+        <div style="background: #F8FAFC; border: 2px dashed #D4AF37; border-radius: 14px; padding: 24px 20px; text-align: center; margin: 24px 0;">
+          <p style="margin: 0 0 8px 0; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.5px; color: #64748B;">Your 6-Digit Verification Code</p>
+          <div style="font-size: 38px; font-weight: 900; letter-spacing: 8px; color: #020B21; font-family: monospace; padding: 8px 0;">
+            ${otp}
+          </div>
+          <p style="margin: 8px 0 0 0; font-size: 12px; color: #DC2626; font-weight: 700;">
+            ⏱ Valid for 10 minutes only
+          </p>
+        </div>
+
+        <div style="background-color: #FFFBEB; border-left: 4px solid #F59E0B; border-radius: 0 10px 10px 0; padding: 14px 16px; margin: 20px 0; font-size: 13px; color: #92400E;">
+          <strong>Security Notice:</strong> Never share this code with anyone. Horse Square Pakistan representatives will never ask for your password or verification code.
+        </div>
+
+        <p style="color: #64748B; font-size: 13px; margin-top: 20px;">
+          If you did not request this account registration or believe you received this in error, please disregard this message.
+        </p>
+
+        <!-- Signature -->
+        <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #E2E8F0; font-size: 13px; color: #64748B;">
+          <p style="margin: 0; font-weight: 700; color: #0F172A;">Kind regards,</p>
+          <p style="margin: 2px 0 0 0; font-weight: 800; color: #D4AF37; font-size: 15px;">Horse Square Pakistan Security Team</p>
+          <p style="margin: 4px 0 0 0;">📧 <a href="mailto:horsesquarepakistan@gmail.com" style="color: #2563eb; text-decoration: none;">horsesquarepakistan@gmail.com</a></p>
+          <p style="margin: 2px 0 0 0;">Connecting Pakistan’s Equestrian Community</p>
+        </div>
+      </div>
+
+      <!-- Footer -->
+      <div style="background-color: #020B21; padding: 18px; text-align: center; color: #94A3B8; font-size: 11px;">
+        <p style="margin: 0;">Dispatched by Horse Square Pakistan Identity & Access Management</p>
+        <p style="margin: 4px 0 0 0; color: #64748B;">© ${new Date().getFullYear()} Horse Square Pakistan • All Rights Reserved</p>
+      </div>
+
+    </div>
+  `;
+
+  return await sendEmail({ to: cleanEmail, subject, text: plainText, html });
+};
+
+/**
+ * Verify Google SMTP Connection Health Check
+ */
+const verifySmtpConnection = async () => {
+  try {
+    dotenv.config({ override: true });
+  } catch (e) {
+    // Ignore dotenv error
+  }
+
+  const emailUser = (process.env.EMAIL_USER || "horsesquarepakistan@gmail.com").trim();
+  const rawPass = process.env.EMAIL_PASS || process.env.GMAIL_APP_PASSWORD || "";
+  const emailPass = rawPass.trim().replace(/^['"]|['"]$/g, "").replace(/\s+/g, "");
+
+  if (!emailPass || emailPass === "your_gmail_app_password_here" || emailPass === "horsesquarepakistan@177241" || emailPass === "abcdefghijklmnop") {
+    console.log("\n⚠️ [GMAIL SMTP NOTICE] Google requires a 16-character App Password in server/.env (EMAIL_PASS) to deliver emails to real inboxes.");
+    return false;
+  }
+
+  try {
+    const transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: emailUser,
+        pass: emailPass,
+      },
+      tls: {
+        rejectUnauthorized: false,
+      },
+    });
+
+    await transporter.verify();
+    console.log(`\n✅ [GMAIL SMTP AUTHENTICATED] Successfully connected to Google Mail servers for ${emailUser}! Emails will be delivered to real inboxes.\n`);
+    return true;
+  } catch (err) {
+    console.error(`\n❌ [GMAIL SMTP AUTH FAILED] Google rejected the password for ${emailUser}: ${err.message}`);
+    console.error("👉 Solution: Generate a 16-character Google App Password under Google Account -> Security -> App Passwords and put it in server/.env under EMAIL_PASS.\n");
+    return false;
+  }
+};
+
 module.exports = {
   sendEmail,
   sendRidingTrialEmail,
   sendNewsletterConfirmationEmail,
   sendWelcomeEmail,
+  sendEmailVerificationOtp,
   broadcastNewListingEmail,
   sendAuctionWinnerEmail,
+  verifySmtpConnection,
 };

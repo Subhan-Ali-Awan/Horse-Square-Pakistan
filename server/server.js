@@ -90,8 +90,10 @@ connectDB().then(async () => {
   await updateAuctions(); // removes Striker and Sher-Dil from live auctions
   await updatePasha(); // uploads Pasha horse photos to Cloudinary and updates DB
 
-  const server = app.listen(PORT, () => {
+  const server = app.listen(PORT, async () => {
     console.log(`🚀 HorseSquare Backend API running on http://localhost:${PORT}/api`);
+    const { verifySmtpConnection } = require("./utils/emailService");
+    await verifySmtpConnection();
   });
 
   server.on("error", (err) => {

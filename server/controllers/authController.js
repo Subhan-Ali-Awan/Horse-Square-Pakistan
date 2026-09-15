@@ -1,7 +1,30 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const User = require("../models/User");
-const { sendWelcomeEmail } = require("../utils/emailService");
+const { sendWelcomeEmail, sendEmailVerificationOtp } = require("../utils/emailService");
+
+// Helper: Check if email has valid official format and domain structure
+const isValidOfficialEmail = (email) => {
+  if (!email || typeof email !== "string") return false;
+  const cleanEmail = email.trim().toLowerCase();
+  
+  // RFC-compliant email regex: user@domain.tld (tld >= 2 letters)
+  const emailRegex = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,15}$/;
+  if (!emailRegex.test(cleanEmail)) return false;
+
+  const parts = cleanEmail.split("@");
+  if (parts.length !== 2) return false;
+  const domain = parts[1];
+
+  if (!domain || !domain.includes(".")) return false;
+  if (domain.includes("..") || domain.startsWith(".") || domain.endsWith(".")) return false;
+
+  const domainParts = domain.split(".");
+  const tld = domainParts[domainParts.length - 1];
+  if (!tld || tld.length < 2 || !/^[a-z]+$/.test(tld)) return false;
+
+  return true;
+};
 
 // Helper: sign a JWT for a given user id
 const signToken = (id) => {
@@ -24,6 +47,7 @@ const buildUserResponse = (user) => ({
   userType: user.userType,
   role: user.role,
   status: user.status,
+  isEmailVerified: !!user.isEmailVerified,
 });
 
 // ===================================================
@@ -50,52 +74,194 @@ exports.registerUser = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Please fill in all required fields" });
     }
 
+    const cleanEmail = String(email).trim().toLowerCase();
+    if (!isValidOfficialEmail(cleanEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid official email address (e.g., name@gmail.com, name@domain.com)",
+      });
+    }
+
     if (confirmPassword !== undefined && confirmPassword !== "" && password !== confirmPassword) {
       return res.status(400).json({ success: false, message: "Passwords do not match" });
     }
 
-    const existingUser = await User.findOne({ email: email.toLowerCase() });
-    if (existingUser) {
-      return res.status(400).json({ success: false, message: "An account with this email already exists" });
+    // Generate 6-digit OTP verification code
+    const otp = crypto.randomInt(100000, 999999).toString();
+    const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    let user = await User.findOne({ email: cleanEmail }).select("+emailVerificationCode +emailVerificationExpires");
+
+    if (user) {
+      if (user.isEmailVerified) {
+        return res.status(400).json({ success: false, message: "An account with this email already exists and is verified. Please log in." });
+      } else {
+        // User created earlier but not verified: update details and generate fresh OTP
+        user.firstName = firstName;
+        user.lastName = lastName;
+        user.phone = phone;
+        user.city = city;
+        user.password = password;
+        user.userType = userType;
+        user.emailVerificationCode = otp;
+        user.emailVerificationExpires = otpExpires;
+        await user.save();
+      }
+    } else {
+      user = await User.create({
+        firstName,
+        lastName,
+        email: cleanEmail,
+        phone,
+        city,
+        password,
+        userType,
+        isEmailVerified: false,
+        emailVerificationCode: otp,
+        emailVerificationExpires: otpExpires,
+        welcomeEmailSent: false,
+      });
     }
 
-    const user = await User.create({
-      firstName,
-      lastName,
-      email,
-      phone,
-      city,
-      password,
-      userType,
-      welcomeEmailSent: false,
+    // Send 6-digit verification code from horsesquarepakistan@gmail.com to user's email
+    const emailResult = await sendEmailVerificationOtp({
+      email: cleanEmail,
+      name: `${firstName} ${lastName}`.trim(),
+      otp,
     });
 
-    // Automatically send official Welcome Email from horsesquarepakistan@gmail.com
-    const welcomeUserData = {
-      _id: user._id,
-      firstName: user.firstName,
-      lastName: user.lastName,
-      email: user.email,
-      name: `${user.firstName} ${user.lastName}`.trim(),
-    };
-
-    sendWelcomeEmail(welcomeUserData)
-      .then(async (result) => {
-        if (result && result.success) {
-          await User.findByIdAndUpdate(user._id, { welcomeEmailSent: true });
-        }
-      })
-      .catch((err) => {
-        console.error("[WELCOME EMAIL DISPATCH ERROR]:", err.message);
+    if (!emailResult.success) {
+      return res.status(500).json({
+        success: false,
+        message: `Failed to dispatch email to ${cleanEmail}: ${emailResult.error}. Please check Google App Password in server/.env.`,
       });
+    }
 
-    const token = signToken(user._id);
-
+    // SECURITY: The OTP is strictly delivered to the user's email and never exposed in the response
     res.status(201).json({
       success: true,
-      message: "Account created successfully",
-      token,
-      user: buildUserResponse(user),
+      requireOtp: true,
+      email: cleanEmail,
+      message: `A 6-digit verification code has been dispatched to ${cleanEmail}. Please check your inbox and enter it below.`,
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ===================================================
+// POST /api/auth/verify-email-otp -> Verify 6-digit email OTP
+// ===================================================
+exports.verifyEmailOtp = async (req, res, next) => {
+  try {
+    const { email, otp } = req.body || {};
+
+    if (!email || !otp) {
+      return res.status(400).json({ success: false, message: "Email and 6-digit verification code are required" });
+    }
+
+    const cleanEmail = String(email).trim().toLowerCase();
+    const cleanOtp = String(otp).trim();
+
+    const user = await User.findOne({
+      email: cleanEmail,
+    }).select("+emailVerificationCode +emailVerificationExpires");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "No account found with this email address" });
+    }
+
+    if (user.isEmailVerified) {
+      return res.status(200).json({
+        success: true,
+        message: "Email is already verified. Please sign in with your credentials.",
+      });
+    }
+
+    if (!user.emailVerificationCode || user.emailVerificationCode !== cleanOtp) {
+      return res.status(400).json({ success: false, message: "Invalid verification code. Please check your email and try again." });
+    }
+
+    if (user.emailVerificationExpires && user.emailVerificationExpires < Date.now()) {
+      return res.status(400).json({ success: false, message: "Verification code has expired. Please request a new code." });
+    }
+
+    // Mark user email as verified
+    user.isEmailVerified = true;
+    user.emailVerificationCode = undefined;
+    user.emailVerificationExpires = undefined;
+    await user.save();
+
+    // Automatically send official Welcome Email from horsesquarepakistan@gmail.com
+    if (!user.welcomeEmailSent) {
+      sendWelcomeEmail(user)
+        .then(async (result) => {
+          if (result && result.success) {
+            await User.findByIdAndUpdate(user._id, { welcomeEmailSent: true });
+          }
+        })
+        .catch((err) => {
+          console.error("[WELCOME EMAIL DISPATCH ERROR]:", err.message);
+        });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Email verified successfully! You can now log in with your credentials.",
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
+// ===================================================
+// POST /api/auth/resend-email-otp -> Resend 6-digit OTP
+// ===================================================
+exports.resendEmailOtp = async (req, res, next) => {
+  try {
+    const { email } = req.body || {};
+
+    if (!email) {
+      return res.status(400).json({ success: false, message: "Email address is required" });
+    }
+
+    const cleanEmail = String(email).trim().toLowerCase();
+    if (!isValidOfficialEmail(cleanEmail)) {
+      return res.status(400).json({ success: false, message: "Please provide a valid official email address" });
+    }
+
+    const user = await User.findOne({ email: cleanEmail }).select("+emailVerificationCode +emailVerificationExpires");
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: "No account found with this email" });
+    }
+
+    if (user.isEmailVerified) {
+      return res.status(400).json({ success: false, message: "Your email is already verified. Please sign in directly." });
+    }
+
+    // Generate fresh 6-digit OTP
+    const otp = crypto.randomInt(100000, 999999).toString();
+    user.emailVerificationCode = otp;
+    user.emailVerificationExpires = new Date(Date.now() + 10 * 60 * 1000);
+    await user.save();
+
+    const emailResult = await sendEmailVerificationOtp({
+      email: cleanEmail,
+      name: `${user.firstName} ${user.lastName}`.trim(),
+      otp,
+    });
+
+    if (!emailResult.success) {
+      return res.status(500).json({
+        success: false,
+        message: `Failed to dispatch email to ${cleanEmail}: ${emailResult.error}. Please check Google App Password in server/.env.`,
+      });
+    }
+
+    res.status(200).json({
+      success: true,
+      message: `A fresh 6-digit verification code has been dispatched to ${cleanEmail}.`,
     });
   } catch (error) {
     next(error);
@@ -113,8 +279,15 @@ exports.loginUser = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Please provide email and password" });
     }
 
-    // .select("+password") because password has select:false in the schema
-    const user = await User.findOne({ email: email.toLowerCase() }).select("+password");
+    const cleanEmail = String(email).trim().toLowerCase();
+    if (!isValidOfficialEmail(cleanEmail)) {
+      return res.status(400).json({
+        success: false,
+        message: "Please enter a valid official email address (e.g., name@gmail.com, name@domain.com)",
+      });
+    }
+
+    const user = await User.findOne({ email: cleanEmail }).select("+password +emailVerificationCode +emailVerificationExpires");
 
     if (!user || !(await user.matchPassword(password))) {
       return res.status(401).json({ success: false, message: "Invalid email or password" });
@@ -122,6 +295,35 @@ exports.loginUser = async (req, res, next) => {
 
     if (user.status === "blocked") {
       return res.status(403).json({ success: false, message: "Your account has been blocked. Contact support." });
+    }
+
+    // Check if email has been verified via OTP
+    if (!user.isEmailVerified) {
+      // Generate fresh OTP code and dispatch it to their email
+      const otp = crypto.randomInt(100000, 999999).toString();
+      user.emailVerificationCode = otp;
+      user.emailVerificationExpires = new Date(Date.now() + 10 * 60 * 1000);
+      await user.save();
+
+      const emailResult = await sendEmailVerificationOtp({
+        email: cleanEmail,
+        name: `${user.firstName} ${user.lastName}`.trim(),
+        otp,
+      });
+
+      if (!emailResult.success) {
+        return res.status(500).json({
+          success: false,
+          message: `Your account is unverified, but we failed to send OTP to ${cleanEmail}: ${emailResult.error}. Please check Google App Password in server/.env.`,
+        });
+      }
+
+      return res.status(403).json({
+        success: false,
+        requireVerification: true,
+        email: cleanEmail,
+        message: "Your email address is not verified yet. We have sent a 6-digit verification code to your email. Please verify your email to continue.",
+      });
     }
 
     user.lastLogin = new Date();
@@ -211,16 +413,11 @@ exports.forgotPassword = async (req, res, next) => {
     user.resetCodeExpires = Date.now() + 60 * 1000 * 10; // valid 10 minutes (frontend resend timer is 60s)
     await user.save();
 
-    // ---- In a real deployed project you'd email this code via nodemailer ----
-    // For FYP/demo purposes we log it to the server console so you can test the flow:
     console.log(`📧 Password reset code for ${user.email}: ${resetCode}`);
 
     res.status(200).json({
       success: true,
       message: "Reset code sent successfully. Check your email.",
-      // devCode is only included so you can test without setting up a real mail server.
-      // REMOVE this field before submitting/deploying your final project.
-      devCode: resetCode,
     });
   } catch (error) {
     next(error);
@@ -355,4 +552,3 @@ exports.changePassword = async (req, res, next) => {
     next(error);
   }
 };
-

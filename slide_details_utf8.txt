@@ -1,0 +1,308 @@
+﻿================ SLIDE 1 ================
+ - CampusConnect: A Unified Platform for Student Forumsand Campus Services
+ - Presented By:
+ - SHUJAAT ALI HASHIM          SAGHEER AHMAD
+ - 2022f-mulbscs-093                  2022f-mulbscs-104
+ - Supervised By:
+ - Muhammad Mohsin Saeed
+ - Lecturer, School of Computer Science
+ - School of Computer Science
+ - MINHAJ UNIVERSITY LAHORE
+================ SLIDE 2 ================
+ - Table of Contents
+ - 1. Introduction & Background
+ - 2. Problem Statement
+ - 3. Literature Review & Gap Analysis
+ - 4. System Requirements & Objectives
+ - 5. System Architecture & Design
+ - 6. Implementation & Tech Stack
+ - 7. Testing & Results
+ - 8. Demo, Conclusion & Future Work
+================ SLIDE 3 ================
+ - Introduction
+ - CampusConnect is a dedicated web platform built exclusively for Minhaj University  requiring an official registration number and campus email to sign in. This ensures a verified, safe community. The platform brings many campus services selected via student surveys into one unified web application, built on the MERN stack (MongoDB, Express, React, Node.js). The application is expected to sit beside the existing CMS.
+================ SLIDE 4 ================
+ - Problem Statement
+ - Minhaj University Lahore's current CMS only handles academic administration and completely lacks student-to-student community features. This causes, students to rely on unverified, unmoderated social media channels (Instagram and Facebook community pages), which put them at risk of being exposed to inappropriate content and may prevent meaningful alumni networking. This absence of a centralized, secure platform also leaves students struggling with disorganized daily campus servicessuch as petitions and lost-and-found, as well as limited, expensive food options.
+================ SLIDE 5 ================
+ - Literature Review
+ - CampusConnect draws inspiration from existing platforms while addressing gaps none of them individually solved.
+ - Reddit & Stack Overflow: Inspired the main idea of "Minhaj being a community" and the threaded discussion structure  CampusConnect uses the same nested reply format adapted for a campus context.
+ - Foodpanda: The food ordering workflow (menu browsing  cart  order tracking) was redesigned and adapted for a single campus delivery point.
+ - InDrive: The rider's shared open ticket pool model was inspired by InDrive's ride-ticket system, adapted for campus food delivery.
+ - COMSATS Plus: The concept of bundling multiple university services into one platform was directly inspired by this existing campus super-app.
+ - Key Research Finding: No existing platform and LMS/CMS portals implemented or offered by other Universities; combines verified identity, AI content moderation, peer discussion, food ordering, and career networking into one campus-specific solution.
+================ SLIDE 6 ================
+ - Gap Analysis
+ - Feature
+ - Univ. Portal
+ - Social Groups
+ - Food Apps
+ - CampusConnect
+ - Verified campus members only
+ - Yes
+ - No
+ - No
+ - Yes
+ - Peer-to-peer discussion
+ - No
+ - Partial
+ - No but there are reviews or previous customers
+ - Yes
+ - AI content moderation
+ - No
+ - No, sometimes human moderation
+ - No
+ - Yes
+ - Formal petitions with signatures
+ - No
+ - No
+ - No
+ - Yes
+ - Lost & Found tracking
+ - No
+ - No
+ - No
+ - Yes
+ - Food ordered to campus gate
+ - No
+ - No
+ - Yes but Costly
+ - Yes
+ - Alumni career networking
+ - No
+ - Sometimes
+ - No
+ - Yes
+ - Bus routes & campus services
+ - No
+ - No
+ - No
+ - Yes
+================ SLIDE 7 ================
+ - Goals, Objectives & System Modules
+ - The primary goal of CampusConnect is to exist with the university's existing academic CMS and establish a moderated, virtual community exclusively for Minhaj's students. To achieve this objective, the platform integrates multiple daily campus services into a single hub, allowing users to safely engage in AI-moderated peer discussions, seek career mentorship from alumni, and submit formal petitions to the administration. Furthermore, the system aims to solve everyday logistical challenges by providing dedicated, centralized modules for tracking lost items, viewing shuttle routes, and ordering food from local vendors directly to the campus gates.
+================ SLIDE 8 ================
+ - Goals, Objectives & System Modules
+ - 8 Core Modules
+ - 8 Supporting Modules
+ - ? Single Sign-On (University Portal)
+ - ?  Forum Discussion (threaded, tagged)
+ - ?  AI Content Moderation (English + Roman Urdu)
+ - ?  Career Paths (jobs, internships, mentorship)
+ - ?  Petitions (with signature collection)
+ - ?  Lost and Found (with status tracking)
+ - ?  Campus Canteen (food ordering + delivery)
+ - ?  Bus Routes (stops + schedules)
+ - ?  Main Dashboard (activity summary)
+ - ?  Complaints & Suggestions (anonymous option  - already implemented in our CMS)
+ - ?  Vendor Management (restaurant dashboards)
+ - ?  Rider Dashboard (delivery ticket pool)
+ - ?  Moderation Room (flagged content review)
+ - ?  Notifications (real-time + browser push)
+ - ?  Bookmarks (saved posts & career listings)
+ - ?  Campus Administration (user & role control)
+================ SLIDE 9 ================
+ - Tools, Techniques & Tech Stack
+ - Technology Stack
+ - Frontend:
+ - ? React 19.2 + React Router 7.15
+ - ? Tailwind CSS 3.4 (unified color theme)
+ - ? Socket.io-client 4.8 (real-time updates)
+ - ? Axios 1.16 (API requests with token)
+ - Database & Storage:
+ - ? MongoDB Atlas (cloud hosted)
+ - ? Mongoose 9.6 (schema & data modeling)
+ - ? Cloudinary (image storage, CDN)
+ - Backend:
+ - ? Node.js + Express 5.2 (REST API)
+ - ? Socket.io 4.8 (WebSocket, real-time events)
+ - ? JWT (JSON Web Tokens)  authentication
+ - ? Bcryptjs  password hashing with salt
+ - ? Helmet + CORS (security headers)
+ - ? Groq SDK + Google Gemini  AI moderation
+ - ? Web-Push VAPID  browser notifications
+ - Development Tools:
+ - ? VS Code, Git & GitHub, Postman
+ - ? MongoDB Compass, Chrome DevTools
+ - ? Draw.io (UML diagrams)
+ - Deployment:
+ - ? Client: Vercel (static React build)
+ - ? Server: Render (Node.js + Socket.io)
+ - ? Database: MongoDB Atlas cluster
+================ SLIDE 10 ================
+ - System Architecture
+ - Browser / React Client  (Single page application | role-aware pages)
+ - REST API (HTTPS)  +  WebSocket (Socket.io)
+ - Node.js + Express Server  (Render)
+ - Mongoose ODM
+ - MongoDB Atlas
+ - Cloudinary
+ - Groq + Gemini AI
+ - Web Push VAPID
+ - ?  Client Layer: React SPA  all pages are role-aware; sidebar only shows links permitted for the signed-in user's role.
+ - ?  Application Layer: Express server handles auth (JWT), business rules, sanitization, moderation, and Socket.io event broadcasting.
+ - ?  Data Layer: MongoDB Atlas stores all records; images live on Cloudinary (only the URL is stored in the database, keeping the server lightweight).
+================ SLIDE 11 ================
+ - User Roles
+ - Role
+ - Primary Access & Permissions
+ - Student
+ - All student modules: forums, canteen, petitions, L&F, career, bookmarks
+ - Student Moderator
+ - Everything a student can + moderation queue access
+ - Alumni
+ - Career board + discussions only; no campus services
+ - Vendor
+ - Own restaurant dashboard: menus, orders, riders
+ - Rider
+ - Shared campus-wide delivery ticket pool
+ - Campus Admin
+ - Full control: users, roles, restaurants, account management
+================ SLIDE 12 ================
+ - System Design  UML Diagrams
+ - Structural Diagrams
+ - Behavioral Diagrams
+ - ?  Architecture Diagram 3-tier (React / Node.js / MongoDB + external services)
+ - ?  Entity Relationship Diagram  MongoDB collections and foreign key references
+ - ?  Class Diagram  Mongoose models and controllers; AI Moderation has no record of its own but is depended on by Forum, Petition, LostFound, and Complaint
+ - ?  Component Diagram  client page groups + server services; shows replaceability
+ - ?  Deployment Diagram  Vercel (client) + Render (server) + Atlas + Cloudinary
+ - ?  8 Sequence Diagrams  Sign In, Create Discussion, Place Order, Deliver Order, Petition, Lost Item, Career Post, Moderation
+ - ?  8 Activity Diagrams  one per major workflow, decision points explicit
+ - ?  5 State Transition Diagrams  Order (7 states, 3 actors), Petition, Complaint, Lost & Found, User Session
+================ SLIDE 13 ================
+ - Key Innovation - AI Content Moderation
+ - CampusConnect is the ONLY platform in the comparison in its scope that checks content before it is
+ - published  and it understands both English AND Roman Urdu.
+ - User Submits Post
+ - Built-in Word List Check
+ - if clean
+ - Groq LLM Check
+ - Post Published Live
+ - Moderation Queue
+ - if flagged
+ - if flagged
+ - ?  Two-layer pipeline: a fast built-in word list runs first; if the post passes, it is forwarded to the Groq language model API for deeper analysis.
+ - ?  Google Gemini serves as a second moderation model  used alongside Groq for higher confidence decisions.
+ - ?  Fallback safety: if both AI services are unavailable, the built-in word list still runs  posts are never published unchecked.
+ - ?  Flagged posts are hidden immediately; a reason is stored for the moderator. Users are NOT told which rule was triggered, preventing circumvention.
+ - ?  Moderators can restore wrongly flagged posts OR issue on-screen warnings the user must acknowledge before using the platform again.
+ - ?  Tested successfully: offensive content in English and Roman Urdu both detected; clean content passes in under 4.07 seconds (well within the 5-second requirement).
+================ SLIDE 14 ================
+ - Implementation
+ - Development Approach
+ - ?  Module-by-module development  each module has its own client pages, API routes, and database model. New features added without breaking existing ones.
+ - ?  API-first: every route built and tested in Postman before the React page was built  if a page failed, the server was ruled out.
+ - Request Processing Pipeline
+ - Security (Helmet/CORS)    Body Parsing    Sanitization ($-operator removal)    Token & Role Check    AI Moderation (if content)    Controller    Database
+ - Project Folder Structure
+ - ?  Two-root structure: /client (React, Tailwind, Socket.io-client) and /server (Express, Mongoose, Socket.io, AI SDKs)  each with its own package.json and environment variables.
+ - ?  Single translation stub function wraps all visible text strings  ready for Urdu localization without rewriting pages.
+ - ?  Coding standards: clear naming, true modularity, server-side trust (totals and counts always computed server-side), secret management via .env.
+================ SLIDE 15 ================
+ - Real-Time Notifications & Features - Socket.io
+ - ?  Order placed by student  vendor dashboard updates instantly, no page refresh required. Achieved via Socket.io event broadcast to the vendor's connected socket.
+ - ?  Rider claims ticket  order status pushed live to the student's order tracker AND the vendor dashboard simultaneously.
+ - ?  Petition signed  signature count updates in real time for everyone currently viewing that petition.
+ - ?  Moderation action  hidden content disappears from all open pages immediately when the moderator hides it.
+ - ?  Notifications bell  unread count updates automatically without polling. Browser push notifications via Web Push VAPID alert users even when the site is not open.
+ - ?  Measured performance: Live update delivery time = 100ms average (requirement was < 2 seconds  exceeded by 20x).
+ - Live Update: 100ms  |  Sign In: 254ms  |  Dashboard Load: 1.7s
+ - Forum List: 2.71s  |  Content Check: 4.07s  |  Image Upload: 3s
+ - All within specified requirements √
+================ SLIDE 16 ================
+ - Campus Canteen - Food Ordering Module
+ - ?  Students browse open restaurants, view menus, add items to a cart, and place an order with a contact number to the campus main gate.
+ - ?  Order total is calculated server-side only  the browser total is never trusted. This prevents price manipulation.
+ - ?  Each order is assigned a unique serial number on creation.
+ - ?  Vendor dashboard: receives new orders via Socket.io (no refresh needed). Vendor accepts or rejects, then marks: Pending  Accepted  Preparing  Ready  Picked Up  Arrived  Completed (7 states).
+ - ?  Rider Dashboard: a shared campus-wide ticket pool; any rider can claim any accepted order. Claiming is atomic  if two riders attempt simultaneously, only one succeeds; the other is told the ticket is gone. Student's number is not shared with riders to implement a no-trust policy.
+ - ?  Closed restaurants are automatically hidden from student view the moment the vendor closes the restaurant on their dashboard.
+ - ?  Order State Transition: 7 states involving 3 actors (Student, Vendor, Rider). "Cancelled" is a dead-end state only reachable if the vendor rejects.
+================ SLIDE 17 ================
+ - Testing & Evaluation
+ - Use Case Testing
+ - ?  22 test cases executed  12 student path, 10 vendor/rider/admin path.
+ - ?  All 22 passed including sign in, order lifecycle, moderation, petition, bookmarks, role-based access, and sign out.
+ - Extension / Edge Case Testing
+ - ?  12 extension scenarios tested all passed. Key cases: wrong password (no token issued); deleted account (all token requests denied); offensive Roman Urdu caught by built-in word list; duplicate petition signature rejected; two riders claiming same ticket (only one succeeds); moderation service unreachable (built-in filter still runs); closed restaurant stops new orders.
+ - Boundary Value Analysis
+ - ?  15 field boundaries tested  all passed. Including: empty fields, duplicate emails/reg numbers, image size limit (50MB), injection characters ($-operator stripped), role validation, cart cannot be empty.
+================ SLIDE 18 ================
+ - Performance Testing Results
+ - Test Case
+ - Requirement
+ - Measured Result
+ - Result
+ - Sign In Response
+ - < 3 seconds
+ - 254ms (0.25s)
+ - PASS
+ - Dashboard Load
+ - < 5 seconds
+ - 1,700ms (1.7s)
+ - PASS
+ - Forum List Load
+ - < 3 seconds
+ - 2,710ms (2.71s)
+ - PASS
+ - AI Content Check
+ - < 5 seconds
+ - 4,070ms (4.07s)
+ - PASS
+ - Live Update (Socket)
+ - < 2 seconds
+ - 100ms (0.1s)
+ - PASS
+ - Image Upload
+ - < 8 seconds
+ - 3,000ms (3s)
+ - PASS
+ - AllmeasurementstakenviabrowserDevToolsNetworktabonthedeployedproductionsystem (Vercel + Render), notonlocalhost.
+ - Stress Testing
+ - ?  8 stress scenarios tested  all passed √. Including: concurrent orders (each gets unique number, none lost); simultaneous ticket claims (atomic); large forum list with indexed search; moderation service outage (fallback activates); mid-order connection drop (last state preserved, nothing left half-written).
+================ SLIDE 19 ================
+ - Project Demo
+ - [ LIVE DEMONSTRATION ]
+ - We will now demonstrate the following live on the deployed system:
+ - 1.  Student sign-in and dashboard overview
+ - 2.  Creating a forum discussion thread (AI moderation in action)
+ - 3.  Placing a canteen food order  vendor accepts  rider claims
+ - 4.  Viewing and signing an active petition
+ - 5.  Reporting a lost item with photo
+ - 6.  Browsing the career board
+ - Live URL: https://campus-connect-kappa-liart.vercel.app/login
+ - All modules are live and functional on the production deployment.
+================ SLIDE 20 ================
+ - Conclusion & Limitations
+ - Conclusion
+ - ?  CampusConnect successfully delivers a verified, moderated, and feature-complete campus community platform for Minhaj University Lahore.
+ - ?  All 16 modules are implemented, tested, and deployed on a live production environment  accessible via web browser on any device.
+ - ?  The AI moderation layer effectively screens English and Roman Urdu content with a reliable fallback mechanism  no post is ever published unchecked.
+ - ?  All performance targets were met or exceeded; all 22 use cases and 12 extension scenarios passed during testing.
+ - ?  The platform fills an unmet need at Minhaj University  replacing unverified social media groups with a structured, safe, and centralized hub.
+ - Current Limitations
+ - ?  Bus routes are currently hardcoded  not updatable by the transport office without developer involvement.
+ - ?  No real-time GPS tracking for buses (routes are static schedules).
+ - ?  Payment for canteen orders is cash on delivery  no online payment yet.
+ - ?  Platform is English-only (Urdu translation stub is in place but not yet populated).
+ - ?  No automated test suite  testing was manual; automated tests are recommended before scaling.
+================ SLIDE 21 ================
+ - Future Work & References
+ - Planned Improvements
+ - ?  Live GPS Bus Tracking  integrate real-time bus location on a campus map
+ - ?  Online Payment in Canteen  eliminate cash on delivery
+ - ?  Urdu Language Support populate existing translation stub for full Urdu UI
+ - ?  Dynamic Bus Route Management  transport office updates schedules via admin panel
+ - ?  Rate Limiting  protect against DoS attacks on sensitive routes
+ - ?  Automated Testing Suite  CI/CD pipeline with automated use-case tests
+ - ?  Admin Analytics Dashboard  charts for complaint trends, order volumes, active petition counts
+ - ?  Pagination  handle very large discussion and order lists efficiently
+ - References
+ - 1. Reddit, Inc. (2005). Reddit. https://www.reddit.com/
+ - 2. Stack Exchange Inc. (2008). Stack Overflow. https://stackoverflow.com/
+ - 3. Comsats Plus. (2024). Campus Companion App. https://www.comsatsplus.com/
+ - 4. Delivery Hero SE. (2012). foodpanda Pakistan. https://www.foodpanda.pk/
+ - 5. inDrive. (2012). inDrive Pakistan. https://indrive.com/en-pk/
+ - 6. GeeksforGeeks. (2024). MERN Stack Forum Project (YouTube Live Parts 1 & 3).

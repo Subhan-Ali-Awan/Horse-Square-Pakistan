@@ -403,8 +403,8 @@ export const SellHorse = () => {
                     type="button"
                     onClick={() => setListingType('marketplace')}
                     className={`p-4 rounded-2xl border text-left transition duration-300 cursor-pointer ${listingType === 'marketplace'
-                        ? 'bg-amber-500/20 border-[#D4AF37] ring-2 ring-[#D4AF37]/50 text-white shadow-[0_0_20px_rgba(212,175,55,0.25)]'
-                        : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:border-slate-700'
+                      ? 'bg-amber-500/20 border-[#D4AF37] ring-2 ring-[#D4AF37]/50 text-white shadow-[0_0_20px_rgba(212,175,55,0.25)]'
+                      : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:border-slate-700'
                       }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -423,8 +423,8 @@ export const SellHorse = () => {
                     type="button"
                     onClick={() => setListingType('auction')}
                     className={`p-4 rounded-2xl border text-left transition duration-300 cursor-pointer ${listingType === 'auction'
-                        ? 'bg-amber-500/20 border-[#D4AF37] ring-2 ring-[#D4AF37]/50 text-white shadow-[0_0_20px_rgba(212,175,55,0.25)]'
-                        : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:border-slate-700'
+                      ? 'bg-amber-500/20 border-[#D4AF37] ring-2 ring-[#D4AF37]/50 text-white shadow-[0_0_20px_rgba(212,175,55,0.25)]'
+                      : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:border-slate-700'
                       }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -443,8 +443,8 @@ export const SellHorse = () => {
                     type="button"
                     onClick={() => setListingType('breeding')}
                     className={`p-4 rounded-2xl border text-left transition duration-300 cursor-pointer ${listingType === 'breeding'
-                        ? 'bg-amber-500/20 border-[#D4AF37] ring-2 ring-[#D4AF37]/50 text-white shadow-[0_0_20px_rgba(212,175,55,0.25)]'
-                        : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:border-slate-700'
+                      ? 'bg-amber-500/20 border-[#D4AF37] ring-2 ring-[#D4AF37]/50 text-white shadow-[0_0_20px_rgba(212,175,55,0.25)]'
+                      : 'bg-slate-800/60 border-slate-800 text-slate-400 hover:bg-slate-800 hover:border-slate-700'
                       }`}
                   >
                     <div className="flex items-center justify-between mb-1.5">
@@ -514,8 +514,8 @@ export const SellHorse = () => {
                       value={formData.price}
                       onChange={handleChange}
                       className={`w-full p-3.5 border rounded-xl text-sm font-bold transition focus:bg-white focus:outline-none ${formData.price && !isPriceValid
-                          ? 'border-rose-400 bg-rose-50 text-rose-900'
-                          : 'border-slate-300 bg-slate-50 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 text-slate-900'
+                        ? 'border-rose-400 bg-rose-50 text-rose-900'
+                        : 'border-slate-300 bg-slate-50 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 text-slate-900'
                         }`}
                     />
                   </div>
@@ -620,8 +620,8 @@ export const SellHorse = () => {
                       value={formData.sellerPhone}
                       onChange={handleChange}
                       className={`w-full p-3.5 border rounded-xl text-sm font-bold transition focus:bg-white focus:outline-none ${formData.sellerPhone && !isPhoneValid
-                          ? 'border-rose-400 bg-rose-50 text-rose-900'
-                          : 'border-slate-300 bg-slate-50 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 text-slate-900'
+                        ? 'border-rose-400 bg-rose-50 text-rose-900'
+                        : 'border-slate-300 bg-slate-50 focus:border-[#D4AF37] focus:ring-2 focus:ring-[#D4AF37]/20 text-slate-900'
                         }`}
                     />
                   </div>
