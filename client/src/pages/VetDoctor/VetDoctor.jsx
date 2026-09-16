@@ -296,17 +296,7 @@ export const VetDoctor = () => {
       if (data.success && data.reply) {
         setMessages((prev) => [...prev, { role: 'assistant', content: data.reply }]);
       } else {
-<<<<<<< HEAD
-        setMessages((prev) => [
-          ...prev,
-          {
-            role: 'assistant',
-            content: data?.error || 'Dr. Max is temporarily unavailable. Please try again in a moment.',
-          },
-        ]);
-=======
         throw new Error(data.error || 'Dr. Max is temporarily unavailable. Please try again in a moment.');
->>>>>>> 8e774aa (Otp send to inbox)
       }
     } catch (err) {
       console.error('[DrMax] Chat error:', err);
