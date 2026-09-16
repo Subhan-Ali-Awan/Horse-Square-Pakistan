@@ -232,15 +232,6 @@ exports.drMaxChat = async (req, res) => {
   }
 };
 
-  } catch (error) {
-    console.error("[AI CHAT] Fatal Server Error:", error.message);
-    return res.status(500).json({
-      success: false,
-      error: `Server Error: ${error.message}`
-    });
-  }
-};
-
 // ===================================================
 // CHECK HEALTH (Triage Form Assessment Handler)
 // ===================================================
