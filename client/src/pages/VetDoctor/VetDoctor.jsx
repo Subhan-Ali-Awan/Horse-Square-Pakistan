@@ -601,8 +601,8 @@ export const VetDoctor = () => {
                     <span
                       key={key}
                       className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-black shadow-sm ${chip.emergency
-                        ? 'bg-red-600 text-white'
-                        : 'bg-amber-400 text-slate-900'
+                          ? 'bg-red-600 text-white'
+                          : 'bg-amber-400 text-slate-900'
                         }`}
                     >
                       <span>{chip.label.split('/')[0].trim()}</span>
