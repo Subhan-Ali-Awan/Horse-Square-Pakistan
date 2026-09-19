@@ -4,8 +4,10 @@ import { getApiUrl } from '../../config/api';
 import {
   Stethoscope, Activity, Heart, Thermometer, Wind,
   Phone, MapPin, Building2, Send, Trash2, ChevronDown,
-  ChevronUp, AlertTriangle, CheckCircle2, User, Bot
+  ChevronUp, AlertTriangle, CheckCircle2, User, Bot,
+  Search, ExternalLink, ShieldCheck, PhoneCall
 } from 'lucide-react';
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Disease Context Map — injected into API calls when chips are selected
@@ -35,6 +37,361 @@ const DISEASE_CHIPS = [
   { key: 'thrush', label: 'Thrush / کھُر کی سڑن / تھرش', emergency: false },
   { key: 'epm', label: 'EPM / ای پی ایم (اعصابی بیماری)', emergency: false },
 ];
+
+// ─────────────────────────────────────────────────────────────────────────────
+// WhatsApp Icon Component & Phone Helpers
+// ─────────────────────────────────────────────────────────────────────────────
+function WhatsAppIcon({ className = "w-4 h-4" }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="currentColor">
+      <path d="M12.031 6.172c-3.181 0-5.767 2.586-5.768 5.766-.001 1.298.38 2.27 1.019 3.287l-.711 2.598 2.664-.699c.97.53 1.942.813 2.796.813h.005c3.18 0 5.767-2.586 5.768-5.766 0-1.54-.599-2.989-1.687-4.079-1.09-1.09-2.537-1.69-4.086-1.69zm3.385 8.163c-.147.414-.725.76-1.026.797-.282.036-.632.148-2.072-.452-1.748-.727-2.868-2.511-2.955-2.628-.087-.117-.714-.951-.714-1.815 0-.864.449-1.288.609-1.464.16-.176.35-.22.467-.22.117 0 .234.001.336.006.107.005.252-.041.394.3.147.355.503 1.228.547 1.316.044.088.073.19.015.307-.058.117-.088.19-.176.293-.088.103-.185.23-.264.309-.092.091-.188.19-.081.374.107.183.475.785 1.02 1.27.702.626 1.294.82 1.477.911.183.092.292.078.4-.047.108-.124.462-.538.585-.723.123-.184.246-.154.414-.092.168.062 1.066.503 1.249.595.183.092.306.138.35.215.044.078.044.453-.103.867z" />
+      <path d="M12 2C6.477 2 2 6.477 2 12c0 1.892.524 3.662 1.435 5.177L2 22l4.981-1.306A9.957 9.957 0 0012 22c5.523 0 10-4.477 10-10S17.523 2 12 2zm0 18.2c-1.636 0-3.17-.468-4.475-1.277l-.321-.197-2.96.776.79-2.887-.216-.344A8.163 8.163 0 013.8 12c0-4.521 3.679-8.2 8.2-8.2 4.521 0 8.2 3.679 8.2 8.2 0 4.521-3.679 8.2-8.2 8.2z" />
+    </svg>
+  );
+}
+
+const cleanPhoneForDial = (phoneStr) => {
+  if (!phoneStr) return '';
+  return phoneStr.replace(/[^0-9+]/g, '');
+};
+
+const isMobileNumber = (phoneStr) => {
+  if (!phoneStr) return false;
+  const digits = phoneStr.replace(/[^0-9]/g, '');
+  return digits.startsWith('03') || digits.startsWith('923') || digits.startsWith('3');
+};
+
+const getWhatsAppUrl = (phoneStr, clinicName) => {
+  let cleaned = phoneStr.replace(/[^0-9]/g, '');
+  if (cleaned.startsWith('0')) {
+    cleaned = '92' + cleaned.slice(1);
+  }
+  const text = encodeURIComponent(
+    `Hello! I found your veterinary clinic (${clinicName || 'Clinic'}) on Horse Square Pakistan and would like to get in touch.`
+  );
+  return `https://wa.me/${cleaned}?text=${text}`;
+};
+
+// ─────────────────────────────────────────────────────────────────────────────
+// City-Wise Vet Doctors & Hospitals Data
+// ─────────────────────────────────────────────────────────────────────────────
+const CITY_VET_DIRECTORIES = [
+  // Gujranwala
+  {
+    city: 'Gujranwala',
+    doctors: 'Dr. Rabia Mazhar & Dr. Ahmed Khan Buttar',
+    clinic: 'Ahmed Veterinary Clinic',
+    location: 'Satellite Town, Gujranwala',
+    phones: ['0333-8789880', '0310-1911191'],
+    url: 'https://www.petpitari.com/2018/05/29/vets-in-gujranwala/?utm_source=gemini',
+    tag: 'Clinic & Surgery',
+  },
+  {
+    city: 'Gujranwala',
+    doctors: 'Dr. Tariq Malik',
+    clinic: 'PetVet Veterinary Hospital',
+    location: 'GT Road, Gujranwala',
+    phones: ['0348-4241140'],
+    url: 'https://www.petpitari.com/2018/05/29/vets-in-gujranwala/?utm_source=gemini',
+    tag: 'Hospital',
+  },
+  {
+    city: 'Gujranwala',
+    doctors: 'Dr. M. Waqas Sandhu',
+    clinic: 'Waqas Pets Clinic',
+    location: 'Satellite Town, Gujranwala',
+    phones: ['0303-8110853'],
+    url: 'https://www.petpitari.com/2018/05/29/vets-in-gujranwala/?utm_source=gemini',
+    tag: 'Pet & Animal Care',
+  },
+
+  // Hyderabad
+  {
+    city: 'Hyderabad',
+    doctors: 'Dr. Zeeshan',
+    clinic: 'Dr Zeeshan Pet Hospital',
+    location: 'Hyderabad, Sindh',
+    phones: ['0304-3044676'],
+    url: 'https://mannvetcorner.com/best-pet-clinics-veterinary-services-in-hyderabad-sindh/?utm_source=gemini',
+    tag: 'Pet Hospital',
+  },
+  {
+    city: 'Hyderabad',
+    doctors: 'Dr. Javed',
+    clinic: "Javed's Veterinary Clinic & Surgery Centre",
+    location: 'Hyderabad, Sindh',
+    phones: ['0319-1251515'],
+    url: 'https://mannvetcorner.com/best-pet-clinics-veterinary-services-in-hyderabad-sindh/?utm_source=gemini',
+    tag: 'Surgery Centre',
+  },
+  {
+    city: 'Hyderabad',
+    doctors: 'Dr. Athar',
+    clinic: "Dr Athar's Veterinary Home Service",
+    location: 'Hyderabad, Sindh',
+    phones: ['0300-4805303'],
+    url: 'https://mannvetcorner.com/best-pet-clinics-veterinary-services-in-hyderabad-sindh/?utm_source=gemini',
+    tag: 'Home Service',
+  },
+  {
+    city: 'Hyderabad',
+    doctors: 'Dr. Wahaj',
+    clinic: 'Dr. Wahaj Animal Home Service',
+    location: 'Hyderabad, Sindh',
+    phones: ['0333-1630087'],
+    url: 'https://mannvetcorner.com/best-pet-clinics-veterinary-services-in-hyderabad-sindh/?utm_source=gemini',
+    tag: 'Home Service',
+  },
+  {
+    city: 'Hyderabad',
+    doctors: 'Emergency Medical Team',
+    clinic: 'Aman Vet Pet (24/7 Emergency)',
+    location: 'Hyderabad, Sindh',
+    phones: ['0341-2977213'],
+    url: null,
+    tag: '24/7 Emergency',
+  },
+  {
+    city: 'Hyderabad',
+    doctors: 'Senior Veterinary Team',
+    clinic: 'Tixe Animal Hospital',
+    location: 'Hyderabad, Sindh',
+    phones: ['022-6127092'],
+    url: null,
+    tag: 'Hospital',
+  },
+  {
+    city: 'Hyderabad',
+    doctors: 'Duty Veterinary Doctor',
+    clinic: 'My Pet Hospital',
+    location: 'Hyderabad, Sindh',
+    phones: ['0345-7088362'],
+    url: null,
+    tag: 'Hospital',
+  },
+
+  // Peshawar
+  {
+    city: 'Peshawar',
+    doctors: 'Dr. Sher',
+    clinic: 'Dr. Sher Pet Clinic',
+    location: 'Jamrud Road, Peshawar',
+    phones: ['0333-9124018', '091-5842523'],
+    url: 'https://www.petpitari.com/2018/02/10/vets-in-peshawar/?utm_source=gemini',
+    tag: 'Clinic',
+  },
+  {
+    city: 'Peshawar',
+    doctors: 'Dr. Waqar Ali Khan',
+    clinic: "Dr. Waqar's Pets Clinic",
+    location: 'Peshawar, KPK',
+    phones: [],
+    url: 'https://www.petpitari.com/2018/02/10/vets-in-peshawar/?utm_source=gemini',
+    tag: 'Clinic',
+  },
+  {
+    city: 'Peshawar',
+    doctors: 'Duty Veterinary Staff',
+    clinic: 'National Veterinary Hospital',
+    location: 'Matta Road, Peshawar',
+    phones: ['091-6282358'],
+    url: null,
+    tag: 'Hospital',
+  },
+
+  // Multan
+  {
+    city: 'Multan',
+    doctors: 'Veterinary Specialist Team',
+    clinic: 'Gentle Care Pets Clinic',
+    location: 'Wapda Town & Gulgasht Colony Branches, Multan',
+    phones: ['0306-6757043'],
+    url: 'https://gentlecarepetsclinic.com/areas-we-serve/wapda-town-?utm_source=gemini',
+    tag: 'Multi-Branch Clinic',
+  },
+
+  // Sialkot
+  {
+    city: 'Sialkot',
+    doctors: 'Consultant Veterinarians',
+    clinic: 'The Sialkot Veterinary Clinic',
+    location: 'Sialkot, Punjab',
+    phones: ['0315-5563939'],
+    url: 'https://yandex.com/maps/org/the_sialkot_veterinary_clinic/231821842411/?utm_source=gemini',
+    tag: 'Veterinary Clinic',
+  },
+
+  // Lahore
+  {
+    city: 'Lahore',
+    doctors: 'Dr. Ahmed Raza Khan',
+    clinic: 'Feline & K9 Hospital',
+    location: 'Gulberg-2, Lahore',
+    phones: ['0300-8402944'],
+    url: 'https://www.scribd.com/doc/130143439/Vets-in-Lahore?utm_source=gemini',
+    tag: 'Hospital',
+  },
+  {
+    city: 'Lahore',
+    doctors: 'Dr. Awais Anees Awan',
+    clinic: 'Lahore Animal Hospital',
+    location: 'Raiwind Road, Lahore',
+    phones: ['0300-4349002', '042-38424399'],
+    url: 'https://www.scribd.com/doc/130143439/Vets-in-Lahore?utm_source=gemini',
+    tag: 'Animal Hospital',
+  },
+  {
+    city: 'Lahore',
+    doctors: 'Dr. Inayat Ullah H. Kathio',
+    clinic: 'Lahore Animal Hospital',
+    location: 'Raiwind Road, Lahore',
+    phones: ['0300-4348993'],
+    url: 'https://www.scribd.com/doc/130143439/Vets-in-Lahore?utm_source=gemini',
+    tag: 'Consultant',
+  },
+  {
+    city: 'Lahore',
+    doctors: 'Dr. Hamid Akbar',
+    clinic: "Small Animals' Hospital",
+    location: 'Gulberg-3 / Bedian Road, Lahore',
+    phones: ['0321-4551700'],
+    url: 'https://www.scribd.com/doc/130143439/Vets-in-Lahore?utm_source=gemini',
+    tag: 'Specialist',
+  },
+  {
+    city: 'Lahore',
+    doctors: 'Dr. Rehan Mehmood',
+    clinic: 'Pets & Vets Clinic',
+    location: 'DHA Phase-1, Lahore',
+    phones: ['0333-4242458'],
+    url: 'https://www.scribd.com/doc/130143439/Vets-in-Lahore?utm_source=gemini',
+    tag: 'Clinic',
+  },
+  {
+    city: 'Lahore',
+    doctors: 'Dr. Muhammad Ahmad',
+    clinic: 'Vets On Door',
+    location: 'Home Visits & Clinics, Lahore',
+    phones: ['0307-8517122'],
+    url: 'https://www.vetsondoor.com/veterinarian-lahore?utm_source=gemini',
+    tag: 'Doorstep Vet',
+  },
+  {
+    city: 'Lahore',
+    doctors: 'Dr. Asim Khalid',
+    clinic: "Asim Pets' Clinic",
+    location: 'Faisal Town, Lahore',
+    phones: ['0300-8406873'],
+    url: 'https://www.scribd.com/doc/130143439/Vets-in-Lahore?utm_source=gemini',
+    tag: 'Clinic',
+  },
+  {
+    city: 'Lahore',
+    doctors: 'Dr. Hafiz Wasif Umair',
+    clinic: 'Pets Health Clinic',
+    location: 'Johar Town, Lahore',
+    phones: ['0321-6434045'],
+    url: 'https://www.scribd.com/doc/130143439/Vets-in-Lahore?utm_source=gemini',
+    tag: 'Clinic',
+  },
+
+  // Karachi
+  {
+    city: 'Karachi',
+    doctors: 'Dr. Osama, Dr. Arsalan, and Dr. Zaitullah',
+    clinic: 'Pets Care n Cure',
+    location: 'DHA Phase 6, Karachi',
+    phones: ['0302-8281181'],
+    url: 'https://petscarencure.com.pk/?utm_source=gemini',
+    tag: 'Advanced Clinic',
+  },
+  {
+    city: 'Karachi',
+    doctors: 'Dr. Emily Parker, Dr. Wade Warren, and Dr. Albert Flores',
+    clinic: 'Healthy Tails Animal Hospital',
+    location: 'Karachi, Sindh',
+    phones: ['0317-8221223'],
+    url: 'https://healthytailsanimalhospital.com/?utm_source=gemini',
+    tag: 'Animal Hospital',
+  },
+
+  // Islamabad / Rawalpindi
+  {
+    city: 'Islamabad / Rawalpindi',
+    doctors: 'Dr. Farooq Tahir & Dr. Masood Tahir',
+    clinic: 'Pioneer Pets Hospital',
+    location: 'Satellite Town, Rawalpindi',
+    phones: ['0321-7654036'],
+    url: 'https://www.petpitari.com/2018/02/10/vets-in-rawalpindi/?utm_source=gemini',
+    tag: 'Hospital',
+  },
+  {
+    city: 'Islamabad / Rawalpindi',
+    doctors: 'Dr. Azhar Majeed',
+    clinic: 'Pet Care 2 Clinic',
+    location: 'Bahria Phase 7, Rawalpindi',
+    phones: ['0304-5585881'],
+    url: 'https://www.petpitari.com/2018/02/10/vets-in-rawalpindi/?utm_source=gemini',
+    tag: 'Clinic',
+  },
+  {
+    city: 'Islamabad / Rawalpindi',
+    doctors: 'Dr. Faisal Ibrahim Khan',
+    clinic: 'Pets & Vets Clinic',
+    location: 'F-7/4, Islamabad / Bahria Town Phase-5',
+    phones: ['0300-8545566'],
+    url: 'https://www.ebizpk.com/pet-clinics-islamabad.htm?utm_source=gemini',
+    tag: 'Dual Branch Clinic',
+  },
+  {
+    city: 'Islamabad / Rawalpindi',
+    doctors: 'Dr. Inam Ullah Khan',
+    clinic: 'Niazi Animal Clinic',
+    location: 'Chakra Road, Rawalpindi',
+    phones: ['0301-5090546'],
+    url: 'https://www.petpitari.com/2018/02/10/vets-in-rawalpindi/?utm_source=gemini',
+    tag: 'Clinic',
+  },
+  {
+    city: 'Islamabad / Rawalpindi',
+    doctors: 'Dr. Mahmood Rashid',
+    clinic: 'Private Pets Clinic',
+    location: 'Airport Housing Society, Rawalpindi',
+    phones: ['0345-8362737'],
+    url: 'https://www.petpitari.com/2018/02/10/vets-in-rawalpindi/?utm_source=gemini',
+    tag: 'Clinic',
+  },
+  {
+    city: 'Islamabad / Rawalpindi',
+    doctors: 'Dr. Hassan Sarosh Akram',
+    clinic: "Dr. Hassan's Clinic",
+    location: 'Satellite Town, Rawalpindi',
+    phones: ['051-4457435'],
+    url: 'https://www.ebizpk.com/pet-clinics-islamabad.htm?utm_source=gemini',
+    tag: 'Clinic',
+  },
+
+  // Faisalabad
+  {
+    city: 'Faisalabad',
+    doctors: 'Dr. Muhammad Saad Sabir',
+    clinic: 'D Vets Pet Clinic',
+    location: 'Faisalabad, Punjab',
+    phones: ['0345-7533820'],
+    url: 'https://dvetsfaisalabad.com/?utm_source=gemini',
+    tag: 'Clinic',
+  },
+  {
+    city: 'Faisalabad',
+    doctors: 'Dr. Amjad Khan',
+    clinic: 'Dr. Amjad Khan Clinic',
+    location: 'Afshan Colony, Faisalabad',
+    phones: ['0335-7955457'],
+    url: 'https://yandex.com/maps/org/dr_amjad_khan/168632216884/?utm_source=gemini',
+    tag: 'Clinic',
+  },
+];
+
 
 // ─────────────────────────────────────────────────────────────────────────────
 // Markdown renderer — bold, lists, confidence badges
@@ -195,6 +552,10 @@ export const VetDoctor = () => {
   const [showDisclaimer, setShowDisclaimer] = useState(true);
   const [showHorseInfo, setShowHorseInfo] = useState(false);
 
+  // ── City Vet Directory State ──────────────────────────────────────
+  const [selectedCity, setSelectedCity] = useState('All');
+  const [searchQuery, setSearchQuery] = useState('');
+
   // ── Refs ──────────────────────────────────────────────────────────
   const chatContainerRef = useRef(null);
   const textareaRef = useRef(null);
@@ -327,16 +688,19 @@ export const VetDoctor = () => {
     { label: 'Respiration Rate', range: '8 – 16 breaths/min', metric: 'breaths per minute', icon: <Wind className="w-5 h-5 text-cyan-500" />, desc: 'Watch flank movements. Elevated rate suggests heat stress or respiratory illness.' },
   ];
 
-  const localVets = [
-    { name: 'UVAS Equine Clinic & Surgery Center', doctor: 'Dr. Aneela Zameer Durrani', city: 'Lahore', phone: '+924299211374', location: 'Outfall Road, Lahore' },
-    { name: 'Lahore Race Club Equine Hospital', doctor: 'Dr. Muhammad Asim', city: 'Lahore', phone: '+923008456789', location: 'Kot Lakhpat, Lahore' },
-    { name: 'Richmond Equine Clinic & Surgery', doctor: 'Dr. Farhan Ali', city: 'Karachi', phone: '+923001234567', location: 'Malir Cantt, Karachi' },
-    { name: 'RVFC Army Equine Hospital', doctor: 'Col. Dr. Tariq Mahmood', city: 'Rawalpindi', phone: '+92515561234', location: 'Westridge, Rawalpindi' },
-    { name: 'NARC Equine & Livestock Hospital', doctor: 'Dr. Khalid Naeem', city: 'Islamabad', phone: '+92519255012', location: 'Park Road, Islamabad' },
-    { name: 'UAF Veterinary Teaching Hospital', doctor: 'Dr. Muhammad Tariq', city: 'Faisalabad', phone: '+92419200161', location: 'Jail Road, Faisalabad' },
-    { name: 'Karachi Race Club Veterinary Hospital', doctor: 'Dr. Syed Muhammad Naeem', city: 'Karachi', phone: '+923332345678', location: 'Dehih, Karachi' },
-    { name: 'Army Stud Farm Vet Center (Mona)', doctor: 'Maj. Dr. Shaukat Ali', city: 'Sargodha', phone: '+92483211234', location: 'Mona Depot, Sargodha' },
-  ];
+  const CITIES = ['All', 'Gujranwala', 'Hyderabad', 'Peshawar', 'Multan', 'Sialkot', 'Lahore', 'Karachi', 'Islamabad / Rawalpindi', 'Faisalabad'];
+
+  const filteredVets = CITY_VET_DIRECTORIES.filter((vet) => {
+    const matchesCity = selectedCity === 'All' || vet.city === selectedCity;
+    const cleanQuery = searchQuery.trim().toLowerCase();
+    const matchesSearch = !cleanQuery ||
+      vet.doctors.toLowerCase().includes(cleanQuery) ||
+      vet.clinic.toLowerCase().includes(cleanQuery) ||
+      vet.city.toLowerCase().includes(cleanQuery) ||
+      vet.location.toLowerCase().includes(cleanQuery) ||
+      vet.phones.some((p) => p.toLowerCase().includes(cleanQuery));
+    return matchesCity && matchesSearch;
+  });
 
   // ─────────────────────────────────────────────────────────────────
   return (
@@ -647,39 +1011,192 @@ export const VetDoctor = () => {
           </div>
         </div>
 
-        {/* ── Emergency Vet Directory ── */}
+        {/* ── City-Wise Vet Doctors Directory ── */}
         <div className="bg-white p-6 sm:p-8 rounded-2xl sm:rounded-3xl border border-slate-200 shadow-xl space-y-6 reveal-on-scroll">
-          <div className="border-b pb-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-            <div>
-              <h2 className="text-lg sm:text-xl font-black text-[#0F172A] flex items-center gap-2">
-                <Building2 className="w-5 h-5 sm:w-6 sm:h-6 text-[#D4AF37]" /> Emergency Equine Hospitals in Pakistan
-              </h2>
-              <p className="text-xs sm:text-sm text-slate-500 font-medium mt-1">Verified equine surgery centers and veterinary teaching clinics across major cities.</p>
-            </div>
-            <span className="px-3 py-1 bg-emerald-50 text-emerald-700 rounded-full text-xs font-bold border border-emerald-200 self-start sm:self-auto">24/7 Contacts</span>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
-            {localVets.map((vet, idx) => (
-              <div key={idx} className="p-4 sm:p-5 rounded-2xl bg-slate-50 border border-slate-200 space-y-3 flex flex-col justify-between hover:border-[#D4AF37] transition">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-slate-200 text-slate-700 rounded-md">{vet.city}</span>
-                    <MapPin className="w-3.5 h-3.5 text-slate-400" />
-                  </div>
-                  <h3 className="text-sm font-black text-[#0F172A] leading-snug">{vet.name}</h3>
-                  <p className="text-xs font-bold text-slate-600">{vet.doctor}</p>
-                  <p className="text-[11px] text-slate-400 font-medium line-clamp-2">{vet.location}</p>
-                </div>
-                <a
-                  href={`tel:${vet.phone}`}
-                  className="w-full py-2.5 bg-[#0F172A] hover:bg-[#1E293B] text-[#D4AF37] font-black rounded-xl text-xs transition flex items-center justify-center gap-2 shadow"
-                >
-                  <Phone className="w-3.5 h-3.5" /> Call Emergency
-                </a>
+          {/* Section Header */}
+          <div className="border-b border-slate-200 pb-5 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="space-y-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <span className="px-2.5 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[11px] font-extrabold border border-amber-200">
+                  Verified Directory
+                </span>
+                <span className="px-2.5 py-0.5 rounded-full bg-emerald-100 text-emerald-800 text-[11px] font-extrabold border border-emerald-200 flex items-center gap-1">
+                  <WhatsAppIcon className="w-3.5 h-3.5 text-emerald-600" /> WhatsApp & Call Ready
+                </span>
               </div>
-            ))}
+              <h2 className="text-xl sm:text-2xl font-black text-[#0F172A] flex items-center gap-2 pt-1">
+                <Building2 className="w-6 h-6 text-[#D4AF37]" /> City-Wise Veterinary Doctors & Clinics
+              </h2>
+              <p className="text-xs sm:text-sm text-slate-500 font-medium">
+                Click the contact button to open your device phone dialer or the WhatsApp icon to start an instant consultation.
+              </p>
+            </div>
+
+            {/* Search Input */}
+            <div className="relative min-w-[260px] sm:min-w-[300px]">
+              <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+              <input
+                type="text"
+                placeholder="Search doctor, clinic, or area..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="w-full pl-9 pr-8 py-2.5 text-xs font-semibold rounded-xl border border-slate-200 focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 outline-none bg-slate-50 focus:bg-white transition"
+              />
+              {searchQuery && (
+                <button
+                  onClick={() => setSearchQuery('')}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-xs text-slate-400 hover:text-slate-600 font-bold cursor-pointer"
+                  title="Clear search"
+                >
+                  ✕
+                </button>
+              )}
+            </div>
           </div>
+
+          {/* City Filter Tabs */}
+          <div className="flex flex-wrap gap-1.5 sm:gap-2 pt-1">
+            {CITIES.map((city) => {
+              const count = city === 'All'
+                ? CITY_VET_DIRECTORIES.length
+                : CITY_VET_DIRECTORIES.filter((v) => v.city === city).length;
+              const isSelected = selectedCity === city;
+              return (
+                <button
+                  key={city}
+                  onClick={() => setSelectedCity(city)}
+                  className={`px-3 sm:px-4 py-1.5 sm:py-2 rounded-xl text-xs font-bold transition flex items-center gap-1.5 cursor-pointer select-none ${
+                    isSelected
+                      ? 'bg-[#0F172A] text-amber-400 shadow-md border border-[#0F172A]'
+                      : 'bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200'
+                  }`}
+                >
+                  <span>{city}</span>
+                  <span className={`text-[10px] px-1.5 py-0.5 rounded-full font-extrabold ${
+                    isSelected ? 'bg-amber-400/20 text-amber-300' : 'bg-slate-200 text-slate-600'
+                  }`}>
+                    {count}
+                  </span>
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Doctor Cards Grid */}
+          {filteredVets.length === 0 ? (
+            <div className="py-12 text-center space-y-2 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+              <p className="text-sm font-bold text-slate-600">No veterinary clinics found matching your filter criteria.</p>
+              <button
+                onClick={() => { setSearchQuery(''); setSelectedCity('All'); }}
+                className="text-xs font-bold text-amber-600 hover:underline cursor-pointer"
+              >
+                Clear all filters
+              </button>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
+              {filteredVets.map((vet, idx) => {
+                return (
+                  <div
+                    key={idx}
+                    className="p-4 sm:p-5 rounded-2xl bg-slate-50/70 hover:bg-white border border-slate-200 hover:border-amber-400 shadow-sm hover:shadow-lg transition-all duration-200 flex flex-col justify-between group"
+                  >
+                    {/* Top Content */}
+                    <div className="space-y-2.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="text-[10px] font-black uppercase tracking-wider px-2 py-0.5 bg-amber-100 text-amber-900 border border-amber-200/70 rounded-md truncate max-w-[130px]">
+                          {vet.city}
+                        </span>
+                        {vet.tag && (
+                          <span className="text-[10px] font-bold text-slate-500 bg-white px-2 py-0.5 rounded-md border border-slate-200 shrink-0">
+                            {vet.tag}
+                          </span>
+                        )}
+                      </div>
+
+                      <div>
+                        <h3 className="text-sm font-black text-[#0F172A] leading-snug group-hover:text-amber-600 transition flex items-start gap-1.5">
+                          <span>{vet.clinic}</span>
+                          {vet.url && (
+                            <a
+                              href={vet.url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              title="Open website / profile"
+                              className="text-slate-400 hover:text-amber-600 transition inline-flex mt-0.5 shrink-0"
+                            >
+                              <ExternalLink className="w-3.5 h-3.5" />
+                            </a>
+                          )}
+                        </h3>
+                        <p className="text-xs font-bold text-slate-700 mt-1 flex items-center gap-1.5">
+                          <Stethoscope className="w-3.5 h-3.5 text-amber-600 shrink-0" />
+                          <span className="truncate">{vet.doctors}</span>
+                        </p>
+                      </div>
+
+                      <div className="flex items-start gap-1 text-[11px] text-slate-500 font-medium">
+                        <MapPin className="w-3.5 h-3.5 text-slate-400 shrink-0 mt-0.5" />
+                        <span className="line-clamp-2">{vet.location}</span>
+                      </div>
+                    </div>
+
+                    {/* Actions & Contact */}
+                    <div className="pt-3.5 mt-3 border-t border-slate-200/80 space-y-2">
+                      {vet.phones.length > 0 ? (
+                        vet.phones.map((phone, pIdx) => {
+                          const isMobile = isMobileNumber(phone);
+                          const cleanDial = cleanPhoneForDial(phone);
+                          const whatsAppUrl = getWhatsAppUrl(phone, vet.clinic);
+
+                          return (
+                            <div key={pIdx} className="flex items-center gap-1.5">
+                              {/* Direct Dial Call Button */}
+                              <a
+                                href={`tel:${cleanDial}`}
+                                title={`Call ${phone} (Opens phone dialer)`}
+                                className="flex-1 py-2 px-2.5 bg-[#0F172A] hover:bg-[#1E293B] text-amber-400 hover:text-amber-300 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition shadow-sm active:scale-95 group/call"
+                              >
+                                <Phone className="w-3.5 h-3.5 text-amber-400 shrink-0 group-hover/call:scale-110 transition-transform" />
+                                <span className="text-[11px] font-black tracking-tight truncate">{phone}</span>
+                              </a>
+
+                              {/* Direct WhatsApp Button */}
+                              {isMobile && (
+                                <a
+                                  href={whatsAppUrl}
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  title={`Chat on WhatsApp with ${phone}`}
+                                  className="p-2 bg-emerald-500 hover:bg-emerald-600 text-white rounded-xl transition shadow-sm active:scale-95 shrink-0 flex items-center justify-center"
+                                >
+                                  <WhatsAppIcon className="w-4 h-4" />
+                                </a>
+                              )}
+                            </div>
+                          );
+                        })
+                      ) : (
+                        vet.url && (
+                          <a
+                            href={vet.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="w-full py-2 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs flex items-center justify-center gap-1.5 transition text-center"
+                          >
+                            <ExternalLink className="w-3.5 h-3.5 text-slate-500" />
+                            <span>View Clinic Details</span>
+                          </a>
+                        )
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </div>
+
 
       </div>
     </div>
