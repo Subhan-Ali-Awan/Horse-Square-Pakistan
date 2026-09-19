@@ -17,7 +17,16 @@ import {
   Users,
   ShieldCheck,
   ChevronLeft,
-  ChevronRight
+  ChevronRight,
+  ZoomIn,
+  ZoomOut,
+  Maximize2,
+  Minimize2,
+  Video,
+  VolumeX,
+  Play,
+  Film,
+  RotateCcw
 } from 'lucide-react';
 import { Modal } from '../../components/Modal';
 
@@ -33,6 +42,22 @@ export const Marketplace = () => {
   const [viewMode, setViewMode] = useState('grid'); // 'grid' or 'list'
   const [selectedHorse, setSelectedHorse] = useState(null);
   const [modalImageIdx, setModalImageIdx] = useState(0);
+
+  // ── Image Zoom & Media State ───────────────────────────────────────
+  const [activeMediaTab, setActiveMediaTab] = useState('photo'); // 'photo' | 'video'
+  const [isPhotoZoomed, setIsPhotoZoomed] = useState(false);
+  const [zoomPos, setZoomPos] = useState({ x: 50, y: 50 });
+  const [isLightboxOpen, setIsLightboxOpen] = useState(false);
+  const [lightboxZoom, setLightboxZoom] = useState(1);
+
+  // Reset zoom & media states when horse changes
+  useEffect(() => {
+    setIsPhotoZoomed(false);
+    setActiveMediaTab('photo');
+    setZoomPos({ x: 50, y: 50 });
+    setIsLightboxOpen(false);
+    setLightboxZoom(1);
+  }, [selectedHorse, modalImageIdx]);
 
   const formatImgUrl = (url) => {
     if (!url) return '/uploads/media__1785359752827.jpg';
@@ -570,6 +595,11 @@ export const Marketplace = () => {
                         Spotlight
                       </span>
                     )}
+                    {horse.videoUrl && (
+                      <span className="absolute top-4 right-4 bg-emerald-600/90 text-white text-[9px] font-black tracking-wider uppercase px-2 py-0.5 rounded-full shadow z-20 flex items-center gap-1 border border-white/20">
+                        <Play className="w-2.5 h-2.5 fill-white" /> Video
+                      </span>
+                    )}
                     <span className="absolute bottom-4 right-4 bg-[#0F172A]/90 text-[#D4AF37] font-black text-xs px-3 py-1.5 rounded-lg border border-slate-800 shadow-md z-20">
                       Rs. {Number(horse.price).toLocaleString('en-PK')}
                     </span>
@@ -623,6 +653,11 @@ export const Marketplace = () => {
                       onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
                       className="relative z-10 max-w-full max-h-full object-contain object-center group-hover:scale-105 transition duration-500"
                     />
+                    {horse.videoUrl && (
+                      <span className="absolute top-2.5 right-2.5 bg-emerald-600/90 text-white text-[9px] font-black uppercase px-2 py-0.5 rounded-full shadow z-20 flex items-center gap-1 border border-white/20">
+                        <Play className="w-2.5 h-2.5 fill-white" /> Video
+                      </span>
+                    )}
                   </div>
 
                   <div className="flex-1 flex flex-col justify-between">
@@ -710,85 +745,198 @@ export const Marketplace = () => {
         {selectedHorse && (
           <div className="-m-3.5 sm:-m-6 flex flex-col md:grid md:grid-cols-12 bg-slate-950 text-white rounded-3xl overflow-hidden shadow-2xl border border-amber-500/30">
 
-            {/* Left Column (6 Cols): Photo Carousel & Thumbnails */}
-            <div className="md:col-span-6 relative bg-slate-950 flex flex-col justify-between p-4 sm:p-6 border-b md:border-b-0 md:border-r border-slate-800 min-h-[300px] md:min-h-[500px]">
+            {/* Left Column (6 Cols): Photo Carousel / Zoom & Video Player */}
+            <div className="md:col-span-6 relative bg-slate-950 flex flex-col justify-between p-4 sm:p-6 border-b md:border-b-0 md:border-r border-slate-800 min-h-[340px] md:min-h-[500px]">
 
-              {/* Close Button Top-Right (Mobile) */}
-              <button
-                type="button"
-                onClick={() => {
-                  setSelectedHorse(null);
-                  setModalImageIdx(0);
-                }}
-                className="md:hidden absolute top-3 right-3 w-8 h-8 rounded-full bg-slate-900/90 text-white flex items-center justify-center z-40 border border-slate-700 shadow-lg cursor-pointer"
-                title="Close"
-              >
-                <X className="w-4 h-4" />
-              </button>
+              {/* Header Bar inside Media Area */}
+              <div className="flex items-center justify-between z-30 pb-2">
+                {/* Media Type & Counter Badge */}
+                <div className="bg-slate-900/90 text-[#D4AF37] text-xs font-black px-3 py-1 rounded-full border border-amber-500/30 shadow-lg flex items-center gap-1.5">
+                  {activeMediaTab === 'video' ? (
+                    <>
+                      <Film className="w-3.5 h-3.5 text-amber-400" />
+                      <span>Video Mode (Muted)</span>
+                    </>
+                  ) : (
+                    <>
+                      <span>📷</span>
+                      <span>{modalImageIdx + 1} / {horseImages.length}</span>
+                    </>
+                  )}
+                </div>
 
-              {/* Top Photo Counter Badge */}
-              <div className="absolute top-4 left-4 bg-slate-900/90 text-[#D4AF37] text-xs font-black px-3 py-1 rounded-full border border-amber-500/30 z-30 shadow-lg flex items-center gap-1.5">
-                <span>📷</span>
-                <span>{modalImageIdx + 1} / {horseImages.length}</span>
+                {/* Top Action Buttons (Zoom / Lightbox / Close on Mobile) */}
+                <div className="flex items-center gap-1.5">
+                  {activeMediaTab === 'photo' && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={() => setIsPhotoZoomed(!isPhotoZoomed)}
+                        className={`p-1.5 rounded-full transition border shadow-md flex items-center justify-center cursor-pointer ${
+                          isPhotoZoomed
+                            ? 'bg-amber-400 text-slate-950 border-amber-300'
+                            : 'bg-slate-900/90 hover:bg-slate-800 text-slate-200 border-slate-700'
+                        }`}
+                        title={isPhotoZoomed ? 'Reset Photo Zoom' : 'Zoom into Photo (2x)'}
+                      >
+                        {isPhotoZoomed ? <ZoomOut className="w-4 h-4" /> : <ZoomIn className="w-4 h-4" />}
+                      </button>
+
+                      <button
+                        type="button"
+                        onClick={() => setIsLightboxOpen(true)}
+                        className="p-1.5 rounded-full bg-slate-900/90 hover:bg-slate-800 text-slate-200 hover:text-white transition border border-slate-700 shadow-md flex items-center justify-center cursor-pointer"
+                        title="Open Fullscreen Lightbox"
+                      >
+                        <Maximize2 className="w-4 h-4" />
+                      </button>
+                    </>
+                  )}
+
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setSelectedHorse(null);
+                      setModalImageIdx(0);
+                    }}
+                    className="md:hidden p-1.5 rounded-full bg-slate-900/90 text-white flex items-center justify-center border border-slate-700 shadow-lg cursor-pointer"
+                    title="Close"
+                  >
+                    <X className="w-4 h-4" />
+                  </button>
+                </div>
               </div>
 
-              {/* Main Photo Display Area */}
-              <div className="relative flex-1 flex items-center justify-center my-auto py-2 group">
-                <img
-                  src={currentImg}
-                  alt={selectedHorse.name}
-                  className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-30 pointer-events-none"
-                  onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
-                />
-                <img
-                  src={currentImg}
-                  alt={`${selectedHorse.name} photo ${modalImageIdx + 1}`}
-                  className="relative z-10 max-h-[240px] md:max-h-[360px] w-full object-contain rounded-2xl border border-white/10 shadow-2xl transition-all duration-300"
-                  onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
-                />
+              {/* Main Media Display Area */}
+              {activeMediaTab === 'video' ? (
+                /* Video Showcase Player */
+                <div className="relative flex-1 flex flex-col items-center justify-center my-auto py-2 bg-slate-900/80 rounded-2xl overflow-hidden border border-amber-400/40 p-2">
+                  <video
+                    src={formatImgUrl(selectedHorse.videoUrl || selectedHorse.video)}
+                    controls
+                    autoPlay
+                    loop
+                    muted
+                    playsInline
+                    className="max-h-[250px] md:max-h-[350px] w-full object-contain rounded-xl bg-black"
+                  />
+                  <div className="absolute top-4 left-4 flex flex-wrap items-center gap-1.5 z-20 pointer-events-none">
+                    <span className="px-2.5 py-1 rounded-full bg-slate-900/90 text-amber-300 border border-amber-400/40 text-[10px] font-black flex items-center gap-1 shadow-lg">
+                      <Film className="w-3 h-3 text-amber-400" /> 20s Showcase
+                    </span>
+                    <span className="px-2.5 py-1 rounded-full bg-slate-900/90 text-slate-300 border border-slate-700 text-[10px] font-black flex items-center gap-1 shadow-lg">
+                      <VolumeX className="w-3 h-3 text-slate-400" /> Muted
+                    </span>
+                  </div>
+                </div>
+              ) : (
+                /* Photo Carousel with Interactive In-Frame Zoom */
+                <div
+                  className="relative flex-1 flex items-center justify-center my-auto py-2 group overflow-hidden rounded-2xl cursor-pointer"
+                  onMouseMove={(e) => {
+                    if (!isPhotoZoomed) return;
+                    const rect = e.currentTarget.getBoundingClientRect();
+                    const x = ((e.clientX - rect.left) / rect.width) * 100;
+                    const y = ((e.clientY - rect.top) / rect.height) * 100;
+                    setZoomPos({ x, y });
+                  }}
+                  onClick={() => setIsPhotoZoomed(!isPhotoZoomed)}
+                  title={isPhotoZoomed ? 'Click to reset zoom' : 'Click to zoom in on horse photo'}
+                >
+                  <img
+                    src={currentImg}
+                    alt={selectedHorse.name}
+                    className="absolute inset-0 w-full h-full object-cover blur-2xl opacity-30 pointer-events-none"
+                    onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
+                  />
+                  <img
+                    src={currentImg}
+                    alt={`${selectedHorse.name} photo ${modalImageIdx + 1}`}
+                    style={{
+                      transform: isPhotoZoomed ? 'scale(2.2)' : 'scale(1)',
+                      transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
+                      transition: isPhotoZoomed ? 'transform 0.08s ease-out' : 'transform 0.3s ease-in-out',
+                    }}
+                    className={`relative z-10 max-h-[240px] md:max-h-[360px] w-full object-contain rounded-2xl border border-white/10 shadow-2xl select-none ${
+                      isPhotoZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'
+                    }`}
+                    onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
+                  />
 
-                {/* Photo Slider Controls */}
-                {horseImages.length > 1 && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setModalImageIdx(prev => (prev === 0 ? horseImages.length - 1 : prev - 1));
-                      }}
-                      className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
-                    >
-                      <ChevronLeft className="w-5 h-5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        setModalImageIdx(prev => (prev === horseImages.length - 1 ? 0 : prev + 1));
-                      }}
-                      className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
-                    >
-                      <ChevronRight className="w-5 h-5" />
-                    </button>
-                  </>
-                )}
-              </div>
+                  {/* Zoom Status Hint */}
+                  <div className="absolute bottom-3 right-3 bg-slate-900/80 hover:bg-slate-900 text-amber-300 text-[10px] font-bold px-2.5 py-1 rounded-full border border-amber-400/30 z-30 shadow-md flex items-center gap-1 backdrop-blur-sm pointer-events-none">
+                    {isPhotoZoomed ? <ZoomOut className="w-3 h-3" /> : <ZoomIn className="w-3 h-3" />}
+                    <span>{isPhotoZoomed ? 'Zoomed (Pan with mouse)' : 'Click to Zoom Photo'}</span>
+                  </div>
 
-              {/* Bottom Thumbnail Strip */}
-              {horseImages.length > 1 && (
-                <div className="flex items-center justify-center gap-2 relative z-30 pt-2">
-                  {horseImages.map((img, idx) => (
-                    <button
-                      key={idx}
-                      type="button"
-                      onClick={() => setModalImageIdx(idx)}
-                      className={`w-12 h-10 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${modalImageIdx === idx ? 'border-[#D4AF37] scale-105 shadow-md' : 'border-slate-800 opacity-60 hover:opacity-100'}`}
-                    >
-                      <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
-                    </button>
-                  ))}
+                  {/* Photo Slider Controls */}
+                  {horseImages.length > 1 && !isPhotoZoomed && (
+                    <>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setModalImageIdx((prev) => (prev === 0 ? horseImages.length - 1 : prev - 1));
+                        }}
+                        className="absolute left-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
+                      >
+                        <ChevronLeft className="w-5 h-5" />
+                      </button>
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setModalImageIdx((prev) => (prev === horseImages.length - 1 ? 0 : prev + 1));
+                        }}
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-9 h-9 rounded-full bg-slate-900/80 hover:bg-[#D4AF37] text-white hover:text-slate-950 transition border border-slate-700 flex items-center justify-center z-30 shadow-xl cursor-pointer"
+                      >
+                        <ChevronRight className="w-5 h-5" />
+                      </button>
+                    </>
+                  )}
                 </div>
               )}
+
+              {/* Bottom Thumbnail & Video Switcher Strip */}
+              <div className="flex items-center justify-center gap-2 relative z-30 pt-2 flex-wrap">
+                {/* Photo Thumbnails */}
+                {horseImages.map((img, idx) => (
+                  <button
+                    key={idx}
+                    type="button"
+                    onClick={() => {
+                      setModalImageIdx(idx);
+                      setActiveMediaTab('photo');
+                      setIsPhotoZoomed(false);
+                    }}
+                    className={`w-12 h-10 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
+                      activeMediaTab === 'photo' && modalImageIdx === idx
+                        ? 'border-[#D4AF37] scale-105 shadow-md ring-2 ring-[#D4AF37]/40'
+                        : 'border-slate-800 opacity-60 hover:opacity-100'
+                    }`}
+                    title={`View Photo ${idx + 1}`}
+                  >
+                    <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
+                  </button>
+                ))}
+
+                {/* Video Switcher Button */}
+                {(selectedHorse.videoUrl || selectedHorse.video) && (
+                  <button
+                    type="button"
+                    onClick={() => setActiveMediaTab('video')}
+                    className={`h-10 px-3 rounded-lg border-2 transition-all cursor-pointer flex items-center gap-1.5 font-black text-xs ${
+                      activeMediaTab === 'video'
+                        ? 'bg-amber-400 text-slate-950 border-amber-300 scale-105 shadow-lg'
+                        : 'bg-slate-900 text-amber-300 border-amber-500/40 hover:bg-slate-800'
+                    }`}
+                    title="Watch Horse Video"
+                  >
+                    <Play className="w-3.5 h-3.5 fill-current" />
+                    <span>Watch Video</span>
+                  </button>
+                )}
+              </div>
             </div>
 
             {/* Right Column (6 Cols): Horse Details & Contact Options */}
@@ -879,8 +1027,8 @@ export const Marketplace = () => {
                 </div>
               </div>
 
-              {/* Seller Contact Footer */}
-              <div className="pt-4 mt-4 border-t border-slate-100 flex items-center justify-between gap-3">
+              {/* Seller Contact & Video Action Footer */}
+              <div className="pt-4 mt-4 border-t border-slate-100 flex flex-wrap sm:flex-nowrap items-center justify-between gap-3">
                 <div className="min-w-0">
                   <span className="text-[9px] text-slate-400 font-extrabold uppercase block truncate">Listed By</span>
                   <h4 className="text-xs font-black text-slate-900 truncate">{selectedHorse.sellerName || selectedHorse.location || 'Verified Breeder'}</h4>
@@ -892,6 +1040,19 @@ export const Marketplace = () => {
                 </div>
 
                 <div className="flex items-center gap-2 shrink-0">
+                  {/* Video Button */}
+                  {(selectedHorse.videoUrl || selectedHorse.video) && (
+                    <button
+                      type="button"
+                      onClick={() => setActiveMediaTab('video')}
+                      className="inline-flex items-center gap-1 px-2.5 py-2 bg-slate-900 hover:bg-slate-800 text-amber-400 border border-amber-400/40 font-black text-xs rounded-xl transition shadow-md cursor-pointer hover:border-amber-400"
+                      title="Watch Horse Video"
+                    >
+                      <Play className="w-3.5 h-3.5 fill-amber-400" />
+                      <span>Video</span>
+                    </button>
+                  )}
+
                   <a
                     href={`tel:${selectedHorse.sellerPhone || selectedHorse.phone}`}
                     className="inline-flex items-center gap-1.5 px-3 py-2 bg-[#D4AF37] hover:bg-[#C9A227] text-slate-950 font-black text-xs rounded-xl transition shadow-md"
@@ -916,6 +1077,70 @@ export const Marketplace = () => {
           </div>
         )}
       </Modal>
+
+      {/* Fullscreen High-Definition Lightbox Modal for Photo Zooming */}
+      {isLightboxOpen && (
+        <div className="fixed inset-0 z-50 bg-black/95 backdrop-blur-md flex flex-col justify-between p-4 animate-fade-in">
+          {/* Lightbox Top Header */}
+          <div className="flex items-center justify-between text-white border-b border-white/10 pb-3">
+            <div className="flex items-center gap-3">
+              <span className="font-bold text-sm text-amber-400">{selectedHorse?.name}</span>
+              <span className="text-xs text-slate-400">Photo {modalImageIdx + 1} of {horseImages.length}</span>
+            </div>
+            <div className="flex items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setLightboxZoom((prev) => Math.max(1, prev - 0.5))}
+                className="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white transition cursor-pointer"
+                title="Zoom Out"
+              >
+                <ZoomOut className="w-4 h-4" />
+              </button>
+              <span className="text-xs font-mono font-bold px-2">{lightboxZoom.toFixed(1)}x</span>
+              <button
+                type="button"
+                onClick={() => setLightboxZoom((prev) => Math.min(3.5, prev + 0.5))}
+                className="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white transition cursor-pointer"
+                title="Zoom In"
+              >
+                <ZoomIn className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => setLightboxZoom(1)}
+                className="p-2 bg-white/10 hover:bg-white/20 rounded-xl text-white transition cursor-pointer"
+                title="Reset Zoom"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsLightboxOpen(false);
+                  setLightboxZoom(1);
+                }}
+                className="p-2 bg-rose-600 hover:bg-rose-700 rounded-xl text-white transition ml-2 cursor-pointer"
+                title="Close Fullscreen"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Lightbox Center Image */}
+          <div className="flex-1 flex items-center justify-center overflow-auto p-4">
+            <img
+              src={currentImg}
+              alt={selectedHorse?.name}
+              style={{
+                transform: `scale(${lightboxZoom})`,
+                transition: 'transform 0.2s ease-out',
+              }}
+              className="max-h-[80vh] max-w-[90vw] object-contain select-none shadow-2xl rounded-xl"
+            />
+          </div>
+        </div>
+      )}
 
     </div>
   );

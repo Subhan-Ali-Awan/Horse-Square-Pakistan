@@ -25,7 +25,11 @@ import {
   CheckSquare,
   ChevronRight,
   Store,
-  Gavel
+  Gavel,
+  Video,
+  VolumeX,
+  Play,
+  Film
 } from 'lucide-react';
 
 export const SellHorse = () => {
@@ -51,6 +55,10 @@ export const SellHorse = () => {
   });
   const [listingType, setListingType] = useState('marketplace'); // 'marketplace' or 'auction'
   const [imageFiles, setImageFiles] = useState([]);
+  const [videoFile, setVideoFile] = useState(null);
+  const [videoPreviewUrl, setVideoPreviewUrl] = useState('');
+  const [videoDuration, setVideoDuration] = useState(0);
+  const [videoError, setVideoError] = useState('');
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState('');
   const [error, setError] = useState('');
@@ -72,6 +80,54 @@ export const SellHorse = () => {
 
   const handleRemoveImage = (indexToRemove) => {
     setImageFiles(prev => prev.filter((_, idx) => idx !== indexToRemove));
+  };
+
+  const handleVideoChange = (e) => {
+    setVideoError('');
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+
+      // Check duration <= 20 seconds using in-memory HTML5 Video element
+      const tempVideo = document.createElement('video');
+      tempVideo.preload = 'metadata';
+      const objectUrl = URL.createObjectURL(file);
+
+      tempVideo.onloadedmetadata = () => {
+        const duration = tempVideo.duration;
+
+        if (duration > 20.5) {
+          setVideoError(`Selected video is ${Math.round(duration)} seconds. Maximum allowed duration is 20 seconds (Muted). Please choose or trim a shorter clip.`);
+          setVideoFile(null);
+          setVideoPreviewUrl('');
+          setVideoDuration(0);
+          e.target.value = '';
+        } else {
+          setVideoFile(file);
+          setVideoPreviewUrl(objectUrl);
+          setVideoDuration(Math.round(duration * 10) / 10);
+          setVideoError('');
+        }
+      };
+
+      tempVideo.onerror = () => {
+        // Fallback if metadata isn't readable
+        setVideoFile(file);
+        setVideoPreviewUrl(objectUrl);
+        setVideoDuration(0);
+      };
+
+      tempVideo.src = objectUrl;
+    }
+  };
+
+  const handleRemoveVideo = () => {
+    if (videoPreviewUrl) {
+      URL.revokeObjectURL(videoPreviewUrl);
+    }
+    setVideoFile(null);
+    setVideoPreviewUrl('');
+    setVideoDuration(0);
+    setVideoError('');
   };
 
   // Real-time Policy Validation Indicators
@@ -214,6 +270,10 @@ export const SellHorse = () => {
         imageFiles.forEach((file) => {
           data.append('images', file);
         });
+
+        if (videoFile) {
+          data.append('video', videoFile);
+        }
 
         const res = await fetch(getApiUrl('/api/horses'), {
           method: 'POST',
@@ -793,6 +853,95 @@ export const SellHorse = () => {
                   </div>
                 )}
               </div>
+
+              {/* Section 6: Video Upload (Max 20s, Muted, Optional) */}
+              <div className="space-y-5 pt-2">
+                <div className="flex justify-between items-center border-b pb-3">
+                  <h3 className="text-sm font-black uppercase tracking-wider text-[#0F172A] flex items-center gap-2.5">
+                    <div className="w-7 h-7 rounded-xl bg-[#D4AF37]/15 text-[#D4AF37] border border-[#D4AF37]/30 flex items-center justify-center font-black text-xs shrink-0">
+                      6
+                    </div>
+                    <span>Horse Video Showcase (Optional • Max 20s, Muted)</span>
+                  </h3>
+                  <span className={`text-xs font-extrabold px-3 py-1 rounded-full border ${
+                    videoFile 
+                      ? 'text-emerald-900 bg-emerald-50 border-emerald-300'
+                      : 'text-slate-600 bg-slate-100 border-slate-200'
+                  }`}>
+                    {videoFile ? '1 Video Selected' : 'Optional'}
+                  </span>
+                </div>
+
+                {videoError && (
+                  <div className="p-3.5 bg-rose-50 border border-rose-300 rounded-2xl text-xs font-bold text-rose-800 flex items-center gap-2 animate-fade-up">
+                    <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                    <span>{videoError}</span>
+                  </div>
+                )}
+
+                {!videoFile ? (
+                  <div className="border-2 border-dashed border-slate-300 hover:border-[#D4AF37] rounded-2xl sm:rounded-3xl p-5 sm:p-8 text-center bg-slate-50/80 hover:bg-amber-50/30 transition duration-300 cursor-pointer relative shadow-inner group">
+                    <input
+                      type="file"
+                      accept="video/mp4,video/webm,video/quicktime,video/*"
+                      onChange={handleVideoChange}
+                      className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
+                    />
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-[#D4AF37]/10 border border-[#D4AF37]/30 flex items-center justify-center text-[#D4AF37] mx-auto mb-2 sm:mb-3 group-hover:scale-110 group-hover:bg-[#D4AF37] group-hover:text-slate-950 transition duration-300 shadow-sm">
+                      <Film className="w-5 h-5 sm:w-6 sm:h-6" />
+                    </div>
+                    <p className="text-xs sm:text-sm font-black text-slate-800">
+                      Click or drag a horse video here to upload (Max 20 Seconds)
+                    </p>
+                    <p className="text-[10px] sm:text-xs text-slate-500 font-medium mt-1">
+                      MP4, WebM, MOV up to 50MB • Maximum duration: 20s • Plays without audio
+                    </p>
+                  </div>
+                ) : (
+                  <div className="relative rounded-2xl sm:rounded-3xl overflow-hidden border-2 border-amber-400 bg-slate-950 shadow-xl">
+                    <video
+                      src={videoPreviewUrl}
+                      controls
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      className="w-full max-h-[280px] sm:max-h-[340px] object-contain bg-slate-950 mx-auto"
+                    />
+                    {/* Video Meta Badges */}
+                    <div className="absolute top-3 left-3 flex flex-wrap items-center gap-2 z-20">
+                      <span className="px-2.5 py-1 rounded-full bg-slate-900/90 text-amber-300 border border-amber-400/40 text-[10px] font-black tracking-wide flex items-center gap-1 shadow-md">
+                        <Play className="w-3 h-3 text-amber-400 fill-amber-400" />
+                        {videoDuration > 0 ? `${videoDuration}s / 20s Max` : 'Max 20s'}
+                      </span>
+                      <span className="px-2.5 py-1 rounded-full bg-slate-900/90 text-slate-300 border border-slate-700 text-[10px] font-black tracking-wide flex items-center gap-1 shadow-md">
+                        <VolumeX className="w-3 h-3 text-slate-400" />
+                        Muted / No Audio
+                      </span>
+                    </div>
+
+                    <div className="absolute top-3 right-3 z-20">
+                      <button
+                        type="button"
+                        onClick={handleRemoveVideo}
+                        className="px-3 py-1.5 bg-rose-600/90 hover:bg-rose-700 text-white rounded-xl text-xs font-bold transition flex items-center gap-1 shadow-lg cursor-pointer"
+                        title="Remove Video"
+                      >
+                        <X className="w-3.5 h-3.5" />
+                        <span>Remove</span>
+                      </button>
+                    </div>
+
+                    <div className="p-3 bg-slate-900 border-t border-slate-800 flex items-center justify-between text-xs text-slate-400">
+                      <span className="truncate max-w-[200px] sm:max-w-md font-medium text-slate-300">
+                        📁 {videoFile.name} ({(videoFile.size / (1024 * 1024)).toFixed(1)} MB)
+                      </span>
+                      <span className="text-emerald-400 font-bold">✓ Ready for listing</span>
+                    </div>
+                  </div>
+                )}
+              </div>
+
 
               {/* Submit Action Button */}
               <button

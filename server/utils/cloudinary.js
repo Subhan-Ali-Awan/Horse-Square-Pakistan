@@ -26,7 +26,7 @@ const uploadToCloudinary = async (filePath, folder = "horsesquare") => {
   try {
     const result = await cloudinary.uploader.upload(filePath, {
       folder: folder,
-      resource_type: "image",
+      resource_type: "auto",
     });
     return result.secure_url;
   } catch (error) {

@@ -28,8 +28,8 @@ const horseSchema = new mongoose.Schema(
     dam: { type: String, default: "Unknown" },
 
     images: [{ type: String }], // file paths e.g. /uploads/xyz.jpg
+    videoUrl: { type: String, default: "" }, // optional horse video showcase URL (max 20s, muted)
 
-    // Link back to the registered user who posted it (optional - guests can also post in this FYP)
     postedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" },
 
     status: {

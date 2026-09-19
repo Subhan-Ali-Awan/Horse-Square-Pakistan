@@ -80,9 +80,41 @@ exports.createHorse = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Please fill in all required fields" });
     }
 
+    let imageFiles = [];
+    let videoFile = null;
+
+    if (req.files) {
+      if (Array.isArray(req.files)) {
+        imageFiles = req.files.filter((f) => f.fieldname === "images" || f.fieldname === "image" || f.mimetype.startsWith("image/"));
+        const v = req.files.find((f) => f.fieldname === "video" || f.mimetype.startsWith("video/"));
+        if (v) videoFile = v;
+      } else if (typeof req.files === "object") {
+        if (req.files.images && Array.isArray(req.files.images)) {
+          imageFiles.push(...req.files.images);
+        }
+        if (req.files.image && Array.isArray(req.files.image)) {
+          imageFiles.push(...req.files.image);
+        }
+        if (req.files.video && Array.isArray(req.files.video) && req.files.video.length > 0) {
+          videoFile = req.files.video[0];
+        }
+      }
+    } else if (req.file) {
+      if (req.file.fieldname === "video" || req.file.mimetype.startsWith("video/")) {
+        videoFile = req.file;
+      } else {
+        imageFiles.push(req.file);
+      }
+    }
+
     let images = [];
-    if (req.files && req.files.length > 0) {
-      images = await Promise.all(req.files.map((file) => uploadToCloudinary(file.path, "horsesquare/marketplace")));
+    if (imageFiles.length > 0) {
+      images = await Promise.all(imageFiles.map((file) => uploadToCloudinary(file.path, "horsesquare/marketplace")));
+    }
+
+    let videoUrl = req.body.videoUrl || "";
+    if (videoFile) {
+      videoUrl = await uploadToCloudinary(videoFile.path, "horsesquare/marketplace/videos");
     }
 
     // Optionally extract user ID from JWT if present in the headers (since this route has no protect middleware)
@@ -133,7 +165,7 @@ exports.createHorse = async (req, res, next) => {
     // 5. Content Policy: Scan for prohibited keywords
     const prohibitedKeywords = ["spam", "scam", "fake", "test ad", "fraud", "dummy"];
     const combinedContent = `${name} ${description}`.toLowerCase();
-    const hasProhibitedWord = prohibitedKeywords.some(kw => combinedContent.includes(kw));
+    const hasProhibitedWord = prohibitedKeywords.some((kw) => combinedContent.includes(kw));
     if (hasProhibitedWord) {
       policyFailures.push("Listing content contains prohibited or spam keywords");
     }
@@ -157,11 +189,12 @@ exports.createHorse = async (req, res, next) => {
       sire,
       dam,
       images,
+      videoUrl,
       postedBy,
       status: finalStatus,
       autoApproved: isApproved,
       rejectionReason: isApproved ? "" : policyFailures.join("; "),
-      policyFailures
+      policyFailures,
     });
 
     if (isApproved) {
@@ -229,8 +262,41 @@ exports.updateHorse = async (req, res, next) => {
       }
     });
 
-    if (req.files && req.files.length > 0) {
-      horse.images = await Promise.all(req.files.map((file) => uploadToCloudinary(file.path, "horsesquare/marketplace")));
+    let imageFiles = [];
+    let videoFile = null;
+
+    if (req.files) {
+      if (Array.isArray(req.files)) {
+        imageFiles = req.files.filter((f) => f.fieldname === "images" || f.fieldname === "image" || f.mimetype.startsWith("image/"));
+        const v = req.files.find((f) => f.fieldname === "video" || f.mimetype.startsWith("video/"));
+        if (v) videoFile = v;
+      } else if (typeof req.files === "object") {
+        if (req.files.images && Array.isArray(req.files.images)) {
+          imageFiles.push(...req.files.images);
+        }
+        if (req.files.image && Array.isArray(req.files.image)) {
+          imageFiles.push(...req.files.image);
+        }
+        if (req.files.video && Array.isArray(req.files.video) && req.files.video.length > 0) {
+          videoFile = req.files.video[0];
+        }
+      }
+    } else if (req.file) {
+      if (req.file.fieldname === "video" || req.file.mimetype.startsWith("video/")) {
+        videoFile = req.file;
+      } else {
+        imageFiles.push(req.file);
+      }
+    }
+
+    if (imageFiles.length > 0) {
+      horse.images = await Promise.all(imageFiles.map((file) => uploadToCloudinary(file.path, "horsesquare/marketplace")));
+    }
+
+    if (videoFile) {
+      horse.videoUrl = await uploadToCloudinary(videoFile.path, "horsesquare/marketplace/videos");
+    } else if (req.body.videoUrl !== undefined) {
+      horse.videoUrl = req.body.videoUrl;
     }
 
     // Any edit by a normal user sends it back for re-approval
