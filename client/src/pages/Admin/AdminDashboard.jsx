@@ -508,7 +508,7 @@ export const AdminDashboard = () => {
               <span className="text-xs font-bold text-slate-200 block truncate">
                 {user?.firstName && user.firstName !== 'Super' ? `${user.firstName} ${user.lastName || ''}`.trim() : 'Admin'}
               </span>
-              <span className="text-[10px] text-amber-200/80 font-bold block truncate">{user?.email || 'admin@horsesquare.pk'}</span>
+              <span className="text-[10px] text-amber-200/80 font-bold block truncate">{user?.email || 'adminhsp7@gmail.com'}</span>
             </div>
           </div>
           <button
@@ -575,7 +575,7 @@ export const AdminDashboard = () => {
               <span className="text-xs font-bold text-slate-200 block truncate">
                 {user?.firstName && user.firstName !== 'Super' ? `${user.firstName} ${user.lastName || ''}`.trim() : 'Admin'}
               </span>
-              <span className="text-[10px] text-amber-200/80 font-bold block truncate">{user?.email || 'admin@horsesquare.pk'}</span>
+              <span className="text-[10px] text-amber-200/80 font-bold block truncate">{user?.email || 'adminhsp7@gmail.com'}</span>
             </div>
           </div>
           <button

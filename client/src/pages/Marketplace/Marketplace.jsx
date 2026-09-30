@@ -1,4 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/AuthContext';
 import { getApiUrl } from '../../config/api';
 import {
   Search,
@@ -26,11 +28,14 @@ import {
   VolumeX,
   Play,
   Film,
-  RotateCcw
+  RotateCcw,
+  Lock
 } from 'lucide-react';
 import { Modal } from '../../components/Modal';
 
 export const Marketplace = () => {
+  const { user } = useAuth();
+  const navigate = useNavigate();
   const [horses, setHorses] = useState([]);
   const [loading, setLoading] = useState(true);
   const [breedFilter, setBreedFilter] = useState('');
@@ -772,11 +777,10 @@ export const Marketplace = () => {
                       <button
                         type="button"
                         onClick={() => setIsPhotoZoomed(!isPhotoZoomed)}
-                        className={`p-1.5 rounded-full transition border shadow-md flex items-center justify-center cursor-pointer ${
-                          isPhotoZoomed
+                        className={`p-1.5 rounded-full transition border shadow-md flex items-center justify-center cursor-pointer ${isPhotoZoomed
                             ? 'bg-amber-400 text-slate-950 border-amber-300'
                             : 'bg-slate-900/90 hover:bg-slate-800 text-slate-200 border-slate-700'
-                        }`}
+                          }`}
                         title={isPhotoZoomed ? 'Reset Photo Zoom' : 'Zoom into Photo (2x)'}
                       >
                         {isPhotoZoomed ? <ZoomOut className="w-4 h-4" /> : <ZoomIn className="w-4 h-4" />}
@@ -857,9 +861,8 @@ export const Marketplace = () => {
                       transformOrigin: `${zoomPos.x}% ${zoomPos.y}%`,
                       transition: isPhotoZoomed ? 'transform 0.08s ease-out' : 'transform 0.3s ease-in-out',
                     }}
-                    className={`relative z-10 max-h-[240px] md:max-h-[360px] w-full object-contain rounded-2xl border border-white/10 shadow-2xl select-none ${
-                      isPhotoZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'
-                    }`}
+                    className={`relative z-10 max-h-[240px] md:max-h-[360px] w-full object-contain rounded-2xl border border-white/10 shadow-2xl select-none ${isPhotoZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'
+                      }`}
                     onError={(e) => { e.target.onerror = null; e.target.src = '/uploads/pasha_1.jpg'; }}
                   />
 
@@ -909,11 +912,10 @@ export const Marketplace = () => {
                       setActiveMediaTab('photo');
                       setIsPhotoZoomed(false);
                     }}
-                    className={`w-12 h-10 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${
-                      activeMediaTab === 'photo' && modalImageIdx === idx
+                    className={`w-12 h-10 rounded-lg overflow-hidden border-2 transition-all cursor-pointer ${activeMediaTab === 'photo' && modalImageIdx === idx
                         ? 'border-[#D4AF37] scale-105 shadow-md ring-2 ring-[#D4AF37]/40'
                         : 'border-slate-800 opacity-60 hover:opacity-100'
-                    }`}
+                      }`}
                     title={`View Photo ${idx + 1}`}
                   >
                     <img src={img} alt="Thumbnail" className="w-full h-full object-cover" />
@@ -925,11 +927,10 @@ export const Marketplace = () => {
                   <button
                     type="button"
                     onClick={() => setActiveMediaTab('video')}
-                    className={`h-10 px-3 rounded-lg border-2 transition-all cursor-pointer flex items-center gap-1.5 font-black text-xs ${
-                      activeMediaTab === 'video'
+                    className={`h-10 px-3 rounded-lg border-2 transition-all cursor-pointer flex items-center gap-1.5 font-black text-xs ${activeMediaTab === 'video'
                         ? 'bg-amber-400 text-slate-950 border-amber-300 scale-105 shadow-lg'
                         : 'bg-slate-900 text-amber-300 border-amber-500/40 hover:bg-slate-800'
-                    }`}
+                      }`}
                     title="Watch Horse Video"
                   >
                     <Play className="w-3.5 h-3.5 fill-current" />
@@ -1036,6 +1037,14 @@ export const Marketplace = () => {
                     <span className="text-amber-500 font-extrabold">4.8★</span>
                     <span>•</span>
                     <span className="text-emerald-600 font-bold">{selectedHorse.location || 'Pakistan'}</span>
+                    {!user && (
+                      <>
+                        <span>•</span>
+                        <span className="text-amber-600 font-extrabold flex items-center gap-0.5">
+                          <Lock className="w-2.5 h-2.5" /> Login to Contact
+                        </span>
+                      </>
+                    )}
                   </div>
                 </div>
 
@@ -1053,22 +1062,38 @@ export const Marketplace = () => {
                     </button>
                   )}
 
-                  <a
-                    href={`tel:${selectedHorse.sellerPhone || selectedHorse.phone}`}
-                    className="inline-flex items-center gap-1.5 px-3 py-2 bg-[#D4AF37] hover:bg-[#C9A227] text-slate-950 font-black text-xs rounded-xl transition shadow-md"
-                  >
-                    <Phone className="w-3.5 h-3.5" />
-                    <span>Call</span>
-                  </a>
-                  <a
-                    href={`https://wa.me/${(selectedHorse.sellerPhone || selectedHorse.phone || '').replace(/[+ -]/g, '')}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl transition shadow-md"
-                  >
-                    <MessageSquare className="w-3.5 h-3.5" />
-                    <span>WhatsApp</span>
-                  </a>
+                  {user ? (
+                    <>
+                      <a
+                        href={`tel:${selectedHorse.sellerPhone || selectedHorse.phone}`}
+                        className="inline-flex items-center gap-1.5 px-3 py-2 bg-[#D4AF37] hover:bg-[#C9A227] text-slate-950 font-black text-xs rounded-xl transition shadow-md cursor-pointer"
+                        title={`Call ${selectedHorse.sellerName || 'Seller'}`}
+                      >
+                        <Phone className="w-3.5 h-3.5" />
+                        <span>Call</span>
+                      </a>
+                      <a
+                        href={`https://wa.me/${(selectedHorse.sellerPhone || selectedHorse.phone || '').replace(/[+ -]/g, '')}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1.5 px-3 py-2 bg-emerald-600 hover:bg-emerald-700 text-white font-black text-xs rounded-xl transition shadow-md cursor-pointer"
+                        title={`Chat on WhatsApp with ${selectedHorse.sellerName || 'Seller'}`}
+                      >
+                        <MessageSquare className="w-3.5 h-3.5" />
+                        <span>WhatsApp</span>
+                      </a>
+                    </>
+                  ) : (
+                    <Link
+                      to="/login"
+                      state={{ from: '/marketplace', message: 'Please log in or register to contact horse sellers.' }}
+                      className="inline-flex items-center gap-1.5 px-3.5 py-2 bg-gradient-to-r from-[#D4AF37] to-[#C9A227] hover:from-[#C9A227] hover:to-[#B8860B] text-slate-950 font-black text-xs rounded-xl transition shadow-md cursor-pointer active:scale-95"
+                      title="Login or register to contact seller"
+                    >
+                      <Lock className="w-3.5 h-3.5 stroke-[2.5]" />
+                      <span>Login to Contact Seller</span>
+                    </Link>
+                  )}
                 </div>
               </div>
 

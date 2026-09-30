@@ -1,7 +1,7 @@
 const jwt = require("jsonwebtoken");
 const crypto = require("crypto");
 const User = require("../models/User");
-const { sendWelcomeEmail, sendEmailVerificationOtp } = require("../utils/emailService");
+const { sendWelcomeEmail, sendLoginCongratulationsEmail, sendEmailVerificationOtp } = require("../utils/emailService");
 
 // Helper: Check if email has valid official format and domain structure
 const isValidOfficialEmail = (email) => {
@@ -328,18 +328,16 @@ exports.loginUser = async (req, res, next) => {
 
     user.lastLogin = new Date();
 
-    // If user has not received welcome email yet, send it on login
-    if (!user.welcomeEmailSent) {
-      sendWelcomeEmail(user)
-        .then(async (result) => {
-          if (result && result.success) {
-            await User.findByIdAndUpdate(user._id, { welcomeEmailSent: true });
-          }
-        })
-        .catch((err) => {
-          console.error("[WELCOME EMAIL DISPATCH ON LOGIN ERROR]:", err.message);
-        });
-    }
+    // Automatically send official congratulations login email from horsesquarepakistan@gmail.com
+    sendLoginCongratulationsEmail(user)
+      .then(async (result) => {
+        if (result && result.success && !user.welcomeEmailSent) {
+          await User.findByIdAndUpdate(user._id, { welcomeEmailSent: true });
+        }
+      })
+      .catch((err) => {
+        console.error("[LOGIN CONGRATULATIONS EMAIL DISPATCH ERROR]:", err.message);
+      });
 
     await user.save();
 

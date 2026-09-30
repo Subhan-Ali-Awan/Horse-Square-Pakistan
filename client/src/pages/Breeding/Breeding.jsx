@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Award, Dna, Send, CheckCircle, ShieldCheck, Sparkles, Stethoscope, CheckCircle2, Info, ArrowRight, Phone, FileText, MessageCircle } from 'lucide-react';
+import { Award, Dna, Send, CheckCircle, ShieldCheck, Sparkles, Stethoscope, CheckCircle2, Info, ArrowRight, Phone, FileText, MessageCircle, Lock } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
@@ -344,7 +344,28 @@ export const Breeding = () => {
           <div>
             <p className="text-xs text-slate-500 mb-6 font-medium">Enter your mare details below to submit your stud service request.</p>
 
-            {submitted ? (
+            {!user ? (
+              <div className="bg-slate-900 text-white p-6 sm:p-7 rounded-3xl text-center border border-amber-500/30 space-y-4 shadow-xl">
+                <div className="w-14 h-14 bg-amber-500/20 text-amber-400 rounded-2xl flex items-center justify-center mx-auto border border-amber-500/40">
+                  <Lock className="w-7 h-7 stroke-[2.5]" />
+                </div>
+                <div className="space-y-1.5">
+                  <h3 className="font-extrabold text-lg sm:text-xl text-white">Login Required</h3>
+                  <p className="text-xs text-slate-300 font-medium max-w-sm mx-auto leading-relaxed">
+                    You must be registered and logged into your HorseSquare Pakistan account to send stud breeding inquiries and contact stallion owners.
+                  </p>
+                </div>
+                <div className="pt-2">
+                  <Link
+                    to="/login"
+                    state={{ from: '/breeding', message: 'Please log in to submit stud service requests.' }}
+                    className="w-full py-3.5 px-5 bg-gradient-to-r from-[#D4AF37] to-[#C9A227] hover:from-[#C9A227] hover:to-[#B8860B] text-slate-950 font-black rounded-2xl text-xs sm:text-sm shadow-lg hover:shadow-xl transition-all duration-200 flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <span>Login / Register to Continue</span>
+                  </Link>
+                </div>
+              </div>
+            ) : submitted ? (
               <div className="bg-gradient-to-br from-emerald-50 to-emerald-100/60 text-emerald-950 p-6 sm:p-7 rounded-3xl text-center border border-emerald-300/80 space-y-4 shadow-md">
                 <div className="w-14 h-14 bg-emerald-500 text-white rounded-2xl flex items-center justify-center mx-auto shadow-md">
                   <CheckCircle className="w-8 h-8 stroke-[2.5]" />

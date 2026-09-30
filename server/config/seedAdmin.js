@@ -33,30 +33,40 @@ try {
 // Also seeds mock live auctions and horses if they don't exist.
 async function seedAdmin() {
   try {
-    const adminEmail = process.env.ADMIN_EMAIL || "admin@horsesquare.pk";
+    const adminEmail = (process.env.ADMIN_EMAIL || "adminhsp7@gmail.com").toLowerCase().trim();
     const adminPassword = process.env.ADMIN_PASSWORD || "Admin@12345";
 
+    // 1. Purge legacy old admin account(s)
+    const oldAdminEmails = ["admin@horsesquare.pk", "superadmin@horsesquare.pk"];
+    await User.deleteMany({ email: { $in: oldAdminEmails } });
+
+    // 2. Find or create the primary admin account (adminhsp7@gmail.com)
     let admin = await User.findOne({ email: adminEmail });
     if (!admin) {
       admin = await User.create({
         firstName: "Admin",
-        lastName: "Account",
+        lastName: "HorseSquare",
         email: adminEmail,
         phone: "+923000000000",
         city: "Lahore",
         password: adminPassword,
-        userType: "User", // arbitrary, not used for admins
+        userType: "User",
         role: "admin",
+        status: "active",
+        isEmailVerified: true
       });
 
-      console.log("👑 Default admin account created:");
+      console.log("👑 Primary admin account created:");
       console.log(`   Email: ${adminEmail}`);
       console.log(`   Password: ${adminPassword}`);
-      console.log("   ⚠️  Change this password after first login in a real deployment.");
-    } else if (admin.firstName === "Super" || (admin.firstName + " " + admin.lastName).trim() === "Super Admin") {
-      admin.firstName = "Admin";
-      admin.lastName = "Account";
+    } else {
+      // Ensure admin has role=admin, active status, isEmailVerified, and the requested password
+      admin.role = "admin";
+      admin.status = "active";
+      admin.isEmailVerified = true;
+      admin.password = adminPassword; // Triggers pre-save hash hook
       await admin.save();
+      console.log(`👑 Admin credentials updated for ${adminEmail}`);
     }
 
     // Seed default horses and auctions for the live marketplace/auction demo

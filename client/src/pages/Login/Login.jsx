@@ -7,6 +7,7 @@ import { getApiUrl } from '../../config/api';
 export const Login = () => {
   const location = useLocation();
   const registeredMessage = location.state?.registeredMessage;
+  const promptMessage = location.state?.message;
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -40,7 +41,8 @@ export const Login = () => {
         if (data.user.role === 'admin') {
           navigate('/admin');
         } else {
-          navigate('/');
+          const destination = location.state?.from || '/';
+          navigate(destination);
         }
       } else {
         setError(data.message || 'Login failed. Please check your credentials.');
@@ -146,6 +148,13 @@ export const Login = () => {
               <div className="bg-emerald-50 text-emerald-900 p-4 rounded-2xl text-xs mb-5 border border-emerald-200 flex items-center gap-3 shadow-sm font-extrabold">
                 <CheckCircle2 className="w-5 h-5 text-emerald-600 shrink-0" />
                 <span>{registeredMessage}</span>
+              </div>
+            )}
+
+            {promptMessage && !registeredMessage && (
+              <div className="bg-amber-50 text-amber-900 p-4 rounded-2xl text-xs mb-5 border border-amber-200 flex items-center gap-3 shadow-sm font-extrabold">
+                <Lock className="w-5 h-5 text-amber-600 shrink-0" />
+                <span>{promptMessage}</span>
               </div>
             )}
 

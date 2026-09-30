@@ -109,7 +109,7 @@ PORT=5000
 MONGO_URI=mongodb://127.0.0.1:27017/horsesquare
 JWT_SECRET=horsesquare_super_secret_key_change_this_in_production
 JWT_EXPIRES_IN=7d
-ADMIN_EMAIL=admin@horsesquare.pk
+ADMIN_EMAIL=adminhsp7@gmail.com
 ADMIN_PASSWORD=Admin@12345
 ```
 
@@ -132,7 +132,7 @@ npm start
 You should see:
 ```
 ✅ MongoDB Connected: ...
-👑 Default admin account created: admin@horsesquare.pk / Admin@12345
+👑 Default admin account created: adminhsp7@gmail.com / Admin@12345
 🚀 Server running on http://localhost:5000
 🛠️  Admin dashboard at http://localhost:5000/admin
 ```
@@ -156,7 +156,7 @@ Start here: `frontend-integration/login.html` → register a new account → you
 
 Admin dashboard: open `http://localhost:5000/admin` directly and log in with:
 ```
-Email: admin@horsesquare.pk
+Email: adminhsp7@gmail.com
 Password: Admin@12345
 ```
 (Change this password after first login by updating `.env` and re-seeding, or build an

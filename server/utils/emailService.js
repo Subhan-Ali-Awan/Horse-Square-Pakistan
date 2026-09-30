@@ -159,6 +159,142 @@ Stay Connected:
 };
 
 /**
+ * Send Professional Login Congratulations Email from horsesquarepakistan@gmail.com on every successful user login
+ */
+const sendLoginCongratulationsEmail = async (user) => {
+  const userName = `${user.firstName || ''} ${user.lastName || ''}`.trim() || user.name || "Valued Member";
+  const userEmail = String(user.email || '').trim().toLowerCase();
+  const subject = `🎉 Congratulations & Welcome Back, ${userName}! | Horse Square Pakistan`;
+  const loginTimestamp = new Date().toLocaleString("en-PK", {
+    timeZone: "Asia/Karachi",
+    dateStyle: "full",
+    timeStyle: "medium",
+  });
+
+  const text = `Dear ${userName},
+
+Congratulations and welcome back to Horse Square Pakistan! 🐎
+
+We are thrilled to confirm that you have successfully logged into your official Horse Square Pakistan account (${userEmail}).
+
+Your Account Privileges:
+• Horse Marketplace: Browse & contact verified sellers across Pakistan
+• Live Auctions: Real-time bidding for elite champions
+• Stud Breeding Registry: Find stud stallions & pedigree lineage records
+• AI Vet Doctor: Instant symptom diagnostics & health checkups
+• Riding Academies: Certified training courses across Pakistan
+
+Login Confirmation Details:
+• Registered User: ${userName}
+• Account Email: ${userEmail}
+• Login Timestamp: ${loginTimestamp} (PKT)
+
+Thank you for being an esteemed part of Pakistan’s premier equestrian network. If you have any inquiries, feel free to contact our support team.
+
+Kind regards,
+Horse Square Pakistan
+📧 horsesquarepakistan@gmail.com
+Connecting Pakistan’s Equestrian Community
+
+Stay Connected:
+📸 Instagram: https://www.instagram.com/horsesquarepakistan
+📘 Facebook: https://www.facebook.com/share/19cgqogZhv/`;
+
+  const html = `
+    <div style="font-family: 'Segoe UI', Arial, sans-serif; max-width: 640px; margin: 0 auto; background-color: #ffffff; border-radius: 18px; overflow: hidden; border: 1px solid #e2e8f0; box-shadow: 0 12px 30px rgba(0,0,0,0.09);">
+      
+      <!-- Premium Luxury Header -->
+      <div style="background: linear-gradient(135deg, #020B21 0%, #0F172A 50%, #1E293B 100%); padding: 36px 28px; text-align: center; border-bottom: 4px solid #D4AF37; position: relative;">
+        <div style="display: inline-block; background: rgba(212,175,55,0.15); border: 2px solid #D4AF37; border-radius: 50%; padding: 10px 14px; margin-bottom: 12px;">
+          <span style="font-size: 28px;">🐎</span>
+        </div>
+        <h1 style="color: #D4AF37; margin: 0; font-size: 25px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">
+          HORSE SQUARE PAKISTAN
+        </h1>
+        <p style="color: #FCD34D; margin: 6px 0 0 0; font-size: 12px; font-weight: 800; text-transform: uppercase; letter-spacing: 2.5px;">
+          🎉 Official Login Confirmation & Welcome Note
+        </p>
+      </div>
+
+      <!-- Main Body -->
+      <div style="padding: 34px 30px; color: #334155; line-height: 1.7; font-size: 15px;">
+        
+        <p style="color: #0F172A; font-weight: 800; font-size: 18px; margin-top: 0; margin-bottom: 8px;">
+          Dear <span style="color: #B45309; font-weight: 900;">${userName}</span>,
+        </p>
+
+        <p style="font-size: 16px; color: #0F172A; font-weight: 700; margin-bottom: 14px; line-height: 1.6;">
+          Congratulations on successfully signing in to <span style="color: #D4AF37; font-weight: 800;">Horse Square Pakistan</span>! 🌟
+        </p>
+
+        <p style="color: #475569; margin-bottom: 20px;">
+          We are delighted to welcome you back to Pakistan's premier digital equine platform. Your account is fully active, allowing you to access all exclusive equestrian features and community resources.
+        </p>
+
+        <!-- Features Showcase Grid -->
+        <div style="background-color: #F8FAFC; border: 1px solid #E2E8F0; border-radius: 14px; padding: 20px 22px; margin-bottom: 24px;">
+          <h3 style="color: #0F172A; font-size: 14px; font-weight: 800; margin: 0 0 12px 0; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid #E2E8F0; pb: 8px;">
+            ✨ What You Can Do Today on HorseSquare:
+          </h3>
+          <ul style="margin: 0; padding-left: 20px; color: #334155; font-size: 13.5px; line-height: 1.8;">
+            <li><strong>Horse Marketplace:</strong> Connect directly with verified horse sellers across Punjab, Sindh, KPK, and Balochistan.</li>
+            <li><strong>Live Auctions:</strong> Participate in real-time bidding for champion purebreds and stallions.</li>
+            <li><strong>AI Vet Doctor:</strong> Run 24/7 symptom analysis and health diagnostic consultations.</li>
+            <li><strong>Breeding Registry:</strong> Discover stud matches, mare pedigree records, and send direct stud inquiries.</li>
+            <li><strong>Riding Academies:</strong> Discover top riding clubs and book certified equestrian courses.</li>
+          </ul>
+        </div>
+
+        <!-- Security & Session Summary Card -->
+        <div style="background: linear-gradient(135deg, #FEF3C7 0%, #FDE68A 100%); border: 1px solid #F59E0B; border-radius: 14px; padding: 18px 20px; margin-bottom: 24px;">
+          <h4 style="margin: 0 0 8px 0; color: #92400E; font-size: 13px; font-weight: 900; text-transform: uppercase; letter-spacing: 0.5px;">
+            🔒 Login Session Summary
+          </h4>
+          <p style="margin: 4px 0; font-size: 13px; color: #78350F;"><strong>Registered Name:</strong> ${userName}</p>
+          <p style="margin: 4px 0; font-size: 13px; color: #78350F;"><strong>Email Account:</strong> ${userEmail}</p>
+          <p style="margin: 4px 0; font-size: 13px; color: #78350F;"><strong>Timestamp:</strong> ${loginTimestamp} (PKT)</p>
+        </div>
+
+        <!-- Official Sign-off Signature -->
+        <div style="background-color: #0F172A; border-left: 5px solid #D4AF37; border-radius: 0 14px 14px 0; padding: 20px 22px; color: #FFFFFF; margin: 26px 0;">
+          <p style="margin: 0; font-weight: 700; color: #94A3B8; font-size: 13px;">Warm regards,</p>
+          <p style="margin: 4px 0 0 0; font-weight: 900; color: #D4AF37; font-size: 17px; letter-spacing: 0.5px;">Horse Square Pakistan</p>
+          <p style="margin: 6px 0 0 0; font-size: 13px; color: #CBD5E1;">
+            📧 Official Email: <a href="mailto:horsesquarepakistan@gmail.com" style="color: #60A5FA; text-decoration: none; font-weight: 700;">horsesquarepakistan@gmail.com</a>
+          </p>
+          <p style="margin: 4px 0 0 0; font-size: 12px; color: #94A3B8;">
+            Connecting Pakistan’s Equestrian Community
+          </p>
+        </div>
+
+        <!-- Social Channels -->
+        <div style="background-color: #F1F5F9; border: 1px solid #CBD5E1; border-radius: 12px; padding: 16px 20px;">
+          <p style="margin: 0 0 8px 0; font-weight: 800; color: #1E293B; font-size: 13px; text-transform: uppercase;">
+            🌟 Connect with Us on Social Media:
+          </p>
+          <p style="margin: 5px 0; font-size: 13px;">
+            📸 <strong>Instagram:</strong> <a href="https://www.instagram.com/horsesquarepakistan" target="_blank" style="color: #C026D3; text-decoration: none; font-weight: 700;">@horsesquarepakistan</a>
+          </p>
+          <p style="margin: 5px 0; font-size: 13px;">
+            📘 <strong>Facebook:</strong> <a href="https://www.facebook.com/share/19cgqogZhv/" target="_blank" style="color: #1D4ED8; text-decoration: none; font-weight: 700;">Horse Square Pakistan Official</a>
+          </p>
+        </div>
+
+      </div>
+
+      <!-- Footer -->
+      <div style="background-color: #020B21; padding: 22px; text-align: center; color: #64748B; font-size: 11px;">
+        <p style="margin: 0; font-weight: 700; color: #94A3B8;">© ${new Date().getFullYear()} Horse Square Pakistan • All Rights Reserved</p>
+        <p style="margin: 4px 0 0 0; color: #64748B;">This email was sent from horsesquarepakistan@gmail.com to ${userEmail}</p>
+      </div>
+
+    </div>
+  `;
+
+  return await sendEmail({ to: userEmail, subject, text, html });
+};
+
+/**
  * Broadcast Email to all registered users when a new listing / activity is uploaded / added
  * @param {Object} options
  * @param {string} options.type - "Marketplace Listing" | "Live Auction" | "Breeding Stallion" | "Riding Academy" | "Platform Activity"
@@ -688,6 +824,7 @@ module.exports = {
   sendRidingTrialEmail,
   sendNewsletterConfirmationEmail,
   sendWelcomeEmail,
+  sendLoginCongratulationsEmail,
   sendEmailVerificationOtp,
   broadcastNewListingEmail,
   sendAuctionWinnerEmail,
