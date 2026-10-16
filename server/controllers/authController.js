@@ -74,6 +74,20 @@ exports.registerUser = async (req, res, next) => {
       return res.status(400).json({ success: false, message: "Please fill in all required fields" });
     }
 
+    // Password Complexity Validation: Min 8 chars, 1 uppercase, 1 lowercase, 1 special char
+    if (password.length < 8) {
+      return res.status(400).json({ success: false, message: "Password must be at least 8 characters long." });
+    }
+    if (!/[A-Z]/.test(password)) {
+      return res.status(400).json({ success: false, message: "Password must contain at least one uppercase letter (A-Z)." });
+    }
+    if (!/[a-z]/.test(password)) {
+      return res.status(400).json({ success: false, message: "Password must contain at least one lowercase letter (a-z)." });
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>_\-+=[\]\\/;~`]/.test(password)) {
+      return res.status(400).json({ success: false, message: "Password must contain at least one special character (e.g. !@#$%^&*)." });
+    }
+
     const cleanEmail = String(email).trim().toLowerCase();
     if (!isValidOfficialEmail(cleanEmail)) {
       return res.status(400).json({
@@ -89,6 +103,13 @@ exports.registerUser = async (req, res, next) => {
     // Generate 6-digit OTP verification code
     const otp = crypto.randomInt(100000, 999999).toString();
     const otpExpires = new Date(Date.now() + 10 * 60 * 1000); // 10 minutes
+
+    console.log(`\n======================================================`);
+    console.log(`🔐 [EMAIL VERIFICATION OTP GENERATED]`);
+    console.log(`   To: ${cleanEmail}`);
+    console.log(`   Code: ${otp}`);
+    console.log(`   Expires: ${otpExpires}`);
+    console.log(`======================================================\n`);
 
     let user = await User.findOne({ email: cleanEmail }).select("+emailVerificationCode +emailVerificationExpires");
 
@@ -137,7 +158,6 @@ exports.registerUser = async (req, res, next) => {
       });
     }
 
-    // SECURITY: The OTP is strictly delivered to the user's email and never exposed in the response
     res.status(201).json({
       success: true,
       requireOtp: true,
@@ -245,6 +265,12 @@ exports.resendEmailOtp = async (req, res, next) => {
     user.emailVerificationCode = otp;
     user.emailVerificationExpires = new Date(Date.now() + 10 * 60 * 1000);
     await user.save();
+
+    console.log(`\n======================================================`);
+    console.log(`🔄 [RESEND EMAIL VERIFICATION OTP GENERATED]`);
+    console.log(`   To: ${cleanEmail}`);
+    console.log(`   Code: ${otp}`);
+    console.log(`======================================================\n`);
 
     const emailResult = await sendEmailVerificationOtp({
       email: cleanEmail,

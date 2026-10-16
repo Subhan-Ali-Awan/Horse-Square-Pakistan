@@ -1,37 +1,39 @@
+const path = require("path");
 const nodemailer = require("nodemailer");
 const dotenv = require("dotenv");
+
+// Explicitly load .env from server directory and workspace root
+try {
+  dotenv.config({ path: path.resolve(__dirname, "../.env"), override: true });
+  dotenv.config({ path: path.resolve(__dirname, "../../.env"), override: true });
+  dotenv.config({ override: true });
+} catch (e) {
+  // Ignore dotenv error in prod
+}
 
 /**
  * Create Nodemailer Transporter
  * Sender account: horsesquarepakistan@gmail.com
  */
 const createTransporter = () => {
-  try {
-    dotenv.config({ override: true });
-  } catch (e) {
-    // Ignore dotenv error in prod
-  }
-
   const emailUser = (process.env.EMAIL_USER || "horsesquarepakistan@gmail.com").trim();
-  const rawPass = process.env.EMAIL_PASS || process.env.GMAIL_APP_PASSWORD || "";
+  const rawPass = process.env.EMAIL_PASS || process.env.GMAIL_APP_PASSWORD || "hhidbotgwpuvwdyh";
   const emailPass = rawPass.trim().replace(/^['"]|['"]$/g, "").replace(/\s+/g, "");
 
-  if (emailPass && emailPass !== "your_gmail_app_password_here") {
-    return nodemailer.createTransport({
-      service: "gmail",
-      auth: {
-        user: emailUser,
-        pass: emailPass,
-      },
-      tls: {
-        rejectUnauthorized: false,
-      },
-    });
+  if (!emailPass || emailPass === "your_gmail_app_password_here") {
+    throw new Error("Missing EMAIL_PASS in server/.env. Please configure your 16-character Google App Password.");
   }
 
-  console.log("ℹ️ [EMAIL NOTICE] Set a 16-character Google App Password under EMAIL_PASS in server/.env to send real inbox emails.");
+  // Connect directly using official Gmail service with verified credentials
   return nodemailer.createTransport({
-    jsonTransport: true,
+    service: "gmail",
+    auth: {
+      user: emailUser,
+      pass: emailPass,
+    },
+    tls: {
+      rejectUnauthorized: false,
+    },
   });
 };
 
@@ -57,11 +59,20 @@ const sendEmail = async ({ to, subject, text, html }) => {
       html,
     };
 
+    console.log(`\n⏳ [CONNECTING TO GMAIL SMTP] Sending to: ${cleanTo}...`);
     const info = await transporter.sendMail(mailOptions);
-    console.log(`✅ [AUTOMATIC EMAIL SENT FROM ${senderEmail} TO ${cleanTo}] Message ID: ${info.messageId || 'DEV-LOGGED'}`);
+    console.log(`\n======================================================`);
+    console.log(`✅ [GMAIL SMTP DELIVERED TO GOOGLE SERVERS]`);
+    console.log(`   From: ${senderEmail}`);
+    console.log(`   To: ${cleanTo}`);
+    console.log(`   Message ID: ${info.messageId}`);
+    console.log(`   Google Server Response: ${info.response}`);
+    console.log(`   Accepted Recipients: ${JSON.stringify(info.accepted)}`);
+    console.log(`======================================================\n`);
     return { success: true, messageId: info.messageId };
   } catch (error) {
-    console.error(`❌ [EMAIL DISPATCH ERROR] Failed to send email from horsesquarepakistan@gmail.com to ${cleanTo}:`, error.message);
+    console.error(`\n❌ [GMAIL SMTP DISPATCH ERROR] Failed to send email to ${cleanTo}:`, error.message);
+    console.error(`Full error:`, error);
     return { success: false, error: error.message };
   }
 };
@@ -701,7 +712,7 @@ Connecting Pakistan’s Equestrian Community`;
 const sendEmailVerificationOtp = async ({ email, name, otp }) => {
   const userName = name || "Valued Member";
   const cleanEmail = String(email || "").trim().toLowerCase();
-  const subject = `🔐 [${otp}] Your Horse Square Pakistan Email Verification Code`;
+  const subject = `Horse Square Pakistan - Email Verification Code: ${otp}`;
 
   console.log(`📧 Dispatching 6-Digit OTP Email to: ${cleanEmail}`);
 

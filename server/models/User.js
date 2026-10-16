@@ -17,7 +17,7 @@ const userSchema = new mongoose.Schema(
     cnic: { type: String, trim: true, default: "" },
     address: { type: String, trim: true, default: "" },
     avatar: { type: String, default: "" },
-    password: { type: String, required: true, minlength: 6, select: false },
+    password: { type: String, required: true, minlength: 8, select: false },
     userType: {
       type: String,
       enum: ["Horse Buyer", "User", "Horse Seller", "Breeder", "Riding Student"],

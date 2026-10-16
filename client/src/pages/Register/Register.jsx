@@ -84,8 +84,21 @@ export const Register = () => {
       return;
     }
 
-    if (password.length < 6) {
-      setError('Password must be at least 6 characters');
+    // Strict Password Rules: min 8 chars, 1 uppercase, 1 lowercase, 1 special character
+    if (password.length < 8) {
+      setError('Password must be at least 8 characters long.');
+      return;
+    }
+    if (!/[A-Z]/.test(password)) {
+      setError('Password must contain at least one uppercase letter (A-Z).');
+      return;
+    }
+    if (!/[a-z]/.test(password)) {
+      setError('Password must contain at least one lowercase letter (a-z).');
+      return;
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>_\-+=[\]\\/;~`]/.test(password)) {
+      setError('Password must contain at least one special character (e.g. !@#$%^&*).');
       return;
     }
 
@@ -345,6 +358,9 @@ export const Register = () => {
                   <p className="text-slate-500 text-xs mt-1.5 leading-relaxed font-medium">
                     We sent a secure 6-digit verification code to <strong className="text-slate-800 font-bold">{otpEmail}</strong> from <span className="text-[#D4AF37] font-bold">horsesquarepakistan@gmail.com</span>. Please check your inbox and enter the code below.
                   </p>
+                  <p className="text-amber-700/80 text-[11px] mt-1 bg-amber-50 border border-amber-200/80 px-2.5 py-1.5 rounded-lg">
+                    📬 <strong>Tip:</strong> If you don't see the email within 1 minute, please check your <strong>Spam / Junk</strong> folder or click "Change Email" below if the address was mistyped.
+                  </p>
                 </div>
 
                 <form onSubmit={handleVerifyOtp} className="space-y-5">
@@ -505,7 +521,7 @@ export const Register = () => {
                       <input
                         type={showPassword ? 'text' : 'password'}
                         required
-                        placeholder="Min 6 characters"
+                        placeholder="Min 8 chars (e.g. Secret@123)"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
                         autoComplete="new-password"
@@ -549,62 +565,43 @@ export const Register = () => {
                       </button>
                     </div>
 
-                    {/* Live 3-Bar Password Strength Calculator */}
-                    {password.length > 0 && (() => {
-                      const getStrength = (pass) => {
-                        if (pass.length < 6) {
-                          return {
-                            label: 'Basic / Weak',
-                            textClass: 'text-rose-500 font-bold',
-                            bars: ['bg-rose-500', 'bg-slate-200', 'bg-slate-200']
-                          };
-                        }
-                        const hasUpper = /[A-Z]/.test(pass);
-                        const hasNum = /[0-9]/.test(pass);
-                        const hasSpecial = /[^A-Za-z0-9]/.test(pass);
-
-                        let score = 0;
-                        if (pass.length >= 6) score += 1;
-                        if (pass.length >= 8 && (hasUpper || hasNum)) score += 1;
-                        if (pass.length >= 10 && hasUpper && hasNum && hasSpecial) score += 1;
-
-                        if (score <= 1) {
-                          return {
-                            label: 'Basic / Weak',
-                            textClass: 'text-rose-500 font-bold',
-                            bars: ['bg-rose-500', 'bg-slate-200', 'bg-slate-200']
-                          };
-                        } else if (score === 2) {
-                          return {
-                            label: 'Medium Strength',
-                            textClass: 'text-amber-500 font-bold',
-                            bars: ['bg-amber-500', 'bg-amber-500', 'bg-slate-200']
-                          };
-                        } else {
-                          return {
-                            label: 'Strong Password',
-                            textClass: 'text-emerald-500 font-bold',
-                            bars: ['bg-emerald-500', 'bg-emerald-500', 'bg-emerald-500']
-                          };
-                        }
-                      };
-
-                      const str = getStrength(password);
-
-                      return (
-                        <div className="pt-1.5 space-y-1 animate-fade-in">
-                          <div className="grid grid-cols-3 gap-1.5 h-1.5 w-full">
-                            <div className={`h-full rounded-full transition-all duration-300 ${str.bars[0]}`}></div>
-                            <div className={`h-full rounded-full transition-all duration-300 ${str.bars[1]}`}></div>
-                            <div className={`h-full rounded-full transition-all duration-300 ${str.bars[2]}`}></div>
+                    {/* Live Password Requirements Checklist */}
+                    {password.length > 0 && (
+                      <div className="pt-2 p-3 rounded-2xl bg-slate-50 border border-slate-200/90 space-y-1.5 text-[11px] animate-fade-in shadow-xs">
+                        <div className="text-[10px] font-black uppercase tracking-wider text-slate-500 mb-1">
+                          Password Security Checklist:
+                        </div>
+                        <div className="grid grid-cols-2 gap-x-2 gap-y-1.5">
+                          <div className={`flex items-center gap-1.5 font-medium transition-colors ${password.length >= 8 ? 'text-emerald-700 font-bold' : 'text-slate-400'}`}>
+                            <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${password.length >= 8 ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-400'}`}>
+                              {password.length >= 8 ? '✓' : '•'}
+                            </span>
+                            <span>Min. 8 characters</span>
                           </div>
-                          <div className="flex justify-between items-center text-[10px]">
-                            <span className="text-slate-400 font-medium">Strength Meter</span>
-                            <span className={str.textClass}>{str.label}</span>
+
+                          <div className={`flex items-center gap-1.5 font-medium transition-colors ${/[A-Z]/.test(password) ? 'text-emerald-700 font-bold' : 'text-slate-400'}`}>
+                            <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${/[A-Z]/.test(password) ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-400'}`}>
+                              {/[A-Z]/.test(password) ? '✓' : '•'}
+                            </span>
+                            <span>1 Uppercase (A-Z)</span>
+                          </div>
+
+                          <div className={`flex items-center gap-1.5 font-medium transition-colors ${/[a-z]/.test(password) ? 'text-emerald-700 font-bold' : 'text-slate-400'}`}>
+                            <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${/[a-z]/.test(password) ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-400'}`}>
+                              {/[a-z]/.test(password) ? '✓' : '•'}
+                            </span>
+                            <span>1 Lowercase (a-z)</span>
+                          </div>
+
+                          <div className={`flex items-center gap-1.5 font-medium transition-colors ${/[!@#$%^&*(),.?":{}|<>_\-+=[\]\\/;~`]/.test(password) ? 'text-emerald-700 font-bold' : 'text-slate-400'}`}>
+                            <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold ${/[!@#$%^&*(),.?":{}|<>_\-+=[\]\\/;~`]/.test(password) ? 'bg-emerald-100 text-emerald-600' : 'bg-slate-200 text-slate-400'}`}>
+                              {/[!@#$%^&*(),.?":{}|<>_\-+=[\]\\/;~`]/.test(password) ? '✓' : '•'}
+                            </span>
+                            <span>1 Special char (!@#$)</span>
                           </div>
                         </div>
-                      );
-                    })()}
+                      </div>
+                    )}
                   </div>
 
                   {/* Submit Button */}
