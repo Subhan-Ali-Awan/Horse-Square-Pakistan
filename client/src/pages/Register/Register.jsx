@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { 
   User, 
   Mail, 
@@ -40,6 +40,23 @@ export const Register = () => {
   const otpInputsRef = useRef([]);
 
   const navigate = useNavigate();
+  const location = useLocation();
+
+  // If redirected from Login or another flow with pending OTP verification
+  useEffect(() => {
+    if (location.state?.pendingEmail) {
+      setOtpEmail(location.state.pendingEmail);
+      setIsOtpStep(true);
+      setResendCooldown(60);
+      if (location.state.otpNotice) {
+        setSuccessMessage(location.state.otpNotice);
+      }
+      if (location.state.pendingOtp) {
+        const digits = String(location.state.pendingOtp).slice(0, 6).split('');
+        setOtpDigits(digits);
+      }
+    }
+  }, [location.state]);
 
   // Resend Timer Countdown
   useEffect(() => {
@@ -118,7 +135,11 @@ export const Register = () => {
           setIsOtpStep(true);
           setResendCooldown(60);
           setSuccessMessage(data.message || `A 6-digit verification code has been dispatched to ${cleanEmail}. Please check your inbox.`);
-          setOtpDigits(['', '', '', '', '', '']);
+          if (data.otp) {
+            setOtpDigits(String(data.otp).slice(0, 6).split(''));
+          } else {
+            setOtpDigits(['', '', '', '', '', '']);
+          }
           setTimeout(() => {
             if (otpInputsRef.current[0]) {
               otpInputsRef.current[0].focus();
@@ -232,7 +253,11 @@ export const Register = () => {
       if (data.success) {
         setSuccessMessage(data.message || `A fresh 6-digit code has been dispatched to ${otpEmail}. Please check your inbox.`);
         setResendCooldown(60);
-        setOtpDigits(['', '', '', '', '', '']);
+        if (data.otp) {
+          setOtpDigits(String(data.otp).slice(0, 6).split(''));
+        } else {
+          setOtpDigits(['', '', '', '', '', '']);
+        }
         if (otpInputsRef.current[0]) {
           otpInputsRef.current[0].focus();
         }

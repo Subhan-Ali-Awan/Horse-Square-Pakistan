@@ -45,6 +45,16 @@ export const Login = () => {
           navigate(destination);
         }
       } else {
+        if (data.requireOtp || data.requireVerification) {
+          navigate('/register', {
+            state: {
+              pendingEmail: data.email || email,
+              pendingOtp: data.otp,
+              otpNotice: data.message,
+            },
+          });
+          return;
+        }
         setError(data.message || 'Login failed. Please check your credentials.');
       }
     } catch (err) {

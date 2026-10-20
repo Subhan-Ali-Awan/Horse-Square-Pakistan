@@ -31,11 +31,15 @@ const createTransporter = () => {
       user: emailUser,
       pass: emailPass,
     },
+    connectionTimeout: 4000, // 4s timeout (prevents hanging indefinitely on cloud hosts where SMTP is restricted)
+    greetingTimeout: 4000,
+    socketTimeout: 5000,
     tls: {
       rejectUnauthorized: false,
     },
   });
 };
+
 
 /**
  * Send Automated Email from horsesquarepakistan@gmail.com
