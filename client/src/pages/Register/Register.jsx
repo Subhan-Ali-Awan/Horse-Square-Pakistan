@@ -51,10 +51,7 @@ export const Register = () => {
       if (location.state.otpNotice) {
         setSuccessMessage(location.state.otpNotice);
       }
-      if (location.state.pendingOtp) {
-        const digits = String(location.state.pendingOtp).slice(0, 6).split('');
-        setOtpDigits(digits);
-      }
+      setOtpDigits(['', '', '', '', '', '']);
     }
   }, [location.state]);
 
@@ -135,11 +132,7 @@ export const Register = () => {
           setIsOtpStep(true);
           setResendCooldown(60);
           setSuccessMessage(data.message || `A 6-digit verification code has been dispatched to ${cleanEmail}. Please check your inbox.`);
-          if (data.otp) {
-            setOtpDigits(String(data.otp).slice(0, 6).split(''));
-          } else {
-            setOtpDigits(['', '', '', '', '', '']);
-          }
+          setOtpDigits(['', '', '', '', '', '']);
           setTimeout(() => {
             if (otpInputsRef.current[0]) {
               otpInputsRef.current[0].focus();
@@ -253,11 +246,7 @@ export const Register = () => {
       if (data.success) {
         setSuccessMessage(data.message || `A fresh 6-digit code has been dispatched to ${otpEmail}. Please check your inbox.`);
         setResendCooldown(60);
-        if (data.otp) {
-          setOtpDigits(String(data.otp).slice(0, 6).split(''));
-        } else {
-          setOtpDigits(['', '', '', '', '', '']);
-        }
+        setOtpDigits(['', '', '', '', '', '']);
         if (otpInputsRef.current[0]) {
           otpInputsRef.current[0].focus();
         }

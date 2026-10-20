@@ -75,8 +75,48 @@ const sendEmail = async ({ to, subject, text, html }) => {
     console.log(`======================================================\n`);
     return { success: true, messageId: info.messageId };
   } catch (error) {
+    console.warn(`\n⚠️ [DIRECT SMTP FAILED] (${error.message}). Attempting Vercel Cloud Mail Relay...`);
+
+    // Cloud Relay: Dispatch via Vercel serverless function over HTTPS (bypasses cloud host SMTP port restrictions)
+    try {
+      const axios = require("axios");
+      const relayEndpoints = [
+        "https://horse-square-pakistan.vercel.app/mail-dispatcher",
+        "https://horse-square-pakistan.vercel.app/api/mail-dispatcher",
+      ];
+
+      for (const endpoint of relayEndpoints) {
+        try {
+          console.log(`⏳ [ATTEMPTING VERCEL RELAY] ${endpoint} -> ${cleanTo}...`);
+          const relayRes = await axios.post(
+            endpoint,
+            {
+              to: cleanTo,
+              subject,
+              text,
+              html,
+              secret: "horsesquare_email_secret_2026",
+            },
+            { timeout: 12000 }
+          );
+
+          if (relayRes.data && relayRes.data.success) {
+            console.log(`\n======================================================`);
+            console.log(`✅ [VERCEL CLOUD MAIL RELAY DELIVERED]`);
+            console.log(`   To: ${cleanTo}`);
+            console.log(`   Message ID: ${relayRes.data.messageId}`);
+            console.log(`======================================================\n`);
+            return { success: true, messageId: relayRes.data.messageId };
+          }
+        } catch (endpointErr) {
+          console.warn(`⚠️ [RELAY ENDPOINT FAILED] ${endpoint}: ${endpointErr.response?.data?.error || endpointErr.message}`);
+        }
+      }
+    } catch (relayErr) {
+      console.error(`❌ [VERCEL MAIL RELAY ERROR]:`, relayErr.message);
+    }
+
     console.error(`\n❌ [GMAIL SMTP DISPATCH ERROR] Failed to send email to ${cleanTo}:`, error.message);
-    console.error(`Full error:`, error);
     return { success: false, error: error.message };
   }
 };

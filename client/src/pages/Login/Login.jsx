@@ -49,7 +49,6 @@ export const Login = () => {
           navigate('/register', {
             state: {
               pendingEmail: data.email || email,
-              pendingOtp: data.otp,
               otpNotice: data.message,
             },
           });

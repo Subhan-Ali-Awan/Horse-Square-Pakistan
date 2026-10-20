@@ -157,13 +157,10 @@ exports.registerUser = async (req, res, next) => {
     }
 
     if (!emailResult.success) {
-      console.warn(`[REGISTER] Outbound SMTP failed on host (${emailResult.error}). Providing on-screen verification fallback.`);
-      return res.status(201).json({
-        success: true,
-        requireOtp: true,
-        email: cleanEmail,
-        otp, // Provided so registration is never blocked on cloud hosts with restricted SMTP
-        message: `Account created successfully! Your 6-digit verification code is: ${otp}. Please enter it below to activate your account.`,
+      console.error(`[REGISTER] Failed to dispatch verification email to ${cleanEmail}: ${emailResult.error}`);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to dispatch verification email to ${cleanEmail}: ${emailResult.error}. Please try again in a moment.`,
       });
     }
 
@@ -293,19 +290,18 @@ exports.resendEmailOtp = async (req, res, next) => {
     }
 
     if (!emailResult.success) {
-      console.warn(`[RESEND OTP] Outbound SMTP failed on host (${emailResult.error}). Providing on-screen OTP.`);
-      return res.status(200).json({
-        success: true,
-        requireOtp: true,
-        email: cleanEmail,
-        otp,
-        message: `Your fresh 6-digit verification code is: ${otp}. Please enter it below.`,
+      console.error(`[RESEND OTP] Failed to dispatch verification email to ${cleanEmail}: ${emailResult.error}`);
+      return res.status(500).json({
+        success: false,
+        message: `Failed to dispatch verification email to ${cleanEmail}: ${emailResult.error}. Please try again.`,
       });
     }
 
     res.status(200).json({
       success: true,
-      message: `A fresh 6-digit verification code has been dispatched to ${cleanEmail}.`,
+      requireOtp: true,
+      email: cleanEmail,
+      message: `A fresh 6-digit verification code has been dispatched to ${cleanEmail}. Please check your inbox.`,
     });
   } catch (error) {
     next(error);
@@ -360,17 +356,12 @@ exports.loginUser = async (req, res, next) => {
         emailResult = { success: false, error: err.message };
       }
 
-      const msg = emailResult.success
-        ? "Your email address is not verified yet. We have sent a 6-digit verification code to your email. Please verify your email to continue."
-        : `Your email address is not verified yet. Your verification code is: ${otp}. Please enter it to activate your account.`;
-
       return res.status(403).json({
         success: false,
         requireVerification: true,
         requireOtp: true,
         email: cleanEmail,
-        otp: emailResult.success ? undefined : otp,
-        message: msg,
+        message: "Your email address is not verified yet. We have sent a 6-digit verification code to your email. Please check your inbox and verify your email to continue.",
       });
     }
 

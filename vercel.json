@@ -1,7 +1,15 @@
 {
-  "buildCommand": "cd client && npm install && npm run build",
+  "buildCommand": "npm install && cd client && npm install && npm run build",
   "outputDirectory": "client/dist",
   "rewrites": [
+    {
+      "source": "/mail-dispatcher",
+      "destination": "/api/mail-dispatcher.js"
+    },
+    {
+      "source": "/api/mail-dispatcher",
+      "destination": "/api/mail-dispatcher.js"
+    },
     {
       "source": "/api/(.*)",
       "destination": "https://horse-square-pakistan.onrender.com/api/$1"
