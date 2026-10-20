@@ -88,7 +88,92 @@ exports.drMaxChat = async (req, res) => {
     let lastError = "";
 
     // ─────────────────────────────────────────────────────────
-    // TIER 1: OpenAI Official API (Primary Engine)
+    // TIER 1: OpenRouter AI (Primary Multi-Key Engine)
+    // Supports multi-key load balancing, auto-failover & models cascade
+    // ─────────────────────────────────────────────────────────
+    const openrouterKeys = [
+      process.env.OPENROUTER_API_KEY,
+      process.env.OPENROUTER_API_KEY_BACKUP,
+      ...(process.env.OPENROUTER_API_KEYS ? process.env.OPENROUTER_API_KEYS.split(",") : [])
+    ]
+      .map((k) => (k || "").trim())
+      .filter((k) => k && (k.startsWith("sk-or-") || k.length > 20));
+
+    if (openrouterKeys.length > 0) {
+      const primaryOpenRouterModel = (process.env.OPENROUTER_MODEL || "openrouter/auto").trim();
+      const openRouterModels = [
+        primaryOpenRouterModel,
+        "openrouter/auto",
+        "nvidia/nemotron-3.5-lightning:free",
+        "minimax/minimax-m3.1-flash:free",
+        "google/gemma-4-31b-it:free",
+        "openrouter/free"
+      ].filter((m, i, arr) => arr.indexOf(m) === i);
+
+      for (let kIdx = 0; kIdx < openrouterKeys.length; kIdx++) {
+        const orKey = openrouterKeys[kIdx];
+        let keyFailed = false;
+
+        for (const modelName of openRouterModels) {
+          try {
+            console.log(`[AI CHAT] OpenRouter request started (Key ${kIdx + 1}, model: ${modelName})...`);
+            const orRes = await axios.post(
+              "https://openrouter.ai/api/v1/chat/completions",
+              {
+                model: modelName,
+                messages: chatMessages,
+                temperature: 0.7,
+                max_tokens: 1500
+              },
+              {
+                headers: {
+                  "Authorization": `Bearer ${orKey}`,
+                  "Content-Type": "application/json",
+                  "HTTP-Referer": "https://horsesquarepakistan.com",
+                  "X-Title": "Horse Square Pakistan"
+                },
+                timeout: 25000
+              }
+            );
+
+            let rawText = orRes.data?.choices?.[0]?.message?.content;
+            if (!rawText && orRes.data?.choices?.[0]?.message?.reasoning) {
+              rawText = orRes.data.choices[0].message.reasoning;
+            }
+
+            const cleaned = cleanAIOutput(rawText);
+            if (cleaned && cleaned.length > 10 && !cleaned.toLowerCase().includes("user safety: safe")) {
+              console.log(`[AI CHAT] OpenRouter response received (${modelName}, Key ${kIdx + 1})`);
+              return res.json({
+                success: true,
+                reply: cleaned,
+                provider: "OpenRouter",
+                model: orRes.data?.model || modelName
+              });
+            }
+          } catch (err) {
+            lastError = err.response?.data?.error?.message || err.message;
+            console.warn(`[AI CHAT] OpenRouter failed (Key ${kIdx + 1}, ${modelName}):`, lastError);
+            const status = err.response?.status;
+            if (status === 401 || status === 402 || status === 429) {
+              console.warn(`[AI CHAT] Switching to next OpenRouter key due to HTTP ${status}`);
+              keyFailed = true;
+              break;
+            }
+          }
+        }
+
+        if (!keyFailed && openrouterKeys.length > 1 && kIdx === 0) {
+          // If all models failed on this key, try backup key
+          console.log(`[AI CHAT] Trying backup OpenRouter key...`);
+        }
+      }
+    } else {
+      console.log("[AI CHAT] No OpenRouter API key found. Skipping to secondary engines.");
+    }
+
+    // ─────────────────────────────────────────────────────────
+    // TIER 2: OpenAI Official API (Secondary Engine)
     // ─────────────────────────────────────────────────────────
     if (openaiKey && (openaiKey.startsWith("sk-") || openaiKey.length > 20)) {
       const openAiModels = ["gpt-4o-mini", "gpt-4o", "gpt-3.5-turbo"];
@@ -128,20 +213,20 @@ exports.drMaxChat = async (req, res) => {
           console.warn(`[AI CHAT] OpenAI request failed (${modelName}):`, lastError);
         }
       }
-    } else {
-      lastError = "OPENAI_API_KEY is not configured on the server.";
     }
 
     // ─────────────────────────────────────────────────────────
-    // TIER 2: Groq Cloud AI (High-Speed Backup Engine)
+    // TIER 3: Groq Cloud AI (High-Speed Backup Engine)
     // Uses active supported models on Groq
     // ─────────────────────────────────────────────────────────
     if (groqKey && (groqKey.startsWith("gsk_") || groqKey.length > 20)) {
       const groqModels = [
         "openai/gpt-oss-120b",
         "openai/gpt-oss-20b",
+        "qwen/qwen3.8-27b",
         "llama-3.3-70b-versatile"
       ];
+
 
       for (const modelName of groqModels) {
         try {
