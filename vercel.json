@@ -4,7 +4,11 @@
   "rewrites": [
     {
       "source": "/api/(.*)",
-      "destination": "/api/index.js"
+      "destination": "https://horse-square-pakistan.onrender.com/api/$1"
+    },
+    {
+      "source": "/uploads/(.*)",
+      "destination": "https://horse-square-pakistan.onrender.com/uploads/$1"
     },
     {
       "source": "/(.*)",
@@ -12,3 +16,4 @@
     }
   ]
 }
+
