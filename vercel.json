@@ -3,15 +3,7 @@
   "outputDirectory": "client/dist",
   "rewrites": [
     {
-      "source": "/mail-dispatcher",
-      "destination": "/api/mail-dispatcher.js"
-    },
-    {
-      "source": "/api/mail-dispatcher",
-      "destination": "/api/mail-dispatcher.js"
-    },
-    {
-      "source": "/api/(.*)",
+      "source": "/api/((?!mail-dispatcher).*)",
       "destination": "https://horse-square-pakistan.onrender.com/api/$1"
     },
     {

@@ -1,7 +1,7 @@
 {
   "rewrites": [
     {
-      "source": "/api/(.*)",
+      "source": "/api/((?!mail-dispatcher).*)",
       "destination": "https://horse-square-pakistan.onrender.com/api/$1"
     },
     {
