@@ -17,7 +17,6 @@ module.exports = async (req, res) => {
   try {
     const { to, subject, text, html, secret } = req.body || {};
 
-    // Authentication token to ensure only our authorized backend calls this relay
     if (secret !== "horsesquare_email_secret_2026") {
       return res.status(401).json({ success: false, message: "Unauthorized relay access" });
     }
@@ -30,7 +29,6 @@ module.exports = async (req, res) => {
     const emailUser = (process.env.EMAIL_USER || "horsesquarepakistan@gmail.com").trim();
     const emailPass = (process.env.EMAIL_PASS || "hhidbotgwpuvwdyh").trim();
 
-    // Use Port 465 with implicit SSL/TLS for maximum reliability on serverless functions
     const transporter = nodemailer.createTransport({
       host: "smtp.gmail.com",
       port: 465,
@@ -39,9 +37,9 @@ module.exports = async (req, res) => {
         user: emailUser,
         pass: emailPass,
       },
-      connectionTimeout: 8000,
-      greetingTimeout: 8000,
-      socketTimeout: 10000,
+      connectionTimeout: 10000,
+      greetingTimeout: 10000,
+      socketTimeout: 15000,
       tls: {
         rejectUnauthorized: false,
       },
@@ -55,14 +53,12 @@ module.exports = async (req, res) => {
       html,
     });
 
-    console.log(`[VERCEL MAIL DISPATCHER] Delivered to ${cleanTo}, Message ID: ${info.messageId}`);
     return res.status(200).json({
       success: true,
       messageId: info.messageId,
       recipient: cleanTo,
     });
   } catch (error) {
-    console.error("[VERCEL MAIL DISPATCHER ERROR]:", error.message);
     return res.status(500).json({
       success: false,
       error: error.message,
