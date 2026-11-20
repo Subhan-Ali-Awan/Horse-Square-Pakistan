@@ -2124,6 +2124,7 @@ export const UserDashboard = () => {
         onClose={() => setSelectedQueryChat(null)}
         query={selectedQueryChat}
         currentUser={user}
+        token={token}
         onQueryUpdated={(updatedQuery) => {
           setSelectedQueryChat(updatedQuery);
           setMyQueries(myQueries.map(q => q._id === updatedQuery._id ? updatedQuery : q));

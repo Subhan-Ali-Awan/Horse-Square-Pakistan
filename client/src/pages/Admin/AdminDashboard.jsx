@@ -2001,6 +2001,7 @@ export const AdminDashboard = () => {
         onClose={() => setSelectedQueryChat(null)}
         query={selectedQueryChat}
         currentUser={user}
+        token={token}
         onQueryUpdated={(updatedQuery) => {
           setSelectedQueryChat(updatedQuery);
           setContactList(contactList.map(q => q._id === updatedQuery._id ? updatedQuery : q));

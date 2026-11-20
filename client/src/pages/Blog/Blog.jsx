@@ -3,10 +3,74 @@ import { BookOpen, Search, ArrowLeft, Clock, User, Calendar, Tag, ChevronRight }
 import { useScrollReveal } from '../../hooks/useScrollReveal';
 import { getApiUrl } from '../../config/api';
 
+const FALLBACK_ARTICLES = [
+  {
+    id: 'f1',
+    title: "Shahi Nukra Ghora: Pakistan Ki Shaan Aur Izzat Ka Nishan",
+    category: "Breeds",
+    author: "Malik Shahzad",
+    date: "Nov 20, 2026",
+    readTime: "5 min read",
+    summary: "Apni chamakdar safaid jild aur gulabi rangat ki waja se, Nukra ghore Punjab ke shahi melaon, shadiyon aur tehwaro me numayan muqam rakhte hain.",
+    image: "https://images.unsplash.com/photo-1553284965-83fd3e82fa5a?auto=format&fit=crop&q=80&w=800",
+    content: [
+      "Nukra ghora sirf aik nasal nahi hai, balkay yeh Pakistan, khas tor par Punjab ke zarkhez maidanon me saqafat, fakhar aur shaan o shaukat ki zinda misaal hai. Iski pehchan iska shafaf safaid rang, safaid baal, gulabi jild aur chamakdar aankhein hain. Desi equine culture me iski gulabi jild ko bohot khoobsurti se 'phulkari' kaha jata hai.",
+      "Genetic aitabar se, Nukra ghoray ka shandar safaid rang double-sabino genes ka nateeja hota hai. Pakistan ke equine breeders isay aik mukammal alag class maantay hain, jabke experts ke mutabiq yeh Sindhi aur Chamba naslon ke sath bhi gehra connection rakhta hai. Yeh ghore nihayat chust, hoshyar aur roabdar chaal dhaal ke malik hotay hain.",
+      "Pakistan ke riwayati melay aur tehwar Nukra ghoron ke baghair adhoore hain. Inhein makhsoos dhol ki thaap par nachnay (horse dance) aur Nezabazi ke shandar muzahiron ke liye train kiya jata hai. Nukra ghore ka maalik hona khandani shaan aur izzat samjha jata hai, aur yeh Lahore Horse & Cattle Show jese qoumi events ka markazi hissa hotay hain."
+    ]
+  },
+  {
+    id: 'f2',
+    title: "Tareekhi Anmol Nasal: Pakistan Ka Qadeem Equine Virsa",
+    category: "Breeds",
+    author: "Dr. Tariq Mahmood",
+    date: "Nov 15, 2026",
+    readTime: "7 min read",
+    summary: "Qadeem Anmol nasal ki tareekh, aur insaan aur ghoray ke sadiyon puranay rishtay aur Pakistan ki shandar saqafat ka jaiza.",
+    image: "https://images.unsplash.com/photo-1598974357801-cbca100e65d3?auto=format&fit=crop&q=80&w=800",
+    content: [
+      "Ghoray aur insaan ka rishta Punjab aur Pakistan ki tareekh aur saqafat me sadiyon purana aur bohot gehra hai. Sadiyon se yeh shandar janwar sirf safar ka zariya nahi rahay, balkay bahadur jangjuon ke wafadar saathi, nawabon aur sardaron ki shaan, aur Nezabazi (tent pegging) ke champions rahay hain. Yeh tareekhi rishta wafadari, ghairat aur ba-bahami ehtaram ki azeem dastaan hai.",
+      "'Anmol' (jis ka lafzi matlab la-jawab ya be-qeemat hai) bare-sagheer aur Pakistan ki aik nihayat qadeem aur nayab equine nasal hai. Tareekhi riwayat ke mutabiq Anmol nasal ka silsila Sikandar-e-Azam (Alexander the Great) ke daryaye Jhelum ke maarkay se milta hai, jahan muqami ghoron ko Arabi aur Irani naslon ke sath cross kiya gaya tha.",
+      "Anmol ghore apne chamakdar kumait (bay) ya samand (chestnut) rang, mazboot pathon, aur sakht garmi aur dhoop me be-misaal stamina ke liye mashhoor hain. Jadeed racing ghoron ke muqablay me Anmol ghora mukhtasir khuraak par lamba fasla tay karne ki shandar salahiyat rakhta hai.",
+      "Aaj kal, Punjab aur Khyber Pakhtunkhwa ke pur-khaloos breeders Anmol nasal ki hifazat aur iski asal bloodline ko dobarah zinda karne ke liye din raat mehnat kar rahay hain, taake Pakistan ka yeh tareekhi sarmaya hamesha mehfooz rahay."
+    ]
+  },
+  {
+    id: 'f3',
+    title: "Ghoron Ki Behtareen Khuraak Aur Rozmarra Diet Ke Assool",
+    category: "Equine Care",
+    author: "Vet. Bilal Ahmed",
+    date: "Nov 10, 2026",
+    readTime: "4 min read",
+    summary: "Ghoron ki sehat, paani ki miqdaar aur tawazan wali ghiza ka mukammal rehnuma guide taake aapka ghora hamesha tandrust aur taqatwar rahay.",
+    image: "https://images.unsplash.com/photo-1534073828943-f801091bb18c?auto=format&fit=crop&q=80&w=800",
+    content: [
+      "Munassib aur tawazan wali ghiza ghoray ki tandrusti aur behtareen kar-kardagi ki bunyad hai. Ghoray ka nizam-e-inhazam (digestive system) din bhar halki halki fiber wali khuraak hazam karne ke liye bana hai. Achi quality ka hara chara ya sookhi ghaas (hay) ghoray ke kul wazan ka 1.5% se 2% rozana hona zaroori hai. Misaal ke tor par, 500kg wazan ke ghoray ko rozana 7.5 se 10kg chara darkaar hota hai.",
+      "Saaf aur taaza paani har waqt ghoray ki pohanch me hona chahiye. Aik aam ghora din me 20 se 50 liter paani peeta hai, aur garmiyon ya sakht mehnat me yeh miqdaar mazeed barh jati hai. Paani ki kami ghoron me 'Colic' (pet dard) ki sab se bari waja banti hai jo ke janlewa sabit ho sakti hai.",
+      "Hara chara bunyadi tawanai deta hai, lekin active stallions, ghaban madiyon (pregnant mares) aur chotay bachedon (foals) ke liye protein aur grains (jaee/oats, jow/barley) aur namak/mineral blocks bohot zaroori hain. Ghoray ki khuraak me tabdeeli hamesha aahista aahista 7 se 10 dino me karein taake pet ke masail aur bimariyon se bacha ja sakay."
+    ]
+  },
+  {
+    id: 'f4',
+    title: "Pakistan Me Nezabazi Aur Shahi Equine Melay",
+    category: "Events",
+    author: "Chaudhry Kamran",
+    date: "Nov 05, 2026",
+    readTime: "5 min read",
+    summary: "Punjab aur KPK ke maidanon me dhol ki thaap, tezz tareen gallop aur Nezabazi ke shandar muqablon ki dastaan.",
+    image: "https://images.unsplash.com/photo-1558904541-efa8c4a08931?auto=format&fit=crop&q=80&w=800",
+    content: [
+      "Nezabazi (Tent Pegging) Pakistan ka qoumi aur saqafati equestrian khel hai jis me ghursawar poori raftaar se gallop karte hue zameen par lagay lakri ke peg ko barchhi (lance) se uthate hain. Yeh khel ghursawar aur ghoray ke darmiyan be-panah rabtay aur yaqeen ki nishani hai.",
+      "Faisalabad, Sargodha, Sahiwal, Chakwal aur Hafizabad ke ilaqon me saalana melaon me hazaron shaiqeen jama hote hain jahan Desi aur Nukra ghore apni tezi aur balance ka shandar muzahira karte hain. Dhol ki thaap par ghoron ka nach aur sawaar ki maharat dekhne se taaluq rakhti hai.",
+      "Horse-Square Pakistan in tamam riwayati melo aur registered riding clubs ko digitally connect kar raha hai taake har ghursawar aur equine lover ko behtareen platform aur maloomat mil sakay."
+    ]
+  }
+];
+
 export const Blog = () => {
   // Enable scroll reveal animations
   useScrollReveal('.reveal-on-scroll');
-  const [articles, setArticles] = useState([]);
+  const [articles, setArticles] = useState(FALLBACK_ARTICLES);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState('All');
@@ -19,11 +83,11 @@ export const Blog = () => {
         const res = await fetch(getApiUrl('/api/blogs'));
         if (res.ok) {
           const data = await res.json();
-          if (data.success && Array.isArray(data.data)) {
+          if (data.success && Array.isArray(data.data) && data.data.length > 0) {
             const formatted = data.data.map(a => ({
               ...a,
               id: a._id,
-              date: new Date(a.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+              date: a.createdAt ? new Date(a.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }) : 'Recent'
             }));
             setArticles(formatted);
           }
@@ -54,7 +118,7 @@ export const Blog = () => {
           onClick={() => setActiveArticle(null)}
           className="flex items-center gap-2 text-slate-500 hover:text-[#D4AF37] font-bold text-xs sm:text-sm mb-4 sm:mb-6 transition cursor-pointer"
         >
-          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" /> Back to Articles
+          <ArrowLeft className="w-4 h-4 sm:w-5 sm:h-5" /> Wapis Articles Par Jayein (Back to Articles)
         </button>
 
         {/* Article Container */}
@@ -121,7 +185,7 @@ export const Blog = () => {
             Horse-Square Pakistan Blog
           </h1>
           <p className="text-slate-300 text-xs sm:text-sm max-w-xl font-light">
-            Stay updated with breed guides, expert vet tips, regional history, and the latest horse shows across Pakistan.
+            Ghoron ki shandar naslein, vet doctor mashwaray, rozmarra khuraak aur Pakistan ke equine shows par Roman English articles.
           </p>
         </div>
       </div>
@@ -149,7 +213,7 @@ export const Blog = () => {
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
-            placeholder="Search articles..."
+            placeholder="Articles search karein (Nukra, Anmol, Khuraak)..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             className="w-full bg-slate-50 border border-slate-200 rounded-xl pl-10 pr-4 py-2 sm:py-2.5 text-xs sm:text-sm font-medium focus:outline-none focus:border-[#D4AF37] focus:bg-white transition"
@@ -199,7 +263,7 @@ export const Blog = () => {
                 </div>
 
                 <div className="flex items-center justify-between pt-3 border-t border-slate-100 text-xs font-black text-[#D4AF37] group-hover:text-[#0F172A] transition">
-                  <span>Read Full Article</span>
+                  <span>Mukammal Article Parhein</span>
                   <ChevronRight className="w-4 h-4 group-hover:translate-x-1 transition-transform stroke-[2.5]" />
                 </div>
               </div>

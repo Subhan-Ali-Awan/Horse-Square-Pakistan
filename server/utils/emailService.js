@@ -538,25 +538,38 @@ const sendRidingTrialEmail = async (trial, locationInfo, courseInfo) => {
 
         <!-- Course Summary Box -->
         <div style="background-color: #f8fafc; border: 1px solid #cbd5e1; border-radius: 14px; padding: 20px; margin: 24px 0;">
-          <h3 style="color: #0F172A; margin: 0 0 14px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 800;">📋 Course & Fee Structure Details</h3>
+          <h3 style="color: #0F172A; margin: 0 0 14px 0; font-size: 14px; text-transform: uppercase; letter-spacing: 0.8px; font-weight: 800;">📋 Slot Booking & Course Summary</h3>
           <table style="width: 100%; border-collapse: collapse; font-size: 13px; color: #334155;">
-            <tr style="border-b: 1px border #f1f5f9;"><td style="padding: 6px 0; font-weight: bold;">Applicant Name:</td><td style="text-align: right; color: #0F172A; font-weight: bold;">${trial.name}</td></tr>
-            <tr style="border-b: 1px border #f1f5f9;"><td style="padding: 6px 0; font-weight: bold;">Course Name:</td><td style="text-align: right; color: #0F172A; font-weight: 800;">${trial.courseTitle}</td></tr>
-            <tr style="border-b: 1px border #f1f5f9;"><td style="padding: 6px 0; font-weight: bold;">Level:</td><td style="text-align: right; color: #b45309; font-weight: bold;">${courseInfo.badge || trial.ridingLevel}</td></tr>
-            <tr style="border-b: 1px border #f1f5f9;"><td style="padding: 6px 0; font-weight: bold;">Official Fee:</td><td style="text-align: right; color: #047857; font-weight: 900; font-size: 15px;">${courseInfo.fee}</td></tr>
-            <tr style="border-b: 1px border #f1f5f9;"><td style="padding: 6px 0; font-weight: bold;">Course Duration:</td><td style="text-align: right;">${courseInfo.duration}</td></tr>
-            <tr><td style="padding: 6px 0; font-weight: bold;">Preferred Slot:</td><td style="text-align: right; font-weight: bold; color: #1e293b;">${trial.preferredSlot}</td></tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 8px 0; font-weight: bold;">Applicant Name:</td><td style="text-align: right; color: #0F172A; font-weight: bold;">${trial.name}</td></tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 8px 0; font-weight: bold;">Personal Phone / WhatsApp:</td><td style="text-align: right; color: #0F172A; font-weight: bold;">${trial.phone}</td></tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 8px 0; font-weight: bold;">Personal Email:</td><td style="text-align: right; color: #0F172A; font-weight: bold;">${trial.email}</td></tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 8px 0; font-weight: bold;">Course Name:</td><td style="text-align: right; color: #0F172A; font-weight: 800;">${trial.courseTitle}</td></tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 8px 0; font-weight: bold;">Level:</td><td style="text-align: right; color: #b45309; font-weight: bold;">${courseInfo.badge || trial.ridingLevel}</td></tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 8px 0; font-weight: bold;">Official Fee:</td><td style="text-align: right; color: #047857; font-weight: 900; font-size: 15px;">${courseInfo.fee}</td></tr>
+            <tr style="border-bottom: 1px solid #f1f5f9;"><td style="padding: 8px 0; font-weight: bold;">Course Duration:</td><td style="text-align: right;">${courseInfo.duration}</td></tr>
+            <tr><td style="padding: 8px 0; font-weight: bold;">Reserved Slot Timing:</td><td style="text-align: right; font-weight: bold; color: #1e293b;">${trial.preferredSlot}</td></tr>
           </table>
         </div>
 
         <!-- Location Card -->
         <div style="background-color: #fffbebf5; border: 1.5px solid #fcd34d; border-radius: 14px; padding: 20px; margin-bottom: 24px;">
-          <h3 style="color: #92400e; margin: 0 0 8px 0; font-size: 14px; font-weight: 800;">📍 Official Riding Academy Location</h3>
-          <p style="color: #78350f; font-size: 14px; margin: 0 0 4px 0; font-weight: bold;">${locationInfo.name}</p>
-          <p style="color: #92400e; font-size: 12px; margin: 0 0 12px 0;">${locationInfo.address}</p>
-          <a href="${locationInfo.mapsUrl}" target="_blank" style="display: inline-block; background-color: #d97706; color: #ffffff; text-decoration: none; padding: 10px 18px; border-radius: 10px; font-size: 12px; font-weight: bold; shadow: 0 2px 4px rgba(0,0,0,0.1);">
-            🗺️ Open Google Maps Navigation Link ↗
+          <h3 style="color: #92400e; margin: 0 0 8px 0; font-size: 14px; font-weight: 800;">📍 Official Riding Academy Location (Hafizabad)</h3>
+          <p style="color: #78350f; font-size: 15px; margin: 0 0 4px 0; font-weight: bold;">${locationInfo.name}</p>
+          <p style="color: #92400e; font-size: 12px; margin: 0 0 14px 0;">${locationInfo.address}</p>
+          <a href="${locationInfo.mapsUrl}" target="_blank" style="display: inline-block; background-color: #d97706; color: #ffffff; text-decoration: none; padding: 11px 20px; border-radius: 10px; font-size: 13px; font-weight: bold; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            🗺️ Open Google Maps Pin Location ↗
           </a>
+        </div>
+
+        <!-- Official Support Box -->
+        <div style="background-color: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 14px; padding: 18px 20px; margin-bottom: 24px;">
+          <h3 style="color: #065f46; margin: 0 0 10px 0; font-size: 13px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px;">📞 Official Website Support & Contacts</h3>
+          <p style="margin: 4px 0; font-size: 13px; color: #047857;">
+            <strong>Official WhatsApp:</strong> <a href="https://wa.me/923059901997" target="_blank" style="color: #047857; font-weight: bold; text-decoration: underline;">+92 305 9901997</a>
+          </p>
+          <p style="margin: 4px 0; font-size: 13px; color: #047857;">
+            <strong>Official Email:</strong> <a href="mailto:horsesquarepakistan@gmail.com" style="color: #047857; font-weight: bold; text-decoration: underline;">horsesquarepakistan@gmail.com</a>
+          </p>
         </div>
 
         <!-- Curriculum List -->

@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Compass, CheckCircle, Award, ShieldCheck, Sparkles, BookOpen, Target, CheckCircle2, ChevronRight, UserCheck, Quote, Flame, Calendar, Clock, MapPin, Send, Check, Globe, Phone } from 'lucide-react';
+import { Compass, CheckCircle, Award, ShieldCheck, Sparkles, BookOpen, Target, CheckCircle2, ChevronRight, UserCheck, Quote, Flame, Calendar, Clock, MapPin, Send, Check, Globe, Phone, Mail, MessageSquare } from 'lucide-react';
 import { Modal } from '../../components/Modal';
 import { useAuth } from '../../context/AuthContext';
 import { useScrollReveal } from '../../hooks/useScrollReveal';
+import { getApiUrl } from '../../config/api';
 
 export const RidingSchool = () => {
   const { user } = useAuth();
@@ -16,7 +17,7 @@ export const RidingSchool = () => {
     name: '',
     phone: '',
     email: '',
-    city: 'Lahore',
+    city: 'Hafizabad',
     ridingLevel: 'Beginner',
     preferredSlot: 'Weekend Morning',
     experienceDetails: ''
@@ -398,7 +399,8 @@ export const RidingSchool = () => {
         setErrorMessage(data.message || 'Failed to submit booking request.');
       }
     } catch (err) {
-      setErrorMessage('Server connection error. Please try again.');
+      console.error('Trial session booking error:', err);
+      setErrorMessage(err.message || 'Server connection error. Please try again.');
     } finally {
       setSubmitting(false);
     }
@@ -724,34 +726,61 @@ export const RidingSchool = () => {
                 </div>
 
                 <p className="text-xs text-slate-700 font-medium leading-relaxed max-w-md mx-auto bg-white/70 p-3 rounded-xl border border-slate-200">
-                  Your trial request for <strong>{selectedProgram.title}</strong> is <strong>APPROVED</strong>! Your course curriculum, fee structure, and location map link have been automatically delivered to your Email and Dashboard Inbox.
+                  Your trial request for <strong>{selectedProgram.title}</strong> is <strong>APPROVED</strong>! Details with Google Maps pin, fee breakdown, and curriculum have been sent to your Email (<strong>{formData.email}</strong>) and WhatsApp.
                 </p>
 
-                {/* Lahore Stud Farm Location Box */}
-                <div className="p-3.5 bg-white rounded-xl border border-slate-200 text-left text-xs space-y-1.5 shadow-sm">
-                  <p className="font-extrabold text-slate-900 flex items-center gap-1.5">
-                    📍 <span className="text-[#0F172A]">Horse-Square Lahore Stud Farm & Riding Academy</span>
-                  </p>
-                  <p className="text-[11px] text-slate-600 font-medium">Lahore Stud Farm Complex, Lahore, Punjab, Pakistan</p>
+                {/* Hafizabad Stud Farm & Riding Academy Location Card */}
+                <div className="p-4 bg-gradient-to-br from-amber-50 to-orange-50/60 rounded-2xl border border-amber-200 text-left text-xs space-y-2.5 shadow-sm">
+                  <div className="flex items-start justify-between gap-2">
+                    <p className="font-extrabold text-[#0F172A] flex items-center gap-1.5 text-sm">
+                      📍 <span>Horse-Square Hafizabad Stud Farm & Riding Academy</span>
+                    </p>
+                    <span className="px-2 py-0.5 text-[10px] font-black uppercase tracking-wider bg-amber-500/20 text-amber-900 rounded-md border border-amber-300">
+                      Hafizabad
+                    </span>
+                  </div>
+                  <p className="text-[11px] text-slate-600 font-medium">Hafizabad Stud Farm Complex, Hafizabad, Punjab, Pakistan</p>
+                  
+                  <div className="flex flex-wrap items-center gap-3 pt-1 text-[11px] text-slate-700 font-semibold border-t border-amber-200/80">
+                    <span className="flex items-center gap-1">
+                      <Mail className="w-3.5 h-3.5 text-amber-600" />
+                      <span>horsesquarepakistan@gmail.com</span>
+                    </span>
+                    <span className="flex items-center gap-1">
+                      <Phone className="w-3.5 h-3.5 text-emerald-600" />
+                      <span>+92 305 9901997</span>
+                    </span>
+                  </div>
+
                   <a
-                    href="https://maps.app.goo.gl/6RSSd7M6WTG8r6Qy6"
+                    href="https://maps.app.goo.gl/poWQENRUtCrfrDrg9"
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1 text-[11px] font-bold text-amber-600 hover:text-amber-700 underline pt-0.5"
+                    className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#D4AF37] hover:bg-amber-500 text-slate-950 text-xs font-black rounded-xl shadow-sm transition"
                   >
-                    🗺️ Open Google Maps Location ↗
+                    <MapPin className="w-3.5 h-3.5 text-slate-950" />
+                    <span>Open Hafizabad School Google Maps Pin ↗</span>
                   </a>
                 </div>
 
                 <div className="flex flex-col sm:flex-row gap-3 pt-2">
+                  <a
+                    href="https://wa.me/923059901997?text=Hello%20Horse-Square%20Pakistan!%20I%20have%20booked%20a%20riding%20trial%20session%20for%20Hafizabad%20Academy."
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer"
+                  >
+                    <MessageSquare className="w-4 h-4 text-white" />
+                    <span>Chat on Official WhatsApp (+92 305 9901997) 💬</span>
+                  </a>
                   {generatedWaUrl && (
                     <a
                       href={generatedWaUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex-1 py-3 bg-emerald-600 hover:bg-emerald-700 text-white font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer"
+                      className="flex-1 py-3 bg-[#0F172A] hover:bg-slate-800 text-amber-300 font-bold rounded-xl text-xs transition shadow flex items-center justify-center gap-2 cursor-pointer border border-amber-500/30"
                     >
-                      <span>Get Details via WhatsApp 💬</span>
+                      <span>Send to My WhatsApp 📲</span>
                     </a>
                   )}
                   <button
@@ -759,7 +788,7 @@ export const RidingSchool = () => {
                       setSelectedProgram(null);
                       navigate('/dashboard');
                     }}
-                    className="px-5 py-3 bg-slate-900 hover:bg-slate-800 text-amber-300 font-bold rounded-xl text-xs transition cursor-pointer"
+                    className="px-5 py-3 bg-slate-100 hover:bg-slate-200 text-slate-800 font-bold rounded-xl text-xs transition cursor-pointer border border-slate-300"
                   >
                     Go to Dashboard Now →
                   </button>
@@ -784,15 +813,22 @@ export const RidingSchool = () => {
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-slate-700">City</label>
-                    <select value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold">
-                      <option value="Lahore">Lahore</option><option value="Islamabad">Islamabad</option><option value="Karachi">Karachi</option><option value="Other">Other City</option>
+                    <label className="text-xs font-bold text-slate-700">Riding Academy City *</label>
+                    <select value={formData.city} onChange={(e) => setFormData({ ...formData, city: e.target.value })} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold bg-white text-slate-900">
+                      <option value="Hafizabad">Hafizabad (Horse-Square Riding Academy)</option>
+                      <option value="Lahore">Lahore</option>
+                      <option value="Islamabad">Islamabad</option>
+                      <option value="Karachi">Karachi</option>
+                      <option value="Other">Other City</option>
                     </select>
                   </div>
                   <div className="space-y-1">
                     <label className="text-xs font-bold text-slate-700">Preferred Slot</label>
-                    <select value={formData.preferredSlot} onChange={(e) => setFormData({ ...formData, preferredSlot: e.target.value })} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold">
-                      <option value="Weekend Morning">Weekend Morning</option><option value="Weekend Afternoon">Weekend Afternoon</option>
+                    <select value={formData.preferredSlot} onChange={(e) => setFormData({ ...formData, preferredSlot: e.target.value })} className="w-full p-2.5 border border-slate-300 rounded-xl text-xs font-bold bg-white text-slate-900">
+                      <option value="Weekend Morning">Weekend Morning (07:00 AM - 09:00 AM)</option>
+                      <option value="Weekend Afternoon">Weekend Afternoon (04:00 PM - 06:00 PM)</option>
+                      <option value="Weekday Morning">Weekday Morning (07:00 AM - 09:00 AM)</option>
+                      <option value="Weekday Afternoon">Weekday Afternoon (04:00 PM - 06:00 PM)</option>
                     </select>
                   </div>
                 </div>

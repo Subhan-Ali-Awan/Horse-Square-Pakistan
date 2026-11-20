@@ -2,8 +2,12 @@ import React, { useState } from 'react';
 import { Send, CheckCircle, Clock, User, ShieldCheck, MessageSquare, X } from 'lucide-react';
 import { Modal } from './Modal';
 import { getApiUrl } from '../config/api';
+import { useAuth } from '../context/AuthContext';
 
-export const QueryChatModal = ({ isOpen, onClose, query, currentUser, token, onQueryUpdated }) => {
+export const QueryChatModal = ({ isOpen, onClose, query, currentUser, token: propToken, onQueryUpdated }) => {
+  const { token: authContextToken } = useAuth();
+  const effectiveToken = propToken || authContextToken || localStorage.getItem('token') || '';
+
   const [replyText, setReplyText] = useState('');
   const [sending, setSending] = useState(false);
   const [resolving, setResolving] = useState(false);
@@ -16,13 +20,18 @@ export const QueryChatModal = ({ isOpen, onClose, query, currentUser, token, onQ
     e.preventDefault();
     if (!replyText.trim()) return;
 
+    if (!effectiveToken) {
+      alert('Your session has expired. Please log in again.');
+      return;
+    }
+
     setSending(true);
     try {
       const res = await fetch(getApiUrl(`/api/contact/${query._id}/reply`), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${effectiveToken}`
         },
         body: JSON.stringify({ message: replyText.trim() })
       });
@@ -41,13 +50,18 @@ export const QueryChatModal = ({ isOpen, onClose, query, currentUser, token, onQ
   };
 
   const handleMarkResolved = async () => {
+    if (!effectiveToken) {
+      alert('Your session has expired. Please log in again.');
+      return;
+    }
+
     setResolving(true);
     try {
       const res = await fetch(getApiUrl(`/api/contact/${query._id}/resolve`), {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`
+          Authorization: `Bearer ${effectiveToken}`
         }
       });
       const data = await res.json();

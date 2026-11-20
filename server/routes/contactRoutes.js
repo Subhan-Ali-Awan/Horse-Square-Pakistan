@@ -261,7 +261,7 @@ const CITY_ACADEMY_LOCATIONS = {
   "Hafizabad": {
     name: "Horse-Square Hafizabad Stud Farm & Riding Academy",
     address: "Hafizabad Stud Farm Complex, Hafizabad, Punjab, Pakistan",
-    mapsUrl: "https://maps.app.goo.gl/6RSSd7M6WTG8r6Qy6"
+    mapsUrl: "https://maps.app.goo.gl/poWQENRUtCrfrDrg9"
   },
   "Lahore": {
     name: "Horse-Square Riding Academy (Bedian Complex, Lahore)",
@@ -330,22 +330,27 @@ AUTOMATICALLY APPROVED TRIAL SESSION & COURSE CURRICULUM
 
 Hello ${name}, your Riding Trial Request for ${courseTitle} has been AUTOMATICALLY APPROVED!
 
-📋 Course Details:
+📋 Course & Slot Booking Details:
+• Applicant Name: ${name}
 • Course: ${courseTitle} (${courseInfo.badge})
 • Duration: ${courseInfo.duration}
 • Fee Structure: ${courseInfo.fee}
 • Preferred Slot: ${preferredSlot || "Weekend Morning"}
 
-📍 ${selectedCity} Riding School Location & Address:
+📍 Riding Academy Location & Google Maps Pin:
 • Academy: ${locationInfo.name}
 • Address: ${locationInfo.address}
-• Google Maps Navigation Link: ${locationInfo.mapsUrl}
+• Google Maps Pin Location: ${locationInfo.mapsUrl}
+
+📞 Official Contact & Support:
+• Official Website WhatsApp: +92 305 9901997 (https://wa.me/923059901997)
+• Official Email: horsesquarepakistan@gmail.com
 
 📚 Training Curriculum & Syllabus:
 ${courseInfo.curriculum.map((c, i) => `${i + 1}. ${c}`).join("\n")}
 
 📍 Next Step:
-Tap the Google Maps link above (${locationInfo.mapsUrl}) to navigate straight to our academy, and reply to this message to confirm your arrival!
+Tap the Google Maps link above (${locationInfo.mapsUrl}) to navigate straight to our academy, and message us on WhatsApp (+92 305 9901997) to confirm your arrival!
 
 Horse-Square Pakistan Equestrian Team`;
 
@@ -432,22 +437,27 @@ AUTOMATICALLY APPROVED TRIAL SESSION & COURSE CURRICULUM
 
 Hello ${trial.name}, your Riding Trial Request for ${trial.courseTitle} has been AUTOMATICALLY APPROVED!
 
-📋 Course Details:
+📋 Course & Slot Booking Details:
+• Applicant Name: ${trial.name}
 • Course: ${trial.courseTitle} (${courseInfo.badge})
 • Duration: ${courseInfo.duration}
 • Fee Structure: ${courseInfo.fee}
 • Preferred Slot: ${trial.preferredSlot}
 
-📍 ${trial.city} Riding School Location & Address:
+📍 Riding Academy Location & Google Maps Pin:
 • Academy: ${approveLocationInfo.name}
 • Address: ${approveLocationInfo.address}
-• Google Maps Navigation Link: ${approveLocationInfo.mapsUrl}
+• Google Maps Pin Location: ${approveLocationInfo.mapsUrl}
+
+📞 Official Contact & Support:
+• Official Website WhatsApp: +92 305 9901997 (https://wa.me/923059901997)
+• Official Email: horsesquarepakistan@gmail.com
 
 📚 Training Curriculum & Syllabus:
 ${courseInfo.curriculum.map((c, i) => `${i + 1}. ${c}`).join("\n")}
 
 📍 Next Step:
-Tap the Google Maps link above (${approveLocationInfo.mapsUrl}) to navigate straight to our academy, and reply to this message to confirm your arrival!
+Tap the Google Maps link above (${approveLocationInfo.mapsUrl}) to navigate straight to our academy, and message us on WhatsApp (+92 305 9901997) to confirm your arrival!
 
 Horse-Square Pakistan Equestrian Team`;
 
@@ -492,7 +502,7 @@ router.post("/riding-trial/:id/resend-email", protect, adminOnly, async (req, re
     const HAFIZABAD_LOCATION = {
       name: "Horse-Square Hafizabad Stud Farm & Riding Academy",
       address: "Hafizabad Stud Farm Complex, Hafizabad, Punjab, Pakistan",
-      mapsUrl: "https://maps.app.goo.gl/6RSSd7M6WTG8r6Qy6"
+      mapsUrl: "https://maps.app.goo.gl/poWQENRUtCrfrDrg9"
     };
 
     const emailResult = await sendRidingTrialEmail(trial, HAFIZABAD_LOCATION, courseInfo);
